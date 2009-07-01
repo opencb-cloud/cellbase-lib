@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.bioinfo</groupId>
+  <artifactId>infrared</artifactId>
+  <name>Infrared project</name>
+  <version>0.8.0</version>
+  <description>Infrared API and application</description>
+  <dependencies>
+    <dependency>
+      <groupId>org.bioinfo</groupId>
+      <artifactId>db</artifactId>
+      <version>1.1.0</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+  <build>
+  	<sourceDirectory>src/main</sourceDirectory>
+  	<testSourceDirectory>src/test</testSourceDirectory>
+  	<resources>
+  	</resources>
+  	<filters>
+  	</filters>
+  	<plugins>
+  		<plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-compiler-plugin</artifactId>
+  			<configuration>
+  				<source>1.6</source>
+  				<target>1.6</target>
+  			</configuration>
+  		</plugin>
+  		<!-- ... any other configurations -->
+  	</plugins>
+  </build>
+</project>
