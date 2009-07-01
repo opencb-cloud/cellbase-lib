@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.common.feature.FunctionalFeature;
-import org.bioinfo.infrared.funcannot.dbsql.GOFactory;
+import org.bioinfo.infrared.funcannot.dbsql.GODBManager;
 
 
 public class GO extends FunctionalFeature {
@@ -63,7 +63,7 @@ public class GO extends FunctionalFeature {
 	 */
 	public FeatureList<GO> getParents() {
 		if(parents == null) {
-			GOFactory gof = new GOFactory(getRosettaDBConnector());
+			GODBManager gof = new GODBManager(getRosettaDBConnector());
 			try {
 				parents = gof.getParentsByAccesion(id);
 			} catch (SQLException e) {

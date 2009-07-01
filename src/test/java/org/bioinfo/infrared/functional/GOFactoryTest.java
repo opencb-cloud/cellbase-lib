@@ -5,7 +5,7 @@ import static org.junit.Assert.fail;
 import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.funcannot.GO;
-import org.bioinfo.infrared.funcannot.dbsql.GOFactory;
+import org.bioinfo.infrared.funcannot.dbsql.GODBManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,11 +14,11 @@ import org.junit.Test;
 public class GOFactoryTest {
 
 	DBConnector ros;
-	GOFactory gof;
+	GODBManager gof;
 	@Before
 	public void setUp() throws Exception {
 		ros = new DBConnector();
-		gof = new GOFactory(ros);
+		gof = new GODBManager(ros);
 	}
 
 	@After
