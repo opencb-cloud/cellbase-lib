@@ -13,7 +13,7 @@ public class InfraredMain {
 		
 		InfraredTool tool = InfraredFactory.createTool(args);
 		if(tool != null) {
-			tool.execute();
+			tool.run();
 		}
 		
 	}
