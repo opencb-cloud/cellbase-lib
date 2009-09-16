@@ -7,7 +7,6 @@ import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.dbsql.DBManager;
 import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.regulatory.MiRNAGene;
-import org.bioinfo.infrared.regulatory.MiRNATarget;
 
 public class MiRNAGeneDBManager extends DBManager {
 

@@ -4,11 +4,11 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
+import org.bioinfo.commons.utils.StringUtils;
 import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.regulatory.MiRNATarget;
 import org.bioinfo.infrared.regulatory.dbsql.MiRNATargetDBManager;
-import org.bioinfo.utils.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 

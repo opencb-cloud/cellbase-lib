@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
 
+import org.bioinfo.commons.utils.StringUtils;
 import org.bioinfo.db.DBConnection;
-import org.bioinfo.utils.StringUtils;
 
 
 public class DBConnector {
@@ -109,11 +109,11 @@ public class DBConnector {
 	}
 	
 	public List<String> getAvailableDBs() {
-		return StringUtils.stringToList((String) props.get("ROSETTA."+specie.toUpperCase()+".AVAILABLE.DBS"));
+		return StringUtils.toList((String) props.get("ROSETTA."+specie.toUpperCase()+".AVAILABLE.DBS"));
 	}
 	
 	public boolean isValidSpecie(String specie) {
-		return StringUtils.stringToList((String) props.get("ROSETTA.SPECIES")).contains(specie);
+		return StringUtils.toList((String) props.get("ROSETTA.SPECIES")).contains(specie);
 	}
 	
 	/**

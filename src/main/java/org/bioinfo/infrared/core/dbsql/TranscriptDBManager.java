@@ -8,7 +8,6 @@ import org.bioinfo.db.handler.BeanHandler;
 import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.dbsql.DBManager;
 import org.bioinfo.infrared.common.feature.FeatureList;
-import org.bioinfo.infrared.core.Gene;
 import org.bioinfo.infrared.core.Transcript;
 
 public class TranscriptDBManager extends DBManager {

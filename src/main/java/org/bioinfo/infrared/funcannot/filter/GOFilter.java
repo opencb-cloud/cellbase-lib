@@ -2,7 +2,7 @@ package org.bioinfo.infrared.funcannot.filter;
 
 import java.util.List;
 
-import org.bioinfo.utils.StringUtils;
+import org.bioinfo.commons.utils.StringUtils;
 
 
 @SuppressWarnings("serial")

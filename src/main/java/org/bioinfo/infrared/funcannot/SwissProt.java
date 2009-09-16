@@ -2,7 +2,7 @@ package org.bioinfo.infrared.funcannot;
 
 import java.util.ArrayList;
 
-import org.bioinfo.utils.StringUtils;
+import org.bioinfo.commons.utils.StringUtils;
 
 public class SwissProt {
 	

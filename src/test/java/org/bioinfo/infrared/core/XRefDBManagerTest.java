@@ -6,11 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bioinfo.commons.utils.StringUtils;
 import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.feature.FeatureList;
-import org.bioinfo.infrared.core.XRef;
 import org.bioinfo.infrared.core.dbsql.XRefDBManager;
-import org.bioinfo.utils.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

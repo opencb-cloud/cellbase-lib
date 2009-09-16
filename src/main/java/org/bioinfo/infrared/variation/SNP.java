@@ -2,10 +2,10 @@ package org.bioinfo.infrared.variation;
 
 import java.util.List;
 
+import org.bioinfo.commons.utils.StringUtils;
 import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.common.feature.VariationFeature;
 import org.bioinfo.infrared.core.Transcript;
-import org.bioinfo.utils.StringUtils;
 
 public class SNP extends VariationFeature{
 

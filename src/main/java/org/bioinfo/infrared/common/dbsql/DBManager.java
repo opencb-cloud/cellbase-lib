@@ -2,17 +2,14 @@ package org.bioinfo.infrared.common.dbsql;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.bioinfo.db.PreparedQuery;
-import org.bioinfo.db.Query;
+import org.bioinfo.db.api.PreparedQuery;
+import org.bioinfo.db.api.Query;
 import org.bioinfo.db.handler.BeanArrayListHandler;
 import org.bioinfo.db.handler.ResultSetHandler;
 import org.bioinfo.infrared.common.feature.Feature;
 import org.bioinfo.infrared.common.feature.FeatureList;
-import org.bioinfo.infrared.core.XRef;
 
 
 public class DBManager {

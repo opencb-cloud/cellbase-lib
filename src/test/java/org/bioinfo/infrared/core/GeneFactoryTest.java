@@ -5,11 +5,10 @@ import static org.junit.Assert.fail;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.bioinfo.commons.utils.StringUtils;
 import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.feature.FeatureList;
-import org.bioinfo.infrared.core.Gene;
 import org.bioinfo.infrared.core.dbsql.GeneDBManager;
-import org.bioinfo.utils.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

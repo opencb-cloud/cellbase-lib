@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bioinfo.commons.utils.ListUtils;
 import org.bioinfo.db.handler.BeanArrayListHandler;
 import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.dbsql.DBManager;
@@ -16,7 +17,6 @@ import org.bioinfo.infrared.funcannot.Kegg;
 import org.bioinfo.infrared.funcannot.filter.BiocartaFilter;
 import org.bioinfo.infrared.funcannot.filter.GOFilter;
 import org.bioinfo.infrared.funcannot.filter.KeggFilter;
-import org.bioinfo.utils.ArrayUtils;
 
 public class AnnotationDBManager extends DBManager {
 	
@@ -67,7 +67,7 @@ public class AnnotationDBManager extends DBManager {
 		FeatureList<AnnotationItem> al = new FeatureList<AnnotationItem>(ids.size());
 		FeatureList<GO> gos;
 		// remove duplicated ids
-		ids = ArrayUtils.unique(ids);
+		ids = ListUtils.unique(ids);
 		getRosettaDBConnector().getDbConnection().setAutoConnectAndDisconnect(false);
 		getRosettaDBConnector().getDbConnection().connect();
 		
@@ -104,7 +104,7 @@ public class AnnotationDBManager extends DBManager {
 		keggFilter.setUseNumberOfGenes(false);
 		FeatureList<AnnotationItem> al = new FeatureList<AnnotationItem>(ids.size());
 		FeatureList<Kegg> keggs;
-		ids = ArrayUtils.unique(ids);
+		ids = ListUtils.unique(ids);
 		getRosettaDBConnector().getDbConnection().setAutoConnectAndDisconnect(false);
 		getRosettaDBConnector().getDbConnection().connect();
 		for(String id: ids) {
@@ -123,7 +123,7 @@ public class AnnotationDBManager extends DBManager {
 		biocartaFilter.setUseNumberOfGenes(false);
 		FeatureList<AnnotationItem> al = new FeatureList<AnnotationItem>(ids.size());
 		FeatureList<Biocarta> biocartas;
-		ids = ArrayUtils.unique(ids);
+		ids = ListUtils.unique(ids);
 		getRosettaDBConnector().getDbConnection().setAutoConnectAndDisconnect(false);
 		getRosettaDBConnector().getDbConnection().connect();
 		for(String id: ids) {
