@@ -9,13 +9,13 @@ import org.bioinfo.infrared.common.dbsql.DBManager;
 import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.regulatory.MiRNAInfo;
 
-public class MiRNAInfoDBFactory extends DBManager {
+public class MiRNAInfoDBManager extends DBManager {
 
 	public static final String GET_ALL_BY_MATURE_ID = "select * from mirna_info where mirna_mature_id = ?";
 	public static final String GET_ALL_BY_GENE_ID = "select * from mirna_info where mirna_gene_id = ?";
 	public static final String GET_ALL_POSITION = "select mi.* from mirna_info mi, dbname db, transcript2xref tx, xref x, transcript t where t.biotype='miRNA' and t.transcript_id=tx.transcript_id and tx.xref_id=x.xref_id and x.dbname_id=db.dbname_id and db.dbname='mirna' and x.display_id=mi.mirna_gene_id  and x.display_id=mi.mirna_gene_id and x.display_id=mi.mirna_gene_id ";
 	
-	public MiRNAInfoDBFactory(DBConnector dBConnector) {
+	public MiRNAInfoDBManager(DBConnector dBConnector) {
 		super(dBConnector);
 	}
 	

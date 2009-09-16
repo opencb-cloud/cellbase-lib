@@ -9,7 +9,7 @@ import org.bioinfo.infrared.common.dbsql.DBManager;
 import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.funcannot.GO;
 
-public class GOFactory extends DBManager {
+public class GODBManager extends DBManager {
 	
 	private static final String NAMESPACE_CONSTRAINT= " gi.namespace = ? ";
 //	private static final String LEVEL_CONSTRAINT= " gi.level between ? and ?  ";
@@ -18,7 +18,7 @@ public class GOFactory extends DBManager {
 	public static final String GET_GO= "SELECT gi.* FROM go_info gi WHERE ";
 	public static final String GET_GO_PARENTS= "SELECT gi.* FROM go_parent gp, go_info gi WHERE gp.child_acc = ? and gp.distance > 0 and gp.parent_acc=gi.acc group by gp.parent_acc ";
 	
-	public GOFactory(DBConnector dBConnector) {
+	public GODBManager(DBConnector dBConnector) {
 		super(dBConnector);
 	}
 	

@@ -10,12 +10,12 @@ import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.regulatory.Triplex;
 
 @Deprecated
-public class TriplexDBFactory extends DBManager {
+public class TriplexDBManager extends DBManager {
 
 	public static final String GET_ALL_BY_GENE_ID = "select t.triplex_id, g.stable_id, t.relative_start, t.relative_end, t.chromosome, t.absolute_start, t.absolute_end, t.strand, t.sequence, t.length from triplex t, gene g where g.stable_id = ? and g.gene_id=t.gene_id ";
 	public static final String GET_ALL_BY_LOCATION = "select t.triplex_id, g.stable_id, t.relative_start, t.relative_end, t.chromosome, t.absolute_start, t.absolute_end, t.strand, t.sequence, t.length from triplex t, gene g where t.gene_id=g.gene_id ";
 	
-	public TriplexDBFactory(DBConnector dBConnector) {
+	public TriplexDBManager(DBConnector dBConnector) {
 		super(dBConnector);
 	}
 	 

@@ -10,7 +10,7 @@ import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.regulatory.MiRNATarget;
 
 @Deprecated
-public class MiRNATargetDBFactory extends DBManager {
+public class MiRNATargetDBManager extends DBManager {
 		
 	public static final String GET_BY_MATURE_ID = "select mt.mirna_id,t.stable_id,mt.chromosome,mt.start,mt.end,mt.strand,mt.score,mt.pvalue from mirna_target mt, transcript t where mt.mirna_id = ? and mt.transcript_id=t.transcript_id";
 	public static final String GET_ALL_BY_TRANSCRIPT_ID = "select mt.mirna_id,t.stable_id,mt.chromosome, mt.start,mt.end,mt.strand,mt.score,mt.pvalue from mirna_target mt, transcript t where t.stable_id= ? and t.transcript_id = mt.transcript_id";
@@ -18,7 +18,7 @@ public class MiRNATargetDBFactory extends DBManager {
 	public static final String GET_ALL_BY_SCORE = "select mt.mirna_id,t.stable_id,mt.chromosome,mt.start,mt.end,mt.strand,mt.score,mt.pvalue from mirna_target mt, transcript t where mt.transcript_id=t.transcript_id and mt.score >= ";
 	public static final String GET_ALL_BY_PVALUE = "select mt.mirna_id,t.stable_id,mt.chromosome,mt.start,mt.end,mt.strand,mt.score,mt.pvalue from mirna_target mt, transcript t where mt.transcript_id=t.transcript_id and pvalue <= ";
 	
-	public MiRNATargetDBFactory(DBConnector dBConnector) {
+	public MiRNATargetDBManager(DBConnector dBConnector) {
 		super(dBConnector);
 	}
 
