@@ -3,7 +3,7 @@
   <groupId>org.bioinfo</groupId>
   <artifactId>infrared</artifactId>
   <name>Infrared project</name>
-  <version>0.9.0-beta</version>
+  <version>0.8.0</version>
   <description>Infrared API and application</description>
   <dependencies>
     <dependency>
