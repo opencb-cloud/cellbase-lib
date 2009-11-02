@@ -1,4 +1,4 @@
-package org.bioinfo.infrared.common.feature;
+  package org.bioinfo.infrared.common.feature;
 
 public class RegulatoryFeature extends GenomicFeature {
 
