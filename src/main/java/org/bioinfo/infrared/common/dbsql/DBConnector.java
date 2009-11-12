@@ -79,11 +79,11 @@ public class DBConnector {
 				this.specie = props.getProperty("DEFAULT.SPECIES");
 			}
 			if(isValidSpecie(specie)) {
-				this.host = props.getProperty("ROSETTA.HOSTNAME");
-				this.port = props.getProperty("ROSETTA.PORT");
-				this.database = props.getProperty("ROSETTA."+specie.toUpperCase()+".DATABASE");
-				this.user = props.getProperty("ROSETTA.USER");
-				this.password = props.getProperty("ROSETTA.PASSWORD");
+				this.host = props.getProperty("INFRARED.HOSTNAME");
+				this.port = props.getProperty("INFRARED.PORT");
+				this.database = props.getProperty("INFRARED."+specie.toUpperCase()+".DATABASE");
+				this.user = props.getProperty("INFRARED.USER");
+				this.password = props.getProperty("INFRARED.PASSWORD");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -109,11 +109,11 @@ public class DBConnector {
 	}
 	
 	public List<String> getAvailableDBs() {
-		return StringUtils.toList((String) props.get("ROSETTA."+specie.toUpperCase()+".AVAILABLE.DBS"));
+		return StringUtils.toList((String) props.get("INFRARED."+specie.toUpperCase()+".AVAILABLE.DBS"));
 	}
 	
 	public boolean isValidSpecie(String specie) {
-		return StringUtils.toList((String) props.get("ROSETTA.SPECIES")).contains(specie);
+		return StringUtils.toList((String) props.get("INFRARED.SPECIES")).contains(specie);
 	}
 	
 	/**
