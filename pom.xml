@@ -32,4 +32,11 @@
   		<!-- ... any other configurations -->
   	</plugins>
   </build>
+  <distributionManagement>
+                <repository>
+                        <id>default</id>
+                        <name>Bioinfo Repository</name>
+                        <url>scp://repos/var/local/commons/repository</url>
+                </repository>
+        </distributionManagement>
 </project>
