@@ -46,8 +46,7 @@ public class GOFilter extends FunctionalFilter{
 	}
 	
 	public void addKeyword(String keyword) {
-//		keywords.add(new Keyword(keyword));
-		addKeywords(StringUtils.stringToList(keyword));
+		addKeywords(StringUtils.toList(keyword));
 	}
 
 	public void addKeywords(List<String> keywordNames) {

@@ -277,14 +277,14 @@ public class DBManager {
 	/**
 	 * @param dBConnector the dBConnector to set
 	 */
-	public void setRosettaDBConnector(DBConnector dBConnector) {
+	public void setDBConnector(DBConnector dBConnector) {
 		this.dBConnector = dBConnector;
 	}
 
 	/**
 	 * @return the dBConnector
 	 */
-	public DBConnector getRosettaDBConnector() {
+	public DBConnector getDBConnector() {
 		return dBConnector;
 	}
 }

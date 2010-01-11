@@ -2,6 +2,7 @@ package org.bioinfo.infrared.variation;
 
 import java.util.List;
 
+import org.bioinfo.commons.utils.ListUtils;
 import org.bioinfo.commons.utils.StringUtils;
 import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.common.feature.VariationFeature;
@@ -18,6 +19,14 @@ public class SNP extends VariationFeature{
 		super(snpId);
 	}
 	
+	public SNP(String snpId, String chromosome, Integer start, Integer end) {
+		this(snpId, chromosome, start, end, "", "");
+	}
+	
+	public SNP(String snpId, String chromosome, Integer start, Integer end, String strand) {
+		this(snpId, chromosome, start, end, strand, "");
+	}
+	
 	public SNP(String snpId, String chromosome, Integer start, Integer end, String strand, String allele) {
 		super(snpId, chromosome, start, end, strand);
 		this.allele = allele;
@@ -26,13 +35,13 @@ public class SNP extends VariationFeature{
 	public SNP(String snpId, String chromosome, Integer start, Integer end, String strand, String allele, String consequence_type) {
 		super(snpId, chromosome, start, end, strand);
 		this.allele = allele;
-		this.consequence_type = StringUtils.stringToList(consequence_type);
+		this.consequence_type = StringUtils.toList(consequence_type);
 	}
 	
 	public SNP(String snpId, String chromosome, Integer start, Integer end, String strand, String allele, Integer weight, String consequence_type, String sequence) {
 		this(snpId, chromosome, start, end, strand, allele);
 		this.weight = weight;
-		this.consequence_type = StringUtils.stringToList(consequence_type);
+		this.consequence_type = StringUtils.toList(consequence_type);
 		this.sequence = sequence;
 	}
 	
@@ -59,7 +68,7 @@ public class SNP extends VariationFeature{
 		sb.append(strand).append("\t");
 		sb.append(allele).append("\t");
 		sb.append(weight).append("\t");
-		sb.append(StringUtils.arrayToString(consequence_type, ",")).append("\t");
+		sb.append(ListUtils.toString(consequence_type, ",")).append("\t");
 		sb.append(sequence).append("\t");
 		return sb.toString();
 	}

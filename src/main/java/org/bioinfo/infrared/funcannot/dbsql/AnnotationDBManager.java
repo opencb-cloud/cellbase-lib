@@ -68,8 +68,8 @@ public class AnnotationDBManager extends DBManager {
 		FeatureList<GO> gos;
 		// remove duplicated ids
 		ids = ListUtils.unique(ids);
-		getRosettaDBConnector().getDbConnection().setAutoConnectAndDisconnect(false);
-		getRosettaDBConnector().getDbConnection().connect();
+		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(false);
+		getDBConnector().getDbConnection().connect();
 		
 		String sqlQuery;
 		if(goFilter.isPropagated()) {
@@ -86,8 +86,8 @@ public class AnnotationDBManager extends DBManager {
 				al.add(new AnnotationItem(id, go.getId()));
 			}
 		}
-		getRosettaDBConnector().getDbConnection().disconnect();
-		getRosettaDBConnector().getDbConnection().setAutoConnectAndDisconnect(true);
+		getDBConnector().getDbConnection().disconnect();
+		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(true);
 		return filterByNumberOfRepeats(al, goFilter.getMinNumberGenes(), goFilter.getMaxNumberGenes());
 	}
 	
@@ -105,16 +105,16 @@ public class AnnotationDBManager extends DBManager {
 		FeatureList<AnnotationItem> al = new FeatureList<AnnotationItem>(ids.size());
 		FeatureList<Kegg> keggs;
 		ids = ListUtils.unique(ids);
-		getRosettaDBConnector().getDbConnection().setAutoConnectAndDisconnect(false);
-		getRosettaDBConnector().getDbConnection().connect();
+		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(false);
+		getDBConnector().getDbConnection().connect();
 		for(String id: ids) {
 			keggs = getFeatureListById(GET_KEGG_ANNOTATION_BY_IDS, id, new BeanArrayListHandler(Kegg.class));
 			for(Kegg kegg: keggs) {
 				al.add(new AnnotationItem(id, kegg.getId()));
 			}
 		}
-		getRosettaDBConnector().getDbConnection().disconnect();
-		getRosettaDBConnector().getDbConnection().setAutoConnectAndDisconnect(true);
+		getDBConnector().getDbConnection().disconnect();
+		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(true);
 		return filterByNumberOfRepeats(al, keggFilter.getMinNumberGenes(), keggFilter.getMaxNumberGenes());
 	}
 	
@@ -124,16 +124,16 @@ public class AnnotationDBManager extends DBManager {
 		FeatureList<AnnotationItem> al = new FeatureList<AnnotationItem>(ids.size());
 		FeatureList<Biocarta> biocartas;
 		ids = ListUtils.unique(ids);
-		getRosettaDBConnector().getDbConnection().setAutoConnectAndDisconnect(false);
-		getRosettaDBConnector().getDbConnection().connect();
+		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(false);
+		getDBConnector().getDbConnection().connect();
 		for(String id: ids) {
 			biocartas = getFeatureListById(GET_BIOCARTA_ANNOTATION_BY_IDS, id, new BeanArrayListHandler(Biocarta.class));
 			for(Biocarta biocarta: biocartas) {
 				al.add(new AnnotationItem(id, biocarta.getId()));
 			}
 		}
-		getRosettaDBConnector().getDbConnection().disconnect();
-		getRosettaDBConnector().getDbConnection().setAutoConnectAndDisconnect(true);
+		getDBConnector().getDbConnection().disconnect();
+		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(true);
 		return filterByNumberOfRepeats(al, biocartaFilter.getMinNumberGenes(), biocartaFilter.getMaxNumberGenes());
 	}
 	

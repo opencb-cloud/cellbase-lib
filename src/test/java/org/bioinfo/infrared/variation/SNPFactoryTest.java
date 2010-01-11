@@ -117,9 +117,11 @@ public class SNPFactoryTest {
 		System.out.println("Test - 4");
 		SNP snp;
 		try {
-			snp = sf.getByName("rs7342690");
-			System.out.println(snp);
-			System.out.println(snp.toString());
+			snp = sf.getByName("rs11644186");
+			if(snp != null) {
+				System.out.println(snp);
+				System.out.println(snp.toString());
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
