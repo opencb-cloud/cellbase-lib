@@ -19,6 +19,7 @@ public class XRefDBManager extends DBManager {
 	public static final String GET_ALL_IDS_BY_DBNAME = "select x.display_id from xref x, dbname db where db.dbname = ? and db.dbname_id=x.dbname_id";
 	public static final String GET_ALL_IDS_BY_IDS = "select x2.display_id from xref x1, transcript2xref tx1, xref x2, transcript2xref tx2, dbname db where x1.display_id= ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='";
 	public static final String GET_TRANSLATION = "select x2.display_id, db.dbname, db.display_label, x2.description from xref x1, xref x2, transcript2xref tx1, transcript2xref tx2, dbname db where x1.display_id=? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id  and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname= ? group by x2.display_id;";
+    public static final String GET_ALL_DBNAMES = "select dbname, display_label, dbname_type from dbname";
 	
 	public XRefDBManager(DBConnector dBConnector) {
 		super(dBConnector);
@@ -32,7 +33,12 @@ public class XRefDBManager extends DBManager {
 		return getStringListByIds(GET_ALL_IDS_BY_IDS+dbname+"' group by x2.display_id ", ids);
 	}
 
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
+    public FeatureList<XRef> getAllDBNames() throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+            return getFeatureList(GET_ALL_DBNAMES, new BeanArrayListHandler(XRef.class));
+    }
+
+    @SuppressWarnings("unchecked")
 	public FeatureList<XRef> getByDBName(String id, String dbname) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getFeatureListById(GET_TRANSLATION.replaceFirst("\\?", "'"+id+"'"), dbname, new BeanArrayListHandler(XRef.class));
 	}
