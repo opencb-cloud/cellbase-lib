@@ -26,10 +26,10 @@ public class Triplex extends RegulatoryFeature {
 	@Override
 	public String toString(){
 		if(length > 20) {
-			return id+"\t"+geneStableId+"\t"+relativeStart+"\t"+relativeEnd+"\t"+chromosome+"\t"+start+"\t"+end+"\t"+strand+"\t"+sequence.substring(0, 20)+"...\t"+length;
+			return id+"\t"+geneStableId+"\t"+relativeStart+"\t"+relativeEnd+"\t"+chromosome+"\t"+start+"\t"+end+"\t"+strand+"\t"+length+"\t"+sequence.substring(0, 20)+"...";
 //			return id+"\t"+chromosome+"\t"+start+"\t"+end+"\t"+strand+"\t"+sequence.substring(0, 20)+"...\t"+length;
 		}else {
-			return id+"\t"+geneStableId+"\t"+relativeStart+"\t"+relativeEnd+"\t"+chromosome+"\t"+start+"\t"+end+"\t"+strand+"\t"+sequence+"\t"+length;
+			return id+"\t"+geneStableId+"\t"+relativeStart+"\t"+relativeEnd+"\t"+chromosome+"\t"+start+"\t"+end+"\t"+strand+"\t"+length+"\t"+sequence;
 		}
 	
 	}

@@ -21,7 +21,7 @@ public class GeneFactoryTest {
 	public void setUp() throws Exception {
 //		ros1 = new DBConnector("hsa","gen29","3306","rashid","bouchard");
 //		ros1 = new DBConnector(new File("/opt/rosetta/conf/db.conf"));
-		ros1 = new DBConnector("hsa");
+		ros1 = new DBConnector("homo_sapiens");
 		System.out.println(ros1.toString());
 		gf1 = new GeneDBManager(ros1);
 		
