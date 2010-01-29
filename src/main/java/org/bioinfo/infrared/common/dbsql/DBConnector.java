@@ -25,7 +25,7 @@ public class DBConnector {
 	private String database;
 	private String user;
 	private String password;
-	private String specie;
+	private String species;
 
 	public DBConnector() {
 		// get parameters from the property file
@@ -33,7 +33,7 @@ public class DBConnector {
 		createDBConnection();
 	}
 	public DBConnector(String specie) {
-		this.setSpecie(specie);
+		this.setSpecies(specie);
 		// get parameters from the property file
 		loadConfig(new File(System.getenv("INFRARED_HOME")+"/conf/db.conf"));
 		createDBConnection();
@@ -46,7 +46,7 @@ public class DBConnector {
 	}
 
 	public DBConnector(String specie, File propertyFile) {
-		this.setSpecie(specie);
+		this.setSpecies(specie);
 		// get parameters from the property file
 		loadConfig(propertyFile);
 		createDBConnection();
@@ -58,7 +58,7 @@ public class DBConnector {
 		// sobreescribo algunos parametros
 		this.host = host;
 		this.port = port;
-		this.specie = specie;
+		this.species = specie;
 		this.user = user;
 		this.password = passwd;
 		createDBConnection();
@@ -70,7 +70,7 @@ public class DBConnector {
 		// sobreescribo algunos parametros
 		this.host = host;
 		this.port = port;
-		this.specie = specie;
+		this.species = specie;
 		this.user = user;
 		this.password = passwd;
 		createDBConnection();
@@ -79,13 +79,13 @@ public class DBConnector {
 	private void loadConfig(File propertyFile) {
 		try {
 			props.load(new FileInputStream(propertyFile));
-			if(specie == null) {
-				this.specie = props.getProperty("DEFAULT.SPECIES");
+			if(species == null) {
+				this.species = props.getProperty("DEFAULT.SPECIES");
 			}
-			if(isValidSpecies(specie)) {
-				this.host = props.getProperty("INFRARED.HOSTNAME");
+			if(isValidSpecies(species)) {
+				this.host = props.getProperty("INFRARED.HOST");
 				this.port = props.getProperty("INFRARED.PORT");
-				this.database = props.getProperty("INFRARED."+specie.toUpperCase()+".DATABASE");
+				this.database = props.getProperty("INFRARED."+species.toUpperCase()+".DATABASE");
 				this.user = props.getProperty("INFRARED.USER");
 				this.password = props.getProperty("INFRARED.PASSWORD");
 			}
@@ -97,7 +97,7 @@ public class DBConnector {
 
 	private void createDBConnection() {
 		if(getDbConnection() == null) {
-			dbConnection = new DBConnection("mysql",host, port, database, user, password);
+			dbConnection = new DBConnection("mysql", host, port, database, user, password);
 		}
 	}
 
@@ -112,20 +112,20 @@ public class DBConnector {
 	@SuppressWarnings("unchecked")
 	public List<String> getAllChromosomes() throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		Query query = dbConnection.createSQLQuery();
-		return (ArrayList<String>)query.execute("select chromosome from karyotype group by chromosome", new BeanArrayListHandler(String.class));
+		return (List<String>)query.execute("select chromosome from karyotype group by chromosome", new BeanArrayListHandler(String.class));
 	}
 
 	public List<String> getAvailableDBs() {
-		if(props != null && props.get("INFRARED."+specie.toUpperCase()+".AVAILABLE.DBS") != null) {
-			return StringUtils.toList((String) props.get("INFRARED."+specie.toUpperCase()+".AVAILABLE.DBS"));
+		if(props != null && props.get("INFRARED."+species.toUpperCase()+".AVAILABLE.DBS") != null) {
+			return StringUtils.toList((String) props.get("INFRARED."+species.toUpperCase()+".AVAILABLE.DBS"));
 		}else {
 			return Collections.emptyList();
 		}
 	}
 
 	public boolean isValidSpecies(String species) {
-		if(props != null && props.get("INFRARED.SPECIES") != null) {
-			return StringUtils.toList((String) props.get("INFRARED.SPECIES")).contains(species);
+		if(props != null && props.getProperty("INFRARED.SPECIES") != null) {
+			return StringUtils.toList(props.getProperty("INFRARED.SPECIES"), "[:,]").contains(species);
 		}else {
 			return false;
 		}
@@ -151,15 +151,15 @@ public class DBConnector {
 		return sb.toString();
 	}
 	/**
-	 * @param specie the specie to set
+	 * @param species the species to set
 	 */
-	public void setSpecie(String specie) {
-		this.specie = specie;
+	public void setSpecies(String species) {
+		this.species = species;
 	}
 	/**
-	 * @return the specie
+	 * @return the species
 	 */
-	public String getSpecie() {
-		return specie;
+	public String getSpecies() {
+		return species;
 	}
 }

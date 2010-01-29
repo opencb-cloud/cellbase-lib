@@ -10,27 +10,42 @@ public class DBConnectorTest {
 
 	@Test
 	public void testGetAllChromosomes() {
-		DBConnector conn = new DBConnector("hsa");
+		System.out.println("\nTest - 1");
+		DBConnector conn = new DBConnector("homo_sapiens");
 		try {
 			System.out.println(conn.getAllChromosomes());
 			conn.disconnect();
 		} catch (Exception e) {
-			fail("Not yet implemented");
 			e.printStackTrace();
+//			fail(e.toString());
 		}
 		
 	}
 
 	@Test
 	public void testGetAvailableDBs() {
+		System.out.println("\nTest - 2");
 		DBConnector conn = new DBConnector("hsa");
-		System.out.println(conn.getAvailableDBs());
+		try {
+			System.out.println(conn.getAvailableDBs());
+			conn.disconnect();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail(e.toString());
+		}
 	}
 
 	@Test
 	public void testIsValidSpecies() {
-//		DBConnector conn = new DBConnector("hsa");
-//		fail("Not yet implemented");
+		System.out.println("\nTest - 3");
+		DBConnector conn = new DBConnector("homo_sapiens");
+		try {
+			System.out.println(conn.isValidSpecies("homo_sapiens"));
+			conn.disconnect();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail(e.toString());
+		}
 	}
 
 }
