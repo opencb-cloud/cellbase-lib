@@ -11,6 +11,7 @@ import org.bioinfo.infrared.regulatory.TransfacTfbs;
 
 public class TransfacTfbsDBManager extends DBManager {
 	
+	private static final String SELECT_FIELDS = " tf.transfac_tfbs_id, g.stable_id, tf.factor_id, tf.factor_name, tf.relative_start, tf.factor_relative_end, tf.chromosome, tf. absolute_start, tf.absolute_end, tf.strand, tf. core_match, tf.matrix_match, tf.length, tf.sequence ";
 	
 	public TransfacTfbsDBManager(DBConnector dBConnector) {
 		super(dBConnector);
@@ -18,18 +19,18 @@ public class TransfacTfbsDBManager extends DBManager {
 	
 	@SuppressWarnings("unchecked")
 	public FeatureList<TransfacTfbs> getAllByGeneId(String geneId) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureListById("select * from transfac_tfbs tf, gene g where g.stable_id = ? and g.gene_id=tf.gene_id", geneId, new BeanArrayListHandler(TransfacTfbs.class));
+		return getFeatureListById("select "+SELECT_FIELDS+" from transfac_tfbs tf, gene g where g.stable_id = ? and g.gene_id=tf.gene_id", geneId, new BeanArrayListHandler(TransfacTfbs.class));
 //		return new TransfacTFBSList((List<TransfacTfbs>)getFeatureList("select * from transfac_tfbs where ensembl_gene_id = ? ", geneId, new BeanArrayListHandler(TransfacTfbs.class)).getElements());
 	}
 	
 	@SuppressWarnings("unchecked")
 	public FeatureList<TransfacTfbs> getAllBySnpId(String snpId) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureListById("select tf.* from transfac_tfbs tf, snp s, snp2transfac_tfbs s2t where snp_name = ? and s.snp_id=s2t.snp_id and s2t.transfac_tfbs_id=tf.transfac_tfbs_id", snpId, new BeanArrayListHandler(TransfacTfbs.class));
+		return getFeatureListById("select "+SELECT_FIELDS+" from transfac_tfbs tf, gene g, snp s, snp2transfac_tfbs s2t where s.name = ? and s.snp_id=s2t.snp_id and s2t.transfac_tfbs_id=tf.transfac_tfbs_id and tf.gene_id=g.gene_id", snpId, new BeanArrayListHandler(TransfacTfbs.class));
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<FeatureList<TransfacTfbs>> getAllBySnpIds(List<String> snpIds) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getListOfFeatureListByIds("select tf.* from transfac_tfbs tf, snp s, snp2transfac_tfbs s2t where snp_name = ? and s.snp_id=s2t.snp_id and s2t.transfac_tfbs_id=tf.transfac_tfbs_id", snpIds, new BeanArrayListHandler(TransfacTfbs.class));
+		return getListOfFeatureListByIds("select "+SELECT_FIELDS+" from transfac_tfbs tf, gene g, snp s, snp2transfac_tfbs s2t where s.name = ? and s.snp_id=s2t.snp_id and s2t.transfac_tfbs_id=tf.transfac_tfbs_id and tf.gene_id=g.gene_id", snpIds, new BeanArrayListHandler(TransfacTfbs.class));
 //		List<FunctionalPropertyList> featList = getListOfFeatureList("select * from transfac_tfbs where snp_id = ? ",snpIds, new BeanArrayListHandler(TransfacTfbs.class));
 //		List<TransfacTFBSList> TransfacTFBSList = new ArrayList<TransfacTFBSList>(featList.size());
 //		for(FunctionalPropertyList pupas: featList) {
@@ -40,7 +41,7 @@ public class TransfacTfbsDBManager extends DBManager {
 	
 	@SuppressWarnings("unchecked")
 	public FeatureList<TransfacTfbs> getAll() throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureList("select * from transfac_tfbs ", new BeanArrayListHandler(TransfacTfbs.class));
+		return getFeatureList("select "+SELECT_FIELDS+" from transfac_tfbs tf, gene g where tf.gene_id=g.gene_id", new BeanArrayListHandler(TransfacTfbs.class));
 	}
 	
 }
