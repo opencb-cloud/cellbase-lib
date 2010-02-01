@@ -2,13 +2,13 @@ package org.bioinfo.infrared.regulatory;
 
 import org.bioinfo.infrared.common.feature.GenomicFeature;
 
-public class MiRNAGene extends GenomicFeature{
+public class MiRnaGene extends GenomicFeature{
 
 	private String accession;
 	private String mirnaID;
 	private String status;
 	
-	public MiRNAGene(String accession, String mirnaID, String status, String sequence) {
+	public MiRnaGene(String accession, String mirnaID, String status, String sequence) {
 		this.accession = accession;
 		this.mirnaID = mirnaID;
 		this.status = status;

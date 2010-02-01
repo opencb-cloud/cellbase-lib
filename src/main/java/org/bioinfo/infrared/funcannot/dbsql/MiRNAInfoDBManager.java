@@ -7,7 +7,7 @@ import org.bioinfo.db.handler.BeanArrayListHandler;
 import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.dbsql.DBManager;
 import org.bioinfo.infrared.common.feature.FeatureList;
-import org.bioinfo.infrared.regulatory.MiRNAInfo;
+import org.bioinfo.infrared.regulatory.MiRnaMature;
 
 public class MiRNAInfoDBManager extends DBManager {
 
@@ -20,47 +20,47 @@ public class MiRNAInfoDBManager extends DBManager {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public FeatureList<MiRNAInfo> getAllByMatureId(String matureId) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException{
-//		return new MiRNAInfoList((List<MiRNAInfo>)getFeatureList(GET_ALL_BY_MATURE_ID, matureId, new BeanArrayListHandler(MiRNAInfo.class)).getElements());
-		return getFeatureListById(GET_ALL_BY_MATURE_ID, matureId, new BeanArrayListHandler(MiRNAInfo.class));
+	public FeatureList<MiRnaMature> getAllByMatureId(String matureId) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException{
+//		return new MiRNAInfoList((List<MiRnaMature>)getFeatureList(GET_ALL_BY_MATURE_ID, matureId, new BeanArrayListHandler(MiRnaMature.class)).getElements());
+		return getFeatureListById(GET_ALL_BY_MATURE_ID, matureId, new BeanArrayListHandler(MiRnaMature.class));
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<FeatureList<MiRNAInfo>> getAllByMatureIds(List<String> matureIds) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException{
-		List<FeatureList<MiRNAInfo>> featList = getListOfFeatureListByIds(GET_ALL_BY_MATURE_ID, matureIds, new BeanArrayListHandler(MiRNAInfo.class));
+	public List<FeatureList<MiRnaMature>> getAllByMatureIds(List<String> matureIds) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException{
+		List<FeatureList<MiRnaMature>> featList = getListOfFeatureListByIds(GET_ALL_BY_MATURE_ID, matureIds, new BeanArrayListHandler(MiRnaMature.class));
 //		List<MiRNAInfoList> miRNAInfoList = new ArrayList<MiRNAInfoList>(featList.size());
 //		for(RosettaFeatureList ros: featList) {
-//			miRNAInfoList.add(new MiRNAInfoList((List<MiRNAInfo>)ros.getElements()));
+//			miRNAInfoList.add(new MiRNAInfoList((List<MiRnaMature>)ros.getElements()));
 //		}
 		return featList;		
 	}
 
 	@SuppressWarnings("unchecked")
-	public FeatureList<MiRNAInfo> getAllByGeneId(String geneId) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException{
-//		return new MiRNAInfoList((List<MiRNAInfo>)getFeatureList(GET_ALL_BY_GENE_ID, geneId, new BeanArrayListHandler(MiRNAInfo.class)).getElements());
-		return getFeatureListById(GET_ALL_BY_GENE_ID, geneId, new BeanArrayListHandler(MiRNAInfo.class));
+	public FeatureList<MiRnaMature> getAllByGeneId(String geneId) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException{
+//		return new MiRNAInfoList((List<MiRnaMature>)getFeatureList(GET_ALL_BY_GENE_ID, geneId, new BeanArrayListHandler(MiRnaMature.class)).getElements());
+		return getFeatureListById(GET_ALL_BY_GENE_ID, geneId, new BeanArrayListHandler(MiRnaMature.class));
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<FeatureList<MiRNAInfo>> getAllByGeneIds(List<String> geneIds) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException{
-		List<FeatureList<MiRNAInfo>> featList = getListOfFeatureListByIds(GET_ALL_BY_GENE_ID, geneIds, new BeanArrayListHandler(MiRNAInfo.class));
+	public List<FeatureList<MiRnaMature>> getAllByGeneIds(List<String> geneIds) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException{
+		List<FeatureList<MiRnaMature>> featList = getListOfFeatureListByIds(GET_ALL_BY_GENE_ID, geneIds, new BeanArrayListHandler(MiRnaMature.class));
 //		List<MiRNAInfoList> miRNAInfoList = new ArrayList<MiRNAInfoList>(featList.size());
 //		for(RosettaFeatureList ros: featList) {
-//			miRNAInfoList.add(new MiRNAInfoList((List<MiRNAInfo>)ros.getElements()));
+//			miRNAInfoList.add(new MiRNAInfoList((List<MiRnaMature>)ros.getElements()));
 //		}
 		return featList;		
 	}
 
 	@SuppressWarnings("unchecked")
-	public FeatureList<MiRNAInfo> getAllByLocation(String chromosome, int position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-//		return new MiRNAInfoList((List<MiRNAInfo>)getFeatureList(GET_ALL_POSITION+" and t.chromosome = '"+chromosome+"' and t.start <= "+position +" and t.end >= " + position, new BeanArrayListHandler(MiRNAInfo.class)).getElements());		
-		return getFeatureList(GET_ALL_POSITION+" and t.chromosome = '"+chromosome+"' and t.start <= "+position +" and t.end >= " + position, new BeanArrayListHandler(MiRNAInfo.class));
+	public FeatureList<MiRnaMature> getAllByLocation(String chromosome, int position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+//		return new MiRNAInfoList((List<MiRnaMature>)getFeatureList(GET_ALL_POSITION+" and t.chromosome = '"+chromosome+"' and t.start <= "+position +" and t.end >= " + position, new BeanArrayListHandler(MiRnaMature.class)).getElements());		
+		return getFeatureList(GET_ALL_POSITION+" and t.chromosome = '"+chromosome+"' and t.start <= "+position +" and t.end >= " + position, new BeanArrayListHandler(MiRnaMature.class));
 	}
 	
 	@SuppressWarnings("unchecked")
-	public FeatureList<MiRNAInfo> getAllByRegion(String chromosome, int start, int end) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-//		return new MiRNAInfoList((List<MiRNAInfo>)getFeatureList(GET_ALL_POSITION+" and t.chromosome = '"+chromosome+"' and t.start >= "+start +" and t.end <= " + end, new BeanArrayListHandler(MiRNAInfo.class)).getElements());
-		return getFeatureList(GET_ALL_POSITION+" and t.chromosome = '"+chromosome+"' and t.start >= "+start +" and t.end <= " + end, new BeanArrayListHandler(MiRNAInfo.class));
+	public FeatureList<MiRnaMature> getAllByRegion(String chromosome, int start, int end) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+//		return new MiRNAInfoList((List<MiRnaMature>)getFeatureList(GET_ALL_POSITION+" and t.chromosome = '"+chromosome+"' and t.start >= "+start +" and t.end <= " + end, new BeanArrayListHandler(MiRnaMature.class)).getElements());
+		return getFeatureList(GET_ALL_POSITION+" and t.chromosome = '"+chromosome+"' and t.start >= "+start +" and t.end <= " + end, new BeanArrayListHandler(MiRnaMature.class));
 	}
 	
 }

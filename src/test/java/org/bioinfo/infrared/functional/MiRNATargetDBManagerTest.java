@@ -8,18 +8,18 @@ import org.bioinfo.commons.utils.StringUtils;
 import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.regulatory.MiRNATarget;
-import org.bioinfo.infrared.regulatory.dbsql.MiRNATargetDBManager;
+import org.bioinfo.infrared.regulatory.dbsql.MiRnaTargetDBManager;
 import org.junit.Before;
 import org.junit.Test;
 
 public class MiRNATargetDBManagerTest {
 
 	DBConnector ros = new DBConnector();
-	MiRNATargetDBManager mitdbf;
+	MiRnaTargetDBManager mitdbf;
 	
 	@Before
 	public void setUp() throws Exception {
-		mitdbf = new MiRNATargetDBManager(ros);
+		mitdbf = new MiRnaTargetDBManager(ros);
 	}
 
 	@Test
