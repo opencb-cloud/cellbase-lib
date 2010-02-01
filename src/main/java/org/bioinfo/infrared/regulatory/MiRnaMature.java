@@ -3,30 +3,30 @@ package org.bioinfo.infrared.regulatory;
 import org.bioinfo.infrared.common.feature.RegulatoryFeature;
 
 
-public class MiRNAInfo extends RegulatoryFeature {
+public class MiRnaMature extends RegulatoryFeature {
 	
 	private String matureId;
 	private String matureSequence;
-	private String miRNAGeneId;
+	private String miRnaGeneId;
 	private String status;
-	private String miRNAGeneSequence;
+	private String miRnaGeneSequence;
 	
-	public MiRNAInfo(String id) {
+	public MiRnaMature(String id) {
 		super(""+id);
 	}
 	
-	public MiRNAInfo(Integer id, String matureId, String matureSequence, String miRNAGeneId, String status, String geneSequence){
+	public MiRnaMature(Integer id, String matureId, String matureSequence, String miRNAGeneId, String status, String geneSequence){
 		super(""+id);
 		this.matureId = matureId;
 		this.matureSequence = matureSequence;
-		this.setMiRNAGeneId(miRNAGeneId);
+		this.setMiRnaGeneId(miRNAGeneId);
 		this.status = status;
-		this.setMiRNAGeneSequence(geneSequence);		
+		this.setMiRnaGeneSequence(geneSequence);		
 	}
 	
 	@Override
 	public String toString(){
-		return id+"\t"+matureId+"\t"+matureSequence+"\t"+getMiRNAGeneId()+"\t"+status+"\t"+getMiRNAGeneSequence();
+		return id+"\t"+matureId+"\t"+matureSequence+"\t"+getMiRnaGeneId()+"\t"+status+"\t"+getMiRnaGeneSequence();
 	}
 
 	/**
@@ -72,31 +72,31 @@ public class MiRNAInfo extends RegulatoryFeature {
 	}
 
 	/**
-	 * @param miRNAGeneId the miRNAGeneId to set
+	 * @param miRnaGeneId the miRnaGeneId to set
 	 */
-	public void setMiRNAGeneId(String miRNAGeneId) {
-		this.miRNAGeneId = miRNAGeneId;
+	public void setMiRnaGeneId(String miRNAGeneId) {
+		this.miRnaGeneId = miRNAGeneId;
 	}
 
 	/**
-	 * @return the miRNAGeneId
+	 * @return the miRnaGeneId
 	 */
-	public String getMiRNAGeneId() {
-		return miRNAGeneId;
+	public String getMiRnaGeneId() {
+		return miRnaGeneId;
 	}
 
 	/**
-	 * @param miRNAGeneSequence the miRNAGeneSequence to set
+	 * @param miRnaGeneSequence the miRnaGeneSequence to set
 	 */
-	public void setMiRNAGeneSequence(String miRNAGeneSequence) {
-		this.miRNAGeneSequence = miRNAGeneSequence;
+	public void setMiRnaGeneSequence(String miRNAGeneSequence) {
+		this.miRnaGeneSequence = miRNAGeneSequence;
 	}
 
 	/**
-	 * @return the miRNAGeneSequence
+	 * @return the miRnaGeneSequence
 	 */
-	public String getMiRNAGeneSequence() {
-		return miRNAGeneSequence;
+	public String getMiRnaGeneSequence() {
+		return miRnaGeneSequence;
 	}
 
 	

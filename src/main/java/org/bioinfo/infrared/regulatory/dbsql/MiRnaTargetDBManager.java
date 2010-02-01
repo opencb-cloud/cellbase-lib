@@ -9,7 +9,7 @@ import org.bioinfo.infrared.common.dbsql.DBManager;
 import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.regulatory.MiRNATarget;
 
-public class MiRNATargetDBManager extends DBManager {
+public class MiRnaTargetDBManager extends DBManager {
 	
 	public static final String SELECT_FIELDS= " mt.mirna_id, t.stable_id, mt.chromosome, mt.start, mt.end, mt.strand, mt.score, mt.pvalue ";
 	public static final String GET_ALL_BY_SNP = "select "+SELECT_FIELDS+" from snp s, snp2mirna_target s2mt, mirna_target mt, transcript t where s.name = ? and s.snp_id=s2mt.snp_id and s2mt.mirna_target_id=mt.mirna_target_id and mt.transcript_id=t.transcript_id";
@@ -19,7 +19,7 @@ public class MiRNATargetDBManager extends DBManager {
 	public static final String GET_ALL_BY_SCORE = "select "+SELECT_FIELDS+" from mirna_target mt, transcript t where mt.transcript_id=t.transcript_id and mt.score >= ";
 	public static final String GET_ALL_BY_PVALUE = "select "+SELECT_FIELDS+" from mirna_target mt, transcript t where mt.transcript_id=t.transcript_id and pvalue <= ";
 	
-	public MiRNATargetDBManager(DBConnector dBConnector) {
+	public MiRnaTargetDBManager(DBConnector dBConnector) {
 		super(dBConnector);
 	}
 	@SuppressWarnings("unchecked")

@@ -2,7 +2,7 @@ package org.bioinfo.infrared.regulatory;
 
 import org.bioinfo.infrared.common.feature.VariationFeature;
 
-public class TransfacTFBS extends VariationFeature{
+public class TransfacTfbs extends VariationFeature{
 
 	private String snpId;
 	private String geneStableId;
@@ -19,7 +19,7 @@ public class TransfacTFBS extends VariationFeature{
 	private String allele2;
 	private String effect;
 	
-	public TransfacTFBS(String snpId, String geneStableId, String factorId, String factorName, String sequence, Integer sequenceLength, Integer factorRelativeStart, Integer factorRelativeEnd, Integer snpRelativePosition, Double coreMatch, Double matrixMatch, String allele1, String allele2, String effect) {
+	public TransfacTfbs(String snpId, String geneStableId, String factorId, String factorName, String sequence, Integer sequenceLength, Integer factorRelativeStart, Integer factorRelativeEnd, Integer snpRelativePosition, Double coreMatch, Double matrixMatch, String allele1, String allele2, String effect) {
 		this.snpId = snpId;
 		this.geneStableId = geneStableId;
 		this.factorId = factorId;
