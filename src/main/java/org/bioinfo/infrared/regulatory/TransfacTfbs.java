@@ -1,14 +1,13 @@
 package org.bioinfo.infrared.regulatory;
 
-import org.bioinfo.infrared.common.feature.VariationFeature;
+import org.bioinfo.infrared.common.feature.GenomicFeature;
 
-public class TransfacTfbs extends VariationFeature{
+public class TransfacTfbs extends GenomicFeature{
 
 	private String snpId;
 	private String geneStableId;
 	private String factorId;
 	private String factorName;
-	private String sequence;
 	private int sequenceLength;
 	private int factorRelativeStart;
 	private int factorRelativeEnd;
@@ -19,6 +18,7 @@ public class TransfacTfbs extends VariationFeature{
 	private String allele2;
 	private String effect;
 	
+	@Deprecated
 	public TransfacTfbs(String snpId, String geneStableId, String factorId, String factorName, String sequence, Integer sequenceLength, Integer factorRelativeStart, Integer factorRelativeEnd, Integer snpRelativePosition, Double coreMatch, Double matrixMatch, String allele1, String allele2, String effect) {
 		this.snpId = snpId;
 		this.geneStableId = geneStableId;
@@ -36,7 +36,17 @@ public class TransfacTfbs extends VariationFeature{
 		this.effect = effect;
 	}
 
-	
+	public TransfacTfbs(Integer transfacTfbsId, String geneStableId, String factorId, String factorName, Integer factorRelativeStart, Integer factorRelativeEnd, String chromosome, Integer absoluteStart, Integer absoluteEnd, String strand, Double coreMatch, Double matrixMatch, Integer sequenceLength, String sequence) {
+		super(""+transfacTfbsId, chromosome, absoluteStart, absoluteEnd, strand, sequence);
+		this.geneStableId = geneStableId;
+		this.factorId = factorId;
+		this.factorName = factorName;
+		this.factorRelativeStart = factorRelativeStart;
+		this.factorRelativeEnd = factorRelativeEnd;
+		this.coreMatch = coreMatch;
+		this.matrixMatch = matrixMatch;
+		this.sequenceLength = sequenceLength;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.bioinfo.infrared.common.feature.VariationFeature#toString()
@@ -48,16 +58,13 @@ public class TransfacTfbs extends VariationFeature{
 		sb.append(geneStableId).append("\t");
 		sb.append(factorId).append("\t");
 		sb.append(factorName).append("\t");
-		sb.append(sequence).append("\t");
-		sb.append(sequenceLength).append("\t");
 		sb.append(factorRelativeStart).append("\t");
 		sb.append(factorRelativeEnd).append("\t");
-		sb.append(snpRelativePosition).append("\t");
+		sb.append(chromosome).append("\t").append(start).append("\t").append(end).append("\t").append(strand).append("\t");
 		sb.append(coreMatch).append("\t");
 		sb.append(matrixMatch).append("\t");
-		sb.append(allele1).append("\t");
-		sb.append(allele2).append("\t");
-		sb.append(effect).append("\t");
+		sb.append(sequenceLength).append("\t");
+		sb.append(sequence);
 		return sb.toString();
 	}
 

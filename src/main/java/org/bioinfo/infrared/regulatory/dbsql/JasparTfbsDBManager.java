@@ -12,7 +12,7 @@ import org.bioinfo.infrared.regulatory.JasparTfbs;
 public class JasparTfbsDBManager extends DBManager {
 	
 	private static final String SELECT_FIELDS = " j.tf_factor_name, g.stable_id, j.relative_start, j.relative_end, j.chromosome, j.absolute_start, j.absolute_end, j.strand, j.score, j.sequence ";
-	public static final String GET_BY_SNP_ID = "select "+SELECT_FIELDS+" from snp s, snp2jaspar_tfbs s2j, jaspar_tfbs j, gene g where s.name = ? and s.snp_id=s2j.snp_id and s2j.jaspar_id=j.jaspar_tfbs_id and j.gene_id=g.gene_id";
+	public static final String GET_BY_SNP_ID = "select "+SELECT_FIELDS+" from snp s, snp2jaspar_tfbs s2j, jaspar_tfbs j, gene g where s.name = ? and s.snp_id=s2j.snp_id and s2j.jaspar_tfbs_id=j.jaspar_tfbs_id and j.gene_id=g.gene_id";
 	
 	public JasparTfbsDBManager(DBConnector dBConnector) {
 		super(dBConnector);
