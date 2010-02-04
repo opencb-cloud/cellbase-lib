@@ -19,9 +19,11 @@ public class MiRnaTargetDBManager extends DBManager {
 	public static final String GET_ALL_BY_SCORE = "select "+SELECT_FIELDS+" from mirna_target mt, transcript t where mt.transcript_id=t.transcript_id and mt.score >= ";
 	public static final String GET_ALL_BY_PVALUE = "select "+SELECT_FIELDS+" from mirna_target mt, transcript t where mt.transcript_id=t.transcript_id and pvalue <= ";
 	
+	
 	public MiRnaTargetDBManager(DBConnector dBConnector) {
 		super(dBConnector);
 	}
+	
 	@SuppressWarnings("unchecked")
 	public FeatureList<MiRNATarget> getAllByMatureId(String matureId) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException{		
 		return getFeatureListById(GET_BY_MATURE_ID, matureId, new BeanArrayListHandler(MiRNATarget.class));

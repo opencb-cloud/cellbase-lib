@@ -36,7 +36,7 @@ public class GenomicFeature extends Feature{
 	
 	
 	public String getLocation() {
-		return chromosome+":"+start+"-"+end+"("+strand+")";
+		return chromosome+":"+start+","+end+"("+strand+")";
 	}
 	
 //	@Override
