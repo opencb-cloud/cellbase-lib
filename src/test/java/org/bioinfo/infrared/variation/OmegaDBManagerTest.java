@@ -25,6 +25,19 @@ public class OmegaDBManagerTest {
 	}
 
 	@Test
+	public void testGetAll() {
+		FeatureList<Omega> o;
+		try {
+			o = omega.getAll();
+			System.out.println(o);
+		} catch (Exception e) {
+			fail(e.toString());
+			e.printStackTrace();
+		} 
+
+	}
+	
+	@Test
 	public void testGetAllBySnpId() {
 		FeatureList<Omega> o;
 		try {

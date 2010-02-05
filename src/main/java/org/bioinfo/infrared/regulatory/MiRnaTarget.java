@@ -2,18 +2,18 @@ package org.bioinfo.infrared.regulatory;
 
 import org.bioinfo.infrared.common.feature.GenomicFeature;
 
-public class MiRNATarget extends GenomicFeature {
+public class MiRnaTarget extends GenomicFeature {
 	
 	private String miRNAId;
 	private String transcriptStableId;
 	private double score;
 	private double pValue;
 	
-	public MiRNATarget(String id) {
+	public MiRnaTarget(String id) {
 		super(id);
 	}
 
-	public MiRNATarget(String miRNAId, String transcriptId, String chromosome, Integer start, Integer end, String strand, Double score, Double pValue){
+	public MiRnaTarget(String miRNAId, String transcriptId, String chromosome, Integer start, Integer end, String strand, Double score, Double pValue){
 		super(miRNAId, chromosome, start, end, strand);
 		this.miRNAId = miRNAId;
 		this.transcriptStableId = transcriptId;
@@ -22,7 +22,7 @@ public class MiRNATarget extends GenomicFeature {
 	}
 	
 	@Deprecated
-	public MiRNATarget(Integer id, String miRNAId, Integer transcriptId, String chromosome, Integer start, Integer end, String strand, Double score, Double pValue){
+	public MiRnaTarget(Integer id, String miRNAId, Integer transcriptId, String chromosome, Integer start, Integer end, String strand, Double score, Double pValue){
 		super(miRNAId, chromosome, start, end, strand);
 		this.miRNAId = miRNAId;
 		this.transcriptStableId = ""+transcriptId;

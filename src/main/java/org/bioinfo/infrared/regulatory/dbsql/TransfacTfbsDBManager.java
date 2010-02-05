@@ -8,10 +8,11 @@ import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.dbsql.DBManager;
 import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.regulatory.TransfacTfbs;
+import org.bioinfo.infrared.variation.SNP;
 
 public class TransfacTfbsDBManager extends DBManager {
 	
-	private static final String SELECT_FIELDS = " tf.transfac_tfbs_id, g.stable_id, tf.factor_id, tf.factor_name, tf.relative_start, tf.factor_relative_end, tf.chromosome, tf. absolute_start, tf.absolute_end, tf.strand, tf. core_match, tf.matrix_match, tf.length, tf.sequence ";
+	private static final String SELECT_FIELDS = " tf.transfac_tfbs_id, g.stable_id, tf.factor_id, tf.factor_name, tf.relative_start, tf.relative_end, tf.chromosome, tf. absolute_start, tf.absolute_end, tf.strand, tf. core_match, tf.matrix_match, tf.length, tf.sequence ";
 	
 	public TransfacTfbsDBManager(DBConnector dBConnector) {
 		super(dBConnector);
@@ -42,6 +43,11 @@ public class TransfacTfbsDBManager extends DBManager {
 	@SuppressWarnings("unchecked")
 	public FeatureList<TransfacTfbs> getAll() throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getFeatureList("select "+SELECT_FIELDS+" from transfac_tfbs tf, gene g where tf.gene_id=g.gene_id", new BeanArrayListHandler(TransfacTfbs.class));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<FeatureList<SNP>> getSnpsByIds(List<String> transfacIds) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		return getListOfFeatureListByIds("select s.* from transfac_tfbs tf, snp2transfac_tfbs s2t, snp s where tf.factor_id= ? and tf.transfac_tfbs_id=s2t.transfac_tfbs_id and s2t.snp_id=s.snp_id", transfacIds, new BeanArrayListHandler(SNP.class));
 	}
 	
 }

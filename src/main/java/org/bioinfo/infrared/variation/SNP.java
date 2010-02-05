@@ -55,7 +55,11 @@ public class SNP extends VariationFeature{
 
 	@Override
 	public String getLocation() {
-		return chromosome+":"+start+"("+strand+")";
+		if(strand.equals("1") || strand.equals("+")) {
+			return chromosome+":"+start+","+end+"(+)";
+		}else {
+			return chromosome+":"+start+","+end+"(-)";
+		}
 	}
 	
 	@Override
