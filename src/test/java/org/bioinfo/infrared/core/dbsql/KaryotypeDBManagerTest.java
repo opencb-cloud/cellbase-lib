@@ -28,7 +28,7 @@ public class KaryotypeDBManagerTest {
 		System.out.println("Test - 1");
 		try {
 			
-			DBConnector man = new DBConnector("hsa");
+			DBConnector man = new DBConnector();
 			KaryotypeDBManager dbMan = new KaryotypeDBManager(man);
 			System.out.println("db connector = " + man);
 			List<Chromosome> chromosomes = dbMan.getAllChromosomes();
