@@ -37,7 +37,7 @@ public class TransfacTfbs extends GenomicFeature{
 	}
 
 	public TransfacTfbs(Integer transfacTfbsId, String geneStableId, String factorId, String factorName, Integer factorRelativeStart, Integer factorRelativeEnd, String chromosome, Integer absoluteStart, Integer absoluteEnd, String strand, Double coreMatch, Double matrixMatch, Integer sequenceLength, String sequence) {
-		super(""+transfacTfbsId, chromosome, absoluteStart, absoluteEnd, strand, sequence);
+		super(factorId, chromosome, absoluteStart, absoluteEnd, strand, sequence);
 		this.geneStableId = geneStableId;
 		this.factorId = factorId;
 		this.factorName = factorName;
@@ -54,9 +54,8 @@ public class TransfacTfbs extends GenomicFeature{
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(snpId).append("\t");
-		sb.append(geneStableId).append("\t");
 		sb.append(factorId).append("\t");
+		sb.append(geneStableId).append("\t");
 		sb.append(factorName).append("\t");
 		sb.append(factorRelativeStart).append("\t");
 		sb.append(factorRelativeEnd).append("\t");

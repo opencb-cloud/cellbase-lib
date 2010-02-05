@@ -13,6 +13,10 @@ public class FeatureList<T extends Feature> extends ArrayList<T>{
 //	private List<T> elements;
 	private int numberNullElements;
 	
+	public FeatureList() {
+		this(10);
+	}
+	
 	public FeatureList(int numFeatures) {
 		super(numFeatures);
 		setNumberNullElements(0);

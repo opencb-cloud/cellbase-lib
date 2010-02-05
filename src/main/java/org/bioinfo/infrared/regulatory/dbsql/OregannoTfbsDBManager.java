@@ -9,6 +9,7 @@ import org.bioinfo.infrared.common.dbsql.DBManager;
 import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.regulatory.JasparTfbs;
 import org.bioinfo.infrared.regulatory.OregannoTfbs;
+import org.bioinfo.infrared.variation.SNP;
 
 public class OregannoTfbsDBManager extends DBManager {
 	
@@ -40,6 +41,11 @@ public class OregannoTfbsDBManager extends DBManager {
 	@SuppressWarnings("unchecked")
 	public FeatureList<OregannoTfbs> getAllByLocation(String chromosome, int position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getFeatureList("select o.* from oreganno o where o.chromosome= '"+chromosome+"' and "+position+">=o.start and "+position+"<=o.end ", new BeanArrayListHandler(OregannoTfbs.class));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<FeatureList<SNP>> getSnpsByIds(List<String> oregannoIds) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		return getListOfFeatureListByIds("select s.* from oreganno o, snp2oreganno s2o, snp s where o.land_mark_id= ? and o.oreganno_id=s2o.oreganno_id and s2o.snp_id=s.snp_id", oregannoIds, new BeanArrayListHandler(SNP.class));
 	}
 	
 }
