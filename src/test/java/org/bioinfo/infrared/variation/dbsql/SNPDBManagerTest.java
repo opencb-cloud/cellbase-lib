@@ -1,4 +1,4 @@
-package org.bioinfo.infrared.variation;
+package org.bioinfo.infrared.variation.dbsql;
 
 import static org.junit.Assert.fail;
 
@@ -8,12 +8,13 @@ import java.util.List;
 import org.bioinfo.commons.utils.StringUtils;
 import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.feature.FeatureList;
+import org.bioinfo.infrared.variation.SNP;
 import org.bioinfo.infrared.variation.dbsql.SNPDBManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class SNPFactoryTest {
+public class SNPDBManagerTest {
 
 	DBConnector ros;
 	SNPDBManager sf;
@@ -48,6 +49,7 @@ public class SNPFactoryTest {
 			e.printStackTrace();
 		}
 	}
+	
 	@Test
 	public void testAllSNPIdByLocationFactory() {
 		System.out.println("Test - 1.2");
@@ -66,6 +68,7 @@ public class SNPFactoryTest {
 			e.printStackTrace();
 		}
 	}
+	
 	public void testAllSNPFactory() {
 		System.out.println("Test - 2");
 		FeatureList<SNP> snps;
@@ -203,6 +206,16 @@ public class SNPFactoryTest {
 			snpList = sf.getAllNamesByConsequenceType("NON_SYNONYMOUS_CODING");
 			System.out.println(snpList.toString());
 			System.out.println(""+snpList.size());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testWriteAllFilteredByConsequenceType() {
+		System.out.println("Test - 10");
+		try {
+			sf.writeAllFilteredByConsequenceType("DOWNSTREAM", "/tmp/downstream_test10.txt");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

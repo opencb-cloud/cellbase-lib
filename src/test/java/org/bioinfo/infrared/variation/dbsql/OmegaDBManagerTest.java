@@ -1,9 +1,10 @@
-package org.bioinfo.infrared.variation;
+package org.bioinfo.infrared.variation.dbsql;
 
 import static org.junit.Assert.fail;
 
 import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.feature.FeatureList;
+import org.bioinfo.infrared.variation.Omega;
 import org.bioinfo.infrared.variation.dbsql.OmegaDBManager;
 import org.junit.After;
 import org.junit.Before;
@@ -26,6 +27,7 @@ public class OmegaDBManagerTest {
 
 	@Test
 	public void testGetAll() {
+		System.out.println("Test 1");
 		FeatureList<Omega> o;
 		try {
 			o = omega.getAll();
@@ -34,22 +36,33 @@ public class OmegaDBManagerTest {
 			fail(e.toString());
 			e.printStackTrace();
 		} 
-
 	}
 	
 	@Test
 	public void testGetAllBySnpId() {
+		System.out.println("Test 2");
 		FeatureList<Omega> o;
 		try {
 			o = omega.getAllBySnpId("rs9653599");
 			System.out.println(o);
 		} catch (Exception e) {
-			fail(e.toString());
 			e.printStackTrace();
+			fail(e.toString());
+		} 
+	}
+
+	@Test
+	public void testWriteAll() {
+		System.out.println("Test 3");
+		try {
+			omega.writeAll("/tmp/omega_test3.txt");
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.toString());
 		} 
 
 	}
-
+	
 	@Test
 	public void testGetAllBySnpIds() {
 //		fail("Not yet implemented");

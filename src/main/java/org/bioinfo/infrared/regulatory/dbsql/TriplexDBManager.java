@@ -1,5 +1,7 @@
 package org.bioinfo.infrared.regulatory.dbsql;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -19,13 +21,17 @@ public class TriplexDBManager extends DBManager {
 	public TriplexDBManager(DBConnector dBConnector) {
 		super(dBConnector);
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public FeatureList<Triplex> getAll() throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		return getFeatureList("select "+SELECT_FIELDS+" from triplex t, gene g where t.gene_id=g.gene_id", new BeanArrayListHandler(Triplex.class));
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<FeatureList<Triplex>> getAllByGeneIds(List<String> geneIds) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		List<FeatureList<Triplex>> featList = getListOfFeatureListByIds(GET_ALL_BY_GENE_ID, geneIds, new BeanArrayListHandler(Triplex.class));
 		return featList;
 	}
-	
 	
 	@SuppressWarnings("unchecked")
 	public FeatureList<Triplex> getAllByGeneId(String geneId) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
@@ -43,11 +49,6 @@ public class TriplexDBManager extends DBManager {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public FeatureList<Triplex> getAll() throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureList("select "+SELECT_FIELDS+" from triplex t, gene g where t.gene_id=g.gene_id", new BeanArrayListHandler(Triplex.class));
-	}
-
-	@SuppressWarnings("unchecked")
 	public FeatureList<Triplex> getAllByLocation(String chromosome, int position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getFeatureList(GET_ALL_BY_LOCATION+" and t.chromosome = '"+chromosome+"' and t.absolute_start <= "+position +" and t.absolute_end >= " + position, new BeanArrayListHandler(Triplex.class));
 	}
@@ -55,5 +56,9 @@ public class TriplexDBManager extends DBManager {
 	@SuppressWarnings("unchecked")
 	public FeatureList<Triplex> getAllByRegion(String chromosome, int start, int end) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getFeatureList(GET_ALL_BY_LOCATION+" and t.chromosome = '"+chromosome+"' and t.absolute_start <= "+ end +" and t.absolute_end >= " + start , new BeanArrayListHandler(Triplex.class));
+	}
+	
+	public void writeAllWithSnps(String outfile) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException, IOException {
+		writeFeatureList("select s.name as 'SNP name', concat(s.chromosome,':',s.start,'(',s.strand,')') as 'SNP Location', g.stable_id as 'Gene',  t.relative_start, t.relative_end, t.chromosome, t.absolute_start, t.absolute_end, t.strand, t.length, t.sequence from triplex t, snp2triplex s2t, snp s, gene g where t.triplex_id=s2t.triplex_id and s2t.snp_id=s.snp_id and t.gene_id=g.gene_id", new File(outfile));
 	}
 }

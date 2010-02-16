@@ -1,5 +1,7 @@
 package org.bioinfo.infrared.regulatory.dbsql;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -81,6 +83,8 @@ public class MiRnaTargetDBManager extends DBManager {
 		return getListOfFeatureListByIds(GET_ALL_BY_SNP, snpIds, new BeanArrayListHandler(MiRnaTarget.class));
 	}
 
-	
+	public void writeAllWithSnps(String outfile) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException, IOException {
+		writeFeatureList("select s.name as 'SNP name', concat(s.chromosome,':',s.start,'(',s.strand,')') as 'SNP Location', mt.mirna_id, t.stable_id as 'Transcript', mt.chromosome, mt.start, mt.end, mt.strand, mt.score, mt.pvalue from snp2mirna_target s2t, mirna_target mt, snp s, transcript t where mt.mirna_target_id=s2t.mirna_target_id and s2t.snp_id=s.snp_id and mt.transcript_id=t.transcript_id", new File(outfile));
+	}
 	
 }

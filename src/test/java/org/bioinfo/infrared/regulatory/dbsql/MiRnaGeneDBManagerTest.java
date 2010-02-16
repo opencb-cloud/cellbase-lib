@@ -34,5 +34,19 @@ public class MiRnaGeneDBManagerTest {
 			fail("testGetAllByMAFDoubleDouble: "+e.toString());
 		}
 	}
-
+	
+	@Test
+	public void testWriteAllWithSnps() {
+		System.out.println("Test 3");
+		DBConnector conn = new DBConnector();
+		MiRnaGeneDBManager man = new MiRnaGeneDBManager(conn);
+		try {
+			man.writeAllWithSnps("/tmp/mirna_gene_test3.txt");
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("testGetAllByMAFDoubleDouble: "+e.toString());
+		}
+	}
+	
+	
 }

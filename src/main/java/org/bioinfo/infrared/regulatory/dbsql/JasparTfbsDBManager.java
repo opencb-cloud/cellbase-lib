@@ -1,5 +1,7 @@
 package org.bioinfo.infrared.regulatory.dbsql;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -20,6 +22,19 @@ public class JasparTfbsDBManager extends DBManager {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public FeatureList<JasparTfbs> getAll() throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		return getFeatureList("select "+SELECT_FIELDS+" from jaspar_tfbs j, gene g where j.gene_id=g.gene_id", new BeanArrayListHandler(JasparTfbs.class));
+	}
+	
+	public void writeAll(String outfile) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException, IOException {
+		writeFeatureList("select "+SELECT_FIELDS+" from jaspar_tfbs j, gene g where j.gene_id=g.gene_id", new File(outfile));
+	}
+	
+	public void writeAllWithSnps(String outfile) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException, IOException {
+		writeFeatureList("select s.name as 'SNP name', concat(s.chromosome,':',s.start,'(',s.strand,')') as 'SNP Location', s.allele_String, j.tf_factor_name, g.stable_id as 'Gene', j.relative_start, j.relative_end, j.chromosome, j.absolute_start, j.absolute_end, j.strand, j.score, j.sequence  from snp s, jaspar_tfbs j, snp2jaspar_tfbs s2j, gene g where j.jaspar_tfbs_id=s2j.jaspar_tfbs_id and s2j.snp_id=s.snp_id and j.gene_id=g.gene_id", new File(outfile));
+	}
+	
+	@SuppressWarnings("unchecked")
 	public FeatureList<JasparTfbs> getAllByGeneId(String geneId) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getFeatureListById("select "+SELECT_FIELDS+" from jaspar_tfbs j, gene g where g.stable_id= ? and j.gene_id=g.gene_id", geneId, new BeanArrayListHandler(JasparTfbs.class));
 	}
@@ -32,10 +47,6 @@ public class JasparTfbsDBManager extends DBManager {
 	@SuppressWarnings("unchecked")
 	public List<FeatureList<JasparTfbs>> getAllBySnpIds(List<String> snpIds) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getListOfFeatureListByIds(GET_BY_SNP_ID, snpIds, new BeanArrayListHandler(JasparTfbs.class));
-	}
-	@SuppressWarnings("unchecked")
-	public FeatureList<JasparTfbs> getAll() throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureList("select "+SELECT_FIELDS+" from jaspar_tfbs j, gene g where j.gene_id=g.gene_id", new BeanArrayListHandler(JasparTfbs.class));
 	}
 	
 	@SuppressWarnings("unchecked")

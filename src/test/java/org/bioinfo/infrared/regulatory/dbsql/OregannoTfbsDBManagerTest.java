@@ -41,5 +41,18 @@ public class OregannoTfbsDBManagerTest {
 			fail("testGetAllByMAFDoubleDouble: "+e.toString());
 		}
 	}
+	
+	@Test
+	public void testWriteAllWithSnps() {
+		System.out.println("Test 2");
+		DBConnector conn = new DBConnector();
+		OregannoTfbsDBManager man = new OregannoTfbsDBManager(conn);
+		try {
+			man.writeAllWithSnps("/tmp/oreganno_test2.txt");
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("testGetAllByMAFDoubleDouble: "+e.toString());
+		}
+	}
 
 }

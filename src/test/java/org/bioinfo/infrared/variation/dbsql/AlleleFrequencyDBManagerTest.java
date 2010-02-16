@@ -1,4 +1,4 @@
-package org.bioinfo.infrared.variation.dbsql;
+	package org.bioinfo.infrared.variation.dbsql;
 
 import static org.junit.Assert.fail;
 
@@ -19,18 +19,29 @@ public class AlleleFrequencyDBManagerTest {
 			fail("testGetAllByMAFDoubleDouble: "+e.toString());
 		}
 	}
-
 	@Test
 	public void testGetAllByMAFDoubleDoubleString() {
 		System.out.println("Test 2");
 		DBConnector conn = new DBConnector();
 		AlleleFrequencyDBManager man = new AlleleFrequencyDBManager(conn);
 		try {
-			System.out.println(man.getAllByMAF(0.1, 0.11, "CEU"));
+			System.out.println(man.getAllByMAF(0.1, 0.102, "CEU"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("testGetAllByMAFDoubleDoubleString: "+e.toString());
 		}
 	}
-
+	
+	@Test
+	public void testWriteAllByMAFDoubleDoubleString() {
+		System.out.println("Test 3");
+		DBConnector conn = new DBConnector();
+		AlleleFrequencyDBManager man = new AlleleFrequencyDBManager(conn);
+		try {
+			man.writeAllByMAF(0.1, 0.2, "CEU", "/tmp/all_freq_test3.txt");
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("testGetAllByMAFDoubleDoubleString: "+e.toString());
+		}
+	}
 }

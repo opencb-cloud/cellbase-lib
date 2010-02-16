@@ -1,5 +1,7 @@
 package org.bioinfo.infrared.variation.dbsql;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -19,19 +21,32 @@ public class OmegaDBManager extends DBManager {
 		super(dBConnector);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public FeatureList<Omega> getAll() throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureList("SELECT "+SELECT_FIELDS+" FROM omega o, snp s, transcript t WHERE o.snp_id=s.snp_id and o.transcript_id=t.transcript_id", new BeanArrayListHandler(Omega.class));
+//		return getFeatureList("SELECT "+SELECT_FIELDS+" FROM omega o, snp s, transcript t WHERE o.snp_id=s.snp_id and o.transcript_id=t.transcript_id", new BeanArrayListHandler(Omega.class));
+		return getAllByOmegaRange(0.0, 1.0);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public FeatureList<Omega> getAll(double min, double max) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+	public FeatureList<Omega> getAllByOmegaRange(double min, double max) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		if(min > max) {
 			double swap = max;
 			max = min;
 			min = swap;
 		}
 		return getFeatureList("SELECT "+SELECT_FIELDS+" FROM omega o, snp s, transcript t WHERE o.snp_id=s.snp_id and o.transcript_id=t.transcript_id and o.w_bayesian>="+min+" and o.w_bayesian<="+max, new BeanArrayListHandler(Omega.class));
+	}
+	
+	public void writeAll(String outfile) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException, IOException {
+		writeAllByOmegaRange(0.0, 1.0, outfile);
+	}
+	
+	public void writeAllByOmegaRange(double min, double max, String outfile) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException, IOException {
+		if(min > max) {
+			double swap = max;
+			max = min;
+			min = swap;
+		}
+		writeFeatureList("select s.name as 'SNP name', concat(s.chromosome,':',s.start,'(',s.strand,')') as 'SNP Location', s.allele_String, t.stable_id as 'Transcript', o.aa_change, o.aa_enviroment, o.aa_relative_position, o.w_slr, o.slr_pval, o.w_bayesian, o.model, o.extrapolated FROM omega o, snp s, transcript t WHERE o.snp_id=s.snp_id and o.transcript_id=t.transcript_id and o.w_bayesian>="+min+" and o.w_bayesian<="+max, new File(outfile));
 	}
 	
 	@SuppressWarnings("unchecked")
