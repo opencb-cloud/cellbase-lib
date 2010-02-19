@@ -1,14 +1,14 @@
 package org.bioinfo.infrared.funcannot.filter;
 
-public class BiocartaFilter extends FunctionalFilter{
-
+public class InterproFilter extends FunctionalFilter {
+	
 	private static final long serialVersionUID = 1L;
 
-	public BiocartaFilter() {
+	public InterproFilter() {
 		this(2, 500);
 	}
 	
-	public BiocartaFilter(int minNumberGenes, int maxNumberGenes) {
+	public InterproFilter(int minNumberGenes, int maxNumberGenes) {
 		super(minNumberGenes, maxNumberGenes);
 	}
 	
@@ -16,4 +16,5 @@ public class BiocartaFilter extends FunctionalFilter{
 	public String getSQLWhereClause(String prefixSqlField) {
 		return "";
 	}
+
 }

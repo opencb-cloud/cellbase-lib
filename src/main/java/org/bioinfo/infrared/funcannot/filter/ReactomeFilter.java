@@ -1,14 +1,14 @@
 package org.bioinfo.infrared.funcannot.filter;
 
-public class BiocartaFilter extends FunctionalFilter{
-
+public class ReactomeFilter extends FunctionalFilter {
+	
 	private static final long serialVersionUID = 1L;
 
-	public BiocartaFilter() {
+	public ReactomeFilter() {
 		this(2, 500);
 	}
 	
-	public BiocartaFilter(int minNumberGenes, int maxNumberGenes) {
+	public ReactomeFilter(int minNumberGenes, int maxNumberGenes) {
 		super(minNumberGenes, maxNumberGenes);
 	}
 	

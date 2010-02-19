@@ -2,9 +2,11 @@ package org.bioinfo.infrared.funcannot;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bioinfo.commons.io.TextFileReader;
 import org.bioinfo.commons.io.utils.FileUtils;
@@ -103,6 +105,32 @@ public class AnnotationUtils {
 			list.add(id+"\t"+values.get(id).toString());
 		}
 		return list;
+	}
+	
+	public static FeatureList<AnnotationItem> filterByNumberOfAnnotationsPerId(FeatureList<AnnotationItem> al, int numMin, int numMax) {
+		System.out.println(al.toString()+"\n***********************");
+		FeatureList<AnnotationItem> annotationResult = new FeatureList<AnnotationItem>(100);
+		Map<String, Integer> visitedTerms = new LinkedHashMap<String, Integer>();
+		Map<String, List<String>> termsToGenes = new HashMap<String, List<String>>();
+		for(AnnotationItem ai: al) {
+			if(visitedTerms.containsKey(ai.getFunctionalTermId())) {
+				visitedTerms.put(ai.getFunctionalTermId(), visitedTerms.get(ai.getFunctionalTermId()) + 1);
+			}else {
+				visitedTerms.put(ai.getFunctionalTermId(), 1);
+				termsToGenes.put(ai.getFunctionalTermId(), new ArrayList<String>());
+			}
+			if(!termsToGenes.get(ai.getFunctionalTermId()).contains(ai.getId())) {
+				termsToGenes.get(ai.getFunctionalTermId()).add(ai.getId());
+			}
+		}
+		for(String key: visitedTerms.keySet()) {
+			if(visitedTerms.get(key) >= numMin && visitedTerms.get(key) <= numMax) {
+				for(String id: termsToGenes.get(key)) {
+					annotationResult.add(new AnnotationItem(id, key));
+				}
+			}
+		}
+		return annotationResult;
 	}
 
 }

@@ -1,14 +1,14 @@
 package org.bioinfo.infrared.funcannot.filter;
 
-public class BiocartaFilter extends FunctionalFilter{
+public class JasparFilter extends FunctionalFilter{
 
 	private static final long serialVersionUID = 1L;
 
-	public BiocartaFilter() {
+	public JasparFilter() {
 		this(2, 500);
 	}
 	
-	public BiocartaFilter(int minNumberGenes, int maxNumberGenes) {
+	public JasparFilter(int minNumberGenes, int maxNumberGenes) {
 		super(minNumberGenes, maxNumberGenes);
 	}
 	

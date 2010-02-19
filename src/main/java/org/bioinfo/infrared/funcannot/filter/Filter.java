@@ -43,6 +43,7 @@ public class Filter extends HashMap<String,String>{
 		return false;
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		String key;

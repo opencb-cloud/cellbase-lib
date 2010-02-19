@@ -21,7 +21,7 @@ public class Keywords extends ArrayList<Keyword>{
 	}
 	
 	public String getClause(String sqlField, String logicalOperator) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		if(this.size() != 0) {
 			for(int i=0;i < this.size() -1 ; i++) {
 				sb.append(sqlField).append(this.get(i).toString()).append(" ").append(logicalOperator).append(" ");
