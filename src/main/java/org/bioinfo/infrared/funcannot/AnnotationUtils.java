@@ -108,7 +108,6 @@ public class AnnotationUtils {
 	}
 	
 	public static FeatureList<AnnotationItem> filterByNumberOfAnnotationsPerId(FeatureList<AnnotationItem> al, int numMin, int numMax) {
-		System.out.println(al.toString()+"\n***********************");
 		FeatureList<AnnotationItem> annotationResult = new FeatureList<AnnotationItem>(100);
 		Map<String, Integer> visitedTerms = new LinkedHashMap<String, Integer>();
 		Map<String, List<String>> termsToGenes = new HashMap<String, List<String>>();
