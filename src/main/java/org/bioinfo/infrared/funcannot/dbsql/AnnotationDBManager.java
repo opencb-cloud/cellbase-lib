@@ -199,7 +199,7 @@ public class AnnotationDBManager extends DBManager {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public FeatureList<AnnotationItem> getReactomeAnnotation(KeggFilter keggFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+	public FeatureList<AnnotationItem> getReactomeAnnotation(ReactomeFilter reactomeFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 //		return new AnnotationList((List<AnnotationItem>)getFeatureList(GET_KEGG_ANNOTATION, new BeanArrayListHandler(AnnotationItem.class)).getElements());
 		return getFeatureList(GET_REACTOME_ANNOTATION, new BeanArrayListHandler(AnnotationItem.class));
 	}
