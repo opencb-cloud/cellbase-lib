@@ -10,7 +10,7 @@ public class Kegg extends FunctionalFeature {
 	private String category1;
 	private String category2;
 	
-	public Kegg(String keggId,String name) {
+	public Kegg(String keggId, String name) {
 		super(keggId, name);
 //		this.keggId = keggId;
 //		this.name = name;

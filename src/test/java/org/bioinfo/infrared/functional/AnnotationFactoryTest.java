@@ -100,9 +100,9 @@ public class AnnotationFactoryTest {
 	public void testGetKeggAnnotation() {
 		System.out.println("Test - 3");
 		try {
-			KeggFilter kf = new KeggFilter(2,200);
+			KeggFilter kf = new KeggFilter(5,60);
 			FeatureList<AnnotationItem> al = af.getKeggAnnotation(kf);
-			System.out.println(al.size());
+			System.out.println(al.toString());
 		} catch (SQLException e) {
 			e.printStackTrace();
 			fail("Not yet implemented");
