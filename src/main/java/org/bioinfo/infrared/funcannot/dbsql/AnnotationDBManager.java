@@ -32,6 +32,7 @@ public class AnnotationDBManager extends DBManager {
 	public static final String GET_GO_ANNOTATION_CONSTRAINT_BY_IDS = "select gi.* from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, go_info gi, dbname db where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and db.dbname='go' and x2.dbname_id=db.dbname_id and x2.display_id=gi.acc ";
 	public static final String GET_GO_ANNOTATION_CONSTRAINT_BY_IDS_PROPAGATED = "select gi.* from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, go_info gi, go_parent gp, dbname db where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and db.dbname='go' and x2.dbname_id=db.dbname_id and x2.display_id=gp.child_acc and gp.parent_acc=gi.acc ";
 	
+	public static final String GET_REACTOME_ANNOTATION = "SELECT g.stable_id, x.display_id, x.description FROM xref x, transcript t, gene g, transcript2xref tx, dbname db  WHERE db.dbname = 'reactome' and db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id group by g.stable_id, x.display_id";
 	public static final String GET_KEGG_ANNOTATION = "SELECT g.stable_id, k.pathway_id, k.name, k.description FROM xref x, transcript t, gene g, transcript2xref tx, kegg_info k, dbname db  WHERE db.dbname = 'kegg' and db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id and x.display_id=k.pathway_id group by g.stable_id, x.display_id";
 	
 	public static final String GET_INTERPRO_ANNOTATION_BY_IDS = "select x1.display_id, x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='interpro' ";
@@ -197,6 +198,11 @@ public class AnnotationDBManager extends DBManager {
 		return AnnotationUtils.filterByNumberOfAnnotationsPerId(al, keggFilter.getMinNumberGenes(), keggFilter.getMaxNumberGenes());
 	}
 	
+	@SuppressWarnings("unchecked")
+	public FeatureList<AnnotationItem> getReactomeAnnotation(KeggFilter keggFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+//		return new AnnotationList((List<AnnotationItem>)getFeatureList(GET_KEGG_ANNOTATION, new BeanArrayListHandler(AnnotationItem.class)).getElements());
+		return getFeatureList(GET_REACTOME_ANNOTATION, new BeanArrayListHandler(AnnotationItem.class));
+	}
 	@SuppressWarnings("unchecked")
 	public FeatureList<AnnotationItem> getReactomeAnnotation(List<String> ids, ReactomeFilter reactomeFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		FeatureList<AnnotationItem> al = new FeatureList<AnnotationItem>(ids.size());
