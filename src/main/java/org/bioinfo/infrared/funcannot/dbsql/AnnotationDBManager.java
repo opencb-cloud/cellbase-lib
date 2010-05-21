@@ -1,10 +1,14 @@
 package org.bioinfo.infrared.funcannot.dbsql;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bioinfo.commons.utils.ListUtils;
+import org.bioinfo.db.api.Query;
 import org.bioinfo.db.handler.BeanArrayListHandler;
+import org.bioinfo.db.handler.MatrixHandler;
 import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.dbsql.DBManager;
 import org.bioinfo.infrared.common.feature.FeatureList;
@@ -353,6 +357,19 @@ public class AnnotationDBManager extends DBManager {
 		}
 	}
 	
+	public Map<String, Integer> getAnnotationTermsSize(String dbname) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		Map<String, Integer> annotationTermsSize = new HashMap<String, Integer>(15000);
+		String sqlQuery = " select x.display_id, count(distinct(g.gene_id)) from xref x, transcript2xref tx, transcript t, gene g, dbname db where db.dbname='" + dbname + "' and db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id group by x.display_id;";
+		Query query = getDBConnector().getDbConnection().createSQLQuery(sqlQuery);
+		Object[][] matrix = (Object[][])query.execute(sqlQuery, new MatrixHandler());
+		if(matrix != null) {
+			for(int row=0; row<matrix.length; row++) {
+				annotationTermsSize.put((String)matrix[row][0], Integer.parseInt(""+matrix[row][1]));
+			}
+		}
+		query.close();
+		return annotationTermsSize;
+	}
 	
 }
 

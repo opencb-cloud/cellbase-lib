@@ -150,4 +150,18 @@ public class AnnotationFactoryTest {
 			fail("Not yet implemented");
 		} 
 	}
+	
+	@Test
+	public void testGetAnnotationTermsSizeTest() {
+		System.out.println("Test - 6");
+		try {
+			System.out.println(af.getAnnotationTermsSize("reactome").toString());
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail("Not yet implemented");
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Not yet implemented");
+		} 
+	}
 }
