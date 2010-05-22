@@ -26,7 +26,11 @@ public class AnnotationItem extends FunctionalFeature{
 	
 	@Override
 	public String toString() {
-		return id+"\t"+functionalTermId+"\t"+name;
+		if(name != null) {
+			return id+"\t"+functionalTermId+"\t"+name;		
+		}else {
+			return id+"\t"+functionalTermId;
+		}
 	}
 	
 

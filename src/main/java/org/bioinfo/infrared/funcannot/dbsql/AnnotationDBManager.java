@@ -6,20 +6,21 @@ import java.util.List;
 import java.util.Map;
 
 import org.bioinfo.commons.utils.ListUtils;
+import org.bioinfo.db.api.PreparedQuery;
 import org.bioinfo.db.api.Query;
 import org.bioinfo.db.handler.BeanArrayListHandler;
 import org.bioinfo.db.handler.MatrixHandler;
+import org.bioinfo.db.handler.ScalarArrayListHandler;
 import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.dbsql.DBManager;
 import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.common.feature.FunctionalFeature;
 import org.bioinfo.infrared.funcannot.AnnotationItem;
 import org.bioinfo.infrared.funcannot.AnnotationUtils;
-import org.bioinfo.infrared.funcannot.GO;
-import org.bioinfo.infrared.funcannot.Kegg;
 import org.bioinfo.infrared.funcannot.filter.BiocartaFilter;
 import org.bioinfo.infrared.funcannot.filter.FunctionalFilter;
 import org.bioinfo.infrared.funcannot.filter.GOFilter;
+import org.bioinfo.infrared.funcannot.filter.GOSlimFilter;
 import org.bioinfo.infrared.funcannot.filter.InterproFilter;
 import org.bioinfo.infrared.funcannot.filter.JasparFilter;
 import org.bioinfo.infrared.funcannot.filter.KeggFilter;
@@ -49,7 +50,9 @@ public class AnnotationDBManager extends DBManager {
 	public static final String GET_OREGANNO_ANNOTATION_BY_IDS = "select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='oreganno' ";
 	
 	public static final String GET_GENERIC_ANNOTATION_BY_IDS = "select x2.display_id from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname=";
-	public static final String SELECT_ANIDADO = "select count(tx.transcript_id) from xref x, transcript2xref tx where x.display_id=x2.display_id and x.xref_id=tx.xref_id and x.dbname_id=db.dbname_id";
+//	public static final String SELECT_ANIDADO = "select count(tx.transcript_id) from xref x, transcript2xref tx where x.display_id=x2.display_id and x.xref_id=tx.xref_id and x.dbname_id=db.dbname_id";
+	public static final String NESTED_SELECT= "select count(distinct(t.gene_id)) from xref x, transcript2xref tx, transcript t where x.display_id=x2.display_id and x.xref_id=tx.xref_id and x.dbname_id=db.dbname_id and tx.transcript_id=t.transcript_id";
+	
 	//select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = 'ENST00000418975' and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='interpro' and (select  count(tx.transcript_id) from xref x, transcript2xref tx where x.dbname_id=46 and x.display_id=x2.display_id and x.xref_id=tx.xref_id group by x.xref_id) between 29 and 50 limit 5;
 	//select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = 'ENST00000418975' and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='interpro' and (select  count(tx.transcript_id) from xref x, transcript2xref tx where x.display_id=x2.display_id and x.xref_id=tx.xref_id and x.dbname_id=db.dbname_id group by x.xref_id) between 29 and 50 group by x2.display_id limit 5;
 	public AnnotationDBManager(DBConnector dBConnector) {
@@ -69,8 +72,8 @@ public class AnnotationDBManager extends DBManager {
 		if(functionalFilter instanceof GOFilter) {
 			return getGOAnnotation(ids, (GOFilter)functionalFilter);
 		}
-		if(functionalFilter instanceof GOFilter) {
-			return getGOAnnotation(ids, (GOFilter)functionalFilter);
+		if(functionalFilter instanceof GOSlimFilter) {
+			return getGOSlimAnnotation(ids, (GOSlimFilter)functionalFilter);
 		}
 		if(functionalFilter instanceof InterproFilter) {
 			return getInterproAnnotation(ids, (InterproFilter)functionalFilter);
@@ -110,15 +113,8 @@ public class AnnotationDBManager extends DBManager {
 		return getFeatureList(GET_GO_ANNOTATION_CONSTRAINT_FILTERED + " and "+ goFilter.getSQLWhereClause("gi.")+" group by gpr.gene_stable_id, gpr.acc", new BeanArrayListHandler(AnnotationItem.class));
 	}
 	
-	@SuppressWarnings("unchecked")
 	public FeatureList<AnnotationItem> getGOAnnotation(List<String> ids, GOFilter goFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException{
 		goFilter.setGenomicNumberOfGenes(false);
-		FeatureList<AnnotationItem> al = new FeatureList<AnnotationItem>(ids.size());
-		FeatureList<GO> gos;
-		// remove duplicated ids
-		ids = ListUtils.unique(ids);
-		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(false);
-		getDBConnector().getDbConnection().connect();
 		
 		String sqlQuery;
 		if(goFilter.isPropagated()) {
@@ -126,50 +122,46 @@ public class AnnotationDBManager extends DBManager {
 		}else {
 			sqlQuery = GET_GO_ANNOTATION_CONSTRAINT_BY_IDS + " and "+ goFilter.getSQLWhereClause("gi.")+" group by gi.acc";
 		}
-		System.out.println(sqlQuery);
-		for(String id: ids) {
-			gos = getFeatureListById(sqlQuery, id, new BeanArrayListHandler(GO.class));
-			for(GO go: gos) {
-				al.add(new AnnotationItem(id, go.getId()));
-			}
-		}
-		getDBConnector().getDbConnection().disconnect();
-		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(true);
 		
-		if(!goFilter.isGenomicNumberOfGenes()) {
+		ids = ListUtils.unique(ids);
+		FeatureList<AnnotationItem> al = getFeatureListOfAnnotationItems(ids, sqlQuery);
+
+		if(goFilter.isGenomicNumberOfGenes()) {
+			return al;
+		}else {
 			return AnnotationUtils.filterByNumberOfAnnotationsPerId(al, goFilter.getMinNumberGenes(), goFilter.getMaxNumberGenes());
 		}
-		return al;
 	}
 	
-	
-	@SuppressWarnings("unchecked")
-	public FeatureList<AnnotationItem> getInterproAnnotation(List<String> ids, InterproFilter interproFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		FeatureList<AnnotationItem> al = new FeatureList<AnnotationItem>(ids.size());
-//		FeatureList<Interpro> interpros;
-		FeatureList<FunctionalFeature> interpros;
-		ids = ListUtils.unique(ids);
-		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(false);
-		getDBConnector().getDbConnection().connect();
+	public FeatureList<AnnotationItem> getGOSlimAnnotation(List<String> ids, GOSlimFilter goSlimFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		String sqlQuery;
+		if(goSlimFilter.isGenomicNumberOfGenes()) {
+			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'goslim_goa_accession' and ("+NESTED_SELECT+") between " + goSlimFilter.getMinNumberGenes() + " and " + goSlimFilter.getMaxNumberGenes() + " group by x2.display_id";
+		}else {
+			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'goslim_goa_accession' group by x2.display_id";
+		}
 		
+		ids = ListUtils.unique(ids);
+		FeatureList<AnnotationItem> al = getFeatureListOfAnnotationItems(ids, sqlQuery);
+		
+		if(goSlimFilter.isGenomicNumberOfGenes()) {
+			return al;
+		}else {
+			return AnnotationUtils.filterByNumberOfAnnotationsPerId(al, goSlimFilter.getMinNumberGenes(), goSlimFilter.getMaxNumberGenes());
+		}
+	}
+	
+	public FeatureList<AnnotationItem> getInterproAnnotation(List<String> ids, InterproFilter interproFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		String sqlQuery;
 		if(interproFilter.isGenomicNumberOfGenes()) {
-			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'interpro' and ("+SELECT_ANIDADO+") between " + interproFilter.getMinNumberGenes() + " and " + interproFilter.getMaxNumberGenes() + " group by x2.display_id";
+			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'interpro' and ("+NESTED_SELECT+") between " + interproFilter.getMinNumberGenes() + " and " + interproFilter.getMaxNumberGenes() + " group by x2.display_id";
 		}else {
 			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'interpro' group by x2.display_id";
 		}
 		
-		for(String id: ids) {
-			interpros = getFeatureListById(sqlQuery, id, new BeanArrayListHandler(FunctionalFeature.class));
-//			for(Interpro iprs: interpros) {
-//				al.add(new AnnotationItem(id, iprs.getId()));
-//			}
-			for(FunctionalFeature iprs: interpros) {
-				al.add(new AnnotationItem(id, iprs.getId()));
-			}
-		}
-		getDBConnector().getDbConnection().disconnect();
-		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(true);
+		ids = ListUtils.unique(ids);
+		FeatureList<AnnotationItem> al = getFeatureListOfAnnotationItems(ids, sqlQuery);
+		
 		if(interproFilter.isGenomicNumberOfGenes()) {
 			return al;
 		}else {
@@ -183,22 +175,12 @@ public class AnnotationDBManager extends DBManager {
 		return getFeatureList(GET_KEGG_ANNOTATION, new BeanArrayListHandler(AnnotationItem.class));
 	}
 	
-	@SuppressWarnings("unchecked")
 	public FeatureList<AnnotationItem> getKeggAnnotation(List<String> ids, KeggFilter keggFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		keggFilter.setGenomicNumberOfGenes(false);
-		FeatureList<AnnotationItem> al = new FeatureList<AnnotationItem>(ids.size());
-		FeatureList<Kegg> keggs;
+		
 		ids = ListUtils.unique(ids);
-		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(false);
-		getDBConnector().getDbConnection().connect();
-		for(String id: ids) {
-			keggs = getFeatureListById(GET_KEGG_ANNOTATION_BY_IDS, id, new BeanArrayListHandler(Kegg.class));
-			for(Kegg kegg: keggs) {
-				al.add(new AnnotationItem(id, kegg.getId()));
-			}
-		}
-		getDBConnector().getDbConnection().disconnect();
-		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(true);
+		FeatureList<AnnotationItem> al = getFeatureListOfAnnotationItems(ids, GET_KEGG_ANNOTATION_BY_IDS);
+
 		return AnnotationUtils.filterByNumberOfAnnotationsPerId(al, keggFilter.getMinNumberGenes(), keggFilter.getMaxNumberGenes());
 	}
 	
@@ -207,29 +189,17 @@ public class AnnotationDBManager extends DBManager {
 //		return new AnnotationList((List<AnnotationItem>)getFeatureList(GET_KEGG_ANNOTATION, new BeanArrayListHandler(AnnotationItem.class)).getElements());
 		return getFeatureList(GET_REACTOME_ANNOTATION, new BeanArrayListHandler(AnnotationItem.class));
 	}
-	@SuppressWarnings("unchecked")
 	public FeatureList<AnnotationItem> getReactomeAnnotation(List<String> ids, ReactomeFilter reactomeFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		FeatureList<AnnotationItem> al = new FeatureList<AnnotationItem>(ids.size());
-		FeatureList<FunctionalFeature> functionalFeatureList;
-		ids = ListUtils.unique(ids);
-		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(false);
-		getDBConnector().getDbConnection().connect();
-		
 		String sqlQuery;
 		if(reactomeFilter.isGenomicNumberOfGenes()) {
-			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'reactome' and ("+SELECT_ANIDADO+") between " + reactomeFilter.getMinNumberGenes() + " and " + reactomeFilter.getMaxNumberGenes() + " group by x2.display_id";
+			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'reactome' and ("+NESTED_SELECT+") between " + reactomeFilter.getMinNumberGenes() + " and " + reactomeFilter.getMaxNumberGenes() + " group by x2.display_id";
 		}else {
 			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'reactome' group by x2.display_id";
 		}
+	
+		ids = ListUtils.unique(ids);
+		FeatureList<AnnotationItem> al = getFeatureListOfAnnotationItems(ids, sqlQuery);
 		
-		for(String id: ids) {
-			functionalFeatureList = getFeatureListById(sqlQuery, id, new BeanArrayListHandler(FunctionalFeature.class));
-			for(FunctionalFeature iprs: functionalFeatureList) {
-				al.add(new AnnotationItem(id, iprs.getId()));
-			}
-		}
-		getDBConnector().getDbConnection().disconnect();
-		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(true);
 		if(reactomeFilter.isGenomicNumberOfGenes()) {
 			return al;
 		}else {
@@ -237,29 +207,17 @@ public class AnnotationDBManager extends DBManager {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public FeatureList<AnnotationItem> getBiocartaAnnotation(List<String> ids, BiocartaFilter biocartaFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		FeatureList<AnnotationItem> al = new FeatureList<AnnotationItem>(ids.size());
-		FeatureList<FunctionalFeature> functionalFeatureList;
-		ids = ListUtils.unique(ids);
-		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(false);
-		getDBConnector().getDbConnection().connect();
-		
 		String sqlQuery;
 		if(biocartaFilter.isGenomicNumberOfGenes()) {
-			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'biocarta' and ("+SELECT_ANIDADO+") between " + biocartaFilter.getMinNumberGenes() + " and " + biocartaFilter.getMaxNumberGenes() + " group by x2.display_id";
+			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'biocarta' and ("+NESTED_SELECT+") between " + biocartaFilter.getMinNumberGenes() + " and " + biocartaFilter.getMaxNumberGenes() + " group by x2.display_id";
 		}else {
 			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'biocarta' group by x2.display_id";
 		}
 		
-		for(String id: ids) {
-			functionalFeatureList = getFeatureListById(sqlQuery, id, new BeanArrayListHandler(FunctionalFeature.class));
-			for(FunctionalFeature iprs: functionalFeatureList) {
-				al.add(new AnnotationItem(id, iprs.getId()));
-			}
-		}
-		getDBConnector().getDbConnection().disconnect();
-		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(true);
+		ids = ListUtils.unique(ids);
+		FeatureList<AnnotationItem> al = getFeatureListOfAnnotationItems(ids, sqlQuery);
+		
 		if(biocartaFilter.isGenomicNumberOfGenes()) {
 			return al;
 		}else {
@@ -277,7 +235,7 @@ public class AnnotationDBManager extends DBManager {
 		
 		String sqlQuery;
 		if(biocartaFilter.isGenomicNumberOfGenes()) {
-			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'biocarta' and ("+SELECT_ANIDADO+") between " + biocartaFilter.getMinNumberGenes() + " and " + biocartaFilter.getMaxNumberGenes() + " group by x2.display_id";
+			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'biocarta' and ("+NESTED_SELECT+") between " + biocartaFilter.getMinNumberGenes() + " and " + biocartaFilter.getMaxNumberGenes() + " group by x2.display_id";
 		}else {
 			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'biocarta' group by x2.display_id";
 		}
@@ -297,59 +255,35 @@ public class AnnotationDBManager extends DBManager {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	public FeatureList<AnnotationItem> getJasparAnnotation(List<String> ids, JasparFilter biocartaFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		FeatureList<AnnotationItem> al = new FeatureList<AnnotationItem>(ids.size());
-		FeatureList<FunctionalFeature> functionalFeatureList;
-		ids = ListUtils.unique(ids);
-		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(false);
-		getDBConnector().getDbConnection().connect();
-		
+	public FeatureList<AnnotationItem> getJasparAnnotation(List<String> ids, JasparFilter jasparFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		String sqlQuery;
-		if(biocartaFilter.isGenomicNumberOfGenes()) {
-			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'jaspar' and ("+SELECT_ANIDADO+") between " + biocartaFilter.getMinNumberGenes() + " and " + biocartaFilter.getMaxNumberGenes() + " group by x2.display_id";
+		if(jasparFilter.isGenomicNumberOfGenes()) {
+			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'jaspar' and ("+NESTED_SELECT+") between " + jasparFilter.getMinNumberGenes() + " and " + jasparFilter.getMaxNumberGenes() + " group by x2.display_id";
 		}else {
 			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'jaspar' group by x2.display_id";
 		}
 		
-		for(String id: ids) {
-			functionalFeatureList = getFeatureListById(sqlQuery, id, new BeanArrayListHandler(FunctionalFeature.class));
-			for(FunctionalFeature iprs: functionalFeatureList) {
-				al.add(new AnnotationItem(id, iprs.getId()));
-			}
-		}
-		getDBConnector().getDbConnection().disconnect();
-		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(true);
-		if(biocartaFilter.isGenomicNumberOfGenes()) {
+		ids = ListUtils.unique(ids);
+		FeatureList<AnnotationItem> al = getFeatureListOfAnnotationItems(ids, sqlQuery);
+		
+		if(jasparFilter.isGenomicNumberOfGenes()) {
 			return al;
 		}else {
-			return AnnotationUtils.filterByNumberOfAnnotationsPerId(al, biocartaFilter.getMinNumberGenes(), biocartaFilter.getMaxNumberGenes());
+			return AnnotationUtils.filterByNumberOfAnnotationsPerId(al, jasparFilter.getMinNumberGenes(), jasparFilter.getMaxNumberGenes());
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public FeatureList<AnnotationItem> getOregannoAnnotation(List<String> ids, OregannoFilter oregannoFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		FeatureList<AnnotationItem> al = new FeatureList<AnnotationItem>(ids.size());
-		FeatureList<FunctionalFeature> functionalFeatureList;
-		ids = ListUtils.unique(ids);
-		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(false);
-		getDBConnector().getDbConnection().connect();
-		
 		String sqlQuery;
 		if(oregannoFilter.isGenomicNumberOfGenes()) {
-			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'oreganno' and ("+SELECT_ANIDADO+") between " + oregannoFilter.getMinNumberGenes() + " and " + oregannoFilter.getMaxNumberGenes() + " group by x2.display_id";
+			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'oreganno' and ("+NESTED_SELECT+") between " + oregannoFilter.getMinNumberGenes() + " and " + oregannoFilter.getMaxNumberGenes() + " group by x2.display_id";
 		}else {
 			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'oreganno' group by x2.display_id";
 		}
 		
-		for(String id: ids) {
-			functionalFeatureList = getFeatureListById(sqlQuery, id, new BeanArrayListHandler(FunctionalFeature.class));
-			for(FunctionalFeature iprs: functionalFeatureList) {
-				al.add(new AnnotationItem(id, iprs.getId()));
-			}
-		}
-		getDBConnector().getDbConnection().disconnect();
-		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(true);
+		ids = ListUtils.unique(ids);
+		FeatureList<AnnotationItem> al = getFeatureListOfAnnotationItems(ids, sqlQuery);
+		
 		if(oregannoFilter.isGenomicNumberOfGenes()) {
 			return al;
 		}else {
@@ -378,5 +312,30 @@ public class AnnotationDBManager extends DBManager {
 		return annotationTermsSize;
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	private FeatureList<AnnotationItem> getFeatureListOfAnnotationItems(List<String> ids, String sqlQuery) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(false);
+		getDBConnector().getDbConnection().connect();
+		
+		FeatureList<AnnotationItem> al = new FeatureList<AnnotationItem>(ids.size());
+		PreparedQuery prepQuery = getDBConnector().getDbConnection().createSQLPrepQuery(sqlQuery);
+		for(String id: ids) {
+			prepQuery.setParams(id);
+			List<String> list = (List<String>) prepQuery.execute(new ScalarArrayListHandler());
+			if(list != null) {
+				for(String s: list) {
+					if(s != null)  {
+						al.add(new AnnotationItem(id, s));
+					}
+				}
+			}
+		}
+		
+		getDBConnector().getDbConnection().disconnect();
+		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(true);
+		
+		return al;
+	}
 }
 

@@ -33,8 +33,7 @@ public class KeggFilter extends FunctionalFilter {
 	
 	@Override
 	public String getSQLWhereClause(String prefixSqlField) {
-		StringBuffer sb = new StringBuffer();
-		
+		StringBuilder sb = new StringBuilder();
 		if(getKeywords().size() != 0) {
 			sb.append(" and ( ").append(getKeywords().getClause(prefixSqlField+"name", getLogicalOperator())).append(" ) ") ;
 		}

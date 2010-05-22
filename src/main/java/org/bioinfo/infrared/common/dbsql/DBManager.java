@@ -128,35 +128,6 @@ public class DBManager {
 		return featureList;
 	}
 
-	//	@SuppressWarnings("unchecked")
-	//	public FeatureList getFeatureListByMultiParam(String prepQueryStm, List<String> ids, ResultSetHandler rsh) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-	//		PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(prepQueryStm);
-	//		prepQuery.setParams(ids);
-	//		FeatureList featureList = new FeatureList((List<Feature>)prepQuery.execute(rsh));
-	//		if(featureList != null) {
-	//			featureList.setRosettaDBConnector(dBConnector);
-	//		}
-	//		prepQuery.close();
-	//		return featureList;
-	//	}
-	//	
-	//	@SuppressWarnings("unchecked")
-	//	public Map getFeatureHashByIds(String prepQueryStm, List<String> ids, ResultSetHandler rsh) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-	//		Map<String,FeatureList> featureMap = new HashMap<String, FeatureList>((int)Math.round(ids.size()*1.4)); 
-	//		PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(prepQueryStm);
-	//		FeatureList featureList;
-	//		for(String id: ids) {
-	//			prepQuery.setParams(id);
-	//			featureList = (FeatureList)prepQuery.execute(rsh);
-	//			if(featureList != null) {
-	//				featureList.setRosettaDBConnector(dBConnector);	
-	//			}
-	//			featureMap.put(id, featureList);
-	//		}
-	//		prepQuery.close();
-	//		return featureMap;
-	//	}
-
 	@SuppressWarnings("unchecked")
 	public FeatureList getFeatureListByIds(String prepQueryStm, List<String> ids, ResultSetHandler rsh) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(prepQueryStm);
