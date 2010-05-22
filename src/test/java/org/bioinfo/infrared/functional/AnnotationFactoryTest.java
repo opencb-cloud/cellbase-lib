@@ -256,4 +256,20 @@ public class AnnotationFactoryTest {
 			fail("Not yet implemented");
 		} 
 	}
+	
+	@Test
+	public void testGetReactomeAnnotationTest() {
+		System.out.println("Test - 9");
+		try {
+			long t1 = System.currentTimeMillis();
+			System.out.println(af.getReactomeAnnotation(new ReactomeFilter()));
+			System.out.println("time: "+(System.currentTimeMillis()-t1));
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail("Not yet implemented");
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Not yet implemented");
+		} 
+	}
 }
