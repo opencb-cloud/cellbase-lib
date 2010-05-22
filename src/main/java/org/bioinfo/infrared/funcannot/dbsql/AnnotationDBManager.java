@@ -52,6 +52,8 @@ public class AnnotationDBManager extends DBManager {
 	public static final String GET_GENERIC_ANNOTATION_BY_IDS = "select x2.display_id from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname=";
 //	public static final String SELECT_ANIDADO = "select count(tx.transcript_id) from xref x, transcript2xref tx where x.display_id=x2.display_id and x.xref_id=tx.xref_id and x.dbname_id=db.dbname_id";
 	public static final String NESTED_SELECT= "select count(distinct(t.gene_id)) from xref x, transcript2xref tx, transcript t where x.display_id=x2.display_id and x.xref_id=tx.xref_id and x.dbname_id=db.dbname_id and tx.transcript_id=t.transcript_id";
+	
+	public static final String GET_KEGG_ANNOTATION_NAMES = "SELECT k.pathway_id, k.name FROM xref x, transcript t, gene g, transcript2xref tx, kegg_info k, dbname db  WHERE db.dbname = 'kegg' and db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id and x.display_id=k.pathway_id group by g.stable_id, x.display_id";
 	public static final String GET_GENERIC_ANNOTATION_TERM_NAME = "SELECT x.display_id, x.description FROM xref x, transcript t, gene g, transcript2xref tx, dbname db  WHERE db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id group by g.stable_id, x.display_id AND db.dbname = ";
 	
 	//select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = 'ENST00000418975' and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='interpro' and (select  count(tx.transcript_id) from xref x, transcript2xref tx where x.dbname_id=46 and x.display_id=x2.display_id and x.xref_id=tx.xref_id group by x.xref_id) between 29 and 50 limit 5;
@@ -318,10 +320,17 @@ public class AnnotationDBManager extends DBManager {
 		Query query = null;
 		Object[][] matrix = null;
 		String sqlQuery = "";
+		if(dbname.equalsIgnoreCase("go-slim") || dbname.equalsIgnoreCase("goslim")) {
+			dbname = "goslim_goa_accession";
+		}
 		if(dbname.equalsIgnoreCase("go")) {
 			sqlQuery = "select acc, propagated_number_genes from go_info";
 		}else {
-			sqlQuery = "select x.display_id, count(distinct(g.gene_id)) from xref x, transcript2xref tx, transcript t, gene g, dbname db where db.dbname='" + dbname + "' and db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id group by x.display_id;";
+			if(dbname.equalsIgnoreCase("kegg")) {
+				sqlQuery = GET_KEGG_ANNOTATION_NAMES;
+			}else {
+				sqlQuery = "select x.display_id, count(distinct(g.gene_id)) from xref x, transcript2xref tx, transcript t, gene g, dbname db where db.dbname='" + dbname + "' and db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id group by x.display_id;";	
+			}
 		}
 		query = getDBConnector().getDbConnection().createSQLQuery(sqlQuery);
 		matrix = (Object[][])query.execute(sqlQuery, new MatrixHandler());
