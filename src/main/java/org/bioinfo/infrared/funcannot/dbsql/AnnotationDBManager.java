@@ -14,7 +14,6 @@ import org.bioinfo.db.handler.ScalarArrayListHandler;
 import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.dbsql.DBManager;
 import org.bioinfo.infrared.common.feature.FeatureList;
-import org.bioinfo.infrared.common.feature.FunctionalFeature;
 import org.bioinfo.infrared.funcannot.AnnotationItem;
 import org.bioinfo.infrared.funcannot.AnnotationUtils;
 import org.bioinfo.infrared.funcannot.filter.BiocartaFilter;
@@ -24,40 +23,36 @@ import org.bioinfo.infrared.funcannot.filter.GOSlimFilter;
 import org.bioinfo.infrared.funcannot.filter.InterproFilter;
 import org.bioinfo.infrared.funcannot.filter.JasparFilter;
 import org.bioinfo.infrared.funcannot.filter.KeggFilter;
+import org.bioinfo.infrared.funcannot.filter.MiRnaTargetFilter;
 import org.bioinfo.infrared.funcannot.filter.OregannoFilter;
 import org.bioinfo.infrared.funcannot.filter.ReactomeFilter;
 
 public class AnnotationDBManager extends DBManager {
 	
-//	public static final String GET_GO_ANNOTATION = "SELECT gpr.gene_stable_id, gpr.acc FROM go_propagated gpr ";
-//	public static final String GET_GO_ANNOTATION_BY_NAMESPACE = "SELECT gpr.gene_stable_id, gpr.acc FROM go_info gi, go_propagated gpr WHERE gpr.acc=gi.acc and gi.namespace = ? group by gpr.gene_stable_id, gpr.acc";
-//	public static final String GET_GO_ANNOTATION_CONSTRAINT = "SELECT gpr.gene_stable_id, gpr.acc FROM go_info gi, go_propagated gpr WHERE gpr.acc=gi.acc and gi.namespace = ? ";
-
 	public static final String GET_GO_ANNOTATION_CONSTRAINT_FILTERED = "SELECT gpr.gene_stable_id, gpr.acc FROM go_info gi, go_propagated gpr WHERE gpr.acc=gi.acc ";
 	public static final String GET_GO_ANNOTATION_CONSTRAINT_BY_IDS = "select gi.* from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, go_info gi, dbname db where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and db.dbname='go' and x2.dbname_id=db.dbname_id and x2.display_id=gi.acc ";
 	public static final String GET_GO_ANNOTATION_CONSTRAINT_BY_IDS_PROPAGATED = "select gi.* from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, go_info gi, go_parent gp, dbname db where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and db.dbname='go' and x2.dbname_id=db.dbname_id and x2.display_id=gp.child_acc and gp.parent_acc=gi.acc ";
-	
-	public static final String GET_GENERIC_ANNOTATION_GENOME = "SELECT g.stable_id, x.display_id, x.description FROM xref x, transcript t, gene g, transcript2xref tx, dbname db  WHERE db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id group by g.stable_id, x.display_id AND db.dbname = ";
-	public static final String GET_KEGG_ANNOTATION = "SELECT g.stable_id, k.pathway_id, k.name, k.description FROM xref x, transcript t, gene g, transcript2xref tx, kegg_info k, dbname db  WHERE db.dbname = 'kegg' and db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id and x.display_id=k.pathway_id group by g.stable_id, x.display_id";
-	
-	public static final String GET_INTERPRO_ANNOTATION_BY_IDS = "select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='interpro' ";
 	public static final String GET_KEGG_ANNOTATION_BY_IDS =  "select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='kegg' ";
-	public static final String GET_REACTOME_ANNOTATION_BY_IDS = "select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='reactome' ";
-	public static final String GET_BIOCARTA_ANNOTATION_BY_IDS = "select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='biocarta' ";
-	
-	
-	public static final String GET_JASPAR_ANNOTATION_BY_IDS = "select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='jaspar' ";
-	public static final String GET_OREGANNO_ANNOTATION_BY_IDS = "select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='oreganno' ";
 	
 	public static final String GET_GENERIC_ANNOTATION_BY_IDS = "select x2.display_id from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname=";
-//	public static final String SELECT_ANIDADO = "select count(tx.transcript_id) from xref x, transcript2xref tx where x.display_id=x2.display_id and x.xref_id=tx.xref_id and x.dbname_id=db.dbname_id";
 	public static final String NESTED_SELECT= "select count(distinct(t.gene_id)) from xref x, transcript2xref tx, transcript t where x.display_id=x2.display_id and x.xref_id=tx.xref_id and x.dbname_id=db.dbname_id and tx.transcript_id=t.transcript_id";
 	
 	public static final String GET_KEGG_ANNOTATION_NAMES = "SELECT k.pathway_id, k.name FROM xref x, transcript t, gene g, transcript2xref tx, kegg_info k, dbname db  WHERE db.dbname = 'kegg' and db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id and x.display_id=k.pathway_id group by g.stable_id, x.display_id";
 	public static final String GET_GENERIC_ANNOTATION_TERM_NAMES = "SELECT x.display_id, x.description FROM xref x, transcript t, gene g, transcript2xref tx, dbname db  WHERE db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id group by g.stable_id, x.display_id AND db.dbname = ";
-	
-	//select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = 'ENST00000418975' and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='interpro' and (select  count(tx.transcript_id) from xref x, transcript2xref tx where x.dbname_id=46 and x.display_id=x2.display_id and x.xref_id=tx.xref_id group by x.xref_id) between 29 and 50 limit 5;
-	//select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = 'ENST00000418975' and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='interpro' and (select  count(tx.transcript_id) from xref x, transcript2xref tx where x.display_id=x2.display_id and x.xref_id=tx.xref_id and x.dbname_id=db.dbname_id group by x.xref_id) between 29 and 50 group by x2.display_id limit 5;
+
+//	public static final String GET_GO_ANNOTATION = "SELECT gpr.gene_stable_id, gpr.acc FROM go_propagated gpr ";
+//	public static final String GET_GO_ANNOTATION_BY_NAMESPACE = "SELECT gpr.gene_stable_id, gpr.acc FROM go_info gi, go_propagated gpr WHERE gpr.acc=gi.acc and gi.namespace = ? group by gpr.gene_stable_id, gpr.acc";
+//	public static final String GET_GO_ANNOTATION_CONSTRAINT = "SELECT gpr.gene_stable_id, gpr.acc FROM go_info gi, go_propagated gpr WHERE gpr.acc=gi.acc and gi.namespace = ? ";
+//	public static final String GET_GENERIC_ANNOTATION_GENOME = "SELECT g.stable_id, x.display_id, x.description FROM xref x, transcript t, gene g, transcript2xref tx, dbname db  WHERE db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id group by g.stable_id, x.display_id AND db.dbname = ";
+//	public static final String GET_KEGG_ANNOTATION = "SELECT g.stable_id, k.pathway_id, k.name, k.description FROM xref x, transcript t, gene g, transcript2xref tx, kegg_info k, dbname db  WHERE db.dbname = 'kegg' and db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id and x.display_id=k.pathway_id group by g.stable_id, x.display_id";
+//	public static final String GET_INTERPRO_ANNOTATION_BY_IDS = "select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='interpro' ";
+//	public static final String GET_REACTOME_ANNOTATION_BY_IDS = "select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='reactome' ";
+//	public static final String GET_BIOCARTA_ANNOTATION_BY_IDS = "select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='biocarta' ";
+//	public static final String GET_JASPAR_ANNOTATION_BY_IDS = "select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='jaspar' ";
+//	public static final String GET_OREGANNO_ANNOTATION_BY_IDS = "select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='oreganno' ";
+//	select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = 'ENST00000418975' and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='interpro' and (select  count(tx.transcript_id) from xref x, transcript2xref tx where x.dbname_id=46 and x.display_id=x2.display_id and x.xref_id=tx.xref_id group by x.xref_id) between 29 and 50 limit 5;
+//	select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = 'ENST00000418975' and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='interpro' and (select  count(tx.transcript_id) from xref x, transcript2xref tx where x.display_id=x2.display_id and x.xref_id=tx.xref_id and x.dbname_id=db.dbname_id group by x.xref_id) between 29 and 50 group by x2.display_id limit 5;
+
 	public AnnotationDBManager(DBConnector dBConnector) {
 		super(dBConnector);
 	}
@@ -90,9 +85,9 @@ public class AnnotationDBManager extends DBManager {
 		if(functionalFilter instanceof BiocartaFilter) {
 			return getBiocartaAnnotation(ids, (BiocartaFilter)functionalFilter);
 		}
-//		if(functionalFilter instanceof MiRnaTargetFilter) {
-//			return getGOAnnotation(ids, (GOFilter)functionalFilter);
-//		}
+		if(functionalFilter instanceof MiRnaTargetFilter) {
+			return getMiRnaTargetAnnotation(ids, (MiRnaTargetFilter)functionalFilter);
+		}
 		if(functionalFilter instanceof JasparFilter) {
 			return getJasparAnnotation(ids, (JasparFilter)functionalFilter);
 		}
@@ -102,6 +97,7 @@ public class AnnotationDBManager extends DBManager {
 		return null;
 	}
 	
+	@Deprecated
 	public FeatureList<AnnotationItem> getGOAnnotation() throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getGOAnnotation(new GOFilter("biological_process"));
 	}
@@ -223,32 +219,21 @@ public class AnnotationDBManager extends DBManager {
 		}
 	}
 	
-	public FeatureList<AnnotationItem> getMiRnaTargetAnnotation(List<String> ids, BiocartaFilter biocartaFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		FeatureList<AnnotationItem> al = new FeatureList<AnnotationItem>(ids.size());
-		FeatureList<FunctionalFeature> functionalFeatureList;
-		ids = ListUtils.unique(ids);
-		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(false);
-		getDBConnector().getDbConnection().connect();
-		
+	public FeatureList<AnnotationItem> getMiRnaTargetAnnotation(List<String> ids, MiRnaTargetFilter mirnaTargetFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		String sqlQuery;
-		if(biocartaFilter.isGenomicNumberOfGenes()) {
-			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'biocarta' and ("+NESTED_SELECT+") between " + biocartaFilter.getMinNumberGenes() + " and " + biocartaFilter.getMaxNumberGenes() + " group by x2.display_id";
+		if(mirnaTargetFilter.isGenomicNumberOfGenes()) {
+			sqlQuery = "select mt.mirna_id from xref x, transcript2xref tx, mirna_target mt, transcript t, gene g where x.display_id= ? and x.xref_id=tx.xref_id and tx.transcript_id= mt.transcript_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id and (select count(distinct(tn.gene_id)) from mirna_target mtn, transcript tn where mtn.mirna_id=mt.mirna_id and mtn.transcript_id=tn.transcript_id) between " + mirnaTargetFilter.getMinNumberGenes() + " and " + mirnaTargetFilter.getMaxNumberGenes() + " group by mt.mirna_id;";
 		}else {
-			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'biocarta' group by x2.display_id";
+			sqlQuery = "select mt.mirna_id from xref x, transcript2xref tx, mirna_target mt, transcript t, gene g where x.display_id= ? and x.xref_id=tx.xref_id and tx.transcript_id= mt.transcript_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id group by mt.mirna_id;";
 		}
 		
-		for(String id: ids) {
-			functionalFeatureList = getFeatureListById(sqlQuery, id, new BeanArrayListHandler(FunctionalFeature.class));
-			for(FunctionalFeature iprs: functionalFeatureList) {
-				al.add(new AnnotationItem(id, iprs.getId()));
-			}
-		}
-		getDBConnector().getDbConnection().disconnect();
-		getDBConnector().getDbConnection().setAutoConnectAndDisconnect(true);
-		if(biocartaFilter.isGenomicNumberOfGenes()) {
+		ids = ListUtils.unique(ids);
+		FeatureList<AnnotationItem> al = getFeatureListOfAnnotationItems(ids, sqlQuery);
+		
+		if(mirnaTargetFilter.isGenomicNumberOfGenes()) {
 			return al;
 		}else {
-			return AnnotationUtils.filterByNumberOfAnnotationsPerId(al, biocartaFilter.getMinNumberGenes(), biocartaFilter.getMaxNumberGenes());
+			return AnnotationUtils.filterByNumberOfAnnotationsPerId(al, mirnaTargetFilter.getMinNumberGenes(), mirnaTargetFilter.getMaxNumberGenes());
 		}
 	}
 	
