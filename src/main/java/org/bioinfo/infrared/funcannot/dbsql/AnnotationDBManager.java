@@ -279,6 +279,9 @@ public class AnnotationDBManager extends DBManager {
 		Query query = null;
 		Object[][] matrix = null;
 		String sqlQuery = "";
+		if(dbname.equalsIgnoreCase("go-slim") || dbname.equalsIgnoreCase("goslim")) {
+			dbname = "goslim_goa_accession";
+		}
 		if(dbname.equalsIgnoreCase("go")) {
 			sqlQuery = "select acc, name from go_info";
 		}else {
