@@ -38,7 +38,7 @@ public class AnnotationDBManager extends DBManager {
 	public static final String NESTED_SELECT= "select count(distinct(t.gene_id)) from xref x, transcript2xref tx, transcript t where x.display_id=x2.display_id and x.xref_id=tx.xref_id and x.dbname_id=db.dbname_id and tx.transcript_id=t.transcript_id";
 	
 	public static final String GET_KEGG_ANNOTATION_NAMES = "SELECT k.pathway_id, k.name FROM xref x, transcript t, gene g, transcript2xref tx, kegg_info k, dbname db  WHERE db.dbname = 'kegg' and db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id and x.display_id=k.pathway_id group by g.stable_id, x.display_id";
-	public static final String GET_GENERIC_ANNOTATION_TERM_NAMES = "SELECT x.display_id, x.description FROM xref x, transcript t, gene g, transcript2xref tx, dbname db  WHERE db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id group by g.stable_id, x.display_id AND db.dbname = ";
+	public static final String GET_GENERIC_ANNOTATION_TERM_NAMES = "select x.display_id, x.description from xref x, dbname db  WHERE db.dbname_id=x.dbname_id and db.dbname =";
 
 //	public static final String GET_GO_ANNOTATION = "SELECT gpr.gene_stable_id, gpr.acc FROM go_propagated gpr ";
 //	public static final String GET_GO_ANNOTATION_BY_NAMESPACE = "SELECT gpr.gene_stable_id, gpr.acc FROM go_info gi, go_propagated gpr WHERE gpr.acc=gi.acc and gi.namespace = ? group by gpr.gene_stable_id, gpr.acc";
@@ -240,7 +240,8 @@ public class AnnotationDBManager extends DBManager {
 	public FeatureList<AnnotationItem> getJasparAnnotation(List<String> ids, JasparFilter jasparFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		String sqlQuery;
 		if(jasparFilter.isGenomicNumberOfGenes()) {
-			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'jaspar' and ("+NESTED_SELECT+") between " + jasparFilter.getMinNumberGenes() + " and " + jasparFilter.getMaxNumberGenes() + " group by x2.display_id";
+//			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'jaspar' and ("+NESTED_SELECT+") between " + jasparFilter.getMinNumberGenes() + " and " + jasparFilter.getMaxNumberGenes() + " group by x2.display_id";
+			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'jaspar' and (select count(distinct(jt.gene_id)) from jaspar_tfbs jt, transcript t, gene g where tx2.transcript_id=t.transcript_id and t.gene_id=jt.gene_id group by tf_factor_name) between " + jasparFilter.getMinNumberGenes() + " and " + jasparFilter.getMaxNumberGenes() + " group by x2.display_id";
 		}else {
 			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'jaspar' group by x2.display_id";
 		}
@@ -281,7 +282,11 @@ public class AnnotationDBManager extends DBManager {
 		if(dbname.equalsIgnoreCase("go")) {
 			sqlQuery = "select acc, name from go_info";
 		}else {
-			sqlQuery = GET_GENERIC_ANNOTATION_TERM_NAMES+"'"+dbname+"'";
+			if(dbname.equalsIgnoreCase("kegg")) {
+				sqlQuery = "select k.pathway_id, k.name from xref x, kegg_info k, dbname db  WHERE db.dbname = 'kegg' and db.dbname_id=x.dbname_id and x.display_id=k.pathway_id group by k.pathway_id;";	//GET_GENERIC_ANNOTATION_TERM_NAMES+"'"+dbname+"';";
+			}else {
+				sqlQuery = GET_GENERIC_ANNOTATION_TERM_NAMES+"'"+dbname+"';";
+			}
 		}
 		query = getDBConnector().getDbConnection().createSQLQuery(sqlQuery);
 		matrix = (Object[][])query.execute(sqlQuery, new MatrixHandler());
