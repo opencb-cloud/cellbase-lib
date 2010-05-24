@@ -241,7 +241,8 @@ public class AnnotationDBManager extends DBManager {
 		String sqlQuery;
 		if(jasparFilter.isGenomicNumberOfGenes()) {
 //			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'jaspar' and ("+NESTED_SELECT+") between " + jasparFilter.getMinNumberGenes() + " and " + jasparFilter.getMaxNumberGenes() + " group by x2.display_id";
-			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'jaspar' and (select count(distinct(jt.gene_id)) from jaspar_tfbs jt, transcript t, gene g where tx2.transcript_id=t.transcript_id and t.gene_id=jt.gene_id group by tf_factor_name) between " + jasparFilter.getMinNumberGenes() + " and " + jasparFilter.getMaxNumberGenes() + " group by x2.display_id";
+//			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'jaspar' and (select count(distinct(jt.gene_id)) from jaspar_tfbs jt, transcript t, gene g where tx2.transcript_id=t.transcript_id and t.gene_id=jt.gene_id group by tf_factor_name) between " + jasparFilter.getMinNumberGenes() + " and " + jasparFilter.getMaxNumberGenes() + " group by x2.display_id";
+			sqlQuery = "select jt.tf_factor_name from jaspar_tfbs jt, xref x, transcript2xref tx, transcript t where  x.display_id = ? and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=jt.gene_id and (select count(distinct(gene_id)) from jaspar_tfbs jtn where jt.tf_factor_name=jtn.tf_factor_name) between " + jasparFilter.getMinNumberGenes() + " and " + jasparFilter.getMaxNumberGenes() + " group by jt.tf_factor_name";
 		}else {
 			sqlQuery = GET_GENERIC_ANNOTATION_BY_IDS+"'jaspar' group by x2.display_id";
 		}
