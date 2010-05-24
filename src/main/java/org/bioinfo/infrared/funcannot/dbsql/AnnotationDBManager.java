@@ -320,10 +320,14 @@ public class AnnotationDBManager extends DBManager {
 		if(dbname.equalsIgnoreCase("go")) {
 			sqlQuery = "select acc, propagated_number_genes from go_info;";
 		}else {
-			if(dbname.equalsIgnoreCase("jaspar")) {
+			if(dbname.equalsIgnoreCase("jaspar")) {	// performance improvement
 				sqlQuery = "select tf_factor_name, count(distinct(gene_id)) from jaspar_tfbs group by tf_factor_name;";
 			}else {
-				sqlQuery = "select x.display_id, count(distinct(g.gene_id)) from xref x, transcript2xref tx, transcript t, gene g, dbname db where db.dbname='" + dbname + "' and db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id group by x.display_id;";
+				if(dbname.equalsIgnoreCase("mirna")) {
+					sqlQuery = "select mt.mirna_id, count(distinct(t.gene_id))  from mirna_target mt, transcript t where mt.transcript_id=t.transcript_id group by mt.mirna_id;";
+				}else {
+					sqlQuery = "select x.display_id, count(distinct(g.gene_id)) from xref x, transcript2xref tx, transcript t, gene g, dbname db where db.dbname='" + dbname + "' and db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id group by x.display_id;";
+				}
 			}
 		}
 		query = getDBConnector().getDbConnection().createSQLQuery(sqlQuery);
