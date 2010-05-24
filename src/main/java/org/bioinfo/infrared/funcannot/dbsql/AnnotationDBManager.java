@@ -54,7 +54,7 @@ public class AnnotationDBManager extends DBManager {
 	public static final String NESTED_SELECT= "select count(distinct(t.gene_id)) from xref x, transcript2xref tx, transcript t where x.display_id=x2.display_id and x.xref_id=tx.xref_id and x.dbname_id=db.dbname_id and tx.transcript_id=t.transcript_id";
 	
 	public static final String GET_KEGG_ANNOTATION_NAMES = "SELECT k.pathway_id, k.name FROM xref x, transcript t, gene g, transcript2xref tx, kegg_info k, dbname db  WHERE db.dbname = 'kegg' and db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id and x.display_id=k.pathway_id group by g.stable_id, x.display_id";
-	public static final String GET_GENERIC_ANNOTATION_TERM_NAME = "SELECT x.display_id, x.description FROM xref x, transcript t, gene g, transcript2xref tx, dbname db  WHERE db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id group by g.stable_id, x.display_id AND db.dbname = ";
+	public static final String GET_GENERIC_ANNOTATION_TERM_NAMES = "SELECT x.display_id, x.description FROM xref x, transcript t, gene g, transcript2xref tx, dbname db  WHERE db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id group by g.stable_id, x.display_id AND db.dbname = ";
 	
 	//select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = 'ENST00000418975' and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='interpro' and (select  count(tx.transcript_id) from xref x, transcript2xref tx where x.dbname_id=46 and x.display_id=x2.display_id and x.xref_id=tx.xref_id group by x.xref_id) between 29 and 50 limit 5;
 	//select x2.display_id, x2.description from transcript2xref tx1, transcript2xref tx2, xref x1, xref x2, dbname db  where x1.display_id = 'ENST00000418975' and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname='interpro' and (select  count(tx.transcript_id) from xref x, transcript2xref tx where x.display_id=x2.display_id and x.xref_id=tx.xref_id and x.dbname_id=db.dbname_id group by x.xref_id) between 29 and 50 group by x2.display_id limit 5;
@@ -187,10 +187,6 @@ public class AnnotationDBManager extends DBManager {
 		return AnnotationUtils.filterByNumberOfAnnotationsPerId(al, keggFilter.getMinNumberGenes(), keggFilter.getMaxNumberGenes());
 	}
 	
-//	@SuppressWarnings("unchecked")
-//	public FeatureList<AnnotationItem> getReactomeAnnotation(ReactomeFilter reactomeFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-//		return getFeatureList(GET_GENERIC_ANNOTATION_GENOME+"'reactome'", new BeanArrayListHandler(AnnotationItem.class));
-//	}
 	public FeatureList<AnnotationItem> getReactomeAnnotation(List<String> ids, ReactomeFilter reactomeFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		String sqlQuery;
 		if(reactomeFilter.isGenomicNumberOfGenes()) {
@@ -209,7 +205,6 @@ public class AnnotationDBManager extends DBManager {
 		}
 	}
 	
-
 	public FeatureList<AnnotationItem> getBiocartaAnnotation(List<String> ids, BiocartaFilter biocartaFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		String sqlQuery;
 		if(biocartaFilter.isGenomicNumberOfGenes()) {
@@ -228,7 +223,6 @@ public class AnnotationDBManager extends DBManager {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public FeatureList<AnnotationItem> getMiRnaTargetAnnotation(List<String> ids, BiocartaFilter biocartaFilter) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		FeatureList<AnnotationItem> al = new FeatureList<AnnotationItem>(ids.size());
 		FeatureList<FunctionalFeature> functionalFeatureList;
@@ -302,7 +296,7 @@ public class AnnotationDBManager extends DBManager {
 		if(dbname.equalsIgnoreCase("go")) {
 			sqlQuery = "select acc, name from go_info";
 		}else {
-			sqlQuery = GET_GENERIC_ANNOTATION_TERM_NAME+"'"+dbname+"'";
+			sqlQuery = GET_GENERIC_ANNOTATION_TERM_NAMES+"'"+dbname+"'";
 		}
 		query = getDBConnector().getDbConnection().createSQLQuery(sqlQuery);
 		matrix = (Object[][])query.execute(sqlQuery, new MatrixHandler());
@@ -326,11 +320,7 @@ public class AnnotationDBManager extends DBManager {
 		if(dbname.equalsIgnoreCase("go")) {
 			sqlQuery = "select acc, propagated_number_genes from go_info";
 		}else {
-			if(dbname.equalsIgnoreCase("kegg")) {
-				sqlQuery = GET_KEGG_ANNOTATION_NAMES;
-			}else {
-				sqlQuery = "select x.display_id, count(distinct(g.gene_id)) from xref x, transcript2xref tx, transcript t, gene g, dbname db where db.dbname='" + dbname + "' and db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id group by x.display_id;";	
-			}
+			sqlQuery = "select x.display_id, count(distinct(g.gene_id)) from xref x, transcript2xref tx, transcript t, gene g, dbname db where db.dbname='" + dbname + "' and db.dbname_id=x.dbname_id and x.xref_id=tx.xref_id and tx.transcript_id=t.transcript_id and t.gene_id=g.gene_id group by x.display_id;";
 		}
 		query = getDBConnector().getDbConnection().createSQLQuery(sqlQuery);
 		matrix = (Object[][])query.execute(sqlQuery, new MatrixHandler());

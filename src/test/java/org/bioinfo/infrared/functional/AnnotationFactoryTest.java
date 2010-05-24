@@ -119,27 +119,10 @@ public class AnnotationFactoryTest {
 		} 
 	}
 
-	@Test
-	public void testGetKeggAnnotation() {
-		System.out.println("Test - 3");
-		try {
-			KeggFilter kf = new KeggFilter(5,60);
-			long t1 = System.currentTimeMillis();
-			FeatureList<AnnotationItem> al = af.getKeggAnnotation(kf);
-			System.out.println("time: "+(System.currentTimeMillis()-t1));
-			System.out.println(al.size());
-		} catch (SQLException e) {
-			e.printStackTrace();
-			fail("Not yet implemented");
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Not yet implemented");
-		} 
-	}
 	
 	@Test
 	public void testGetKeggAnnotationList() {
-		System.out.println("Test - 3.1");
+		System.out.println("Test - 3");
 		try {
 			KeggFilter kf = new KeggFilter(5,60);
 			String ids = "FGFR2,ENST00000261597,ENST00000431386,PCDH15,IL7R,SPOCK,ENST00000449252,ENSG00000037280,ENST00000440336,ENST00000480017,ENSG00000038382,ENST00000425036,ENST00000433804,ENSG00000044524,ENSG00000070019,ENSG00000072401,ENSG00000077943,ENSG00000078549,ENSG00000080224,ENSG00000080815,ENSG00000084234,ENSG00000089159,ENSG00000095637,ENSG00000099250,ENSG00000100784,ENSG00000101134,ENSG00000102755,ENSG00000037280,ENSG00000038382,ENSG00000044524,ENSG00000070019,ENSG00000072401,ENSG00000077943,ENSG00000078549,ENSG00000080224,ENSG00000080815,ENSG00000084234,ENSG00000089159,ENSG00000095637,ENSG00000099250,ENSG00000100784,ENSG00000101134,ENSG00000102755";
@@ -257,19 +240,4 @@ public class AnnotationFactoryTest {
 		} 
 	}
 	
-	@Test
-	public void testGetReactomeAnnotationTest() {
-		System.out.println("Test - 9");
-		try {
-			long t1 = System.currentTimeMillis();
-			System.out.println(af.getReactomeAnnotation(new ReactomeFilter()));
-			System.out.println("time: "+(System.currentTimeMillis()-t1));
-		} catch (SQLException e) {
-			e.printStackTrace();
-			fail("Not yet implemented");
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Not yet implemented");
-		} 
-	}
 }
