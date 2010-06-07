@@ -211,7 +211,6 @@ public class SNPDBManagerTest {
 		}
 	}
 	
-	@Test
 	public void testWriteAllFilteredByConsequenceType() {
 		System.out.println("Test - 10");
 		try {

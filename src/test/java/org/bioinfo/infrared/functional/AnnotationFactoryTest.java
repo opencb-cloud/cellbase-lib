@@ -225,11 +225,41 @@ public class AnnotationFactoryTest {
 	}
 	
 	@Test
-	public void testGetAnnotationTermsSizeTest() {
+	public void testGetAnnotationTermsNamesTest() {
 		System.out.println("Test - 8");
 		try {
 			long t1 = System.currentTimeMillis();
+			System.out.println(af.getAnnotationTermNames("go").toString());
+			System.out.println(af.getAnnotationTermNames("goslim").toString());
+			System.out.println(af.getAnnotationTermNames("interpro").toString());
+			System.out.println(af.getAnnotationTermNames("kegg").toString());
+			System.out.println(af.getAnnotationTermNames("reactome").toString());
+			System.out.println(af.getAnnotationTermNames("biocarta").toString());
+			System.out.println(af.getAnnotationTermNames("jaspar").toString());
+			System.out.println(af.getAnnotationTermNames("oreganno").toString());
+			System.out.println("time: "+(System.currentTimeMillis()-t1));
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail("Not yet implemented");
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Not yet implemented");
+		} 
+	}
+	
+	@Test
+	public void testGetAnnotationTermsSizeTest() {
+		System.out.println("Test - 9");
+		try {
+			long t1 = System.currentTimeMillis();
+			System.out.println(af.getAnnotationTermsSize("go").toString());
+			System.out.println(af.getAnnotationTermsSize("goslim").toString());
+			System.out.println(af.getAnnotationTermsSize("interpro").toString());
+			System.out.println(af.getAnnotationTermsSize("kegg").toString());
 			System.out.println(af.getAnnotationTermsSize("reactome").toString());
+			System.out.println(af.getAnnotationTermsSize("biocarta").toString());
+			System.out.println(af.getAnnotationTermsSize("jaspar").toString());
+			System.out.println(af.getAnnotationTermsSize("oreganno").toString());
 			System.out.println("time: "+(System.currentTimeMillis()-t1));
 		} catch (SQLException e) {
 			e.printStackTrace();
