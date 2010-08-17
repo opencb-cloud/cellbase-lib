@@ -53,6 +53,11 @@ public class SNPDBManager extends DBManager{
 	}
 	
 	@SuppressWarnings("unchecked")
+	public FeatureList<SNP> getAllByPosition(String chromosome, int position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		return getFeatureList(GET_ALL_SNPS  + " where s.chromosome = '"+chromosome+"' and s.start = "+position, new BeanArrayListHandler(SNP.class));
+	}
+	
+	@SuppressWarnings("unchecked")
 	public FeatureList<SNP> getAllByLocation(String chromosome, int start, int end) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getFeatureList(GET_ALL_SNPS  + " where s.chromosome = '"+chromosome+"' and s.start > "+start +" and s.end < "+end+" ", new BeanArrayListHandler(SNP.class));
 	}
@@ -97,5 +102,6 @@ public class SNPDBManager extends DBManager{
 //		return new SNPList((List<SNP>)getFeatureList(GET_SNPS_BY_EXTERNAL_ID, externalIds, new BeanHandler(SNP.class)).getElements());
 		return getListOfFeatureListByIds(GET_SNPS_BY_EXTERNAL_ID, externalIds, new BeanArrayListHandler(SNP.class));
 	}
+	
 	
 }

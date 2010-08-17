@@ -3,11 +3,14 @@ package org.bioinfo.infrared.regulatory.dbsql;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.bioinfo.db.api.PreparedQuery;
 import org.bioinfo.db.handler.BeanArrayListHandler;
 import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.dbsql.DBManager;
+import org.bioinfo.infrared.common.feature.Feature;
 import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.regulatory.JasparTfbs;
 import org.bioinfo.infrared.variation.SNP;
@@ -51,7 +54,40 @@ public class JasparTfbsDBManager extends DBManager {
 	
 	@SuppressWarnings("unchecked")
 	public FeatureList<JasparTfbs> getAllByLocation(String chromosome, int position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureList("select "+SELECT_FIELDS+" from jaspar_tfbs j, gene g where j.gene_id=g.gene_id and j.chromosome= '"+chromosome+"' and "+position+">=j.absolute_start and "+position+"<=j.absolute_end ", new BeanArrayListHandler(JasparTfbs.class));
+//		return getFeatureList("select "+SELECT_FIELDS+" from jaspar_tfbs j, gene g where j.gene_id=g.gene_id and j.chromosome= '"+chromosome+"' and "+position+">=j.absolute_start and "+position+"<=j.absolute_end ", new BeanArrayListHandler(JasparTfbs.class));
+		return getFeatureList("select "+SELECT_FIELDS+" from feature_map_jaspar_tfbs fm, jaspar_tfbs j, gene g where fm.chromosome= '"+chromosome+"' and fm.position="+position+" and fm.id=j.jaspar_tfbs_id and j.gene_id=g.gene_id", new BeanArrayListHandler(JasparTfbs.class));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<FeatureList<JasparTfbs>> getAllByLocation(List<SNP> snps) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		List<FeatureList<JasparTfbs>> featureList = new ArrayList<FeatureList<JasparTfbs>>(snps.size());
+//		getFeatureList("select "+SELECT_FIELDS+" from feature_map_jaspar_tfbs fm, jaspar_tfbs j, gene g where fm.chromosome=? and fm.position=? and fm.id=j.jaspar_tfbs_id and j.gene_id=g.gene_id", new BeanArrayListHandler(JasparTfbs.class));
+		PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery("select "+SELECT_FIELDS+" from feature_map_jaspar_tfbs fm, jaspar_tfbs j, gene g where fm.chromosome= ? and fm.position= ? and fm.id=j.jaspar_tfbs_id and j.gene_id=g.gene_id");
+		Object queryResult = null;
+		FeatureList featList = new FeatureList();
+		int cont = 0;
+		for(SNP snp: snps) {
+			prepQuery.setParams(snp.getChromosome(), ""+snp.getStart());
+			
+			queryResult = prepQuery.execute(new BeanArrayListHandler(JasparTfbs.class));
+			if(queryResult == null) {
+//				featList = null;
+				featureList.add(null);
+			}else {
+				featList.clear();
+				featList.addAll((List<Feature>)queryResult);
+//				featList = new FeatureList((List<Feature>)queryResult);
+				featList.setRosettaDBConnector(dBConnector);
+
+				featureList.add(featList);
+			}
+//			featureList.add(featList);
+			if(cont++ % 10000 == 0) {
+				System.out.println("SNPs processed: "+cont);
+			}
+		}
+		prepQuery.close();
+		return featureList;
 	}
 	
 	@SuppressWarnings("unchecked")

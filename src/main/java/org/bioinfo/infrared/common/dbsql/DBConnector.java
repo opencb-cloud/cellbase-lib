@@ -52,13 +52,26 @@ public class DBConnector {
 		createDBConnection();
 	}
 
-	public DBConnector(String specie, String host, String port, String user, String passwd) {
+//	public DBConnector(String specie, String host, String port, String user, String passwd) {
+//		// get parameters from the property file
+//		loadConfig(new File(System.getenv("INFRARED_HOME")+"/conf/db.conf"));
+//		// sobreescribo algunos parametros
+//		this.host = host;
+//		this.port = port;
+//		this.species = specie;
+//		this.user = user;
+//		this.password = passwd;
+//		createDBConnection();
+//	}
+	
+	public DBConnector(String species, String host, String port, String database, String user, String passwd) {
 		// get parameters from the property file
-		loadConfig(new File(System.getenv("INFRARED_HOME")+"/conf/db.conf"));
+//		loadConfig(new File(System.getenv("INFRARED_HOME")+"/conf/db.conf"));
 		// sobreescribo algunos parametros
 		this.host = host;
 		this.port = port;
-		this.species = specie;
+		this.species = species;
+		this.database = database;
 		this.user = user;
 		this.password = passwd;
 		createDBConnection();
