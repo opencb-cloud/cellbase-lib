@@ -2,14 +2,14 @@ package org.bioinfo.infrared.regulatory;
 
 import org.bioinfo.infrared.common.feature.GenomicFeature;
 
-public class MiRNAGene extends GenomicFeature{
+public class MiRnaGene extends GenomicFeature{
 
-	private String accession;
+//	private String accession;
 	private String mirnaID;
 	private String status;
 	
-	public MiRNAGene(String accession, String mirnaID, String status, String sequence) {
-		this.accession = accession;
+	public MiRnaGene(String accession, String mirnaID, String status, String sequence) {
+		this.id = accession;
 		this.mirnaID = mirnaID;
 		this.status = status;
 		this.sequence = sequence;
@@ -17,20 +17,20 @@ public class MiRNAGene extends GenomicFeature{
 	
 	@Override
 	public String toString() {
-		return accession+"\t"+mirnaID+"\t"+status+"\t"+sequence; 
+		return id+"\t"+mirnaID+"\t"+status+"\t"+sequence; 
 	}
-	/**
-	 * @return the accession
-	 */
-	public String getAccession() {
-		return accession;
-	}
-	/**
-	 * @param accession the accession to set
-	 */
-	public void setAccession(String accession) {
-		this.accession = accession;
-	}
+//	/**
+//	 * @return the accession
+//	 */
+//	public String getAccession() {
+//		return accession;
+//	}
+//	/**
+//	 * @param accession the accession to set
+//	 */
+//	public void setAccession(String accession) {
+//		this.accession = accession;
+//	}
 	/**
 	 * @return the mirnaID
 	 */

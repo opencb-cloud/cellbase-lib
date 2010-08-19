@@ -5,23 +5,22 @@ public abstract class FunctionalFilter extends Filter{
 
 	protected int minNumberGenes;
 	protected int maxNumberGenes;
-	protected boolean useNumberOfGenes;
+	protected boolean genomicNumberOfGenes;
 	
 	public FunctionalFilter() {
-		this(0,Integer.MAX_VALUE);
+		this(0, Integer.MAX_VALUE);
 	}
 	
 	public FunctionalFilter(int minNumberGenes, int maxNumberGenes) {
 		this.minNumberGenes = minNumberGenes;
 		this.maxNumberGenes = maxNumberGenes;
-		this.useNumberOfGenes = true;
+		this.genomicNumberOfGenes = true;
 	}
 	
-	public abstract String getWhereClause(String prefixSqlField);
+	public abstract String getSQLWhereClause(String prefixSqlField);
 	
 	
-	
-	public String getWhereClause() {
+	public String getSQLWhereClause() {
 		return "";
 	}
 
@@ -54,17 +53,17 @@ public abstract class FunctionalFilter extends Filter{
 	}
 	
 	/**
-	 * @param useNumberOfGenes the useNumberOfGenes to set
+	 * @param genomicNumberOfGenes the genomicNumberOfGenes to set
 	 */
-	public void setUseNumberOfGenes(boolean useNumberOfGenes) {
-		this.useNumberOfGenes = useNumberOfGenes;
+	public void setGenomicNumberOfGenes(boolean useNumberOfGenes) {
+		this.genomicNumberOfGenes = useNumberOfGenes;
 	}
 
 	/**
-	 * @return the useNumberOfGenes
+	 * @return the genomicNumberOfGenes
 	 */
-	public boolean isUseNumberOfGenes() {
-		return useNumberOfGenes;
+	public boolean isGenomicNumberOfGenes() {
+		return genomicNumberOfGenes;
 	}
 	
 }

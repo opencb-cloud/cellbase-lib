@@ -18,6 +18,10 @@ public class ConservedRegionDBManager extends DBManager {
 		super(dBConnector);
 	}
 	
+	public void writeAll(String outfile) {
+		
+	}
+
 	@SuppressWarnings("unchecked")
 	public FeatureList<ConservedRegion> getAllBySnpId(String snpId) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getFeatureListById(GET_ALL_BY_SNP, snpId, new BeanArrayListHandler(ConservedRegion.class));
@@ -35,6 +39,10 @@ public class ConservedRegionDBManager extends DBManager {
 	
 	@SuppressWarnings("unchecked")
 	public FeatureList<ConservedRegion> getAllByRegion(String chromosome, int start, int end) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureList(GET_ALL_BY+" chromosome = '"+chromosome+"' and start >= "+start +" and end <= " + end, new BeanArrayListHandler(ConservedRegion.class));
+		return getFeatureList(GET_ALL_BY+" chromosome = '"+chromosome+"' and start <= "+ end+" and end >= " + start, new BeanArrayListHandler(ConservedRegion.class));
+	}
+	
+	public void writeAllWithSnps(String outfile) {
+		
 	}
 }

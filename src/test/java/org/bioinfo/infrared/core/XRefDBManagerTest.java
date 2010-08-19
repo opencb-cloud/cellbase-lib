@@ -71,8 +71,8 @@ public class XRefDBManagerTest {
 	public void testGetXRefListByIds() {
 		System.out.println("Test - 4");
 		try {
-			List<String> ids = StringUtils.stringToList(",", "p53,brca2");
-			List<Map<String, FeatureList<XRef>>> xrefList = xrefDBMan.getListByDBNames(ids, StringUtils.stringToList(",", "uniprotkb/swissprot,ensembl_transcript"));
+			List<String> ids = StringUtils.toList(",", "p53,brca2");
+			List<Map<String, FeatureList<XRef>>> xrefList = xrefDBMan.getListByDBNames(ids, StringUtils.toList("uniprotkb/swissprot,ensembl_transcript", ","));
 //			for(Map map: xrefList) {
 			for(int i=0;i<xrefList.size(); i++) {
 				System.out.println(ids.get(i));
@@ -90,13 +90,16 @@ public class XRefDBManagerTest {
 	public void testGetIdsListByIds() {
 		System.out.println("Test - 5");
 		try {
-			List<String> ids = StringUtils.stringToList(",", "p53,brca2,bcl2,ENSG00000141510");
+			List<String> ids = StringUtils.toList("p53,brca2,bcl2,ENSG00000141510", ",");
 			List<List<String>> xrefList = xrefDBMan.getIdsByDBName(ids, "interpro");
 //			for(Map map: xrefList) {
 			for(int i=0;i<xrefList.size(); i++) {
 				System.out.println(ids.get(i));
 				System.out.println("==================================");
-				System.out.println(xrefList.get(i).toString());
+				if(xrefList.get(i) != null) {
+					System.out.println(xrefList.get(i).toString());
+				}
+				
 			}
 			
 		} catch (Exception e) {

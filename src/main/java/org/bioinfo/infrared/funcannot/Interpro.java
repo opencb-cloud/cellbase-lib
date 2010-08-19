@@ -4,19 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bioinfo.commons.utils.StringUtils;
+import org.bioinfo.infrared.common.feature.FunctionalFeature;
 
-public class InterPro {
+public class Interpro extends FunctionalFeature {
 
 	private String interProtId;
 	private List<String> transcrits;
 	private String description;
 	
-	public InterPro(String interProtId, List<String> list, String description) {
+	public Interpro(String bioCartatId) {
+		super(bioCartatId,"");
+	}
+	
+	public Interpro(String bioCartatId, String name) {
+		super(bioCartatId,name);
+	}
+	
+	public Interpro(String interProtId, List<String> list, String description) {
 		this.interProtId = interProtId;
 		this.transcrits = list;
 		this.description = description;
 	}
 	
+	@Override
 	public String toString() {
 		if(transcrits != null)
 			return interProtId+"\t"+StringUtils.arrayToString(transcrits, ",")+"\t"+description;

@@ -21,7 +21,7 @@ public class GeneFactoryTest {
 	public void setUp() throws Exception {
 //		ros1 = new DBConnector("hsa","gen29","3306","rashid","bouchard");
 //		ros1 = new DBConnector(new File("/opt/rosetta/conf/db.conf"));
-		ros1 = new DBConnector("hsa");
+		ros1 = new DBConnector("homo_sapiens");
 		System.out.println(ros1.toString());
 		gf1 = new GeneDBManager(ros1);
 		
@@ -39,7 +39,6 @@ public class GeneFactoryTest {
 			System.out.println("Test 1 - GeneDBManager");
 			FeatureList<Gene> genes = gf1.getAllByExternalId("ENSG00000000003");
 			System.out.println(genes.toString());
-			System.out.println(genes.get(0).getTranscripts().toString());
 		} catch (SQLException e) {
 			System.out.println(e.toString());
 			fail("Not yet implemented "+e.toString());
@@ -60,7 +59,6 @@ public class GeneFactoryTest {
 		try {
 			System.out.println("Test 2 - GeneFactoryGetTranscrits");
 			FeatureList<Gene> genes = gf1.getAllByExternalId("ENSG00000000003");
-			System.out.println(genes.get(0).getTranscripts().toString());
 		} catch (SQLException e) {
 			System.out.println(e.toString());
 			fail("Not yet implemented "+e.toString());
@@ -80,13 +78,13 @@ public class GeneFactoryTest {
 	public void testGeneListFactory() {
 		try {
 			System.out.println("Test 3 - GeneListFactory");
-			List<String> gs = StringUtils.stringToList("BCL2 BRCA2 ENSG00000000003 ENSG00000000005  BCL2");
+			List<String> gs = StringUtils.toList("BCL2 BRCA2");
 			List<FeatureList<Gene>> genes = gf1.getAllByExternalIds(gs);
 			System.out.println(genes.toString());
 			System.out.println("Test 4 - GeneListFactory");
 			System.out.println(genes.get(0).get(0).getTranscripts().toString());
-			System.out.println("Test 5 - GeneListFactory");
-			System.out.println(genes.get(0).get(0).getTranscripts().get(0).getExons().toString());
+//			System.out.println("Test 5 - GeneListFactory");
+//			System.out.println(genes.get(0).get(0).getTranscripts().get(0).getExons().toString());
 			System.out.println("Test 6 - GeneListFactory");
 			System.out.println(genes.get(0).get(0).getExons().toString());
 
@@ -103,7 +101,7 @@ public class GeneFactoryTest {
 			System.out.println(e.toString());
 			fail("Not yet implemented "+e.toString());
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			e.printStackTrace();
 			fail("Not yet implemented "+e.toString());
 		}
 	}
@@ -260,11 +258,11 @@ public class GeneFactoryTest {
 	public void testAllGenesBySNPIdFactory() {
 		try {
 			System.out.println("Test 13 - AllGenesBySNPFactory");
-			FeatureList<Gene> genes = gf1.getGeneListBySNP("rs3883917");
+			FeatureList<Gene> genes = gf1.getGeneListBySNP("rs11644186");
 			System.out.println(genes.size());
 			System.out.println(genes.get(0).toString());
 //			System.out.println(genes.getFeaturesIds().toString());
-			System.out.println(genes.get(0).getTranscripts().toString());
+//			System.out.println(genes.get(0).getTranscripts().toString());
 		} catch (SQLException e) {
 			System.out.println(e.toString());
 			fail("Not yet implemented "+e.toString());
@@ -278,7 +276,7 @@ public class GeneFactoryTest {
 			System.out.println(e.toString());
 			fail("Not yet implemented "+e.toString());
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			e.printStackTrace();
 			fail("Not yet implemented "+e.toString());
 		}
 	}

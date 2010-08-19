@@ -15,7 +15,7 @@ public class Biocarta extends FunctionalFeature{
 	}
 	
 	public Biocarta(String bioCartatId, String name) {
-		super(bioCartatId,name);
+		super(bioCartatId, name);
 	}
 	
 }

@@ -23,6 +23,15 @@ public class VariationFeature extends GenomicFeature{
 	}
 	
 	@Override
+	public String getLocation() {
+		if(strand.equals("1") || strand.equals("+")) {
+			return chromosome+":"+start+"(+)";
+		}else {
+			return chromosome+":"+start+"(-)";
+		}
+	}
+	
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		

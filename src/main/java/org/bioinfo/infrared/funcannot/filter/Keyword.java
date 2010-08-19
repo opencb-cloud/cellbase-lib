@@ -4,7 +4,7 @@ public class Keyword {
 
 	private String keyword;
 	private boolean positive;
-	
+
 	public Keyword(String keyword) {
 		if(keyword != null) {
 			if(keyword.startsWith("-")) {
@@ -23,7 +23,16 @@ public class Keyword {
 			positive = true;
 		}
 	}
-	
+
+	@Override
+	public String toString() {
+		if(positive) {
+			return " LIKE '%"+keyword+"%' ";
+		}else {
+			return " NOT LIKE '%"+keyword+"%' ";
+		}
+	}
+
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
 	}
@@ -36,13 +45,5 @@ public class Keyword {
 	public boolean isPositive() {
 		return positive;
 	}
-	
-	public String toString() {
-		if(positive) {
-			return " LIKE '%"+keyword+"%' ";
-		}else {
-			return " NOT LIKE '%"+keyword+"%' ";
-		}
-	}
-	
+
 }

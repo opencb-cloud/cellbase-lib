@@ -3,22 +3,23 @@ package org.bioinfo.infrared.common.feature;
 
 public class FunctionalFeature extends Feature{
 
-//	protected String functionalId;
 	protected String name;
 	protected String description;
 	
 	public FunctionalFeature() {
 		
 	}
+	public FunctionalFeature(String id) {
+		this.id = id;
+	}
+	
 	public FunctionalFeature(String id, String name) {
 		this.id = id;
-//		this.functionalId = id;
 		this.name = name;
 	}
 	
 	public FunctionalFeature(String id, String name, String description) {
 		this.id = id;
-//		this.functionalId = id;
 		this.name = name;
 		this.description = description;
 	}

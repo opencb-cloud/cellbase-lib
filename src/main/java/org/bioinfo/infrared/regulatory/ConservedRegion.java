@@ -6,7 +6,7 @@ public class ConservedRegion extends RegulatoryFeature {
 
 	private int length;
 	
-	public ConservedRegion(Integer id, String chromosome, Integer start, Integer end, String strand, String sequence, Integer length){
+	public ConservedRegion(Integer id, String chromosome, Integer start, Integer end, String strand, Integer length, String sequence){
 		super(""+id, chromosome, start, end, strand, sequence);
 		this.length = length;
 	}
@@ -14,9 +14,9 @@ public class ConservedRegion extends RegulatoryFeature {
 	@Override
 	public String toString(){
 		if(length > 20) {
-			return id+"\t"+chromosome+"\t"+start+"\t"+end+"\t"+strand+"\t"+sequence.substring(0, 20)+"...\t"+length;
+			return id+"\t"+chromosome+"\t"+start+"\t"+end+"\t"+strand+"\t"+length+"\t"+sequence.substring(0, 20)+"...";
 		}else {
-			return id+"\t"+chromosome+"\t"+start+"\t"+end+"\t"+strand+"\t"+sequence+"\t"+length;
+			return id+"\t"+chromosome+"\t"+start+"\t"+end+"\t"+strand+"\t"+length+"\t"+sequence;
 		}
 		
 	}

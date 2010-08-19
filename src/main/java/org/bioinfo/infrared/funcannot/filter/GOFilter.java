@@ -14,19 +14,14 @@ public class GOFilter extends FunctionalFilter{
 	private Keywords keywords;
 	private String logicalOperator;
 	private boolean propagated;
+	private boolean childrenTerms;
 	
 	public GOFilter(String namespace) {
-		this.namespace = namespace;
-		minLevel = 3;
-		maxLevel = 19;		
-		initDefaults();
+		this(namespace, 3, 19, 1, Integer.MAX_VALUE);
 	}
 	
 	public GOFilter(String namespace, int minLevel, int maxLevel) {
-		this.namespace = namespace;
-		this.minLevel = minLevel;
-		this.maxLevel = maxLevel;
-		initDefaults();
+		this(namespace, minLevel, maxLevel, 5, 500);
 	}
 	
 	public GOFilter(String namespace, int minLevel, int maxLevel, int minNumberGenes, int maxNumberGenes) {
@@ -41,13 +36,12 @@ public class GOFilter extends FunctionalFilter{
 	private void initDefaults() {
 		keywords = new Keywords(2);
 		logicalOperator = "OR";
-		this.useNumberOfGenes = true;
+		this.genomicNumberOfGenes = true;
 		this.propagated = true;
 	}
 	
 	public void addKeyword(String keyword) {
-//		keywords.add(new Keyword(keyword));
-		addKeywords(StringUtils.stringToList(keyword));
+		addKeywords(StringUtils.toList(keyword));
 	}
 
 	public void addKeywords(List<String> keywordNames) {
@@ -56,19 +50,24 @@ public class GOFilter extends FunctionalFilter{
 		}
 	}
 	
-	public String getWhereClause(String prefixSqlField) {
-		StringBuffer sb = new StringBuffer(" and ");
+	public String getSQLWhereClause(String prefixSqlField) {
+		StringBuilder sb = new StringBuilder();
 		sb.append(prefixSqlField).append("namespace = '").append(namespace).append("' and ");
 		sb.append(prefixSqlField).append("level >= ").append(minLevel).append(" and ");
 		sb.append(prefixSqlField).append("level <= ").append(maxLevel).append(" ");
-		if(isUseNumberOfGenes()) {
+		if(isGenomicNumberOfGenes()) {
 			sb.append(" and ");
 			sb.append(prefixSqlField).append("propagated_number_genes >= ").append(getMinNumberGenes()).append(" and ");
 			sb.append(prefixSqlField).append("propagated_number_genes <= ").append(getMaxNumberGenes()).append(" ");
 		}
 		
 		if(keywords.size() != 0) {
-			sb.append(" and ( ").append(keywords.getClause(prefixSqlField+"name", getLogicalOperator())).append(" ) ") ;
+			sb.append(" and ( ").append(keywords.getClause(prefixSqlField+"name", logicalOperator)).append(" ) ") ;
+		}
+		
+		if(childrenTerms) {
+			sb.append(" and ");
+			
 		}
 		return sb.toString();
 	}

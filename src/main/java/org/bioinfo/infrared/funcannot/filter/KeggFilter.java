@@ -17,7 +17,7 @@ public class KeggFilter extends FunctionalFilter {
 		this.minNumberGenes = minNumberGenes;
 		this.maxNumberGenes = maxNumberGenes;
 		keywords = new Keywords(2);
-		this.useNumberOfGenes = true;
+		this.genomicNumberOfGenes = true;
 	}
 	
 	public void addKeyword(String keyword) {
@@ -32,9 +32,8 @@ public class KeggFilter extends FunctionalFilter {
 	}
 	
 	@Override
-	public String getWhereClause(String prefixSqlField) {
-		StringBuffer sb = new StringBuffer();
-		
+	public String getSQLWhereClause(String prefixSqlField) {
+		StringBuilder sb = new StringBuilder();
 		if(getKeywords().size() != 0) {
 			sb.append(" and ( ").append(getKeywords().getClause(prefixSqlField+"name", getLogicalOperator())).append(" ) ") ;
 		}

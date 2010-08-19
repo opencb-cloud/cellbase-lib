@@ -1,58 +1,19 @@
 package org.bioinfo.infrared.funcannot.filter;
 
-@SuppressWarnings("serial")
 public class BiocartaFilter extends FunctionalFilter{
 
-	private Keywords keywords;
-	private String logicalOperator;
-	
+	private static final long serialVersionUID = 1L;
+
 	public BiocartaFilter() {
-		this(0,Integer.MAX_VALUE);
+		this(2, 500);
 	}
+	
 	public BiocartaFilter(int minNumberGenes, int maxNumberGenes) {
-		this.minNumberGenes = minNumberGenes;
-		this.maxNumberGenes = maxNumberGenes;
-		keywords = new Keywords(2);
-		this.useNumberOfGenes = true;
+		super(minNumberGenes, maxNumberGenes);
 	}
 	
 	@Override
-	public String getWhereClause(String prefixSqlField) {
-		StringBuffer sb = new StringBuffer();
-		
-		if(getKeywords().size() != 0) {
-			sb.append(" and ( ").append(getKeywords().getClause(prefixSqlField+"name", getLogicalOperator())).append(" ) ") ;
-		}
-		return sb.toString();
+	public String getSQLWhereClause(String prefixSqlField) {
+		return "";
 	}
-	
-
-	/**
-	 * @param keywords the keywords to set
-	 */
-	public void setKeywords(Keywords keywords) {
-		this.keywords = keywords;
-	}
-
-	/**
-	 * @return the keywords
-	 */
-	public Keywords getKeywords() {
-		return keywords;
-	}
-
-	/**
-	 * @param logicalOperator the logicalOperator to set
-	 */
-	public void setLogicalOperator(String logicalOperator) {
-		this.logicalOperator = logicalOperator;
-	}
-
-	/**
-	 * @return the logicalOperator
-	 */
-	public String getLogicalOperator() {
-		return logicalOperator;
-	}
-
 }

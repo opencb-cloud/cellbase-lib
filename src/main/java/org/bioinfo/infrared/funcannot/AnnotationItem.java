@@ -12,10 +12,25 @@ public class AnnotationItem extends FunctionalFeature{
 		this.id = id;
 		this.functionalTermId = functionalTermId;
 	}
+	
+	public AnnotationItem(String id, String functionalTermId, String name) {
+		this(id, functionalTermId);
+		this.name = name;
+	}
 
+	public AnnotationItem(String id, String functionalTermId, String name, String description) {
+		this(id, functionalTermId, name);
+		this.description = description;
+	}
+	
+	
 	@Override
 	public String toString() {
-		return id+"\t"+functionalTermId;
+		if(name != null) {
+			return id+"\t"+functionalTermId+"\t"+name;		
+		}else {
+			return id+"\t"+functionalTermId;
+		}
 	}
 	
 

@@ -13,14 +13,9 @@ public class Omega extends VariationFeature{
 	private double wBayesian;
 	private String bayesianModel;
 	private String extrapolated;
-//	" s.name, s.chromosome, s.tart, s.end, s.strand, s.allele_string , t.stable_id, o.aa_change, o.aa_enviroment, o.aa_relative_position, o.w_slr, o.slr_pval, o.w_bayesian, o.model, o.extrapolated ";
-	public Omega(String snpId, String chromosome, Integer start, Integer end, String strand, String allele, String ensemblTranscriptId, String aminoacidChange, String aminoacidEnviroment, Integer aminoacidRelativePosition, Double slr, String slrPvalue, Double bayesian, String bayesianModel, String extrapolated) {
-		this.id = snpId;
-		this.chromosome = chromosome;
-		this.start = start;
-		this.end = end;
-		this.strand = strand;
-		this.allele = allele;
+	
+	public Omega(String snpId, String chromosome, Integer start, Integer end, String strand, String sequence, String allele, String ensemblTranscriptId, String aminoacidChange, String aminoacidEnviroment, Integer aminoacidRelativePosition, Double slr, String slrPvalue, Double bayesian, String bayesianModel, String extrapolated) {
+		super(snpId, chromosome, start, end, strand, sequence, allele);
 		this.transcriptStableId = ensemblTranscriptId;
 		this.aminoacidChange = aminoacidChange;
 		this.aminoacidEnviroment = aminoacidEnviroment;
@@ -34,7 +29,7 @@ public class Omega extends VariationFeature{
 
 	@Override
 	public String toString() {
-		return id+"\t"+chromosome+":"+start+"("+strand+")"+"\t"+allele+"\t"+transcriptStableId+"\t"+aminoacidChange+"\t"+aminoacidEnviroment+"\t"+aminoacidRelativePosition+"\t"+wSlr+"\t"+slrPvalue+"\t"+wBayesian+"\t"+bayesianModel+"\t"+extrapolated;
+		return id+"\t"+getLocation()+"\t"+allele+"\t"+transcriptStableId+"\t"+aminoacidChange+"\t"+aminoacidEnviroment+"\t"+aminoacidRelativePosition+"\t"+wSlr+"\t"+slrPvalue+"\t"+wBayesian+"\t"+bayesianModel+"\t"+extrapolated;
 	}
 
 	
