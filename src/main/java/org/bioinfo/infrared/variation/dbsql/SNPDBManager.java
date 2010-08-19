@@ -17,6 +17,7 @@ public class SNPDBManager extends DBManager{
 	private static final String SELECT_FIELDS = " s.name, s.chromosome, s.start, s.end, s.strand, s.allele_string ";
 	public static final String GET_ALL_SNP_IDS = "SELECT s.name FROM snp s";
 	public static final String GET_ALL_SNPS = "SELECT * FROM snp s";
+	public static final String GET_ALL_SNPS_WITH_CONSEQUENCE_IN_TRANSCRIPTS = "SELECT * FROM snp s, snp2transcripts ";
 	public static final String GET_SNP_BY_NAME = "SELECT " + SELECT_FIELDS + " FROM snp s WHERE s.name = ? ";
 	public static final String GET_SNPS_BY_EXTERNAL_ID = "select s.* from xref x, transcript2xref tx, snp2transcript st, snp s where x.display_id= ? and x.xref_id=tx.xref_id and tx.transcript_id=st.transcript_id and st.snp_id=s.snp_id group by s.snp_id";
 	public static final String GET_SNPS_BY_CONSEQUENCE_TYPE= "select s.* from snp2transcript st, snp s, consequence_type cq where cq.consequence_type_name= ? and cq.consequence_type_id=st.consequence_type_id and st.snp_id=s.snp_id group by s.name";
