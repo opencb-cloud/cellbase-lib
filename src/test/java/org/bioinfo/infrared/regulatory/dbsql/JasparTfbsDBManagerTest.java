@@ -58,7 +58,7 @@ public class JasparTfbsDBManagerTest {
 
 	@Test
 	public void testGetSnpsByIds() {
-		System.out.println("Test 3");
+		System.out.println("\nTest 3");
 		DBConnector conn = new DBConnector();
 		JasparTfbsDBManager man = new JasparTfbsDBManager(conn);
 		try {

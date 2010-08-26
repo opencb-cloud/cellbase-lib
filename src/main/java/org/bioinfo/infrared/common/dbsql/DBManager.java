@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bioinfo.commons.utils.ListUtils;
 import org.bioinfo.db.api.PreparedQuery;
 import org.bioinfo.db.api.Query;
 import org.bioinfo.db.handler.BeanArrayListHandler;
@@ -67,7 +68,21 @@ public class DBManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<List<String>> getStringListByIds(String prepQueryStm, List<String> ids) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+	protected List<String> getStringListByIds(String prepQueryStm, List<String> ids) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(prepQueryStm);
+		List<String> stringList = new ArrayList<String>(ids.size());
+		List<String> aux;
+		for(String id: ids) {
+			prepQuery.setParams(id);
+			aux = (List<String>) prepQuery.execute(new BeanArrayListHandler(String.class));
+			stringList.add(ListUtils.toString(aux, ","));
+		}
+		prepQuery.close();
+		return stringList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected List<List<String>> getStringListListByIds(String prepQueryStm, List<String> ids) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(prepQueryStm);
 		List<List<String>> listStringList = new ArrayList<List<String>>(ids.size());
 		List<String> stringList;

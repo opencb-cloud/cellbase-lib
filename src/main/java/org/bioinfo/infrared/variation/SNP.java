@@ -1,5 +1,6 @@
 package org.bioinfo.infrared.variation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bioinfo.commons.utils.ListUtils;
@@ -11,44 +12,69 @@ import org.bioinfo.infrared.core.Transcript;
 public class SNP extends VariationFeature{
 
 	private String allele;
-	private int weight;
+	private int mapWeight;
 	private List<String> consequenceType;
-//	private List<ConsequenceType> consequenceType2;
+	private List<TranscriptConsequenceType> transcriptConsequenceTypes;
 	private String sequence;
-	
+
 	public SNP(String snpId) {
 		super(snpId);
 	}
-	
+
 	public SNP(String snpId, String chromosome, Integer start, Integer end) {
 		this(snpId, chromosome, start, end, "", "");
 	}
-	
+
 	public SNP(String snpId, String chromosome, Integer start, Integer end, String strand) {
 		this(snpId, chromosome, start, end, strand, "");
 	}
-	
+
 	public SNP(String snpId, String chromosome, Integer start, Integer end, String strand, String allele) {
-		super(snpId, chromosome, start, end, strand);
-		this.allele = allele;
+		this(snpId, chromosome, start, end, strand, allele, 1, "", "", "");
+	}
+
+	public SNP(String snpId, String chromosome, Integer start, Integer end, String strand, String allele, Integer mapWeight) {
+		this(snpId, chromosome, start, end, strand, allele, mapWeight, "", "", "");
+	}
+
+	public SNP(String snpId, String chromosome, Integer start, Integer end, String strand, String allele, Integer mapWeight, String consequenceType) {
+		this(snpId, chromosome, start, end, strand, allele, mapWeight, "", "", "");
 	}
 	
-	public SNP(String snpId, String chromosome, Integer start, Integer end, String strand, String allele, String consequence_type) {
-		super(snpId, chromosome, start, end, strand);
-		this.allele = allele;
-		this.consequenceType = StringUtils.toList(consequence_type);
+	public SNP(String snpId, String chromosome, Integer start, Integer end, String strand, String allele, Integer mapWeight, String consequenceType, String trancriptConsequenceType) {
+		this(snpId, chromosome, start, end, strand, allele, mapWeight,consequenceType, trancriptConsequenceType, "");
 	}
 	
-	public SNP(String snpId, String chromosome, Integer start, Integer end, String strand, String allele, Integer weight, String consequenceType, String sequence) {
-		this(snpId, chromosome, start, end, strand, allele);
-		this.weight = weight;
-		this.consequenceType = StringUtils.toList(consequenceType);
+	public SNP(String snpId, String chromosome, Integer start, Integer end, String strand, String allele, Integer mapWeight, String consequenceType, String trancriptConsequenceType, String sequence) {
+		super(snpId, chromosome, start, end, strand);
+		this.allele = allele;
+		this.mapWeight = mapWeight;
+		this.consequenceType = StringUtils.toList(consequenceType, ",");
+		this.transcriptConsequenceTypes = TranscriptConsequenceType.parseTranscriptConsequenceTypeList(trancriptConsequenceType);
 		this.sequence = sequence;
 	}
 	
-	public SNP(Integer id, String snpId, String chromosome, Integer start, Integer end, String strand, String allele, Integer weight, String consequence_type, String sequence) {
-		this(snpId, chromosome, start, end, strand, allele,weight,consequence_type,sequence);
+	// weird constructor
+	@Deprecated
+	public SNP(Integer id, String snpId, String chromosome, Integer start, Integer end, String strand, String allele, Integer weight, String consequenceType, String sequence) {
+		this(snpId, chromosome, start, end, strand, allele, weight, consequenceType, sequence);
 	}
+	
+//	public SNP(String snpId, String chromosome, Integer start, Integer end, String strand, String allele, String consequenceType) {
+//		super(snpId, chromosome, start, end, strand);
+//		this.allele = allele;
+//		this.consequenceType = StringUtils.toList(consequenceType, ",");
+//	}
+	
+//	public SNP(String snpId, String chromosome, Integer start, Integer end, String strand, String allele, Integer mapWeight, String consequenceType, String sequence) {
+//		super(snpId, chromosome, start, end, strand);
+//		this.allele = allele;
+//		this.weight = mapWeight;
+//		this.consequenceType = StringUtils.toList(consequenceType, ",");
+//		//		this.transcriptConsequenceType = TranscriptConsequenceType.parse(consequenceType);
+//		this.sequence = sequence;
+//	}
+	
 	
 	public FeatureList<Transcript> getTranscripts() {
 		return null;
@@ -62,7 +88,7 @@ public class SNP extends VariationFeature{
 			return chromosome+":"+start+","+end+"(-)";
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -72,12 +98,13 @@ public class SNP extends VariationFeature{
 		sb.append(end).append("\t");
 		sb.append(strand).append("\t");
 		sb.append(allele).append("\t");
-		sb.append(weight).append("\t");
+		sb.append(mapWeight).append("\t");
 		sb.append(ListUtils.toString(consequenceType, ",")).append("\t");
-		sb.append(sequence).append("\t");
+		sb.append(ListUtils.toString(transcriptConsequenceTypes, ",")).append("\t");
+		sb.append(sequence);
 		return sb.toString();
 	}
-	
+
 	/**
 	 * @return the allele
 	 */
@@ -93,17 +120,17 @@ public class SNP extends VariationFeature{
 	}
 
 	/**
-	 * @return the weight
+	 * @return the mapWeight
 	 */
-	public int getWeight() {
-		return weight;
+	public int getMapWeight() {
+		return mapWeight;
 	}
 
 	/**
-	 * @param weight the weight to set
+	 * @param mapWeight the mapWeight to set
 	 */
-	public void setWeight(int weight) {
-		this.weight = weight;
+	public void setMapWeight(int mapWeight) {
+		this.mapWeight = mapWeight;
 	}
 
 	/**
@@ -119,50 +146,87 @@ public class SNP extends VariationFeature{
 	public void setSequence(String sequence) {
 		this.sequence = sequence;
 	}
-	
+
 	/**
-	 * @return the consequenceType
+	 * @return the transcriptConsequenceTypes
 	 */
-	public List<String> getConsequence_type() {
-		return consequenceType;
+	public List<TranscriptConsequenceType> getTranscriptConsequenceTypes() {
+		return transcriptConsequenceTypes;
 	}
+
+	/**
+	 * @param transcriptConsequenceTypes the transcriptConsequenceTypes to set
+	 */
+	public void setTranscriptConsequenceTypes(List<TranscriptConsequenceType> transcriptConsequenceTypes) {
+		this.transcriptConsequenceTypes = transcriptConsequenceTypes;
+	}
+
 
 	/**
 	 * @param consequenceType the consequenceType to set
 	 */
-	public void setConsequence_type(List<String> consequence_type) {
-		this.consequenceType = consequence_type;
+	public void setConsequenceType(List<String> consequenceType) {
+		this.consequenceType = consequenceType;
 	}
 
-	class ConsequenceType {
+	/**
+	 * @return the consequenceType
+	 */
+	public List<String> getConsequenceType() {
+		return consequenceType;
+	}
+
+
+	static class TranscriptConsequenceType {
 		private String consequenceType;
 		private String ensemblTranscript;
 		private String ensemblGene;
 
-		public ConsequenceType(String consequenceType) {
+		public TranscriptConsequenceType(String consequenceType) {
 			this(consequenceType, "", "");
 		}
 
-		public ConsequenceType(String consequenceType, String ensemblTranscript, String ensemblGene) {
+		public TranscriptConsequenceType(String consequenceType, String ensemblTranscript, String ensemblGene) {
 			this.consequenceType = consequenceType;
 			this.ensemblTranscript= ensemblTranscript;
 			this.ensemblGene = ensemblGene;
 		}
-		
+
+		public static TranscriptConsequenceType parseTranscriptConsequenceType(String transcriptConsequenceType) {
+			String[] fields = transcriptConsequenceType.split(":", -1);
+			if(fields.length == 1) {
+				return new TranscriptConsequenceType(fields[0]);
+			}else {
+				if(fields.length == 3) {
+					return new TranscriptConsequenceType(fields[0], fields[1], fields[2]);
+				}else {
+					return null;
+				}
+			}
+		}
+
+		public static List<TranscriptConsequenceType> parseTranscriptConsequenceTypeList(String transcriptConsequenceType) {
+			List<TranscriptConsequenceType> consequences  = new ArrayList<SNP.TranscriptConsequenceType>(4);
+			for(String cons: transcriptConsequenceType.split(",")) {
+				consequences.add(parseTranscriptConsequenceType(cons));
+			}
+			return consequences;
+		}
+
 		@Override
 		public String toString() {
-			return consequenceType + " in " + ensemblTranscript + " (gene: " + ensemblGene +")";
+			return consequenceType + ":" + ensemblTranscript + ":" + ensemblGene +"";
 		}
-		
+
 		/**
-		 * @return the consequenceType
+		 * @return the transcriptConsequenceTypes
 		 */
 		public String getConsequenceType() {
 			return consequenceType;
 		}
 
 		/**
-		 * @param consequenceType the consequenceType to set
+		 * @param transcriptConsequenceTypes the transcriptConsequenceTypes to set
 		 */
 		public void setConsequenceType(String consequenceType) {
 			this.consequenceType = consequenceType;
@@ -195,7 +259,7 @@ public class SNP extends VariationFeature{
 		public void setEnsemblGene(String ensemblGene) {
 			this.ensemblGene = ensemblGene;
 		}
-		
+
 	}
-	
+
 }

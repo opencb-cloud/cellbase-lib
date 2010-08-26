@@ -2,10 +2,12 @@ package org.bioinfo.infrared.core;
 
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bioinfo.commons.utils.ListUtils;
 import org.bioinfo.commons.utils.StringUtils;
 import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.feature.FeatureList;
@@ -34,8 +36,9 @@ public class XRefDBManagerTest {
 	public void testGetAllIdsByDBName() {
 		System.out.println("Test - 1");
 		try {
-			List<String> names = xrefDBMan.getAllIdsByDBName("ipi");
-			System.out.println(names.size());
+//			List<String> names = xrefDBMan.getAllIdsByDBName("ipi");
+			List<DBName> names = xrefDBMan.getAllDBNames();
+			System.out.println(names.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Not yet implemented");
@@ -45,29 +48,69 @@ public class XRefDBManagerTest {
 
 	@Test
 	public void testGetByDBName() {
-		System.out.println("Test - 2");
+		System.out.println("\nTest - 2");
 		try {
-			FeatureList<XRef> xrefs = xrefDBMan.getByDBName("brca2", "uniprotkb/swissprot");
-			System.out.println(xrefs.toString());
+//			FeatureList<XRef> xrefs = xrefDBMan.getByDBNameOld("brca2", "uniprotkb/swissprot");
+			XRef xref = xrefDBMan.getByDBName("brca2", "embl");
+			if(xref != null) {
+				System.out.println(xref.toString());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Not yet implemented");
 		} 
 	}
-
+	
+	@Test
+	public void testGetListByDBName() {
+		System.out.println("\nTest - 3");
+		try {
+//			FeatureList<XRef> xrefs = xrefDBMan.getByDBNameOld("brca2", "uniprotkb/swissprot");
+			List<XRef> xrefs = xrefDBMan.getByDBName(Arrays.asList("brca2", null, "bcl2"), "embl");
+			System.out.println(ListUtils.toString(xrefs, "\n"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Not yet implemented");
+		} 
+	}
+	
 	@Test
 	public void testGetByDBNames() {
-		System.out.println("Test - 3");
+		System.out.println("\nTest - 4");
 		try {
-			HashMap<String, FeatureList<XRef>> xrefs = (HashMap<String, FeatureList<XRef>>) xrefDBMan.getByDBNames("brca2", StringUtils.stringToList(",", "uniprotkb/swissprot,ipi,go"));
-			System.out.println(xrefs.toString());
+//			FeatureList<XRef> xrefs = xrefDBMan.getByDBNameOld("brca2", "uniprotkb/swissprot");
+			XRef xref = xrefDBMan.getByDBName("brca2", Arrays.asList("", "go", "kegg", "unigene", null, "embl"));
+			System.out.println(xref.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Not yet implemented");
+		} 
+	}
+	
+	@Test
+	public void testGetListByDBNames() {
+		System.out.println("\nTest - 5");
+		try {
+//			FeatureList<XRef> xrefs = xrefDBMan.getByDBNameOld("brca2", "uniprotkb/swissprot");
+			List<XRef> xrefs = xrefDBMan.getByDBName(Arrays.asList("brca2", null, "bcl2"), Arrays.asList("", "unigene", null, "embl"));
+			System.out.println(ListUtils.toString(xrefs, "\n"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Not yet implemented");
 		} 
 	}
 
-	@Test
+//	public void testGetByDBNames() {
+//		System.out.println("Test - 3");
+//		try {
+//			HashMap<String, FeatureList<XRef>> xrefs = (HashMap<String, FeatureList<XRef>>) xrefDBMan.getByDBNames("brca2", StringUtils.stringToList(",", "uniprotkb/swissprot,ipi,go"));
+//			System.out.println(xrefs.toString());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			fail("Not yet implemented");
+//		} 
+//	}
+
 	public void testGetXRefListByIds() {
 		System.out.println("Test - 4");
 		try {
@@ -86,26 +129,36 @@ public class XRefDBManagerTest {
 		} 
 	}
 	
-	@Test
-	public void testGetIdsListByIds() {
+//	@Test
+//	public void testGetIdsListByIds() {
+//		System.out.println("Test - 5");
+//		try {
+//			List<String> ids = StringUtils.toList("p53,brca2,bcl2,ENSG00000141510", ",");
+//			List<List<String>> xrefList = xrefDBMan.getIdsByDBName(ids, "interpro");
+////			for(Map map: xrefList) {
+//			for(int i=0;i<xrefList.size(); i++) {
+//				System.out.println(ids.get(i));
+//				System.out.println("==================================");
+//				if(xrefList.get(i) != null) {
+//					System.out.println(xrefList.get(i).toString());
+//				}
+//				
+//			}
+//			
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			fail("Not yet implemented");
+//		} 
+//	}
+	
+	public void testGetAllDBNames() {
 		System.out.println("Test - 5");
 		try {
-			List<String> ids = StringUtils.toList("p53,brca2,bcl2,ENSG00000141510", ",");
-			List<List<String>> xrefList = xrefDBMan.getIdsByDBName(ids, "interpro");
-//			for(Map map: xrefList) {
-			for(int i=0;i<xrefList.size(); i++) {
-				System.out.println(ids.get(i));
-				System.out.println("==================================");
-				if(xrefList.get(i) != null) {
-					System.out.println(xrefList.get(i).toString());
-				}
-				
-			}
-			
+			System.out.println(xrefDBMan.getAllDBNames().toString());
 		} catch (Exception e) {
 			e.printStackTrace();
-			fail("Not yet implemented");
+			fail(e.toString());
 		} 
 	}
-
+	
 }

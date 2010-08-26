@@ -14,6 +14,7 @@ import org.bioinfo.infrared.common.feature.Feature;
 import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.regulatory.JasparTfbs;
 import org.bioinfo.infrared.variation.SNP;
+import org.bioinfo.infrared.variation.dbsql.SNPDBManager;
 
 public class JasparTfbsDBManager extends DBManager {
 	
@@ -92,7 +93,7 @@ public class JasparTfbsDBManager extends DBManager {
 	
 	@SuppressWarnings("unchecked")
 	public List<FeatureList<SNP>> getSnpsByIds(List<String> oregannoIds) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getListOfFeatureListByIds("select s.* from jaspar_tfbs j, snp2jaspar_tfbs s2j, snp s where j.tf_factor_name= ? and j.jaspar_tfbs_id=s2j.jaspar_tfbs_id and s2j.snp_id=s.snp_id", oregannoIds, new BeanArrayListHandler(SNP.class));
+		return getListOfFeatureListByIds("select "+SNPDBManager.SELECT_FIELDS+" from jaspar_tfbs j, snp2jaspar_tfbs s2j, snp s where j.tf_factor_name= ? and j.jaspar_tfbs_id=s2j.jaspar_tfbs_id and s2j.snp_id=s.snp_id", oregannoIds, new BeanArrayListHandler(SNP.class));
 	}
 	
 }

@@ -8,7 +8,7 @@ public class VariationUtils {
 		FeatureList<SNP> selectedSnps = new FeatureList<SNP>(10);
 		if(snps != null && snps.size()>0) {
 			for(SNP snp: snps) {
-				if(snp.getConsequence_type().contains(consequenceType)) {
+				if(snp.getTranscriptConsequenceTypes().contains(consequenceType)) {
 					selectedSnps.add(snp);
 				}
 			}

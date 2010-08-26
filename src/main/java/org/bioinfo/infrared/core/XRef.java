@@ -1,69 +1,234 @@
 package org.bioinfo.infrared.core;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.bioinfo.commons.utils.ListUtils;
 import org.bioinfo.infrared.common.feature.Feature;
 
 
 public class XRef extends Feature {
 
-//	private String id;
-	private String dbName;
-	private String displayName;
-	private String description;
-	
-	public XRef(String dbname, String displayName, String description) {
-		this("", dbname, displayName, description);
-	}
-	public XRef(String id, String dbname, String displayName, String description) {
-//		super(stableId);
+	// it picks up the id of the parent class
+	private Map<String, List<XRefItem>> xrefItems;
+	private List<String> dbNames;
+
+	//	private String dbNames;
+	//	private String displayName;
+	//	private String description;
+	//	private List<String> dbNames;
+	//	private List<String> displayName;
+	//	private List<String> description;
+
+	public XRef(String id) {
 		this.id = id;
-		this.dbName=dbname;
-		this.displayName = displayName;
-		this.description = description;
+
+		// create structures
+		xrefItems = new HashMap<String, List<XRefItem>>();
+		dbNames = new ArrayList<String>();
+	}
+	
+	public XRef(String id, String dbname) {
+		this.id = id;
+
+		// create structures
+		xrefItems = new HashMap<String, List<XRefItem>>();
+		dbNames = new ArrayList<String>();
+		// init dbname
+		addDbName(dbname);
+	}
+	
+	public XRef(String id, String dbname, String displayName) {
+		this(id, dbname, displayName, "");
+	}
+
+	public XRef(String id, String dbname, List<String> displayName) {
+		this(id, dbname, displayName, ListUtils.initialize(displayName.size(), ""));
+	}
+
+	public XRef(String id, String dbname, String displayName, String description) {
+		this(id, dbname, Arrays.asList(displayName), Arrays.asList(description));
+	}
+
+	public XRef(String id, String dbname, List<String> displayName, List<String> description) {
+		this.id = id;
+
+		// create structures
+		xrefItems = new HashMap<String, List<XRefItem>>();
+		dbNames = new ArrayList<String>();
+
+		addXRefItem(dbname, displayName, description);
+	}
+
+	public void addXRefItem(String dbname, String displayName, String description) {
+		addXRefItem(dbname, Arrays.asList(displayName), Arrays.asList(description));
+	}
+
+	public void addXRefItem(String dbname, List<String> displayName, List<String> description) {
+		addDbName(dbname);
+		if(displayName != null && description != null && displayName.size() == description.size()) {
+			for(int i=0; i<displayName.size(); i++) {
+				xrefItems.get(dbname).add(new XRefItem(displayName.get(i), description.get(i)));
+			}
+		}
+	}
+	
+	public void deleteXRefItem(String displayName) {
+		for(String dbname: dbNames) {
+			xrefItems.get(dbname).remove(displayName);
+		}
+	}
+
+	
+	public void addDbName(String dbName) {
+		if(!xrefItems.containsKey(dbName)) {
+			xrefItems.put(dbName, new ArrayList<XRef.XRefItem>());
+			dbNames.add(dbName);
+		}
+	}
+	
+	public void deleteDbNameItems(String dbName) {
+		if(xrefItems.containsKey(dbName)) {
+			xrefItems.remove(dbName);
+			dbNames.remove(dbName);
+		}
 	}
 	
 	@Override
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append(id).append("\t").append(getDbName()).append("\t").append(getDisplayName()).append("\t").append(getDescription());
-		return sb.toString();
-	}
-	
-	/**
-	 * @param displayName the displayName to set
-	 */
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
-	/**
-	 * @return the displayName
-	 */
-	public String getDisplayName() {
-		return displayName;
-	}
-	/**
-	 * @param dbName the dbName to set
-	 */
-	public void setDbName(String dbName) {
-		this.dbName = dbName;
-	}
-	/**
-	 * @return the dbName
-	 */
-	public String getDbName() {
-		return dbName;
-	}
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
+		sb.append(id);
+		if(dbNames.size()>0) {
+			sb.append("\t");
+		}
+		for(String dbname: dbNames) {
+			sb.append(dbname).append(":");
+			for(XRefItem xrefItem: xrefItems.get(dbname)) {
+				sb.append(xrefItem.getDisplayName()).append(",");
+			}
+			if(sb.lastIndexOf(",") != -1) {
+				sb.deleteCharAt(sb.length()-1);
+			}
+			sb.append("\t");
+		}
+		return sb.toString().trim();
 	}
 
-	
+	/**
+	 * @param xrefItems the xrefItems to set
+	 */
+	public void setXrefItems(Map<String, List<XRefItem>> xrefItems) {
+		this.xrefItems = xrefItems;
+	}
+
+	/**
+	 * @return the xrefItems
+	 */
+	public Map<String, List<XRefItem>> getXrefItems() {
+		return xrefItems;
+	}
+
+	/**
+	 * @return the dbNames
+	 */
+	public List<String> getDbNames() {
+		return dbNames;
+	}
+
+
+	class XRefItem {
+
+		private String displayName;
+		private String description;
+
+		public XRefItem(String displayName) {
+			this(displayName, "");
+		}
+
+		public XRefItem(String displayName, String description) {
+			this.displayName = displayName;
+			this.description = description;
+		}
+
+		@Override
+		public String toString(){
+			return displayName+"\t"+description;
+		}
+
+		/**
+		 * @return the displayName
+		 */
+		public String getDisplayName() {
+			return displayName;
+		}
+
+		/**
+		 * @param displayName the displayName to set
+		 */
+		public void setDisplayName(String displayName) {
+			this.displayName = displayName;
+		}
+
+		/**
+		 * @return the description
+		 */
+		public String getDescription() {
+			return description;
+		}
+
+		/**
+		 * @param description the description to set
+		 */
+		public void setDescription(String description) {
+			this.description = description;
+		}
+	}
+
+
+
+	//	/**
+	//	 * @param displayName the displayName to set
+	//	 */
+	//	public void setDisplayName(String displayName) {
+	//		this.displayName = displayName;
+	//	}
+	//	
+	//	/**
+	//	 * @return the displayName
+	//	 */
+	//	public String getDisplayName() {
+	//		return displayName;
+	//	}
+	//	
+	//	/**
+	//	 * @param dbNames the dbNames to set
+	//	 */
+	//	public void setDbName(String dbNames) {.append("\t").
+	//		this.dbName = dbNames;
+	//	}
+	//	
+	//	/**
+	//	 * @return the dbNames
+	//	 */
+	//	public String getDbName() {
+	//		return dbNames;
+	//	}
+	//	
+	//	/**
+	//	 * @param description the description to set
+	//	 */
+	//	public void setDescription(String description) {
+	//		this.description = description;
+	//	}
+	//	
+	//	/**
+	//	 * @return the description
+	//	 */
+	//	public String getDescription() {
+	//		return description;
+	//	}
+
 }

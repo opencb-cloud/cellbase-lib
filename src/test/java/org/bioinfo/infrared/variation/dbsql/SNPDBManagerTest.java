@@ -2,14 +2,12 @@ package org.bioinfo.infrared.variation.dbsql;
 
 import static org.junit.Assert.fail;
 
-import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
-import org.bioinfo.commons.utils.StringUtils;
 import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.variation.SNP;
-import org.bioinfo.infrared.variation.dbsql.SNPDBManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,9 +21,9 @@ public class SNPDBManagerTest {
 	public void setUp() throws Exception {
 		ros = new DBConnector();
 		sf = new SNPDBManager(ros);
+		System.out.println("\nSNPDBManagerTest");
+		System.out.println("=====================================");
 	}
-
-	
 
 	@After
 	public void tearDown() throws Exception {
@@ -39,15 +37,10 @@ public class SNPDBManagerTest {
 			snps = sf.getAllNames();
 			System.out.println(snps.size());
 			System.out.println(snps.get(0).toString());
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		}
+			fail(e.toString());
+		} 
 	}
 	
 	@Test
@@ -55,18 +48,13 @@ public class SNPDBManagerTest {
 		System.out.println("Test - 1.2");
 		List<String> snps;
 		try {
-			snps = sf.getAllNamesByLocation("1",1,1000000);
+			snps = sf.getAllNamesByRegion("1",1,5000000);
 			System.out.println(snps.size());
 			System.out.println(snps.get(0).toString());
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		}
+			fail(e.toString());
+		} 
 	}
 	
 	public void testAllSNPFactory() {
@@ -76,43 +64,25 @@ public class SNPDBManagerTest {
 			snps = sf.getAll();
 			System.out.println(snps.size());
 			System.out.println(snps.get(0).toString());
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			fail(e.toString());
+		} 
 		
 	}
 	
 	@Test
-	public void testAllSNPByLocationFactory() {
+	public void testAllSNPByLocation() {
 		System.out.println("Test - 3");
 		FeatureList<SNP> snps;
 		try {
-			snps = sf.getAllByLocation("1", 1, 1000000);
+			snps = sf.getAllByRegion("1", 2, 25000000);
 			System.out.println(snps.size());
 			System.out.println(snps.get(0).toString());
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			fail(e.toString());
+		} 
 	}
 	
 	@Test
@@ -120,24 +90,15 @@ public class SNPDBManagerTest {
 		System.out.println("Test - 4");
 		SNP snp;
 		try {
-			snp = sf.getByName("rs11644186");
+			snp = sf.getByName("rs9959"); //rs11644186
 			if(snp != null) {
 				System.out.println(snp);
 				System.out.println(snp.toString());
 			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			fail(e.toString());
+		} 
 	}
 	
 	@Test
@@ -145,16 +106,13 @@ public class SNPDBManagerTest {
 		System.out.println("Test - 5");
 		FeatureList<SNP> snpList;
 		try {
-			List<String> snps = StringUtils.stringToList(" rs7342690 rs11644186 rs7342797");
-			snpList = sf.getSNPListByIds(snps);
+			List<String> snps = Arrays.asList("rs7342690", "rs11644186", "rs7342797");
+			snpList = sf.getByName(snps);
 			System.out.println(snpList.toString());
 			System.out.println(snpList.size());
-		} catch (SQLException e) {
-			e.printStackTrace();
-			fail();
 		} catch (Exception e) {
 			e.printStackTrace();
-			fail();
+			fail(e.toString());
 		} 
 	}
 	
@@ -163,7 +121,7 @@ public class SNPDBManagerTest {
 		System.out.println("Test - 6");
 		FeatureList<SNP> snpList;
 		try {
-			snpList = sf.getAllByConsequenceType("SPLICE_SITE");
+			snpList = sf.getAllByConsequenceType("SYNONYMOUS_CODING");
 			System.out.println(snpList.toString());
 			System.out.println(""+snpList.size());
 		} catch (Exception e) {
@@ -176,26 +134,27 @@ public class SNPDBManagerTest {
 		System.out.println("Test - 7");
 		FeatureList<SNP> snpList;
 		try {
-			snpList = sf.getAllFilteredByConsequenceType(StringUtils.stringToList("rs999980 rs7342690 rs9999097 rs11644186 rs7342797"), "NON_SYNONYMOUS_CODING");
+			snpList = sf.getAllFilteredByConsequenceType(Arrays.asList("rs999980", "rs7342690", "rs9999097", "rs11644186", "rs7342797"), "NON_SYNONYMOUS_CODING");
 			System.out.println(snpList.toString());
 			System.out.println(""+snpList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+			fail(e.toString());
+		} 
 	}
-
+	
 	@Test
 	public void testSNPListByExternalId() {
 		System.out.println("Test - 8");
 		FeatureList<SNP> snpList;
 		try {
-			snpList = sf.getSNPListByExternalId("ENSG00000039068");
+			snpList = sf.getByExternalId("ENSG00000039068");
 			System.out.println(""+snpList.size());
 			System.out.println(snpList.toString());
-
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+			fail(e.toString());
+		} 
 	}
 	
 	@Test
@@ -204,11 +163,12 @@ public class SNPDBManagerTest {
 		List<String> snpList;
 		try {
 			snpList = sf.getAllNamesByConsequenceType("NON_SYNONYMOUS_CODING");
-			System.out.println(snpList.toString());
+//			System.out.println(snpList.toString());
 			System.out.println(""+snpList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+			fail(e.toString());
+		} 
 	}
 	
 	public void testWriteAllFilteredByConsequenceType() {
@@ -217,7 +177,8 @@ public class SNPDBManagerTest {
 			sf.writeAllFilteredByConsequenceType("DOWNSTREAM", "/tmp/downstream_test10.txt");
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+			fail(e.toString());
+		} 
 	}
 	
 }
