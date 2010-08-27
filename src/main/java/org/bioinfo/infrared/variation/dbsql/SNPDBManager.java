@@ -19,7 +19,7 @@ public class SNPDBManager extends DBManager {
 	public static final String GET_ALL_SNP_IDS = "SELECT s.name FROM snp s";
 	public static final String GET_ALL_SNPS = "SELECT " + SELECT_FIELDS + " FROM snp s";
 	public static final String GET_ALL_SNPS_WITH_CONSEQUENCE_IN_TRANSCRIPTS = "SELECT * FROM snp s, snp2transcripts ";
-	public static final String GET_SNP_BY_NAME = "SELECT " + SELECT_FIELDS + " FROM snp s WHERE s.name = ? ";
+	public static final String GET_SNP_BY_NAME = "SELECT " + SELECT_FIELDS + " FROM snp s WHERE s.name = ? group by s.name";
 	public static final String GET_SNPS_BY_EXTERNAL_ID = "select "+SELECT_FIELDS+" from xref x, transcript2xref tx, snp2transcript st, snp s where x.display_id= ? and x.xref_id=tx.xref_id and tx.transcript_id=st.transcript_id and st.snp_id=s.snp_id group by s.snp_id";
 	public static final String GET_SNPS_BY_CONSEQUENCE_TYPE = "select "+SELECT_FIELDS+" from snp2transcript st, snp s, consequence_type cq where cq.consequence_type_name= ? and cq.consequence_type_id=st.consequence_type_id and st.snp_id=s.snp_id group by s.name";
 	public static final String GET_SNPS_FILTERED_BY_CONSEQUENCE_TYPE= "select "+SELECT_FIELDS+" from snp2transcript st, snp s, consequence_type cq where s.name = ? AND cq.consequence_type_id=st.consequence_type_id and st.snp_id=s.snp_id AND cq.consequence_type_name = '";
@@ -49,9 +49,8 @@ public class SNPDBManager extends DBManager {
 		return getStringList(GET_ALL_SNP_IDS + " where s.consequence_type = '"+ consequence +"' ");
 	}	
 	
-	@SuppressWarnings("unchecked")
 	public List<String> getAllConsequenceTypes() throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureList("select consequence_type_name from consequence_type", new BeanArrayListHandler(String.class));
+		return getStringList("select consequence_type_name from consequence_type");
 	}
 	
 	@Deprecated
@@ -67,7 +66,7 @@ public class SNPDBManager extends DBManager {
 	
 	@SuppressWarnings("unchecked")
 	public FeatureList<SNP> getByName(List<String> snpIds) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureListByIds("SELECT "+SELECT_FIELDS+" FROM snp s WHERE s.name = ? ", snpIds, new BeanHandler(SNP.class));
+		return getFeatureListByIds(GET_SNP_BY_NAME, snpIds, new BeanHandler(SNP.class));
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -21,7 +21,7 @@ public class VariationFrequencyDBManager extends DBManager {
 	
 	@SuppressWarnings("unchecked")
 	public FeatureList<VariationFrequency> getBySnpIds(List<String> ids) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureListByIds("select sf.name, sf.chromosome, sf.start, sf.end, sf.strand, sf.reference_allele, sf.other_allele, sf.allele_frequencies, sf.reference_allele_homozygotes, sf.allele_heterozygote, sf.other_allele_homozygote, sf.genotype_frequencies from snp_frequencies sf where sf.name = ? ", ids, new BeanHandler(VariationFrequency.class));
+		return getFeatureListByIds("select sf.name, sf.chromosome, sf.start, sf.end, sf.strand, sf.reference_allele, sf.other_allele, sf.allele_frequencies, sf.reference_allele_homozygotes, sf.allele_heterozygote, sf.other_allele_homozygote, sf.genotype_frequencies from snp_frequencies sf where sf.name = ? group by sf.name", ids, new BeanHandler(VariationFrequency.class));
 	}
 	
 	public FeatureList<VariationFrequency> getBySnpIds(List<String> ids, double maf) {
