@@ -12,24 +12,26 @@ import org.bioinfo.db.handler.BeanArrayListHandler;
 import org.bioinfo.db.handler.MatrixHandler;
 import org.bioinfo.infrared.common.dbsql.DBConnector;
 import org.bioinfo.infrared.common.dbsql.DBManager;
-import org.bioinfo.infrared.common.feature.Feature;
 import org.bioinfo.infrared.common.feature.FeatureList;
 import org.bioinfo.infrared.core.DBName;
 import org.bioinfo.infrared.core.XRef;
 
 public class XRefDBManager extends DBManager {
 
-	public static final String GET_ALL_DBNAMES = "select dbname_id, dbname, display_label, dbname_type from dbname";
-	public static final String PREP_QUERY = "select h2.display_id from xref h1, xref h2 where h1.display_id = ? and h1.stable_id = h2.stable_id and h2.dbname = ? group by h2.display_id"; 
-	public static final String GET_ALL_IDS_BY_DBNAME = "select x.display_id from xref x, dbname db where db.dbname = ? and db.dbname_id=x.dbname_id";
+	public static final String GET_ALL_DBNAMES = "select dbname_id, dbname, display_label, dbname_type from dbname;";
+	public static final String GET_ALL_DBNAMES_BY_TYPE = "select dbname_id, dbname, display_label, dbname_type from dbname where dbname_type= ? ;";
+	public static final String PREP_QUERY = "select h2.display_id from xref h1, xref h2 where h1.display_id = ? and h1.stable_id = h2.stable_id and h2.dbname = ? group by h2.display_id;"; 
+	public static final String GET_ALL_IDS_BY_DBNAME = "select x.display_id from xref x, dbname db where db.dbname = ? and db.dbname_id=x.dbname_id;";
 	public static final String GET_ALL_IDS_BY_IDS = "select x2.display_id from xref x1, transcript2xref tx1, xref x2, transcript2xref tx2, dbname db where x1.display_id= ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname= '";
 	public static final String GET_TRANSLATION = "select db.dbname, x2.display_id, x2.description from xref x1, transcript2xref tx1, xref x2, transcript2xref tx2, dbname db where x1.display_id= ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname= ? group by x2.display_id;";
-
+	public static final String GET_ALL_IDENTIFIERS = "select db.dbname, x2.display_id, x2.description from xref x1, transcript2xref tx1, xref x2, transcript2xref tx2, dbname db where x1.display_id= ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and (db.dbname_type='Identifier' or db.dbname_type='Microarray Probeset') group by x2.display_id;";
+	public static final String GET_ALL_FUNCTIONAL_ANNOTATIONS = "select db.dbname, x2.display_id, x2.description from xref x1, transcript2xref tx1, xref x2, transcript2xref tx2, dbname db where x1.display_id= ? and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.dbname_type=('Pathway' or 'Functional Annotation') group by x2.display_id;";
 
 	public XRefDBManager(DBConnector dBConnector) {
 		super(dBConnector);
 	}
 
+	// Returns all possible DB names
 	@SuppressWarnings("unchecked")
 	public List<DBName> getAllDBNames() throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		List<DBName> dbnames = new ArrayList<DBName>();
@@ -38,7 +40,19 @@ public class XRefDBManager extends DBManager {
 		query.close();
 		return dbnames;
 	}
-
+	
+	// Returns all possible DB names by type
+	@SuppressWarnings("unchecked")
+	public List<DBName> getAllDBNamesByType(String type) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		List<DBName> dbnames = new ArrayList<DBName>();
+		PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_ALL_DBNAMES_BY_TYPE);
+		prepQuery.setParams(type);
+		dbnames = (List<DBName>)prepQuery.execute(new BeanArrayListHandler(DBName.class));
+		prepQuery.close();
+		return dbnames;
+	}
+	
+	// Returns an XRef object according to a single ID and DB (used in FeatureId.java)
 	public XRef getByDBName(String id, String dbname) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		if(id != null && !id.equals("")) {
 			if(dbname != null && !dbname.equals("")) {
@@ -59,6 +73,7 @@ public class XRefDBManager extends DBManager {
 		}
 	}
 
+	// Returns a list of XRef objects according to a list of IDs and single DB (used in FeatureId.java)
 	public List<XRef> getByDBName(List<String> ids, String dbname) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		if(ids != null) {
 			List<XRef> xrefs = new ArrayList<XRef>(ids.size());
@@ -90,7 +105,8 @@ public class XRefDBManager extends DBManager {
 			return null;
 		}
 	}
-
+	
+	// Returns an XRef object according to a single ID in the specified list of DDBB (used in FeatureId.java)
 	public XRef getByDBName(String id, List<String> dbnames) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		if(id != null && !id.equals("")) {
 			PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_TRANSLATION);
@@ -115,6 +131,7 @@ public class XRefDBManager extends DBManager {
 		}
 	}
 
+	// Returns a list of XRef objects according to a list of ID in the specified list of DDBB (used in FeatureId.java)
 	public List<XRef> getByDBName(List<String> ids, List<String> dbnames) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		if(ids != null) {
 			List<XRef> xrefs = new ArrayList<XRef>(ids.size());
@@ -147,6 +164,89 @@ public class XRefDBManager extends DBManager {
 		}
 	}
 
+	
+	// Returns a list of XRef objects with all the possible identifiers for every single ID in a list (used in FeatureId.java)
+	public List<XRef> getAllIdentifiersByIds(List<String> ids) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+//		if(ids != null) {
+//			List<XRef> xrefs = new ArrayList<XRef>(ids.size());
+//			XRef xref;
+//			PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_ALL_IDENTIFIERS);
+//			Object[][] result;
+//			for(String id: ids) {
+//				if(id != null && !id.equals("")) {
+//					prepQuery.setParams(id);
+//					result = (Object[][])prepQuery.execute(new MatrixHandler());
+//					xref = new XRef(id);
+//					for(int i=0; i<result.length; i++) {
+//						xref.addXRefItem(result[i][0].toString(), result[i][1].toString(), result[i][2].toString());
+//					}
+//					xrefs.add(xref);
+//				}else {
+//					xrefs.add(null);
+//				}
+//			}
+//			prepQuery.close();
+//			return xrefs;
+//		}else {
+//			return null;
+//		}
+		return getAllXRefsByPrepQuery(ids, GET_ALL_IDENTIFIERS);
+	}
+	
+	
+	public List<XRef> getAllFunctionalAnnotByIds(List<String> ids) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+//		if(ids != null) {
+//			List<XRef> xrefs = new ArrayList<XRef>(ids.size());
+//			XRef xref;
+//			PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_ALL_FUNCTIONAL_ANNOTATIONS);
+//			Object[][] result;
+//			for(String id: ids) {
+//				if(id != null && !id.equals("")) {
+//					prepQuery.setParams(id);
+//					result = (Object[][])prepQuery.execute(new MatrixHandler());
+//					xref = new XRef(id);
+//					for(int i=0; i<result.length; i++) {
+//						xref.addXRefItem(result[i][0].toString(), result[i][1].toString(), result[i][2].toString());
+//					}
+//					xrefs.add(xref);
+//				}else {
+//					xrefs.add(null);
+//				}
+//			}
+//			prepQuery.close();
+//			return xrefs;
+//		}else {
+//			return null;
+//		}
+		return getAllXRefsByPrepQuery(ids, GET_ALL_FUNCTIONAL_ANNOTATIONS);
+	}
+	
+	private List<XRef> getAllXRefsByPrepQuery(List<String> ids, String prepQuerySql) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		if(ids != null) {
+			List<XRef> xrefs = new ArrayList<XRef>(ids.size());
+			XRef xref;
+			PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(prepQuerySql);
+			Object[][] result;
+			for(String id: ids) {
+				if(id != null && !id.equals("")) {
+					prepQuery.setParams(id);
+					result = (Object[][])prepQuery.execute(new MatrixHandler());
+					xref = new XRef(id);
+					for(int i=0; i<result.length; i++) {
+						xref.addXRefItem(result[i][0].toString(), result[i][1].toString(), result[i][2].toString());
+					}
+					xrefs.add(xref);
+				}else {
+					xrefs.add(null);
+				}
+			}
+			prepQuery.close();
+			return xrefs;
+		}else {
+			return null;
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Deprecated
 	public FeatureList<XRef> getByDBNameOld(String id, String dbname) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
