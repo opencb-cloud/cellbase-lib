@@ -81,7 +81,7 @@ public class MiRNATargetDBManagerTest {
 	@Test
 	public void testGetAllByLocation() {
 		try {
-			FeatureList<MiRnaTarget> mitl = mitdbf.getAllByLocation("19", 60723020);
+			FeatureList<MiRnaTarget> mitl = mitdbf.getAllByPosition("19", 60723020);
 			header("testGetAllByLocation");
 			System.out.println(mitl.toString());
 		} catch (Exception e) {
@@ -113,7 +113,7 @@ public class MiRNATargetDBManagerTest {
 	@Test
 	public void testGetAllLocation() {
 		try {
-			FeatureList<MiRnaTarget> mitl = mitdbf.getAllByLocation("2", 120824264);
+			FeatureList<MiRnaTarget> mitl = mitdbf.getAllByPosition("2", 120824264);
 			header("testGetAllLocation");
 			System.out.println(mitl.toString());
 		} catch (Exception e) {

@@ -56,7 +56,7 @@ public class TriplexDBManagerTest {
 	@Test
 	public void testGetAllByLocation() {
 		try {
-			FeatureList<Triplex> tl = tdbf.getAllByLocation("5", 148706475);
+			FeatureList<Triplex> tl = tdbf.getAllByPosition("5", 148706475);
 			header("testGetAllByLocation");
 			System.out.println(tl.toString());
 		} catch (Exception e) {

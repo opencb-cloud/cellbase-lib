@@ -34,7 +34,7 @@ public class ConservedDBManagerTest {
 	@Test
 	public void testGetAllByLocation() {
 		try {
-			FeatureList<ConservedRegion> cl = cdbf.getAllByLocation("19", 63781247);
+			FeatureList<ConservedRegion> cl = cdbf.getAllByPosition("19", 63781247);
 			header("testGetAllByLocation");
 			System.out.println(cl.toString());
 		} catch (Exception e) {

@@ -16,7 +16,7 @@ public class TriplexDBManager extends DBManager {
 	private static final String SELECT_FIELDS = " t.triplex_id, g.stable_id, t.relative_start, t.relative_end, t.chromosome, t.absolute_start, t.absolute_end, t.strand, t.length, t.sequence ";
 	public static final String GET_BY_SNP_ID = "select "+SELECT_FIELDS+" from snp s, snp2triplex s2t, triplex t, gene g where s.name = ? and s.snp_id=s2t.snp_id and s2t.triplex_id=t.triplex_id and t.gene_id=g.gene_id";
 	public static final String GET_ALL_BY_GENE_ID = "select "+SELECT_FIELDS+" from triplex t, gene g where g.stable_id = ? and g.gene_id=t.gene_id ";
-	public static final String GET_ALL_BY_LOCATION = "select "+SELECT_FIELDS+" from triplex t, gene g where t.gene_id=g.gene_id ";
+	public static final String GET_ALL_BY_POSITION = "select "+SELECT_FIELDS+" from triplex t, gene g where t.gene_id=g.gene_id ";
 	
 	public TriplexDBManager(DBConnector dBConnector) {
 		super(dBConnector);
@@ -49,13 +49,13 @@ public class TriplexDBManager extends DBManager {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public FeatureList<Triplex> getAllByLocation(String chromosome, int position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureList(GET_ALL_BY_LOCATION+" and t.chromosome = '"+chromosome+"' and t.absolute_start <= "+position +" and t.absolute_end >= " + position, new BeanArrayListHandler(Triplex.class));
+	public FeatureList<Triplex> getAllByPosition(String chromosome, int position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		return getFeatureList(GET_ALL_BY_POSITION+" and t.chromosome = '"+chromosome+"' and t.absolute_start <= "+position +" and t.absolute_end >= " + position, new BeanArrayListHandler(Triplex.class));
 	}
 
 	@SuppressWarnings("unchecked")
 	public FeatureList<Triplex> getAllByRegion(String chromosome, int start, int end) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureList(GET_ALL_BY_LOCATION+" and t.chromosome = '"+chromosome+"' and t.absolute_start <= "+ end +" and t.absolute_end >= " + start , new BeanArrayListHandler(Triplex.class));
+		return getFeatureList(GET_ALL_BY_POSITION+" and t.chromosome = '"+chromosome+"' and t.absolute_start <= "+ end +" and t.absolute_end >= " + start , new BeanArrayListHandler(Triplex.class));
 	}
 	
 	public void writeAllWithSnps(String outfile) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException, IOException {

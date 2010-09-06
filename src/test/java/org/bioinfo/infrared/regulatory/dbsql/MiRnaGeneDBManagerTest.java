@@ -15,7 +15,7 @@ public class MiRnaGeneDBManagerTest {
 		DBConnector conn = new DBConnector();
 		MiRnaGeneDBManager man = new MiRnaGeneDBManager(conn);
 		try {
-			System.out.println(man.getAllByLocation("1", 23456));
+			System.out.println(man.getAllByPosition("1", 23456));
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("testGetAllByMAFDoubleDouble: "+e.toString());

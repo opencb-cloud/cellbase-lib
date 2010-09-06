@@ -54,7 +54,7 @@ public class JasparTfbsDBManager extends DBManager {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public FeatureList<JasparTfbs> getAllByLocation(String chromosome, int position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+	public FeatureList<JasparTfbs> getAllByPosition(String chromosome, int position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 //		return getFeatureList("select "+SELECT_FIELDS+" from jaspar_tfbs j, gene g where j.gene_id=g.gene_id and j.chromosome= '"+chromosome+"' and "+position+">=j.absolute_start and "+position+"<=j.absolute_end ", new BeanArrayListHandler(JasparTfbs.class));
 		return getFeatureList("select "+SELECT_FIELDS+" from feature_map_jaspar_tfbs fm, jaspar_tfbs j, gene g where fm.chromosome= '"+chromosome+"' and fm.position="+position+" and fm.id=j.jaspar_tfbs_id and j.gene_id=g.gene_id", new BeanArrayListHandler(JasparTfbs.class));
 	}

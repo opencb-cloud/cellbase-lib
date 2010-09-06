@@ -49,7 +49,7 @@ public class MiRnaTargetDBManager extends DBManager {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public FeatureList<MiRnaTarget> getAllByLocation(String chromosome, int position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+	public FeatureList<MiRnaTarget> getAllByPosition(String chromosome, int position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getFeatureList(GET_ALL+" and mt.chromosome = '"+chromosome+"' and mt.start <= "+position +" and mt.end >= " + position, new BeanArrayListHandler(MiRnaTarget.class));
 	}
 	

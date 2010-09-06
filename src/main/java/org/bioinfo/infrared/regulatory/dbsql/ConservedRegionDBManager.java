@@ -33,7 +33,7 @@ public class ConservedRegionDBManager extends DBManager {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public FeatureList<ConservedRegion> getAllByLocation(String chromosome, int position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+	public FeatureList<ConservedRegion> getAllByPosition(String chromosome, int position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getFeatureList(GET_ALL_BY+" chromosome = '"+chromosome+"' and start <= "+position +" and end >= " + position, new BeanArrayListHandler(ConservedRegion.class));
 	}
 	
