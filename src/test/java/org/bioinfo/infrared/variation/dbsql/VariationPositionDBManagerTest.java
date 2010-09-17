@@ -17,12 +17,12 @@ import org.junit.Test;
 public class VariationPositionDBManagerTest {
 
 	DBConnector infDBConnector;
-	VariationPositionDBManager vf;
+	TranscriptConsequenceTypeDBManager vf;
 	
 	@Before
 	public void setUp() throws Exception {
 		infDBConnector = new DBConnector();
-		vf = new VariationPositionDBManager(infDBConnector);
+		vf = new TranscriptConsequenceTypeDBManager(infDBConnector);
 		System.out.println("VariationPositionDBManagerTest");
 		System.out.println("===============================================");
 	}

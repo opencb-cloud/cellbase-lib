@@ -20,7 +20,7 @@ public class MiRnaGeneDBManager extends DBManager {
 	public MiRnaGeneDBManager(DBConnector infraredDBConnector) {
 		super(infraredDBConnector);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public FeatureList<MiRnaGene> getAllByPosition(String chromosome, int position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		//t.chromosome=19 and t.start<=56887859 and t.end>=56887859";
@@ -31,7 +31,7 @@ public class MiRnaGeneDBManager extends DBManager {
 	public List<FeatureList<MiRnaGene>> getAllBySnpIds(List<String> snpIds) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getListOfFeatureListByIds(GET_ALL_BY_SNP, snpIds, new BeanArrayListHandler(MiRnaGene.class));
 	}
-	
+
 	public void writeAllWithSnps(String outfile) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException, IOException {
 		writeFeatureList("select s.name as 'SNP name', concat(s.chromosome,':',s.start,'(',s.strand,')') as 'SNP Location', mg.accession, mg.id, mg.status, mg.sequence from snp2mirna_gene s2m, mirna_gene mg, snp s where mg.mirna_gene_id=s2m.mirna_gene_id and s2m.snp_id=s.snp_id", new File(outfile));
 	}

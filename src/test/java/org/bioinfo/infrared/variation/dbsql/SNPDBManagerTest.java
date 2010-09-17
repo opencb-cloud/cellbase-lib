@@ -107,7 +107,7 @@ public class SNPDBManagerTest {
 		FeatureList<SNP> snpList;
 		try {
 			List<String> snps = Arrays.asList("rs7342690", "rs11644186", "rs7342797");
-			snpList = sf.getByName(snps);
+			snpList = sf.getByNames(snps);
 			System.out.println(snpList.toString());
 			System.out.println(snpList.size());
 		} catch (Exception e) {
