@@ -5,9 +5,10 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bioinfo.infrared.common.dbsql.DBConnector;
-import org.bioinfo.infrared.common.feature.FeatureList;
-import org.bioinfo.infrared.variation.AnnotatedSnps;
+import org.bioinfo.infrared.common.DBConnector;
+import org.bioinfo.infrared.core.common.FeatureList;
+import org.bioinfo.infrared.core.variation.AnnotatedSnps;
+import org.bioinfo.infrared.variation.AnnotatedSnpsDBManager;
 import org.junit.Test;
 
 public class AnnotatedSnpsDBManagerTest {

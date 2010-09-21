@@ -3,11 +3,11 @@ package org.bioinfo.infrared.core.dbsql;
 
 import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.util.List;
 
-import org.bioinfo.infrared.common.dbsql.DBConnector;
-import org.bioinfo.infrared.core.Chromosome;
+import org.bioinfo.infrared.common.DBConnector;
+import org.bioinfo.infrared.core.KaryotypeDBManager;
+import org.bioinfo.infrared.core.feature.Chromosome;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

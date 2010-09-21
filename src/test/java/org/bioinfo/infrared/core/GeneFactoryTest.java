@@ -6,9 +6,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.bioinfo.commons.utils.StringUtils;
-import org.bioinfo.infrared.common.dbsql.DBConnector;
-import org.bioinfo.infrared.common.feature.FeatureList;
-import org.bioinfo.infrared.core.dbsql.GeneDBManager;
+import org.bioinfo.infrared.common.DBConnector;
+import org.bioinfo.infrared.core.GeneDBManager;
+import org.bioinfo.infrared.core.common.FeatureList;
+import org.bioinfo.infrared.core.feature.Gene;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,12 +82,12 @@ public class GeneFactoryTest {
 			List<String> gs = StringUtils.toList("BCL2 BRCA2");
 			List<FeatureList<Gene>> genes = gf1.getAllByExternalIds(gs);
 			System.out.println(genes.toString());
-			System.out.println("Test 4 - GeneListFactory");
-			System.out.println(genes.get(0).get(0).getTranscripts().toString());
+//			System.out.println("Test 4 - GeneListFactory");
+//			System.out.println(genes.get(0).get(0).getTranscripts().toString());
 //			System.out.println("Test 5 - GeneListFactory");
 //			System.out.println(genes.get(0).get(0).getTranscripts().get(0).getExons().toString());
-			System.out.println("Test 6 - GeneListFactory");
-			System.out.println(genes.get(0).get(0).getExons().toString());
+//			System.out.println("Test 6 - GeneListFactory");
+//			System.out.println(genes.get(0).get(0).getExons().toString());
 
 		} catch (SQLException e) {
 			System.out.println(e.toString());
@@ -235,7 +236,7 @@ public class GeneFactoryTest {
 			System.out.println(genes.size());
 			System.out.println(genes.get(0).toString());
 //			System.out.println(genes.getFeaturesIds().toString());
-			System.out.println(genes.get(0).getTranscripts().toString());
+//			System.out.println(genes.get(0).getTranscripts().toString());
 		} catch (SQLException e) {
 			System.out.println(e.toString());
 			fail("Not yet implemented "+e.toString());

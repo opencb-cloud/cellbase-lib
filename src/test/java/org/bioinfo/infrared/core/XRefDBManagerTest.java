@@ -3,15 +3,16 @@ package org.bioinfo.infrared.core;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.bioinfo.commons.utils.ListUtils;
 import org.bioinfo.commons.utils.StringUtils;
-import org.bioinfo.infrared.common.dbsql.DBConnector;
-import org.bioinfo.infrared.common.feature.FeatureList;
-import org.bioinfo.infrared.core.dbsql.XRefDBManager;
+import org.bioinfo.infrared.common.DBConnector;
+import org.bioinfo.infrared.core.XRefDBManager;
+import org.bioinfo.infrared.core.common.FeatureList;
+import org.bioinfo.infrared.core.feature.DBName;
+import org.bioinfo.infrared.core.feature.XRef;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

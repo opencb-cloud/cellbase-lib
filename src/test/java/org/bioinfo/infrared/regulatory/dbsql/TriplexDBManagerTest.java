@@ -2,8 +2,8 @@ package org.bioinfo.infrared.regulatory.dbsql;
 
 import static org.junit.Assert.fail;
 
-import org.bioinfo.infrared.common.dbsql.DBConnector;
-import org.bioinfo.infrared.variation.dbsql.AlleleFrequencyDBManager;
+import org.bioinfo.infrared.common.DBConnector;
+import org.bioinfo.infrared.regulatory.TriplexDBManager;
 import org.junit.Test;
 
 public class TriplexDBManagerTest {

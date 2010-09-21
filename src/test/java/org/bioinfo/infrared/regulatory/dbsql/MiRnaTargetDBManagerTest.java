@@ -1,8 +1,9 @@
 package org.bioinfo.infrared.regulatory.dbsql;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
-import org.bioinfo.infrared.common.dbsql.DBConnector;
+import org.bioinfo.infrared.common.DBConnector;
+import org.bioinfo.infrared.regulatory.MiRnaTargetDBManager;
 import org.junit.Test;
 
 public class MiRnaTargetDBManagerTest {

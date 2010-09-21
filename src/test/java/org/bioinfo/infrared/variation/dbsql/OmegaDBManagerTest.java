@@ -2,10 +2,10 @@ package org.bioinfo.infrared.variation.dbsql;
 
 import static org.junit.Assert.fail;
 
-import org.bioinfo.infrared.common.dbsql.DBConnector;
-import org.bioinfo.infrared.common.feature.FeatureList;
-import org.bioinfo.infrared.variation.Omega;
-import org.bioinfo.infrared.variation.dbsql.OmegaDBManager;
+import org.bioinfo.infrared.common.DBConnector;
+import org.bioinfo.infrared.core.common.FeatureList;
+import org.bioinfo.infrared.core.variation.Omega;
+import org.bioinfo.infrared.variation.OmegaDBManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

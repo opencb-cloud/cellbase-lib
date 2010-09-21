@@ -5,10 +5,10 @@ import static org.junit.Assert.fail;
 import java.sql.SQLException;
 
 import org.bioinfo.commons.utils.StringUtils;
-import org.bioinfo.infrared.common.dbsql.DBConnector;
-import org.bioinfo.infrared.common.feature.FeatureList;
-import org.bioinfo.infrared.funcannot.AnnotationItem;
-import org.bioinfo.infrared.funcannot.dbsql.AnnotationDBManager;
+import org.bioinfo.infrared.common.DBConnector;
+import org.bioinfo.infrared.core.common.FeatureList;
+import org.bioinfo.infrared.core.funcannot.AnnotationItem;
+import org.bioinfo.infrared.funcannot.AnnotationDBManager;
 import org.bioinfo.infrared.funcannot.filter.GOFilter;
 import org.bioinfo.infrared.funcannot.filter.GOSlimFilter;
 import org.bioinfo.infrared.funcannot.filter.InterproFilter;

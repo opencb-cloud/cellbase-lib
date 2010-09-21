@@ -1,9 +1,10 @@
 package org.bioinfo.infrared.common.dbsql;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.sql.SQLException;
 
+import org.bioinfo.infrared.common.DBConnector;
 import org.junit.Test;
 
 public class DBConnectorTest {

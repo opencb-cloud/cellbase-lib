@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bioinfo.commons.io.utils.IOUtils;
-import org.bioinfo.infrared.common.dbsql.DBConnector;
-import org.bioinfo.infrared.core.Position;
-import org.bioinfo.infrared.variation.TranscriptConsequenceType;
+import org.bioinfo.infrared.common.DBConnector;
+import org.bioinfo.infrared.core.feature.Position;
+import org.bioinfo.infrared.core.variation.TranscriptConsequenceType;
+import org.bioinfo.infrared.variation.TranscriptConsequenceTypeDBManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

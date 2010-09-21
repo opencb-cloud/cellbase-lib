@@ -5,8 +5,9 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bioinfo.infrared.common.dbsql.DBConnector;
-import org.bioinfo.infrared.variation.VariationFrequency;
+import org.bioinfo.infrared.common.DBConnector;
+import org.bioinfo.infrared.core.variation.VariationFrequency;
+import org.bioinfo.infrared.variation.VariationFrequencyDBManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

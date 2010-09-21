@@ -2,10 +2,10 @@ package org.bioinfo.infrared.functional;
 
 import static org.junit.Assert.fail;
 
-import org.bioinfo.infrared.common.dbsql.DBConnector;
-import org.bioinfo.infrared.common.feature.FeatureList;
-import org.bioinfo.infrared.regulatory.ConservedRegion;
-import org.bioinfo.infrared.regulatory.dbsql.ConservedRegionDBManager;
+import org.bioinfo.infrared.common.DBConnector;
+import org.bioinfo.infrared.core.common.FeatureList;
+import org.bioinfo.infrared.core.regulatory.ConservedRegion;
+import org.bioinfo.infrared.regulatory.ConservedRegionDBManager;
 import org.junit.Before;
 import org.junit.Test;
 

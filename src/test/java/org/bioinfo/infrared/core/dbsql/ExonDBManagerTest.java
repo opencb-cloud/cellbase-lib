@@ -5,9 +5,10 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bioinfo.infrared.common.dbsql.DBConnector;
-import org.bioinfo.infrared.common.feature.FeatureList;
-import org.bioinfo.infrared.core.Exon;
+import org.bioinfo.infrared.common.DBConnector;
+import org.bioinfo.infrared.core.ExonDBManager;
+import org.bioinfo.infrared.core.common.FeatureList;
+import org.bioinfo.infrared.core.feature.Exon;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

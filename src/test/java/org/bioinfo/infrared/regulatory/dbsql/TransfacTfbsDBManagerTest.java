@@ -1,10 +1,11 @@
 package org.bioinfo.infrared.regulatory.dbsql;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 
-import org.bioinfo.infrared.common.dbsql.DBConnector;
+import org.bioinfo.infrared.common.DBConnector;
+import org.bioinfo.infrared.regulatory.TransfacTfbsDBManager;
 import org.junit.Test;
 
 public class TransfacTfbsDBManagerTest {

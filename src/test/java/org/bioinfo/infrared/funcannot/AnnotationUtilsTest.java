@@ -5,7 +5,9 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.util.List;
 
-import org.bioinfo.infrared.common.feature.FeatureList;
+import org.bioinfo.infrared.core.common.FeatureList;
+import org.bioinfo.infrared.core.funcannot.AnnotationItem;
+import org.bioinfo.infrared.core.funcannot.AnnotationUtils;
 import org.junit.Test;
 
 public class AnnotationUtilsTest {

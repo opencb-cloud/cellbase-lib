@@ -2,10 +2,10 @@ package org.bioinfo.infrared.functional;
 
 import static org.junit.Assert.fail;
 
-import org.bioinfo.infrared.common.dbsql.DBConnector;
-import org.bioinfo.infrared.common.feature.FeatureList;
-import org.bioinfo.infrared.funcannot.GO;
-import org.bioinfo.infrared.funcannot.dbsql.GODBManager;
+import org.bioinfo.infrared.common.DBConnector;
+import org.bioinfo.infrared.core.common.FeatureList;
+import org.bioinfo.infrared.core.funcannot.GO;
+import org.bioinfo.infrared.funcannot.GODBManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,13 +25,12 @@ public class GOFactoryTest {
 	public void tearDown() throws Exception {
 	}
 
-	@Test
 	public void testGetByAccesion() {
 		try {
 			GO go = gof.getByAccesion("GO:0000009");
 			if(go != null) {
 				System.out.println(go.toString());
-				System.out.println(go.getParents().toString());
+//				System.out.println(go.getParents().toString());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

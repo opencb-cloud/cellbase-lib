@@ -2,7 +2,8 @@
 
 import static org.junit.Assert.fail;
 
-import org.bioinfo.infrared.common.dbsql.DBConnector;
+import org.bioinfo.infrared.common.DBConnector;
+import org.bioinfo.infrared.variation.AlleleFrequencyDBManager;
 import org.junit.Test;
 
 public class AlleleFrequencyDBManagerTest {

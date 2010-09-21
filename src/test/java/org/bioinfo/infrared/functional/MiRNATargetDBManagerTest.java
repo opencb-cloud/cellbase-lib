@@ -5,10 +5,10 @@ import static org.junit.Assert.fail;
 import java.util.List;
 
 import org.bioinfo.commons.utils.StringUtils;
-import org.bioinfo.infrared.common.dbsql.DBConnector;
-import org.bioinfo.infrared.common.feature.FeatureList;
-import org.bioinfo.infrared.regulatory.MiRnaTarget;
-import org.bioinfo.infrared.regulatory.dbsql.MiRnaTargetDBManager;
+import org.bioinfo.infrared.common.DBConnector;
+import org.bioinfo.infrared.core.common.FeatureList;
+import org.bioinfo.infrared.core.regulatory.MiRnaTarget;
+import org.bioinfo.infrared.regulatory.MiRnaTargetDBManager;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -4,7 +4,8 @@ import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 
-import org.bioinfo.infrared.common.dbsql.DBConnector;
+import org.bioinfo.infrared.common.DBConnector;
+import org.bioinfo.infrared.regulatory.JasparTfbsDBManager;
 import org.junit.Test;
 
 public class JasparTfbsDBManagerTest {
