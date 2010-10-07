@@ -5,7 +5,7 @@ public class MiRnaTargetFilter extends FunctionalFilter{
 	private static final long serialVersionUID = 1L;
 
 	public MiRnaTargetFilter() {
-		this(5, 500);
+		this(5, 1000);
 	}
 	
 	public MiRnaTargetFilter(int minNumberGenes, int maxNumberGenes) {
