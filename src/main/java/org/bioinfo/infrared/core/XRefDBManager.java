@@ -40,7 +40,7 @@ public class XRefDBManager extends DBManager {
 		query.close();
 		return dbnames;
 	}
-	
+
 	// Returns all possible DB names by type
 	@SuppressWarnings("unchecked")
 	public List<DBName> getAllDBNamesByType(String type) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
@@ -51,10 +51,13 @@ public class XRefDBManager extends DBManager {
 		prepQuery.close();
 		return dbnames;
 	}
-	
+
 	// Returns an XRef object according to a single ID and DB (used in FeatureId.java)
 	public XRef getByDBName(String id, String dbname) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		if(id != null && !id.equals("")) {
+			if(id.contains("'")) {
+				id = id.replace("'", "\\\\'");
+			}
 			if(dbname != null && !dbname.equals("")) {
 				PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_TRANSLATION);
 				prepQuery.setParams(id, dbname);
@@ -83,6 +86,9 @@ public class XRefDBManager extends DBManager {
 				Object[][] result;
 				for(String id: ids) {
 					if(id != null && !id.equals("")) {
+						if(id.contains("'")) {
+							id = id.replace("'", "\\\\'");
+						}
 						prepQuery.setParams(id, dbname);
 						result = (Object[][])prepQuery.execute(new MatrixHandler());
 						xref = new XRef(id, dbname);
@@ -105,10 +111,13 @@ public class XRefDBManager extends DBManager {
 			return null;
 		}
 	}
-	
+
 	// Returns an XRef object according to a single ID in the specified list of DDBB (used in FeatureId.java)
 	public XRef getByDBName(String id, List<String> dbnames) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		if(id != null && !id.equals("")) {
+			if(id.contains("'")) {
+				id = id.replace("'", "\\\\'");
+			}
 			PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_TRANSLATION);
 			XRef xref = new XRef(id);
 			Object[][] result;
@@ -136,10 +145,14 @@ public class XRefDBManager extends DBManager {
 		if(ids != null) {
 			List<XRef> xrefs = new ArrayList<XRef>(ids.size());
 			PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_TRANSLATION);
+			XRef xref;
 			Object[][] result;
 			for(String id: ids) {
 				if(id != null && !id.equals("")) {
-					XRef xref = new XRef(id);
+					if(id.contains("'")) {
+						id = id.replace("'", "\\\\'");
+					}
+					xref = new XRef(id);
 					if(dbnames != null) {
 						for(String dbname: dbnames) {
 							if(dbname != null && !dbname.equals("")) {
@@ -164,63 +177,63 @@ public class XRefDBManager extends DBManager {
 		}
 	}
 
-	
+
 	// Returns a list of XRef objects with all the possible identifiers for every single ID in a list (used in FeatureId.java)
 	public List<XRef> getAllIdentifiersByIds(List<String> ids) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-//		if(ids != null) {
-//			List<XRef> xrefs = new ArrayList<XRef>(ids.size());
-//			XRef xref;
-//			PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_ALL_IDENTIFIERS);
-//			Object[][] result;
-//			for(String id: ids) {
-//				if(id != null && !id.equals("")) {
-//					prepQuery.setParams(id);
-//					result = (Object[][])prepQuery.execute(new MatrixHandler());
-//					xref = new XRef(id);
-//					for(int i=0; i<result.length; i++) {
-//						xref.addXRefItem(result[i][0].toString(), result[i][1].toString(), result[i][2].toString());
-//					}
-//					xrefs.add(xref);
-//				}else {
-//					xrefs.add(null);
-//				}
-//			}
-//			prepQuery.close();
-//			return xrefs;
-//		}else {
-//			return null;
-//		}
+		//		if(ids != null) {
+		//			List<XRef> xrefs = new ArrayList<XRef>(ids.size());
+		//			XRef xref;
+		//			PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_ALL_IDENTIFIERS);
+		//			Object[][] result;
+		//			for(String id: ids) {
+		//				if(id != null && !id.equals("")) {
+		//					prepQuery.setParams(id);
+		//					result = (Object[][])prepQuery.execute(new MatrixHandler());
+		//					xref = new XRef(id);
+		//					for(int i=0; i<result.length; i++) {
+		//						xref.addXRefItem(result[i][0].toString(), result[i][1].toString(), result[i][2].toString());
+		//					}
+		//					xrefs.add(xref);
+		//				}else {
+		//					xrefs.add(null);
+		//				}
+		//			}
+		//			prepQuery.close();
+		//			return xrefs;
+		//		}else {
+		//			return null;
+		//		}
 		return getAllXRefsByPrepQuery(ids, GET_ALL_IDENTIFIERS);
 	}
-	
-	
+
+
 	public List<XRef> getAllFunctionalAnnotByIds(List<String> ids) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-//		if(ids != null) {
-//			List<XRef> xrefs = new ArrayList<XRef>(ids.size());
-//			XRef xref;
-//			PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_ALL_FUNCTIONAL_ANNOTATIONS);
-//			Object[][] result;
-//			for(String id: ids) {
-//				if(id != null && !id.equals("")) {
-//					prepQuery.setParams(id);
-//					result = (Object[][])prepQuery.execute(new MatrixHandler());
-//					xref = new XRef(id);
-//					for(int i=0; i<result.length; i++) {
-//						xref.addXRefItem(result[i][0].toString(), result[i][1].toString(), result[i][2].toString());
-//					}
-//					xrefs.add(xref);
-//				}else {
-//					xrefs.add(null);
-//				}
-//			}
-//			prepQuery.close();
-//			return xrefs;
-//		}else {
-//			return null;
-//		}
+		//		if(ids != null) {
+		//			List<XRef> xrefs = new ArrayList<XRef>(ids.size());
+		//			XRef xref;
+		//			PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_ALL_FUNCTIONAL_ANNOTATIONS);
+		//			Object[][] result;
+		//			for(String id: ids) {
+		//				if(id != null && !id.equals("")) {
+		//					prepQuery.setParams(id);
+		//					result = (Object[][])prepQuery.execute(new MatrixHandler());
+		//					xref = new XRef(id);
+		//					for(int i=0; i<result.length; i++) {
+		//						xref.addXRefItem(result[i][0].toString(), result[i][1].toString(), result[i][2].toString());
+		//					}
+		//					xrefs.add(xref);
+		//				}else {
+		//					xrefs.add(null);
+		//				}
+		//			}
+		//			prepQuery.close();
+		//			return xrefs;
+		//		}else {
+		//			return null;
+		//		}
 		return getAllXRefsByPrepQuery(ids, GET_ALL_FUNCTIONAL_ANNOTATIONS);
 	}
-	
+
 	private List<XRef> getAllXRefsByPrepQuery(List<String> ids, String prepQuerySql) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		if(ids != null) {
 			List<XRef> xrefs = new ArrayList<XRef>(ids.size());
@@ -229,6 +242,9 @@ public class XRefDBManager extends DBManager {
 			Object[][] result;
 			for(String id: ids) {
 				if(id != null && !id.equals("")) {
+					if(id.contains("'")) {
+						id = id.replace("'", "\\\\'");
+					}
 					prepQuery.setParams(id);
 					result = (Object[][])prepQuery.execute(new MatrixHandler());
 					xref = new XRef(id);
@@ -246,7 +262,7 @@ public class XRefDBManager extends DBManager {
 			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Deprecated
 	public FeatureList<XRef> getByDBNameOld(String id, String dbname) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
@@ -279,7 +295,7 @@ public class XRefDBManager extends DBManager {
 		}
 		return featureMap;
 	}
-	
+
 	@Deprecated
 	public List<Map<String, FeatureList<XRef>>> getListByDBNames(List<String> ids, List<String> dbnames) throws Exception {
 		List<Map<String, FeatureList<XRef>>> xrefList = new ArrayList<Map<String,FeatureList<XRef>>>(ids.size());
