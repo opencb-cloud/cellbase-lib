@@ -1,4 +1,4 @@
-	package org.bioinfo.infrared.variation.dbsql;
+	package org.bioinfo.infrared.variation;
 
 import static org.junit.Assert.fail;
 

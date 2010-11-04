@@ -11,6 +11,7 @@ import org.bioinfo.db.handler.BeanArrayListHandler;
 import org.bioinfo.db.handler.BeanHandler;
 import org.bioinfo.infrared.common.DBConnector;
 import org.bioinfo.infrared.common.DBManager;
+import org.bioinfo.infrared.core.common.Feature;
 import org.bioinfo.infrared.core.common.FeatureList;
 import org.bioinfo.infrared.core.feature.Position;
 import org.bioinfo.infrared.core.variation.SNP;
@@ -113,7 +114,7 @@ public class SNPDBManager extends DBManager {
 			for(Position position: positions) {
 				if(position != null) {
 					prepQuery.setParams(position.getChromosome(), ""+position.getPosition());
-					snpFeatureList = (FeatureList<SNP>)prepQuery.execute(new BeanArrayListHandler(SNP.class));
+					snpFeatureList = new FeatureList((List<Feature>)prepQuery.execute(new BeanArrayListHandler(SNP.class)));
 					snpList.add(snpFeatureList);
 				}else {
 					snpList.add(null);

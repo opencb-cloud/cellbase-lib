@@ -1,12 +1,14 @@
-package org.bioinfo.infrared.variation.dbsql;
+package org.bioinfo.infrared.variation;
 
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.bioinfo.infrared.common.DBConnector;
 import org.bioinfo.infrared.core.common.FeatureList;
+import org.bioinfo.infrared.core.feature.Position;
 import org.bioinfo.infrared.core.variation.SNP;
 import org.bioinfo.infrared.variation.SNPDBManager;
 import org.junit.After;
@@ -123,7 +125,7 @@ public class SNPDBManagerTest {
 		FeatureList<SNP> snpList;
 		try {
 			snpList = sf.getAllByConsequenceType("SYNONYMOUS_CODING");
-			System.out.println(snpList.toString());
+			System.out.println(snpList.get(0).toString());
 			System.out.println(""+snpList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -136,7 +138,7 @@ public class SNPDBManagerTest {
 		FeatureList<SNP> snpList;
 		try {
 			snpList = sf.getAllFilteredByConsequenceType(Arrays.asList("rs999980", "rs7342690", "rs9999097", "rs11644186", "rs7342797"), "NON_SYNONYMOUS_CODING");
-			System.out.println(snpList.toString());
+			System.out.println(snpList.get(0).toString());
 			System.out.println(""+snpList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -172,8 +174,26 @@ public class SNPDBManagerTest {
 		} 
 	}
 	
-	public void testWriteAllFilteredByConsequenceType() {
+	@Test
+	public void testAllByPositions() {
 		System.out.println("Test - 10");
+		List<FeatureList<SNP>> snpList;
+		try {
+			List<Position> positions = new ArrayList<Position>();
+			positions.add(new Position("11", 17352480));positions.add(new Position("5", 11784));
+			positions.add(new Position("19", 9325358));positions.add(new Position("19", 9325279));
+			snpList = sf.getAllByPositions(positions);
+			System.out.println(snpList.size());
+			System.out.println(snpList.get(1).toString());
+			System.out.println(""+snpList.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.toString());
+		} 
+	}
+	
+	public void testWriteAllFilteredByConsequenceType() {
+		System.out.println("Test - 11");
 		try {
 			sf.writeAllFilteredByConsequenceType("DOWNSTREAM", "/tmp/downstream_test10.txt");
 		} catch (Exception e) {
