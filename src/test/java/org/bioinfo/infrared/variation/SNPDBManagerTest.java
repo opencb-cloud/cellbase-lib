@@ -51,7 +51,7 @@ public class SNPDBManagerTest {
 		System.out.println("Test - 1.2");
 		List<String> snps;
 		try {
-			snps = sf.getAllNamesByRegion("1",1,5000000);
+			snps = sf.getAllNamesByRegion("10",10,100000);
 			System.out.println(snps.size());
 			System.out.println(snps.get(0).toString());
 		} catch (Exception e) {
@@ -79,7 +79,7 @@ public class SNPDBManagerTest {
 		System.out.println("Test - 3");
 		FeatureList<SNP> snps;
 		try {
-			snps = sf.getAllByRegion("1", 2, 25000000);
+			snps = sf.getAllByRegion("1", 2, 1500000);
 			System.out.println(snps.size());
 			System.out.println(snps.get(0).toString());
 		} catch (Exception e) {
