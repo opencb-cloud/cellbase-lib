@@ -1,7 +1,9 @@
 package org.bioinfo.infrared.core;
 
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bioinfo.db.handler.BeanArrayListHandler;
 import org.bioinfo.db.handler.BeanHandler;
@@ -51,8 +53,31 @@ public class GeneDBManager extends DBManager{
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Deprecated
 	public FeatureList<Gene> getAllByLocation(String chromosome, int start, int end) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getFeatureList(GET_ALL_ENSEMBL_GENES + " where g.chromosome = '"+chromosome+"' and g.start >= "+start +" and g.end <= "+end+" ", new BeanArrayListHandler(Gene.class));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public FeatureList<Gene> getAllByRegion(String chromosome, int start, int end) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		return getFeatureList(GET_ALL_ENSEMBL_GENES + " where g.chromosome = '"+chromosome+"' and g.start >= "+start +" and g.end <= "+end+" ", new BeanArrayListHandler(Gene.class));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public FeatureList<Gene> getAllByRegion(String chromosome, int start, int end, List<String> biotypes) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		FeatureList<Gene> allGenes = getFeatureList(GET_ALL_ENSEMBL_GENES + " where g.chromosome = '"+chromosome+"' and g.start >= "+start +" and g.end <= "+end+" ", new BeanArrayListHandler(Gene.class));
+		if(biotypes != null) {
+			FeatureList<Gene> filteredGenes = new FeatureList<Gene>();
+			Set<String> biotypesSet = new HashSet<String>(biotypes);
+			for(Gene gene: allGenes) {
+				if(biotypesSet.contains(gene.getBiotype())) {
+					filteredGenes.add(gene);
+				}
+			}
+			return filteredGenes;
+		}else {
+			return allGenes;
+		}
 	}
 	
 	@SuppressWarnings({ "unchecked" })
