@@ -52,7 +52,20 @@ public class SNPDBManager extends DBManager {
 	public List<String> getAllNamesByConsequenceType(String consequenceType) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		//		return getStringList(GET_ALL_SNP_NAMES + " where s.consequence_type = '"+ consequence +"' ");
 		return getStringList("select s.name from snp2transcript st, snp s, consequence_type cq where cq.consequence_type_name= '"+consequenceType+"' and cq.consequence_type_id=st.consequence_type_id and st.snp_id=s.snp_id group by s.name");
-	}	
+	}
+	
+	public List<String> getAllNamesByConsequenceTypes(List<String> consequenceTypes) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		List<String> snpNames = null;
+		if(consequenceTypes != null) {
+			snpNames = new ArrayList<String>();
+			for(String consequenceType: consequenceTypes) {
+				if(consequenceType != null) {
+					snpNames.addAll(getAllNamesByConsequenceType(consequenceType));
+				}
+			}
+		}
+		return snpNames;
+	}
 
 	public List<String> getAllConsequenceTypes() throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getStringList("select consequence_type_name from consequence_type");
@@ -90,6 +103,11 @@ public class SNPDBManager extends DBManager {
 		return getFeatureList(GET_ALL_SNPS  + " where s.chromosome = '"+chromosome+"' ", new BeanArrayListHandler(SNP.class));
 	}
 
+	@SuppressWarnings("unchecked")
+	public FeatureList<SNP> getAllByRegion(String chromosome, int start) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		return getFeatureList(GET_ALL_SNPS  + " where s.chromosome = '"+chromosome+"' and s.start >= "+start +" ", new BeanArrayListHandler(SNP.class));
+	}
+	
 	@SuppressWarnings("unchecked")
 	public FeatureList<SNP> getAllByRegion(String chromosome, int start, int end) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getFeatureList(GET_ALL_SNPS  + " where s.chromosome = '"+chromosome+"' and s.start >= "+start +" and s.end <= "+end+" ", new BeanArrayListHandler(SNP.class));

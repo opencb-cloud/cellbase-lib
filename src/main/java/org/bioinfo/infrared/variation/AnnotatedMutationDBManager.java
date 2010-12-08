@@ -12,7 +12,6 @@ import org.bioinfo.infrared.core.common.Feature;
 import org.bioinfo.infrared.core.common.FeatureList;
 import org.bioinfo.infrared.core.feature.Position;
 import org.bioinfo.infrared.core.variation.AnnotatedMutation;
-import org.bioinfo.infrared.core.variation.SNP;
 
 public class AnnotatedMutationDBManager extends DBManager {
 
