@@ -29,7 +29,6 @@ public class GeneDBManager extends DBManager{
 	}
 
 
-	@SuppressWarnings("unchecked")
 	public List<String> getAllEnsemblIds() throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getStringList(GET_ALL_ENSEMBL_IDS);
 	}
