@@ -98,6 +98,48 @@ public class SNPDBManager extends DBManager {
 		return getFeatureListByIds("SELECT s.* FROM snp s WHERE s.name = ? ", snpIds, new BeanHandler(SNP.class));
 	}
 
+	
+	
+	@SuppressWarnings("unchecked")
+	public FeatureList<SNP> getAllByPosition(String chromosome, int position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		return getFeatureList(GET_ALL_SNPS  + " where s.chromosome = '"+chromosome+"' and s.start = "+position, new BeanArrayListHandler(SNP.class));
+	}
+
+	public FeatureList<SNP> getAllByPosition(Position position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		if(position != null) {
+			return getAllByPosition(position.getChromosome(), position.getPosition());	
+		}else {
+			return null;
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<FeatureList<SNP>> getAllByPositions(List<Position> positions) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		List<FeatureList<SNP>> snpList = null;
+		if(positions != null) {
+			snpList = new ArrayList<FeatureList<SNP>>(positions.size());
+			PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_ALL_SNPS  + " where s.chromosome = ? and s.start = ? ");
+			FeatureList<SNP> snpFeatureList;
+			for(Position position: positions) {
+				if(position != null) {
+					prepQuery.setParams(position.getChromosome(), ""+position.getPosition());
+					snpFeatureList = new FeatureList((List<Feature>)prepQuery.execute(new BeanArrayListHandler(SNP.class)));
+					if(snpFeatureList != null && snpFeatureList.size() > 0) {
+						snpList.add(snpFeatureList);
+					}else {
+						snpList.add(null);
+					}
+				}else {
+					snpList.add(null);
+				}
+			}
+			prepQuery.close();
+		}
+		return snpList;
+	}
+	
+	
+	
 	@SuppressWarnings("unchecked")
 	public FeatureList<SNP> getAllByRegion(String chromosome) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getFeatureList(GET_ALL_SNPS  + " where s.chromosome = '"+chromosome+"' ", new BeanArrayListHandler(SNP.class));
@@ -115,7 +157,11 @@ public class SNPDBManager extends DBManager {
 
 	@SuppressWarnings("unchecked")
 	public FeatureList<SNP> getAllByRegion(Region region) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureList(GET_ALL_SNPS  + " where s.chromosome = '"+region.getChromosome()+"' and s.start >= "+region.getStart()+" and s.end <= "+region.getEnd()+" ", new BeanArrayListHandler(SNP.class));
+		if(region != null) {
+			return getFeatureList(GET_ALL_SNPS  + " where s.chromosome = '"+region.getChromosome()+"' and s.start >= "+region.getStart()+" and s.end <= "+region.getEnd()+" ", new BeanArrayListHandler(SNP.class));	
+		}else {
+			return null;
+		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -143,52 +189,11 @@ public class SNPDBManager extends DBManager {
 		return snpList;
 	}
 
-
-	@SuppressWarnings("unchecked")
-	public FeatureList<SNP> getAllByPosition(String chromosome, int position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureList(GET_ALL_SNPS  + " where s.chromosome = '"+chromosome+"' and s.start = "+position, new BeanArrayListHandler(SNP.class));
-	}
-
-	@SuppressWarnings("unchecked")
-	public FeatureList<SNP> getAllByPosition(Position position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureList(GET_ALL_SNPS  + " where s.chromosome = '"+position.getChromosome()+"' and s.start = "+position.getPosition(), new BeanArrayListHandler(SNP.class));
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public List<FeatureList<SNP>> getAllByPositions(List<Position> positions) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		List<FeatureList<SNP>> snpList = null;
-		if(positions != null) {
-			snpList = new ArrayList<FeatureList<SNP>>(positions.size());
-			PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_ALL_SNPS  + " where s.chromosome = ? and s.start = ? ");
-			FeatureList<SNP> snpFeatureList;
-			for(Position position: positions) {
-				if(position != null) {
-					prepQuery.setParams(position.getChromosome(), ""+position.getPosition());
-					snpFeatureList = new FeatureList((List<Feature>)prepQuery.execute(new BeanArrayListHandler(SNP.class)));
-					if(snpFeatureList != null && snpFeatureList.size() > 0) {
-						snpList.add(snpFeatureList);
-					}else {
-						snpList.add(null);
-					}
-				}else {
-					snpList.add(null);
-				}
-			}
-			prepQuery.close();
-		}
-		return snpList;
-	}
+	
 
 	@SuppressWarnings("unchecked")
 	public FeatureList<SNP> getAllByConsequenceType(String consequence) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getFeatureListById(GET_SNPS_BY_CONSEQUENCE_TYPE, consequence, new BeanArrayListHandler(SNP.class));
-	}
-
-
-	@SuppressWarnings("unchecked")
-	@Deprecated
-	public FeatureList<SNP> getAllByLocation(String chromosome, int start, int end) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureList(GET_ALL_SNPS  + " where s.chromosome = '"+chromosome+"' and s.start > "+start +" and s.end < "+end+" ", new BeanArrayListHandler(SNP.class));
 	}
 
 	@SuppressWarnings("unchecked")
