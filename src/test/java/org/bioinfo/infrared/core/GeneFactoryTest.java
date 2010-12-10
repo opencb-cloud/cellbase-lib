@@ -232,7 +232,7 @@ public class GeneFactoryTest {
 	public void testAllGenesByLocationFactory() {
 		try {
 			System.out.println("Test 12 - AllGenesByLocationFactory");
-			FeatureList<Gene> genes = gf1.getAllByLocation("1", 1, 1000000000);
+			FeatureList<Gene> genes = gf1.getAllByRegion("1", 1, 1000000000);
 			System.out.println(genes.size());
 			System.out.println(genes.get(0).toString());
 //			System.out.println(genes.getFeaturesIds().toString());
