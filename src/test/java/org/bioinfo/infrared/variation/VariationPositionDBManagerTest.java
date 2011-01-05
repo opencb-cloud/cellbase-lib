@@ -45,7 +45,7 @@ public class VariationPositionDBManagerTest {
 				positions.add(new Position(fields[0], Integer.parseInt(fields[1])));
 			}
 			long t1 = System.currentTimeMillis();
-			List<List<TranscriptConsequenceType>> tct = vf.getConsequenceType(positions);
+			List<List<TranscriptConsequenceType>> tct = vf.getConsequenceTypes(positions);
 			System.out.println(tct.size());
 			
 			for(int i=0; i<tct.size(); i++) {
