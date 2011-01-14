@@ -30,7 +30,7 @@ public class TranscriptConsequenceTypeDBManager extends DBManager {
 	public List<List<TranscriptConsequenceType>> getConsequenceTypes(List<Position> positions) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		List<List<TranscriptConsequenceType>> transcriptConsequenceTypeList = new ArrayList<List<TranscriptConsequenceType>>(positions.size());
 //		PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery("select g.stable_id, g.start, g.end, g.strand, t.stable_id, e.stable_id, e.start, e.end, et.coding_region_start, et.coding_region_end, et.phase, es.sequence from gene g, transcript t, exon2transcript et, exon e, exon_sequence es where g.position_prefix= ? and g.start-5000 <= ? and g.end+5000 >= ? and g.gene_id=t.gene_id and t.transcript_id=et.transcript_id and et.exon_id=e.exon_id and e.exon_id=es.exon_id");	
-		PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery("select g.stable_id, t.stable_id, t.start, t.end, t.coding_region_start, t.coding_region_end, t.strand, e.stable_id, e.start, e.end, et.coding_region_start, et.coding_region_end, et.phase, es.sequence from gene g, transcript t, transcript_position_prefix tpp, exon2transcript et, exon e, exon_sequence es where tpp.position_prefix = ? and tpp.transcript_id=t.transcript_id and t.start-5000 <= ? and t.end+5000 >= ? and g.gene_id=t.gene_id and t.transcript_id=et.transcript_id and et.exon_id=e.exon_id and e.exon_id=es.exon_id order by g.stable_id, t.stable_id, e.start");
+		PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery("select g.stable_id, t.stable_id, t.start, t.end, t.coding_region_start, t.coding_region_end, t.strand, e.stable_id, e.start, e.end, et.coding_region_start, et.coding_region_end, et.phase, es.sequence from gene g, transcript t, transcript_position_prefix tpp, exon2transcript et, exon e, exon_sequence es where tpp.position_prefix = ? and tpp.transcript_id=t.transcript_id and t.chromosome = ? and t.start-5000 <= ? and t.end+5000 >= ? and g.gene_id=t.gene_id and t.transcript_id=et.transcript_id and et.exon_id=e.exon_id and e.exon_id=es.exon_id order by g.stable_id, t.stable_id, e.start");
 		Object[][] result;
 		List<TranscriptConsequenceType> transcriptConsquenceTypes = new ArrayList<TranscriptConsequenceType>();
 		int transcriptStart, transcriptEnd;
@@ -52,9 +52,9 @@ public class TranscriptConsequenceTypeDBManager extends DBManager {
 		
 		for(Position position: positions) {
 			if(position.getPosition() >= 1000000) {
-				prepQuery.setParams(position.getChromosome()+":"+String.valueOf(position.getPosition()).substring(0, 3), ""+position.getPosition(), ""+position.getPosition());
+				prepQuery.setParams(position.getChromosome()+":"+String.valueOf(position.getPosition()).substring(0, 3), position.getChromosome(), ""+position.getPosition(), ""+position.getPosition());
 			}else {
-				prepQuery.setParams("0:000", ""+position.getPosition(), ""+position.getPosition());
+				prepQuery.setParams("0:000", position.getChromosome(), ""+position.getPosition(), ""+position.getPosition());
 			}
 			
 			transcriptConsquenceTypes = new ArrayList<TranscriptConsequenceType>();
@@ -68,9 +68,14 @@ public class TranscriptConsequenceTypeDBManager extends DBManager {
 			intergenic = null;
 			
 			result = (Object[][])prepQuery.execute(new MatrixHandler());
+//			System.out.println("TranscriptConsequenceTypeDBManager: "+result.length+" results for: "+position.toString());
 			if(result != null && result.length > 0) {
 				prevTranscript = "";
 				for(int i=0; i<result.length; i++) {
+//					for(int j=0;j<result[i].length; j++) {
+//						System.out.print(result[i][j]+" ");
+//					}
+//					System.out.println();
 					transcriptStart = Integer.parseInt(result[i][2].toString());
 					transcriptEnd = Integer.parseInt(result[i][3].toString());
 					codingRegionStart = Integer.parseInt(result[i][4].toString());
@@ -81,47 +86,54 @@ public class TranscriptConsequenceTypeDBManager extends DBManager {
 				
 					if(strand == 1) {
 						if(position.getPosition() < transcriptStart && position.getPosition() > transcriptStart-5000) {
-							upstream = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "UPSTREAM");
-							continue;
+							upstream = new TranscriptConsequenceType("UPSTREAM", result[i][1].toString(), result[i][0].toString());
+//							if(!transcriptConsquenceTypes.contains(upstream)) {
+//								transcriptConsquenceTypes.add(upstream);
+//							}
+//							continue;
 						}
 						if(position.getPosition() > transcriptEnd && position.getPosition() < transcriptEnd+5000) {
-							downstream = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "DOWNSTREAM");
+							downstream = new TranscriptConsequenceType("DOWNSTREAM", result[i][1].toString(), result[i][0].toString());
+//							if(!transcriptConsquenceTypes.contains(downstream)) {
+//								transcriptConsquenceTypes.add(downstream);
+//							}
+//							transcriptConsquenceTypes.add(new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "DOWNSTREAM"));
 						}
 						if(position.getPosition() >= transcriptStart && position.getPosition() < codingRegionStart) {
-							fivePrimeUtr = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "5PRIME_UTR");
+							fivePrimeUtr = new TranscriptConsequenceType("5PRIME_UTR", result[i][1].toString(), result[i][0].toString());
 						}
 						if(position.getPosition() > codingRegionEnd && position.getPosition() <= transcriptEnd) {
-							threePrimeUtr = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "3PRIME_UTR");
+							threePrimeUtr = new TranscriptConsequenceType("3PRIME_UTR", result[i][1].toString(), result[i][0].toString());
 						}
 						
 						
 						if(exonEnd > codingRegionStart && exonEnd < codingRegionEnd && position.getPosition() >= exonEnd-3 && position.getPosition() <= exonEnd) {
-							exonSpliceSite = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "SPLICE_SITE");
+							exonSpliceSite = new TranscriptConsequenceType("SPLICE_SITE", result[i][1].toString(), result[i][0].toString());
 						}
 						if(exonEnd > codingRegionStart && exonEnd < codingRegionEnd && position.getPosition() >= exonEnd+3 && position.getPosition() <= exonEnd+8) {
-							exonSpliceSite = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "SPLICE_SITE");
-							intronic = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "INTRONIC");
+							exonSpliceSite = new TranscriptConsequenceType("SPLICE_SITE", result[i][1].toString(), result[i][0].toString());
+							intronic = new TranscriptConsequenceType("INTRONIC", result[i][1].toString(), result[i][0].toString());
 						}
 						if(exonStart > codingRegionStart && exonStart < codingRegionEnd && position.getPosition() >= exonStart && position.getPosition() <= exonStart+3) {
-							exonSpliceSite = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "SPLICE_SITE");
+							exonSpliceSite = new TranscriptConsequenceType("SPLICE_SITE", result[i][1].toString(), result[i][0].toString());
 						}
 						if(exonStart > codingRegionStart && exonStart < codingRegionEnd && position.getPosition() >= exonStart-8 && position.getPosition() <= exonStart-3) {
-							exonSpliceSite = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "SPLICE_SITE");
-							intronic = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "INTRONIC");
+							exonSpliceSite = new TranscriptConsequenceType("SPLICE_SITE", result[i][1].toString(), result[i][0].toString());
+							intronic = new TranscriptConsequenceType("INTRONIC", result[i][1].toString(), result[i][0].toString());
 						}
 						if(exonEnd > codingRegionStart && exonEnd < codingRegionEnd && position.getPosition() >= exonEnd+1 && position.getPosition() <= exonEnd+2) {
-							essentialSpliceSite = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "ESSENTIAL_SPLICE_SITE");
-							intronic = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "INTRONIC");
+							essentialSpliceSite = new TranscriptConsequenceType("ESSENTIAL_SPLICE_SITE", result[i][1].toString(), result[i][0].toString());
+							intronic = new TranscriptConsequenceType("INTRONIC", result[i][1].toString(), result[i][0].toString());
 						}
 						if(exonStart > codingRegionStart && exonStart < codingRegionEnd && position.getPosition() >= exonStart-2 && position.getPosition() <= exonStart-1) {
-							essentialSpliceSite = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "ESSENTIAL_SPLICE_SITE");
-							intronic = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "INTRONIC");
+							essentialSpliceSite = new TranscriptConsequenceType("ESSENTIAL_SPLICE_SITE", result[i][1].toString(), result[i][0].toString());
+							intronic = new TranscriptConsequenceType("INTRONIC", result[i][1].toString(), result[i][0].toString());
 						}
 						
 						
 						if(result[i][1].toString().equals(prevTranscript)) {
 							if(position.getPosition() > codingRegionStart && position.getPosition() < codingRegionEnd && position.getPosition() > prevExonEnd && position.getPosition() < exonStart) {
-								intronic = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "INTRONIC");
+								intronic = new TranscriptConsequenceType("INTRONIC", result[i][1].toString(), result[i][0].toString());
 							}
 						}else {
 							prevTranscript = result[i][1].toString();
@@ -132,45 +144,51 @@ public class TranscriptConsequenceTypeDBManager extends DBManager {
 						
 					}else {
 						if(position.getPosition() > transcriptEnd  && position.getPosition() < transcriptEnd+5000) {
-							upstream = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "UPSTREAM");
+							upstream = new TranscriptConsequenceType("UPSTREAM", result[i][1].toString(), result[i][0].toString());
+//							if(!transcriptConsquenceTypes.contains(upstream)) {
+//								transcriptConsquenceTypes.add(upstream);
+//							}
 						}
 						if(position.getPosition() < transcriptStart && position.getPosition() > transcriptStart-5000) {
-							downstream = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "DOWNSTREAM");
+							downstream = new TranscriptConsequenceType("DOWNSTREAM", result[i][1].toString(), result[i][0].toString());
+//							if(!transcriptConsquenceTypes.contains(downstream)) {
+//								transcriptConsquenceTypes.add(downstream);
+//							}
 						}
 						if(position.getPosition() > codingRegionEnd && position.getPosition() <= transcriptEnd) {
-							fivePrimeUtr = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "5PRIME_UTR");
+							fivePrimeUtr = new TranscriptConsequenceType("5PRIME_UTR", result[i][1].toString(), result[i][0].toString());
 						}
 						if(position.getPosition() >= transcriptStart && position.getPosition() < codingRegionStart) {
-							threePrimeUtr = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "3PRIME_UTR");
+							threePrimeUtr = new TranscriptConsequenceType("3PRIME_UTR", result[i][1].toString(), result[i][0].toString());
 						}
 						
 						
 						if(exonEnd > codingRegionStart && exonEnd < codingRegionEnd && position.getPosition() >= exonEnd-3 && position.getPosition() <= exonEnd) {
-							exonSpliceSite = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "SPLICE_SITE");
+							exonSpliceSite = new TranscriptConsequenceType("SPLICE_SITE", result[i][1].toString(), result[i][0].toString());
 						}
 						if(exonEnd > codingRegionStart && exonEnd < codingRegionEnd && position.getPosition() >= exonEnd+3 && position.getPosition() <= exonEnd+8) {
-							exonSpliceSite = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "SPLICE_SITE");
-							intronic = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "INTRONIC");
+							exonSpliceSite = new TranscriptConsequenceType("SPLICE_SITE", result[i][1].toString(), result[i][0].toString());
+							intronic = new TranscriptConsequenceType("INTRONIC", result[i][1].toString(), result[i][0].toString());
 						}
 						if(exonStart > codingRegionStart && exonStart < codingRegionEnd && position.getPosition() >= exonStart && position.getPosition() <= exonStart+3) {
-							exonSpliceSite = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "SPLICE_SITE");
+							exonSpliceSite = new TranscriptConsequenceType("SPLICE_SITE", result[i][1].toString(), result[i][0].toString());
 						}
 						if(exonStart > codingRegionStart && exonStart < codingRegionEnd && position.getPosition() >= exonStart-8 && position.getPosition() <= exonStart-3) {
-							exonSpliceSite = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "SPLICE_SITE");
-							intronic = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "INTRONIC");
+							exonSpliceSite = new TranscriptConsequenceType("SPLICE_SITE", result[i][1].toString(), result[i][0].toString());
+							intronic = new TranscriptConsequenceType("INTRONIC", result[i][1].toString(), result[i][0].toString());
 						}
 						if(exonEnd > codingRegionStart && exonEnd < codingRegionEnd && position.getPosition() >= exonEnd+1 && position.getPosition() <= exonEnd+2) {
-							essentialSpliceSite = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "ESSENTIAL_SPLICE_SITE");
-							intronic = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "INTRONIC");
+							essentialSpliceSite = new TranscriptConsequenceType("ESSENTIAL_SPLICE_SITE", result[i][1].toString(), result[i][0].toString());
+							intronic = new TranscriptConsequenceType("INTRONIC", result[i][1].toString(), result[i][0].toString());
 						}
 						if(exonStart > codingRegionStart && exonStart < codingRegionEnd && position.getPosition() >= exonStart-2 && position.getPosition() <= exonStart-1) {
-							essentialSpliceSite = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "ESSENTIAL_SPLICE_SITE");
-							intronic = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "INTRONIC");
+							essentialSpliceSite = new TranscriptConsequenceType("ESSENTIAL_SPLICE_SITE", result[i][1].toString(), result[i][0].toString());
+							intronic = new TranscriptConsequenceType("INTRONIC", result[i][1].toString(), result[i][0].toString());
 						}
 						
 						if(result[i][1].toString().equals(prevTranscript)) {
 							if(position.getPosition() > codingRegionStart && position.getPosition() < codingRegionEnd && position.getPosition() > prevExonEnd && position.getPosition() < exonStart) {
-								intronic = new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), "INTRONIC");
+								intronic = new TranscriptConsequenceType("INTRONIC", result[i][1].toString(), result[i][0].toString());
 							}
 						}else {
 							prevTranscript = result[i][1].toString();
@@ -181,37 +199,44 @@ public class TranscriptConsequenceTypeDBManager extends DBManager {
 					}
 					
 //					transcriptConsquenceTypes.add(new TranscriptConsequenceType(result[i][0].toString(), result[i][1].toString(), result[i][2].toString()));
+					if(upstream != null && !transcriptConsquenceTypes.contains(upstream)) {
+						transcriptConsquenceTypes.add(upstream);
+						upstream = null;
+					}
+					if(downstream != null && !transcriptConsquenceTypes.contains(downstream)) {
+						transcriptConsquenceTypes.add(downstream);
+						downstream = null;
+					}
+					if(fivePrimeUtr != null && !transcriptConsquenceTypes.contains(fivePrimeUtr)) {
+						transcriptConsquenceTypes.add(fivePrimeUtr);
+						fivePrimeUtr = null;
+					}
+					if(threePrimeUtr != null && !transcriptConsquenceTypes.contains(threePrimeUtr)) {
+						transcriptConsquenceTypes.add(threePrimeUtr);
+						threePrimeUtr = null;
+					}
+					if(exonSpliceSite != null && !transcriptConsquenceTypes.contains(exonSpliceSite)) {
+						transcriptConsquenceTypes.add(exonSpliceSite);	
+						exonSpliceSite = null;
+					}
+					if(essentialSpliceSite != null && !transcriptConsquenceTypes.contains(essentialSpliceSite)) {
+						transcriptConsquenceTypes.add(essentialSpliceSite);
+						essentialSpliceSite = null;
+					}
+					if(intronic != null && !transcriptConsquenceTypes.contains(intronic)) {
+						transcriptConsquenceTypes.add(intronic);
+						intronic = null;
+					}
+					if(intergenic != null && !transcriptConsquenceTypes.contains(intergenic)) {
+						transcriptConsquenceTypes.add(intergenic);	
+						intergenic = null;
+					}
+					
 				}
 			}else {
 				intergenic = new TranscriptConsequenceType("", "", "INTERGENIC");
-			}
-			
-			
-			if(upstream != null) {
-				transcriptConsquenceTypes.add(upstream);	
-			}
-			if(downstream != null) {
-				transcriptConsquenceTypes.add(downstream);	
-			}
-			if(fivePrimeUtr != null) {
-				transcriptConsquenceTypes.add(fivePrimeUtr);	
-			}
-			if(threePrimeUtr != null) {
-				transcriptConsquenceTypes.add(threePrimeUtr);	
-			}
-			if(exonSpliceSite != null) {
-				transcriptConsquenceTypes.add(exonSpliceSite);	
-			}
-			if(essentialSpliceSite != null) {
-				transcriptConsquenceTypes.add(essentialSpliceSite);	
-			}
-			if(intronic != null) {
-				transcriptConsquenceTypes.add(intronic);	
-			}
-			if(intergenic != null) {
 				transcriptConsquenceTypes.add(intergenic);	
 			}
-			
 			
 			transcriptConsequenceTypeList.add(transcriptConsquenceTypes);
 		}
