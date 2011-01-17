@@ -110,6 +110,10 @@ public class DBManager {
 		prepQuery.close();
 		return feature;
 	}
+	
+	
+	
+
 
 	//	public Feature getFeatureByIdWithMultiParam(String prepQueryStm, String id, ResultSetHandler rsh) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 	//		PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(prepQueryStm);
@@ -126,20 +130,19 @@ public class DBManager {
 	public FeatureList getFeatureList(String prepQueryStm, ResultSetHandler rsh) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		
 		Query query = dBConnector.getDbConnection().createSQLQuery(prepQueryStm);
+		System.err.println(query.getQuery());
 		FeatureList rosettaFeatureList = new FeatureList((List<Feature>)query.execute(rsh));
-//		rosettaFeatureList.setRosettaDBConnector(dBConnector);
+		System.err.println(rosettaFeatureList.size());
 		query.close();
 		return rosettaFeatureList;
 	}
+	
 
 	@SuppressWarnings("unchecked")
 	public FeatureList getFeatureListById(String prepQueryStm, String id, ResultSetHandler rsh) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(prepQueryStm);
 		prepQuery.setParams(id);
 		FeatureList featureList = new FeatureList((List<Feature>)prepQuery.execute(rsh));
-//		if(featureList != null) {
-//			featureList.setRosettaDBConnector(dBConnector);
-//		}
 		prepQuery.close();
 		return featureList;
 	}
@@ -151,7 +154,8 @@ public class DBManager {
 		Feature feature;
 		for(String id: ids) {
 			prepQuery.setParams(id);
-			feature = (Feature)prepQuery.execute(rsh);
+			Object result = prepQuery.execute(rsh);
+			feature = (Feature)result;
 //			if(feature != null) {
 //				feature.setRosettaDBConnector(dBConnector);	
 //			}
@@ -169,7 +173,6 @@ public class DBManager {
 		Object queryResult = null;
 		for(String id: ids) {
 			prepQuery.setParams(id);
-
 			queryResult = prepQuery.execute(rsh);
 			if(queryResult == null) {
 				featList = null;

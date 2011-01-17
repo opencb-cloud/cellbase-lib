@@ -14,10 +14,16 @@ import org.bioinfo.infrared.core.feature.Region;
 
 public class KaryotypeDBManager extends DBManager {
 
-	//public static final String GET_ALL_CYTOBANDS = "select * from karyotype order by start";
-	public static final String GET_ALL_CYTOBANDS = "select distinct cytoband, chromosome, min(start), max(end), stain from karyotype group by chromosome";
-	public static final String GET_CYTOBANDS_BY_CHROMOSOME = "select distinct cytoband, chromosome, min(start), max(end), stain  from karyotype where chromosome = ? group by chromosome";
-	//public static final String GET_CYTOBANDS_BY_CHROMOSOME = "select * from karyotype where chromosome = ? order by start";
+	public static final String select = "cytoband, chromosome, start, end, stain";
+	
+	
+	public static final String GET_ALL_CYTOBANDS = "select " + select + " from karyotype order by chromosome, start";
+	
+	//public static final String GET_ALL_CYTOBANDS = "select distinct cytoband, chromosome, min(start), max(end), stain from karyotype group by chromosome";
+	public static final String GET_CYTOBANDS = "select " + select + " from karyotype ";
+	
+	
+	//public static final String GET_CYTOBANDS_BY_CHROMOSOME = "select " + select + " from karyotype where chromosome = ? order by start";
 	
 	public KaryotypeDBManager(DBConnector dBConnector) {
 		super(dBConnector);
@@ -29,11 +35,29 @@ public class KaryotypeDBManager extends DBManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public FeatureList<Cytoband> getCytobandByChromosomes(List<String> ids) throws Exception{
+	public FeatureList<Cytoband> getCytobandByChromosomes(List<String> chromosomeIds) throws Exception{
 		try
 		{
-			System.err.println(ids.toString()); 
-			return getFeatureListByIds(GET_CYTOBANDS_BY_CHROMOSOME, ids, new BeanHandler(Cytoband.class));
+			FeatureList<Cytoband> list = new FeatureList<Cytoband>();
+			for (String id : chromosomeIds) {
+				list.addAll(getCytobandByChromosomes(id));
+			}
+			return list;
+		}
+		catch(Exception e)
+		{
+			System.err.println(e.getMessage());
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public FeatureList<Cytoband> getCytobandByChromosomes(String chromosomeID) throws Exception{
+		try
+		{
+			return getFeatureList(GET_CYTOBANDS + " where chromosome = " + chromosomeID + " order  by chromosome, start",  new BeanArrayListHandler(Cytoband.class));
 		}
 		catch(Exception e)
 		{
@@ -42,6 +66,8 @@ public class KaryotypeDBManager extends DBManager {
 			return null;
 		}
 	}
+	
+	
 	
 	@SuppressWarnings("unchecked")
 	public List<FeatureList<Cytoband>> getCytobandByRegions(List<Region> regions) throws Exception{
