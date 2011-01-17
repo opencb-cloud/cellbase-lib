@@ -40,7 +40,7 @@ public class KaryotypeDBManager extends DBManager {
 		{
 			FeatureList<Cytoband> list = new FeatureList<Cytoband>();
 			for (String id : chromosomeIds) {
-				list.addAll(getCytobandByChromosomes(id));
+				list.addAll(getCytobandByChromosome(id));
 			}
 			return list;
 		}
@@ -50,14 +50,46 @@ public class KaryotypeDBManager extends DBManager {
 			e.printStackTrace();
 			return null;
 		}
-		
 	}
 	
 	@SuppressWarnings("unchecked")
-	public FeatureList<Cytoband> getCytobandByChromosomes(String chromosomeID) throws Exception{
+	public FeatureList<Cytoband> getCytobandByChromosome(String chromosomeID) throws Exception{
 		try
 		{
 			return getFeatureList(GET_CYTOBANDS + " where chromosome = " + chromosomeID + " order  by chromosome, start",  new BeanArrayListHandler(Cytoband.class));
+		}
+		catch(Exception e)
+		{
+			System.err.println(e.getMessage());
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public FeatureList<Cytoband> getCytobandByRegion(Region region){
+		try
+		{
+			String query = String.format(GET_CYTOBANDS + " where chromosome = %s and start>=%s and end<=%s order by chromosome, start", region.getChromosome(), region.getStart(), region.getEnd());
+			return getFeatureList(query,  new BeanArrayListHandler(Cytoband.class));
+		}
+		catch(Exception e)
+		{
+			System.err.println(e.getMessage());
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public FeatureList<Cytoband> getCytobandByPosition(String chromosomeID, String start, String end){
+		try
+		{
+			String query = String.format(GET_CYTOBANDS + " where chromosome = %s and start>=%s and end<=%s order  by chromosome, start", chromosomeID, start, end);
+			System.out.println(query);
+			return getFeatureList(query,  new BeanArrayListHandler(Cytoband.class));
 		}
 		catch(Exception e)
 		{
