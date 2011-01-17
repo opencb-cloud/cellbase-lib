@@ -67,6 +67,24 @@ public class KaryotypeDBManager extends DBManager {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<FeatureList<Cytoband>> getCytobandByRegions(List<Region> regions){
+		try
+		{
+			List<FeatureList<Cytoband>> list = new ArrayList<FeatureList<Cytoband>>();
+			for (Region  region : regions) {
+				list.add(getCytobandByRegion(region));
+			}
+			return list;
+		}
+		catch(Exception e)
+		{
+			System.err.println(e.getMessage());
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	
 	@SuppressWarnings("unchecked")
 	public FeatureList<Cytoband> getCytobandByRegion(Region region){
@@ -120,18 +138,7 @@ public class KaryotypeDBManager extends DBManager {
 	}
 	
 	
-	
-	
-	
-	
-	
-	@SuppressWarnings("unchecked")
-	public List<FeatureList<Cytoband>> getCytobandByRegions(List<Region> regions) throws Exception{
-		List<FeatureList<Cytoband>> pepe = new ArrayList<FeatureList<Cytoband>>(regions.size());
-		
-		return null;
-	}
-	
+
 
 	
 }
