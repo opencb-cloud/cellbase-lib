@@ -10,6 +10,7 @@ import org.bioinfo.infrared.common.DBManager;
 import org.bioinfo.infrared.core.common.FeatureList;
 import org.bioinfo.infrared.core.feature.Chromosome;
 import org.bioinfo.infrared.core.feature.Cytoband;
+import org.bioinfo.infrared.core.feature.Position;
 import org.bioinfo.infrared.core.feature.Region;
 
 public class KaryotypeDBManager extends DBManager {
@@ -84,11 +85,30 @@ public class KaryotypeDBManager extends DBManager {
 	
 	
 	@SuppressWarnings("unchecked")
-	public FeatureList<Cytoband> getCytobandByPosition(String chromosomeID, String start, String end){
+	public List<FeatureList<Cytoband>> getCytobandByPosition(List<Position> positions){
 		try
 		{
-			String query = String.format(GET_CYTOBANDS + " where chromosome = %s and start>=%s and end<=%s order  by chromosome, start", chromosomeID, start, end);
-			System.out.println(query);
+			List<FeatureList<Cytoband>> list = new ArrayList<FeatureList<Cytoband>>();
+			for (Position position : positions) {
+				list.add(getCytobandByPosition(position));
+			}
+			return list;
+			
+		}
+		catch(Exception e)
+		{
+			System.err.println(e.getMessage());
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public FeatureList<Cytoband> getCytobandByPosition(Position position){
+		try
+		{
+			String query = String.format(GET_CYTOBANDS + " where chromosome = %s and start<=%s and %s<=end ", position.getChromosome(), position.getPosition(), position.getPosition());
+			System.out.println("[KaryotypeDBManager.getCytobandByPosition] " + query);
 			return getFeatureList(query,  new BeanArrayListHandler(Cytoband.class));
 		}
 		catch(Exception e)
@@ -98,6 +118,10 @@ public class KaryotypeDBManager extends DBManager {
 			return null;
 		}
 	}
+	
+	
+	
+	
 	
 	
 	
