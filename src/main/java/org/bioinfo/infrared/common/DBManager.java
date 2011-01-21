@@ -130,9 +130,9 @@ public class DBManager {
 	public FeatureList getFeatureList(String prepQueryStm, ResultSetHandler rsh) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		
 		Query query = dBConnector.getDbConnection().createSQLQuery(prepQueryStm);
-		System.err.println(query.getQuery());
+		System.err.println("getFeatureList: "+query.getQuery());
 		FeatureList rosettaFeatureList = new FeatureList((List<Feature>)query.execute(rsh));
-		System.err.println(rosettaFeatureList.size());
+		System.err.println("rosettaFeatureList: "+rosettaFeatureList.size());
 		query.close();
 		return rosettaFeatureList;
 	}
