@@ -71,12 +71,6 @@ public class SNPDBManager extends DBManager {
 		return getStringList("select consequence_type_name from consequence_type");
 	}
 
-	@Deprecated
-	public List<String> getAllNamesByLocation(String chromosome, int start, int end) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getStringList(GET_ALL_SNP_NAMES + " where s.chromosome = '"+chromosome+"' and s.start > "+start +" and s.end < "+end+" ");
-	}
-
-
 
 	@SuppressWarnings("unchecked")
 	public FeatureList<SNP> getAll() throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
@@ -92,11 +86,7 @@ public class SNPDBManager extends DBManager {
 		return getFeatureListByIds(GET_SNP_BY_NAME, names, new BeanHandler(SNP.class));
 	}
 
-	@SuppressWarnings("unchecked")
-	@Deprecated
-	public FeatureList<SNP> getSNPListByIds(List<String> snpIds) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureListByIds("SELECT s.* FROM snp s WHERE s.name = ? ", snpIds, new BeanHandler(SNP.class));
-	}
+	
 
 	
 	
@@ -189,8 +179,6 @@ public class SNPDBManager extends DBManager {
 		return snpList;
 	}
 
-	
-
 	@SuppressWarnings("unchecked")
 	public FeatureList<SNP> getAllByConsequenceType(String consequence) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getFeatureListById(GET_SNPS_BY_CONSEQUENCE_TYPE, consequence, new BeanArrayListHandler(SNP.class));
@@ -225,4 +213,14 @@ public class SNPDBManager extends DBManager {
 		return getListOfFeatureListByIds(GET_SNPS_BY_EXTERNAL_ID, externalIds, new BeanArrayListHandler(SNP.class));
 	}
 
+	@Deprecated
+	public List<String> getAllNamesByLocation(String chromosome, int start, int end) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		return getStringList(GET_ALL_SNP_NAMES + " where s.chromosome = '"+chromosome+"' and s.start > "+start +" and s.end < "+end+" ");
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Deprecated
+	public FeatureList<SNP> getSNPListByIds(List<String> snpIds) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		return getFeatureListByIds("SELECT s.* FROM snp s WHERE s.name = ? ", snpIds, new BeanHandler(SNP.class));
+	}
 }
