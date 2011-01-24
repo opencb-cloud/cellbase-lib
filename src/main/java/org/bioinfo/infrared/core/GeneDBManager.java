@@ -42,18 +42,18 @@ public class GeneDBManager extends DBManager{
 		return getFeatureList(GET_ALL_ENSEMBL_GENES, new BeanArrayListHandler(Gene.class));
 	}
 
-	public Gene getByEnsemblId(String ensemblId) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return (Gene)getFeatureById(GET_GENE_BY_ENSEMBL_GENE_ID, ensemblId, new BeanHandler(Gene.class));
+	public FeatureList<Gene> getByEnsemblId(List<String> ids) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		return getFeatureListByIds(GET_GENE_BY_ENSEMBL_GENE_ID, ids, new BeanHandler(Gene.class));
 	}
 
-	public Gene getByEnsemblTranscriptId(String transcriptId) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return (Gene)getFeatureById(GET_GENE_BY_ENSEMBL_TRANSCRIPT_ID, transcriptId, new BeanHandler(Gene.class));
+	public FeatureList<Gene> getByEnsemblTranscriptId(List<String> ids) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		return getFeatureListByIds(GET_GENE_BY_ENSEMBL_TRANSCRIPT_ID, ids, new BeanArrayListHandler(Gene.class));
 	}
 
-	@SuppressWarnings({ "unchecked" })
-	public FeatureList<Gene> getAllByExternalId(String id) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-		return getFeatureListById(GET_GENELIST_BY_ID, id, new BeanArrayListHandler(Gene.class));
-	}
+//	@SuppressWarnings({ "unchecked" })
+//	public FeatureList<Gene> getAllByExternalId(String id) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+//		return getFeatureListById(GET_GENELIST_BY_ID, id, new BeanArrayListHandler(Gene.class));
+//	}
 
 	@SuppressWarnings("unchecked")
 	public List<FeatureList<Gene>> getAllByExternalIds(List<String> ids) throws Exception {
