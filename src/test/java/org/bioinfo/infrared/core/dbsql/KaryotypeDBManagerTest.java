@@ -29,7 +29,6 @@ public class KaryotypeDBManagerTest {
 	public void testGetAllDBNames() {
 		System.out.println("Test - 1");
 		try {
-			
 			DBConnector man = new DBConnector();
 			KaryotypeDBManager dbMan = new KaryotypeDBManager(man);
 			System.out.println("db connector = " + man);

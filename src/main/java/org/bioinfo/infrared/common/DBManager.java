@@ -88,7 +88,6 @@ public class DBManager {
 		List<String> stringList;
 		for(String id: ids) {
 			prepQuery.setParams(id);
-
 			stringList = (List<String>) prepQuery.execute(new BeanArrayListHandler(String.class));
 			listStringList.add(stringList);
 		}
@@ -130,9 +129,7 @@ public class DBManager {
 	public FeatureList getFeatureList(String prepQueryStm, ResultSetHandler rsh) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		
 		Query query = dBConnector.getDbConnection().createSQLQuery(prepQueryStm);
-		System.err.println(query.getQuery());
 		FeatureList rosettaFeatureList = new FeatureList((List<Feature>)query.execute(rsh));
-		System.err.println(rosettaFeatureList.size());
 		query.close();
 		return rosettaFeatureList;
 	}
@@ -150,15 +147,12 @@ public class DBManager {
 	@SuppressWarnings("unchecked")
 	public FeatureList getFeatureListByIds(String prepQueryStm, List<String> ids, ResultSetHandler rsh) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(prepQueryStm);
+		System.out.println("Infrared-lib->DBManager.java -> getFeatureListByIds: prepQueryStm="+prepQueryStm+", ids="+ids+", rsh="+rsh);
 		FeatureList featureList = new FeatureList(ids.size());
 		Feature feature;
 		for(String id: ids) {
 			prepQuery.setParams(id);
-			Object result = prepQuery.execute(rsh);
-			feature = (Feature)result;
-//			if(feature != null) {
-//				feature.setRosettaDBConnector(dBConnector);	
-//			}
+			feature = (Feature)prepQuery.execute(rsh);
 			featureList.add(feature);
 		}
 		prepQuery.close();
