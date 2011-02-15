@@ -1,5 +1,6 @@
 package org.bioinfo.infrared.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bioinfo.db.handler.BeanArrayListHandler;
@@ -7,6 +8,8 @@ import org.bioinfo.infrared.common.DBConnector;
 import org.bioinfo.infrared.common.DBManager;
 import org.bioinfo.infrared.core.common.FeatureList;
 import org.bioinfo.infrared.core.feature.Exon;
+import org.bioinfo.infrared.core.feature.Region;
+import org.bioinfo.infrared.core.variation.SNP;
 
 public class ExonDBManager extends DBManager {
 
@@ -32,5 +35,22 @@ public class ExonDBManager extends DBManager {
 	public FeatureList<Exon> getAllByPosition(String chromosome, int position) throws Exception{
 //		return getFeatureList("select e.stable_id, e.chromosome, e.start, e.end, e.strand, t.stable_id, g.stable_id from exon e, exon2transcript e2t, transcript t, gene g where e.chromosome='"+chromosome+"' and e.start<"+position+" and e.end>"+position+" and e.exon_id=e2t.exon_id and e2t.transcript_id=t.transcript_id and t.gene_id=g.gene_id", new BeanArrayListHandler(Exon.class));
 		return getFeatureList("select e.stable_id, e.chromosome, e.start, e.end, e.strand, t.stable_id, g.stable_id from feature_map_exon fme, exon e, exon2transcript e2t, transcript t, gene g where fme.chromosome='"+chromosome+"' and fme.position="+position+" and fme.id=e.exon_id and e.exon_id=e2t.exon_id and e2t.transcript_id=t.transcript_id and t.gene_id=g.gene_id", new BeanArrayListHandler(Exon.class));
+	}
+	public List<FeatureList<Exon>> getByRegions(List<Region> regions) throws Exception{
+	
+		List<FeatureList<Exon>> exonList = new ArrayList<FeatureList<Exon>>();
+		for (Region region : regions) {
+			exonList.add(this.getByRegion(region.getChromosome(), region.getStart(), region.getEnd()));
+		}
+		return exonList;
+	}
+	
+	
+	@SuppressWarnings({ "unchecked" })
+	public FeatureList<Exon> getByRegion(String chromosome, int start, int end) throws Exception{
+		String sql = " select e.stable_id, e.chromosome, e.start, e.end, e.strand, t.stable_id, g.stable_id from exon e, exon2transcript e2t, transcript t, gene g where e.chromosome="+chromosome+" and e.start<"+start+" and e.end> "+end+" and e.exon_id=e2t.exon_id and e2t.transcript_id=t.transcript_id and t.gene_id=g.gene_id;";
+		System.err.println(sql);
+		return getFeatureList(sql, new BeanArrayListHandler(Exon.class));
+		
 	}
 }

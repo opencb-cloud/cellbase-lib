@@ -27,6 +27,10 @@ public class KaryotypeDBManager extends DBManager {
 	public FeatureList<Cytoband> getAllCytoband() throws Exception{
 		return getFeatureList(GET_ALL_CYTOBANDS, new BeanArrayListHandler(Cytoband.class));
 	}
+	//No sirve, es solamente pra que compile
+	public List<Chromosome>  getAllChromosomes() throws Exception{
+		return null;
+	}
 
 	public FeatureList<Cytoband> getCytobandByChromosomes(List<String> chromosomeIds) throws Exception{
 			FeatureList<Cytoband> list = new FeatureList<Cytoband>();
