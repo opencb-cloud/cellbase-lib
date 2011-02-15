@@ -9,7 +9,7 @@ import java.util.List;
 import org.bioinfo.infrared.common.DBConnector;
 import org.bioinfo.infrared.core.KaryotypeDBManager;
 import org.bioinfo.infrared.core.common.FeatureList;
-import org.bioinfo.infrared.core.feature.Chromosome;
+import org.bioinfo.infrared.core.feature.Cytoband;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,18 +29,17 @@ public class KaryotypeDBManagerTest {
 	public void testGetAllDBNames() {
 		System.out.println("Test - 1");
 		try {
+			DBConnector man = new DBConnector();
+			KaryotypeDBManager dbMan = new KaryotypeDBManager(man);
+			System.out.println("db connector = " + man);
+			List<Cytoband> chromosomes = dbMan.getAllCytoband();
+			for(int i=0;i<chromosomes.size(); i++) {
+				System.out.println(" ---> " + chromosomes.get(i).toString());
+			}
+			System.out.println(" -> " + chromosomes.size() + " chromosomes");
 			
-//			DBConnector man = new DBConnector();
-//			KaryotypeDBManager dbMan = new KaryotypeDBManager(man);
-//			System.out.println("db connector = " + man);
-//			List<Chromosome> chromosomes = dbMan.getAllCytoband();
-//			for(int i=0;i<chromosomes.size(); i++) {
-//				System.out.println(" ---> " + chromosomes.get(i).toString());
-//			}
-//			System.out.println(" -> " + chromosomes.size() + " chromosomes");
-//			
-//			FeatureList<Chromosome> chromosome = dbMan.getCytobandByChromosomes(Arrays.asList("9"));
-//			System.out.println(" -> " + chromosome);
+			FeatureList<Cytoband> chromosome = dbMan.getCytobandByChromosomes(Arrays.asList("9"));
+			System.out.println(" -> " + chromosome);
 
 		} catch (Exception e) {
 			e.printStackTrace();
