@@ -31,6 +31,17 @@ public class XRefDBManager extends DBManager {
 		super(dBConnector);
 	}
 
+
+	// Returns all possible DB names
+	@SuppressWarnings("unchecked")
+	public List<DBName> getAllDBNamesById(String id) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+		List<DBName> dbnames = new ArrayList<DBName>();
+		Query query = dBConnector.getDbConnection().createSQLQuery("select db.* from xref x, dbname db where x.display_id='"+id+"' and x.dbname_id=db.dbname_id");
+		dbnames = (List<DBName>)query.execute(new BeanArrayListHandler(DBName.class));
+		query.close();
+		return dbnames;
+	}
+	
 	// Returns all possible DB names
 	@SuppressWarnings("unchecked")
 	public List<DBName> getAllDBNames() throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
