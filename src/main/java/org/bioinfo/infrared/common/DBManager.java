@@ -147,7 +147,7 @@ public class DBManager {
 	@SuppressWarnings("unchecked")
 	public FeatureList getFeatureListByIds(String prepQueryStm, List<String> ids, ResultSetHandler rsh) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(prepQueryStm);
-		System.out.println("Infrared-lib->DBManager.java -> getFeatureListByIds: prepQueryStm="+prepQueryStm+", ids="+ids+", rsh="+rsh);
+//		System.out.println("Infrared-lib->DBManager.java -> getFeatureListByIds: prepQueryStm="+prepQueryStm+", ids="+ids+", rsh="+rsh);
 		FeatureList featureList = new FeatureList(ids.size());
 		Feature feature;
 		for(String id: ids) {
