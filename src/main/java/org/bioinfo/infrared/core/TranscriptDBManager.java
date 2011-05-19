@@ -16,7 +16,7 @@ import org.bioinfo.infrared.core.variation.SNP;
 
 public class TranscriptDBManager extends DBManager {
 	
-	private static final String SELECT_FIELDS = " t.stable_id,t.chromosome,t.start,t.end,t.strand,t.biotype ";
+	private static final String SELECT_FIELDS = " t.stable_id, t.external_name, t.chromosome, t.start, t.end, t.strand, t.biotype ";
 
 	public static final String TRANS_BY_ID_STM = "select " + SELECT_FIELDS + " from xref x, transcript2xref tx, transcript t where x.display_id = ? and x.xref_id = tx.xref_id and tx.transcript_id=t.transcript_id group by t.stable_id  order by t.start";
 	public static final String GET_SEQUENCE_BY_ENSEMBL_ID = "SELECT ts.sequence FROM trasncript t, transcript_sequence ts WHERE t.stable_id = ? and t.transcript_id=ts.transcript_id ";

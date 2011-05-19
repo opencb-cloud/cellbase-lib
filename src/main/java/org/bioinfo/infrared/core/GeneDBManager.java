@@ -19,7 +19,7 @@ import org.bioinfo.infrared.core.feature.Region;
 
 public class GeneDBManager extends DBManager{
 
-	private static final String SELECT_FIELDS = " g.stable_id,g.chromosome,g.start,g.end,g.strand,g.biotype ";
+	private static final String SELECT_FIELDS = " g.stable_id, g.external_name, g.chromosome, g.start, g.end, g.strand, g.biotype ";
 
 	public static final String GET_ALL_ENSEMBL_IDS = "SELECT stable_id FROM gene ";
 	public static final String GET_ALL_ENSEMBL_GENES = "SELECT " + SELECT_FIELDS + "FROM gene g ";
@@ -42,10 +42,12 @@ public class GeneDBManager extends DBManager{
 		return getFeatureList(GET_ALL_ENSEMBL_GENES, new BeanArrayListHandler(Gene.class));
 	}
 
+	@SuppressWarnings("unchecked")
 	public FeatureList<Gene> getByEnsemblId(List<String> ids) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getFeatureListByIds(GET_GENE_BY_ENSEMBL_GENE_ID, ids, new BeanHandler(Gene.class));
 	}
 
+	@SuppressWarnings("unchecked")
 	public FeatureList<Gene> getByEnsemblTranscriptId(List<String> ids) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		return getFeatureListByIds(GET_GENE_BY_ENSEMBL_TRANSCRIPT_ID, ids, new BeanArrayListHandler(Gene.class));
 	}
