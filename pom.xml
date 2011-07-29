@@ -4,13 +4,13 @@
 	<groupId>org.bioinfo</groupId>
 	<artifactId>infrared-lib</artifactId>
 	<name>Infrared project</name>
-	<version>2.0.0-BETA</version>
+	<version>2.0.0</version>
 	<description>Infrared API and application</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.bioinfo</groupId>
 			<artifactId>infrared-core</artifactId>
-			<version>2.0.0-BETA</version>
+			<version>2.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bioinfo</groupId>
