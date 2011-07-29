@@ -36,7 +36,7 @@ public class GeneDataAdapter extends HibernateDataAdapter {
 	@SuppressWarnings("unchecked")
 	public List getGeneByRegion(String chregionId){
 		List<Region> regions = Region.parseRegions(chregionId);
-		ArrayList result = new ArrayList();
+		List result = new ArrayList();
 		for (Region region : regions) {
 			result.add(getGeneByRegion(region.getChromosome(), region.getStart(), region.getEnd()));
 		}

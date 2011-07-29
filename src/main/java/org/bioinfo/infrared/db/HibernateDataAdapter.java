@@ -9,6 +9,8 @@ import org.hibernate.classic.Session;
 
 public class HibernateDataAdapter {
 	
+	protected Criteria criteria;
+	
 	protected Session getSession(){
 		   return HibernateUtil.getSessionFactory().openSession();
 	}
