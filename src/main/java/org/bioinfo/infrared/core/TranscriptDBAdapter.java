@@ -10,7 +10,7 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.criterion.Restrictions;
 
-public class TranscriptDataAdapter extends HibernateDataAdapter {
+public class TranscriptDBAdapter extends HibernateDataAdapter {
 	
 	@SuppressWarnings("unchecked")
 	public List<List> getByIds(String ids){
@@ -25,7 +25,7 @@ public class TranscriptDataAdapter extends HibernateDataAdapter {
 	
 	@SuppressWarnings("unchecked")
 	public List getById(String id){
-		Criteria criteria = this.getSession().createCriteria(Transcript.class);
+		criteria = this.getSession().createCriteria(Transcript.class);
 		criteria.add(Restrictions.eq("stableId", id.trim()));
 		return  execute(criteria);
 	}
@@ -42,28 +42,26 @@ public class TranscriptDataAdapter extends HibernateDataAdapter {
 	
 	@SuppressWarnings("unchecked")
 	public List getByRegion(String chromosome, int start, int end){
-		Criteria criteria =  this.getSession().createCriteria(Transcript.class);
-		criteria.add(Restrictions.eq("chromosome", chromosome)).add( Restrictions.ge("start", start)).add(Restrictions.le("end", end));
+		criteria =  this.getSession().createCriteria(Transcript.class);
+		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("start", Math.min(start, end))).add(Restrictions.le("end", Math.max(start, end)));
 		return  execute(criteria);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List getByGene(String geneId){
+	public List<Transcript> getByGeneId(String geneId){
 		System.out.println("estoy buscando por: " + geneId);
-		Criteria criteria =  this.getSession().createCriteria(Transcript.class).setFetchMode("gene", FetchMode.SELECT)
-		.createCriteria("gene").add( Restrictions.eq("stableId", geneId));
-		return  execute(criteria);
+		criteria =  this.getSession().createCriteria(Transcript.class).setFetchMode("gene", FetchMode.SELECT)
+		.createCriteria("gene").add(Restrictions.eq("stableId", geneId));
+		return execute(criteria);
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List getByGenes(String geneIds){
+	public List<List<Transcript>> getByGeneIdList(List<String> geneIds) {
 		System.out.println("estoy buscando por:2 " + geneIds);
-		String[] ids = geneIds.split(",");
-		ArrayList<String> result = new ArrayList<String>();
-		for (String id : ids) {
-			result.add(getByGene(id));
+		List<List<Transcript>> result = new ArrayList<List<Transcript>>(geneIds.size());
+		for (String id: geneIds) {
+			result.add(getByGeneId(id));
 		}
-		return  result;
+		return result;
 	}
 	
 	
