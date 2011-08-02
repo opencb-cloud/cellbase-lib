@@ -10,6 +10,7 @@ import org.hibernate.classic.Session;
 public class HibernateDataAdapter {
 
 	protected Session session;
+
 	protected Criteria criteria;
 
 	public HibernateDataAdapter() {
