@@ -8,21 +8,31 @@ import org.hibernate.Query;
 import org.hibernate.classic.Session;
 
 public class HibernateDataAdapter {
-	
+
+	protected Session session;
 	protected Criteria criteria;
-	
-	protected Session getSession(){
-		   return HibernateUtil.getSessionFactory().openSession();
+
+	public HibernateDataAdapter() {
+//		session = HibernateUtil.getSessionFactory().openSession();
 	}
-	
-	protected List execute(Criteria criteria){
-		List result = criteria.list();
+
+	protected Session getSession() {
+		if(session != null) {
+			session = HibernateUtil.getSessionFactory().openSession();
+		}
+		session.di
+//		return HibernateUtil.getSessionFactory().openSession();
+		return session;
+	}
+
+	protected List<?> execute(Criteria criteria){
+		List<?> result = criteria.list();
 		this.getSession().close();
 		return result;
 	}
-	
-	protected List execute(Query query){
-		List result = query.list();
+
+	protected List<?> execute(Query query){
+		List<?> result = query.list();
 		this.getSession().close();
 		return result;
 	}
