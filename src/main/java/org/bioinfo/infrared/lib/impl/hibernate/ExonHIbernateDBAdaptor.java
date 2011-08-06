@@ -1,25 +1,26 @@
-package org.bioinfo.infrared.core;
+package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bioinfo.commons.utils.StringUtils;
-import org.bioinfo.infrared.common.dao.Region;
-import org.bioinfo.infrared.db.HibernateDBAdapter;
+import org.bioinfo.infrared.core.Exon;
+import org.bioinfo.infrared.lib.common.Region;
+import org.bioinfo.infrared.lib.db.HibernateDBAdaptor;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.criterion.Restrictions;
 
 
-public class ExonDBAdapter extends HibernateDBAdapter {
+public class ExonHIbernateDBAdaptor extends HibernateDBAdaptor {
 	
 	/** BY GENE **/
+	@SuppressWarnings("unchecked")
 	public List<Exon> getByGeneId(String geneId){
 		Criteria criteria =  this.getSession().createCriteria(Exon.class).setFetchMode("exon2transcripts", FetchMode.SELECT)
 		.createCriteria("exon2transcripts").setFetchMode("transcript", FetchMode.SELECT)
 		.createCriteria("transcript").setFetchMode("gene", FetchMode.SELECT)
 		.createCriteria("gene").add( Restrictions.eq("stableId", geneId.trim()));
-		return execute(criteria);
+		return (List<Exon>)execute(criteria);
 	}
 	
 	
@@ -32,11 +33,12 @@ public class ExonDBAdapter extends HibernateDBAdapter {
 	}
 	
 	/** BY TRANSCRIPT **/
+	@SuppressWarnings("unchecked")
 	public List<Exon> getBytranscriptId(String transcriptId){
 		Criteria criteria =  this.getSession().createCriteria(Exon.class)
 		.createCriteria("exon2transcripts")
 		.createCriteria("transcript").add( Restrictions.eq("stableId", transcriptId.trim()));
-		return execute(criteria);
+		return (List<Exon>)execute(criteria);
 	}
 	
 	public List<List<Exon>> getByTranscriptIdList(List<String> transcriptIds) {
@@ -48,10 +50,11 @@ public class ExonDBAdapter extends HibernateDBAdapter {
 	}
 	
 	/** BY REGION **/
+	@SuppressWarnings("unchecked")
 	public List<Exon> getExonByRegion(String chromosome, int start, int end){
 		Criteria criteria =  this.getSession().createCriteria(Exon.class);
 		criteria.add(Restrictions.eq("chromosome", chromosome)).add( Restrictions.ge("start", start)).add(Restrictions.le("end", end));
-		return  execute(criteria);
+		return  (List<Exon>)execute(criteria);
 	}
 	
 	public List<List<Exon>> getExonByRegionList(String chregionId){

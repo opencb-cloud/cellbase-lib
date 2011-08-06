@@ -1,28 +1,22 @@
-package org.bioinfo.infrared.common.dao;
+package org.bioinfo.infrared.lib.impl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.bioinfo.infrared.core.Cytoband;
-import org.bioinfo.infrared.core.Gene;
 import org.bioinfo.infrared.core.GenomeSequence;
 import org.bioinfo.infrared.dao.utils.HibernateUtil;
-import org.hibernate.Criteria;
+import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Query;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.classic.Session;
-import org.hibernate.criterion.Restrictions;
 
-public class GenomeSequenceDataAdapter {
+public class GenomeSequenceDBAdaptor {
 
 	private String chromosome;
 	private int start;
 	private int end;
 	private String sequence;
 
-	public GenomeSequenceDataAdapter(String chromosome, int start, int end, String sequence) {
+	public GenomeSequenceDBAdaptor(String chromosome, int start, int end, String sequence) {
 		super();
 		this.chromosome = chromosome;
 		this.start = start;
@@ -40,15 +34,15 @@ public class GenomeSequenceDataAdapter {
 	
 
 	
-	public static List<GenomeSequenceDataAdapter> getByRegionList(List<Region> regions){
-		ArrayList<GenomeSequenceDataAdapter> result = new ArrayList<GenomeSequenceDataAdapter>(regions.size());
+	public static List<GenomeSequenceDBAdaptor> getByRegionList(List<Region> regions){
+		ArrayList<GenomeSequenceDBAdaptor> result = new ArrayList<GenomeSequenceDBAdaptor>(regions.size());
 		for (Region region : regions) {
 			result.add(getByRegion(region.getChromosome(), region.getStart(), region.getEnd()));
 		}
 		return result;
 	}
 	
-	public static GenomeSequenceDataAdapter getByRegion(String chromosome, int start, int end){
+	public static GenomeSequenceDBAdaptor getByRegion(String chromosome, int start, int end){
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		start = start - 1;
 
@@ -67,7 +61,7 @@ public class GenomeSequenceDataAdapter {
 		}
 		session.close();
 		String sequence = sb.toString().substring(getOffset(start)   , getOffset(start) + (end-start) );
-		return new GenomeSequenceDataAdapter(chromosome, start, end, sequence);
+		return new GenomeSequenceDBAdaptor(chromosome, start, end, sequence);
 	}
 
 	public String getChromosome() {

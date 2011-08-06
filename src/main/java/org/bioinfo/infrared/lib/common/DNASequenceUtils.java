@@ -1,4 +1,4 @@
-package org.bioinfo.infrared.common.utils;
+package org.bioinfo.infrared.lib.common;
 
 import java.util.Map;
 

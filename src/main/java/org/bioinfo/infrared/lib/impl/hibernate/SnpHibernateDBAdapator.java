@@ -1,18 +1,23 @@
-package org.bioinfo.infrared.variation;
+package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.List;
 
 import org.bioinfo.infrared.core.Transcript;
-import org.bioinfo.infrared.db.HibernateDataAdapter;
+import org.bioinfo.infrared.lib.db.HibernateDBAdaptor;
+import org.bioinfo.infrared.lib.db.HibernateDBUtils;
 import org.hibernate.criterion.Restrictions;
 
-public class SnpDBAdapater extends HibernateDataAdapter {
+public class SnpHibernateDBAdapator extends HibernateDBAdaptor {
 
-	public List<String> getAllNames() {
-		criteria = this.getSession().createCriteria(Transcript.class);
-		return (List<String>) execute(criteria);
+	@SuppressWarnings("unchecked")
+	public String getAllNames() {
+		
+		return HibernateDBUtils.getStaticTest();
+//		criteria = this.getSession().createCriteria(Transcript.class);
+//		return (List<String>) execute(criteria);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<String> getAllNamesByRegion(String chromosome) {
 //		return getStringList(GET_ALL_SNP_NAMES + " where s.chromosome = '"+chromosome+"'");
 		criteria = this.getSession().createCriteria(Transcript.class);

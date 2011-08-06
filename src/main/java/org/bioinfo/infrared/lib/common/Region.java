@@ -1,4 +1,4 @@
-package org.bioinfo.infrared.common.dao;
+package org.bioinfo.infrared.lib.common;
 
 import java.util.ArrayList;
 import java.util.List;

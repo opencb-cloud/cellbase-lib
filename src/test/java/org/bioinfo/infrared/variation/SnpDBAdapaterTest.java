@@ -4,24 +4,28 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
+import org.bioinfo.infrared.lib.db.HibernateDBUtils;
+import org.bioinfo.infrared.lib.impl.hibernate.SnpHibernateDBAdapator;
 import org.junit.Test;
 
 public class SnpDBAdapaterTest {
 
-	private SnpDBAdapater snpDBAdapater;
+	private SnpHibernateDBAdapator snpHibernateDBAdapator;
 	
 	public SnpDBAdapaterTest() {
-		snpDBAdapater = new SnpDBAdapater();
+		snpHibernateDBAdapator = new SnpHibernateDBAdapator();
 	}
 	
 	@Test
 	public void testGetAllNames() {
-		List<String> snpNames = snpDBAdapater.getAllNames();
-		System.out.println("SNP number: "+snpNames.size()+", ");
-		fail("Not yet implemented");
+		
+		System.out.println(HibernateDBUtils.getStaticTest());
+		
+//		List<String> snpNames = snpHibernateDBAdapator.getAllNames();
+//		System.out.println("SNP number: "+snpNames.size()+", ");
+//		fail("Not yet implemented");
 	}
 
-	@Test
 	public void testGetAllNamesByRegion() {
 		fail("Not yet implemented");
 	}

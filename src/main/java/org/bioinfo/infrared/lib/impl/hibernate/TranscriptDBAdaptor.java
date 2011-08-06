@@ -1,14 +1,15 @@
-package org.bioinfo.infrared.core;
+package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bioinfo.infrared.common.dao.Region;
-import org.bioinfo.infrared.db.HibernateDBAdapter;
+import org.bioinfo.infrared.core.Transcript;
+import org.bioinfo.infrared.lib.common.Region;
+import org.bioinfo.infrared.lib.db.HibernateDBAdaptor;
 import org.hibernate.FetchMode;
 import org.hibernate.criterion.Restrictions;
 
-public class TranscriptDBAdapter extends HibernateDBAdapter {
+public class TranscriptDBAdaptor extends HibernateDBAdaptor {
 	
 	/** BY ID **/
 	public List<List<Transcript>> getByIdList(List<String> identifiers){
@@ -19,10 +20,11 @@ public class TranscriptDBAdapter extends HibernateDBAdapter {
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<Transcript> getById(String id){
 		criteria = this.getSession().createCriteria(Transcript.class);
 		criteria.add(Restrictions.eq("stableId", id.trim()));
-		return  execute(criteria);
+		return (List<Transcript>) execute(criteria);
 	}
 	
 	
@@ -36,18 +38,20 @@ public class TranscriptDBAdapter extends HibernateDBAdapter {
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<Transcript> getByRegion(String chromosome, int start, int end){
 		criteria =  this.getSession().createCriteria(Transcript.class);
 		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("start", Math.min(start, end))).add(Restrictions.le("end", Math.max(start, end)));
-		return  execute(criteria);
+		return  (List<Transcript>) execute(criteria);
 	}
 	
 	
 	/** BY GENE **/
+	@SuppressWarnings("unchecked")
 	public List<Transcript> getByGeneId(String geneId){
 		criteria =  this.getSession().createCriteria(Transcript.class).setFetchMode("gene", FetchMode.SELECT)
 		.createCriteria("gene").add(Restrictions.eq("stableId", geneId));
-		return execute(criteria);
+		return (List<Transcript>) execute(criteria);
 	}
 	
 	public List<List<Transcript>> getByGeneIdList(List<String> geneIds) {
