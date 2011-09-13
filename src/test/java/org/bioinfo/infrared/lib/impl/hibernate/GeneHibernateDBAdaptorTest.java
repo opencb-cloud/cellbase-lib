@@ -14,12 +14,17 @@ public class GeneHibernateDBAdaptorTest {
 	
 	@Test
 	public void testGeneHibernateDBAdaptorString() {
-		geneDBAdaptor = dbAdaptorFact.getGeneDBAdaptor("hsapiens_v2");
+		geneDBAdaptor = dbAdaptorFact.getGeneDBAdaptor("hsapiens");
+		System.out.println(geneDBAdaptor.getGeneById("ENSG00000252775").get(0).getStart());
 //		fail("Not yet implemented");
 	}
 
+	@Test
 	public void testGetGeneById() {
-//		fail("Not yet implemented");
+		geneDBAdaptor = dbAdaptorFact.getGeneDBAdaptor("hsapiens", "v2");
+		System.out.println(geneDBAdaptor.getGeneById("ENSG00000252775").get(0).getEnd());
+		
+		dbAdaptorFact.close();
 	}
 
 	public void testGetGeneByIdList() {

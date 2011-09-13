@@ -19,13 +19,13 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<Gene> getGeneById(String geneId){
+	public List<Gene> getGeneById(String geneId) {
 		Criteria criteria = this.getSession().createCriteria(Gene.class);
 		criteria.add(Restrictions.eq("stableId", geneId.trim()));
 		return (List<Gene>)execute(criteria);
 	}
 	
-	public List<List<Gene>> getGeneByIdList(List<String> geneIdList){
+	public List<List<Gene>> getGeneByIdList(List<String> geneIdList) {
 		List<List<Gene>> result = new ArrayList<List<Gene>>(geneIdList.size());
 		for(String id: geneIdList) {
 			result.add(getGeneById(id));
@@ -67,25 +67,6 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		}
 		return result;
 	}
-
-	@Override
-	public String getSequence() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getSequence(String strand) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Region getRegion(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	
 	
 //		Criteria criteria =  this.getSession().createCriteria(Gene.class);

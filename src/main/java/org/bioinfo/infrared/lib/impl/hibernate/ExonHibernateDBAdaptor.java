@@ -11,7 +11,7 @@ import org.hibernate.FetchMode;
 import org.hibernate.criterion.Restrictions;
 
 
-public class ExonHIbernateDBAdaptor extends HibernateDBAdaptor {
+public class ExonHibernateDBAdaptor extends HibernateDBAdaptor {
 	
 	/** BY GENE **/
 	@SuppressWarnings("unchecked")

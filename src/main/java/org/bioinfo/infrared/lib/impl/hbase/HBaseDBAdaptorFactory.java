@@ -6,7 +6,7 @@ import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 
 
-public class HBaseDBAdaptorFactory implements DBAdaptorFactory{
+public class HBaseDBAdaptorFactory extends DBAdaptorFactory{
 
 	@Override
 	public void setConfiguration(Properties properties) {
@@ -19,6 +19,13 @@ public class HBaseDBAdaptorFactory implements DBAdaptorFactory{
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public GeneDBAdaptor getGeneDBAdaptor(String species, String version) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 
 	@Override
 	public GeneDBAdaptor getTranscriptDBAdaptor(String species) {
@@ -67,5 +74,12 @@ public class HBaseDBAdaptorFactory implements DBAdaptorFactory{
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void close() {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

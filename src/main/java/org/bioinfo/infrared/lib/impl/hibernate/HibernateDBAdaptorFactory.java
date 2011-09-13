@@ -15,10 +15,6 @@ import org.hibernate.cfg.Configuration;
 
 public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 
-	//	public static GeneDBAdaptor getGeneDBAdaptor(String species) {
-	//		return null;
-	//	}
-
 	private static Map<String, HibernateDBAdaptor> adaptors;
 	private static Config applicationProperties;
 	private static ResourceBundle resourceBundle;
@@ -36,54 +32,86 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		}
 	}
 
-	private SessionFactory init(String key) {
-		//		InputStream is = this.getClass().getResourceAsStream("conf/hibernate.cfg.xml");
-		//		String hibernateXfgXML = IOUtils.toString(is);
-		//		logger.debug(hibernateXfgXML);
-		//		this.sessionFactory = cfg.configure(hibernateXfgXML).buildSessionFactory();
+	private String getSpeciesVersionPrefix(String species, String version) {
+		String speciesPrefix = null;
+		if(species != null && !species.equals("")) {
+			// coding an alias to application code species
+			species = speciesAlias.get(species);
+
+			// if 'version' parameter has not been provided the default version is selected
+			if(version == null || version.trim().equals("")) {
+				version = applicationProperties.getProperty(species+".DEFAULT.VERSION").toUpperCase();
+				logger.debug("HibernateDBAdaptorFactory in createSessionFactory(): 'version' parameter is null or empty, it's been set to: '"+version+"'");
+			}
+
+			// setting database configuration for the 'species.version'
+			speciesPrefix = species.toUpperCase() + "." + version.toUpperCase();
+		}
+		return speciesPrefix;
+	}
+
+	private SessionFactory createSessionFactory(String speciesVersionPrefix) {
+		logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): creating Hibernate SessionFactory object for SPECIES.VERSION: '"+speciesVersionPrefix+"' ...");
+		long t1 = System.currentTimeMillis();
+
+		// initial load and setup from hibernate.cfg.xml
 		Configuration cfg = new Configuration().configure();
-
-		// setting database configuration for the 'species.version'
-		if(key != null && resourceBundle.containsKey(key.toUpperCase()+".DATABASE")) {
-			String prefix = key.toUpperCase()+".";
-			cfg.setProperty("hibernate.connection.username", getApplicationPropertyValue(prefix+"USERNAME"));
-			cfg.setProperty("hibernate.connection.password", getApplicationPropertyValue(prefix+"PASSWORD"));
-			cfg.setProperty("hibernate.connection.url", resourceBundle.getString("PASSWORD"));
-			cfg.setProperty("hibernate.connection.username", getApplicationPropertyValue(prefix+"USERNAME"));
-			cfg.setProperty("hibernate.connection.pool_size", getApplicationPropertyValue(prefix+"POOL_SIZE"));
-			
-
-
-			cfg.setProperty("hibernate.default_catalog", resourceBundle.getString("PASSWORD"));
-			
+		if(speciesVersionPrefix != null && !speciesVersionPrefix.trim().equals("")) {
+			// read DB configuration for that SPECIES.VERSION, by default PRIMARY_DB is selected 
+			String dbPrefix = applicationProperties.getProperty(speciesVersionPrefix+".DB", "PRIMARY_DB");
+			cfg.setProperty("hibernate.default_catalog", applicationProperties.getProperty(speciesVersionPrefix+".DATABASE"));
+			cfg.setProperty("hibernate.connection.username", applicationProperties.getProperty(dbPrefix + ".USERNAME"));
+			cfg.setProperty("hibernate.connection.password", applicationProperties.getProperty(dbPrefix + ".PASSWORD"));
+			cfg.setProperty("hibernate.connection.url", "jdbc:"+ applicationProperties.getProperty(dbPrefix+".DRIVER_CLASS")+"://"+applicationProperties.getProperty(dbPrefix + ".HOST")+":"+applicationProperties.getProperty(dbPrefix + ".PORT", "3306")+"/"+applicationProperties.getProperty(speciesVersionPrefix+".DATABASE"));
+//			cfg.setProperty("hibernate.connection.pool_size", "30");
+		}else {
+			logger.debug("HibernateDBAdaptorFactory in createSessionFactory(): 'species' parameter is null or empty");
 		}
 
 		SessionFactory sessionFactory = cfg.buildSessionFactory();
+		logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): Hibernate SessionFactory object for '"+speciesVersionPrefix+"' created in "+(System.currentTimeMillis()-t1)+" ms");
+
 		return sessionFactory;
 	}
-	
-	@Deprecated
-	private String getApplicationPropertyValue(String key) {
-		if(applicationProperties.containsKey(applicationProperties.getProperty(key))) {
-			return applicationProperties.getProperty(applicationProperties.getProperty(key));
-		}else {
-			return applicationProperties.getProperty(key, "not found");
-		}
-	}
+
 
 	@Override
 	public void setConfiguration(Properties properties) {
-		// TODO Auto-generated method stub	
+		if(properties != null) {
+			if(applicationProperties == null) {
+				applicationProperties = new Config();
+			}
+			for(Object key: properties.keySet()) {
+				applicationProperties.setProperty((String) key, properties.getProperty((String) key));
+			}
+		}
 	}
 
 	@Override
-	public GeneDBAdaptor getGeneDBAdaptor(String species) {
-		if(!adaptors.containsKey(species)) {
-			SessionFactory s = init();
-			adaptors.put(species, new GeneHibernateDBAdaptor(s));
+	public void close() {
+		for(HibernateDBAdaptor adaptor: adaptors.values()) {
+			if(adaptor != null && adaptor.getSessionFactory() != null && !adaptor.getSessionFactory().isClosed()) {
+				adaptor.getSessionFactory().close();
+			}
 		}
-		return (GeneDBAdaptor) adaptors.get(species);
 	}
+
+
+	@Override
+	public GeneDBAdaptor getGeneDBAdaptor(String species) {
+		return getGeneDBAdaptor(species, null);
+	}
+
+	@Override
+	public GeneDBAdaptor getGeneDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+		if(!adaptors.containsKey(speciesVersionPrefix)) {
+			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
+			adaptors.put(speciesVersionPrefix, new GeneHibernateDBAdaptor(sessionFactory));
+		}
+		return (GeneDBAdaptor) adaptors.get(speciesVersionPrefix);
+	}
+
 
 	@Override
 	public GeneDBAdaptor getTranscriptDBAdaptor(String species) {
@@ -132,5 +160,6 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 }

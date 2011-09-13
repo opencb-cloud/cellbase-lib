@@ -2,50 +2,66 @@ package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.List;
 
-import org.bioinfo.commons.log.Logger;
 import org.bioinfo.infrared.lib.api.DBAdaptor;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
 
-public class HibernateDBAdaptor implements DBAdaptor{
+public class HibernateDBAdaptor extends DBAdaptor{
 
 	private SessionFactory sessionFactory;
 	private Session session;
-
-	protected Logger logger;
 	
-//	private static Map<String, SessionFactory> sessionFactories;
-	
-	public HibernateDBAdaptor() {
-//		this.hibernateDBConnector = new HibernateDBAdaptorFactory();
-	}
+//	public HibernateDBAdaptor() {
+//
+//	}
 	
 	public HibernateDBAdaptor(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-
-		logger = new Logger();
-		logger.setLevel(Logger.DEBUG_LEVEL);
+		this.setSessionFactory(sessionFactory);
 	}
 	
 	protected Session getSession() {
-		if(session != null) {
+		if(session == null || !session.isOpen()) {
+			long t1 = System.currentTimeMillis();
 			session = sessionFactory.openSession();
+			logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): Hibernate Session object for SessionFactory created in "+(System.currentTimeMillis()-t1)+" ms");
 		}
 		return session;
 	}
+	
+	
 
 	protected List<?> execute(Criteria criteria){
 		List<?> result = criteria.list();
 //		hibernateDBConnector.openSession();
-		this.getSession().close();
+		closeSession();
 		return result;
 	}
 
 	protected List<?> execute(Query query){
 		List<?> result = query.list();
-		this.getSession().close();
+		closeSession();
 		return result;
+	}
+	
+	private void closeSession() {
+		if(session != null && session.isOpen()) {
+			session.close();
+		}
+	}
+
+	/**
+	 * @return the sessionFactory
+	 */
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+
+	/**
+	 * @param sessionFactory the sessionFactory to set
+	 */
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 }

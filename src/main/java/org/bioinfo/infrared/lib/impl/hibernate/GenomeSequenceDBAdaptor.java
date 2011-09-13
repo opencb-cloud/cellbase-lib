@@ -1,4 +1,4 @@
-package org.bioinfo.infrared.lib.impl;
+package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
 import java.util.List;
