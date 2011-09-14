@@ -30,10 +30,11 @@ public class Position {
 	public static List<Position> parsePositions(String positionString) {
 		List<Position> positions = null;
 		if(positionString != null && !positionString.equals("")) {
-			positions = new ArrayList<Position>();
 			String[] positionItems = positionString.split(",");
+			positions = new ArrayList<Position>(positionItems.length);
+			String[] fields;
 			for(String posString: positionItems) {
-				String[] fields = posString.split(":", -1);
+				fields = posString.split(":", -1);
 				if(fields.length == 2) {
 					positions.add(new Position(fields[0], Integer.parseInt(fields[1])));
 				}else {
@@ -44,27 +45,40 @@ public class Position {
 		return positions;
 	}
 
+	
 	@Override
 	public String toString() {
 		return chromosome+":"+position;
 	}
 
+	
+	/**
+	 * @return the chromosome
+	 */
 	public String getChromosome() {
 		return chromosome;
 	}
 
+	/**
+	 * @param chromosome the chromosome to set
+	 */
 	public void setChromosome(String chromosome) {
 		this.chromosome = chromosome;
 	}
 
+	
+	/**
+	 * @return the position
+	 */
 	public int getPosition() {
 		return position;
 	}
 
+	/**
+	 * @param position the position to set
+	 */
 	public void setPosition(int position) {
 		this.position = position;
 	}
-
-
-
+	
 }

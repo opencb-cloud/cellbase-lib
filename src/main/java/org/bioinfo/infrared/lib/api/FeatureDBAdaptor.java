@@ -1,9 +1,13 @@
 package org.bioinfo.infrared.lib.api;
 
+import java.util.List;
+
 
 
 public interface FeatureDBAdaptor {
 
+	public List<String> getAllStringIds();
+	
 //	public String getChromosome();
 //	
 //	public int getStart();
