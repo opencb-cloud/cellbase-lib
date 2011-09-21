@@ -15,12 +15,14 @@ import org.hibernate.cfg.Configuration;
 
 public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 
-	private static Map<String, HibernateDBAdaptor> adaptors;
+//	private static Map<String, HibernateDBAdaptor> sessionFactories;
+	private static Map<String, SessionFactory> sessionFactories;
 	private static Config applicationProperties;
 	private static ResourceBundle resourceBundle;
 
 	static {
-		adaptors = new HashMap<String, HibernateDBAdaptor>(20);
+//		sessionFactories = new HashMap<String, HibernateDBAdaptor>(20);
+		sessionFactories = new HashMap<String, SessionFactory>(10);
 
 		// reading application.properties file
 		resourceBundle = ResourceBundle.getBundle("org.bioinfo.infrared.lib.impl.hibernate.conf.application");
@@ -89,9 +91,14 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 
 	@Override
 	public void close() {
-		for(HibernateDBAdaptor adaptor: adaptors.values()) {
-			if(adaptor != null && adaptor.getSessionFactory() != null && !adaptor.getSessionFactory().isClosed()) {
-				adaptor.getSessionFactory().close();
+//		for(HibernateDBAdaptor adaptor: sessionFactories.values()) {
+//			if(adaptor != null && adaptor.getSessionFactory() != null && !adaptor.getSessionFactory().isClosed()) {
+//				adaptor.getSessionFactory().close();
+//			}
+//		}
+		for(SessionFactory adaptor: sessionFactories.values()) {
+			if(adaptor != null && !adaptor.isClosed()) {
+				adaptor.close();
 			}
 		}
 	}
@@ -105,11 +112,11 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 	@Override
 	public GeneDBAdaptor getGeneDBAdaptor(String species, String version) {
 		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
-		if(!adaptors.containsKey(speciesVersionPrefix)) {
+		if(!sessionFactories.containsKey(speciesVersionPrefix)) {
 			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
-			adaptors.put(speciesVersionPrefix, new GeneHibernateDBAdaptor(sessionFactory));
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (GeneDBAdaptor) adaptors.get(speciesVersionPrefix);
+		return (GeneDBAdaptor) new GeneHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 
 
@@ -149,12 +156,25 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		return null;
 	}
 
+	
 	@Override
-	public GeneDBAdaptor getGenomeDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
+	public GenomeSequenceDBAdaptor getGenomeSequenceDBAdaptor(String species) {
+		return getGenomeSequenceDBAdaptor(species, null);
+	}
+	
+	@Override
+	public GenomeSequenceDBAdaptor getGenomeSequenceDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)) {
+			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
+//			sessionFactories.put(speciesVersionPrefix, new GenomeSequenceDBAdaptor(sessionFactory));
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+//		return (GenomeSequenceDBAdaptor) sessionFactories.get(speciesVersionPrefix);
+		return (GenomeSequenceDBAdaptor) new GenomeSequenceDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 
+	
 	@Override
 	public GeneDBAdaptor getXRefDBAdaptor(String species) {
 		// TODO Auto-generated method stub

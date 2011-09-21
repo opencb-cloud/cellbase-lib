@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import org.bioinfo.commons.log.Logger;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
+import org.bioinfo.infrared.lib.impl.hibernate.GenomeSequenceDBAdaptor;
 
 public abstract class DBAdaptorFactory {
 
@@ -53,8 +54,12 @@ public abstract class DBAdaptorFactory {
 
 	public abstract GeneDBAdaptor getChromosomeDBAdaptor(String species);
 
-	public abstract GeneDBAdaptor getGenomeDBAdaptor(String species);
+	
+	public abstract GenomeSequenceDBAdaptor getGenomeSequenceDBAdaptor(String species);
+	
+	public abstract GenomeSequenceDBAdaptor getGenomeSequenceDBAdaptor(String species, String version);
 
+	
 	public abstract GeneDBAdaptor getXRefDBAdaptor(String species);
 
 }

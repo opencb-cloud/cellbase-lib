@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
+import org.bioinfo.infrared.lib.impl.hibernate.GenomeSequenceDBAdaptor;
 
 
 public class HBaseDBAdaptorFactory extends DBAdaptorFactory{
@@ -63,11 +64,6 @@ public class HBaseDBAdaptorFactory extends DBAdaptorFactory{
 		return null;
 	}
 
-	@Override
-	public GeneDBAdaptor getGenomeDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public GeneDBAdaptor getXRefDBAdaptor(String species) {
@@ -79,6 +75,19 @@ public class HBaseDBAdaptorFactory extends DBAdaptorFactory{
 	public void close() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public GenomeSequenceDBAdaptor getGenomeSequenceDBAdaptor(String species,
+			String version) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GenomeSequenceDBAdaptor getGenomeSequenceDBAdaptor(String species) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

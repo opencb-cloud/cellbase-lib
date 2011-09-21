@@ -4,79 +4,73 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bioinfo.infrared.core.GenomeSequence;
-import org.bioinfo.infrared.dao.utils.HibernateUtil;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Query;
-import org.hibernate.classic.Session;
+import org.hibernate.SessionFactory;
 
-public class GenomeSequenceDBAdaptor {
+public class GenomeSequenceDBAdaptor extends HibernateDBAdaptor {
 
-	private String chromosome;
-	private int start;
-	private int end;
-	private String sequence;
+	private final static int CHUNK_SIZE = 2000;
 
-	public GenomeSequenceDBAdaptor(String chromosome, int start, int end, String sequence) {
-		super();
-		this.chromosome = chromosome;
-		this.start = start;
-		this.end = end;
-		this.sequence = sequence;
+	public GenomeSequenceDBAdaptor(SessionFactory sessionFactory) {
+		super(sessionFactory);
 	}
 
 	private static int getChunk(int position){
-		return (position / 2000) + 1;
+		return (position / CHUNK_SIZE) + 1;
 	}
 
 	private static int getOffset(int position){
-		return ((position) % 2000);
+		return ((position) % CHUNK_SIZE);
 	}
 	
-
+	@SuppressWarnings("unchecked")
+	public String getByRegion(String chromosome, int start, int end) {
+		Query query = this.getSession().createQuery("from GenomeSequence where chromosome = :chromosome and chunk >= :start and chunk <= :end")
+		.setParameter("chromosome", chromosome.trim())
+		.setParameter("start", String.valueOf(getChunk(start)))
+		.setParameter("end", String.valueOf(getChunk(end)));
+		
+//		Criteria criteria = session.createCriteria(GenomeSequence.class).add(Restrictions.eq("chromosome", chromosome)).add( Restrictions.ge("start", start)).add(Restrictions.le("end", end));
+		List<GenomeSequence> genomeSequenceList = (List<GenomeSequence>)query.list();
+		
+		StringBuilder sb = new StringBuilder();
+		for(GenomeSequence genomeSequence: genomeSequenceList) {
+			sb.append(genomeSequence.getSequence());
+		}
+		this.getSession().close();
+		
+		return sb.toString().substring(getOffset(start), getOffset(start) + (end-start));
+	}
 	
-	public static List<GenomeSequenceDBAdaptor> getByRegionList(List<Region> regions){
-		ArrayList<GenomeSequenceDBAdaptor> result = new ArrayList<GenomeSequenceDBAdaptor>(regions.size());
-		for (Region region : regions) {
+	public List<String> getByRegionList(List<Region> regions){
+		List<String> result = new ArrayList<String>(regions.size());
+		for(Region region: regions) {
 			result.add(getByRegion(region.getChromosome(), region.getStart(), region.getEnd()));
 		}
 		return result;
 	}
 	
-	public static GenomeSequenceDBAdaptor getByRegion(String chromosome, int start, int end){
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		start = start - 1;
+//	public static GenomeSequenceDBAdaptor getByRegion(String chromosome, int start, int end){
+//		Session session = HibernateUtil.getSessionFactory().openSession();
+//		start = start - 1;
+//
+//		Query queryHql = session.createQuery("from GenomeSequence where chromosome=:chromosome and chunk >= :start and chunk <= :end")
+//		.setParameter("chromosome", chromosome.trim())
+//		.setParameter("start", String.valueOf(getChunk(start)).trim())
+//		.setParameter("end", String.valueOf(getChunk(end)).trim());
+//		
+////		Criteria criteria = session.createCriteria(GenomeSequence.class).add(Restrictions.eq("chromosome", chromosome)).add( Restrictions.ge("start", start)).add(Restrictions.le("end", end));
+//		List query = queryHql.list();
+//		
+//		StringBuilder sb = new StringBuilder();
+//		for (int i = 0; i < query.size(); i++) {
+//			GenomeSequence genomeSequence = (GenomeSequence)query.get(i);
+//			sb.append(genomeSequence.getSequence());
+//		}
+//		session.close();
+//		String sequence = sb.toString().substring(getOffset(start)   , getOffset(start) + (end-start) );
+//		return new GenomeSequenceDBAdaptor(chromosome, start, end, sequence);
+//	}
 
-		Query queryHql = session.createQuery("from GenomeSequence where chromosome=:chromosome and chunk>=:start and chunk<=:end")
-		.setParameter("chromosome", chromosome.trim())
-		.setParameter("start", String.valueOf(getChunk(start)).trim())
-		.setParameter("end", String.valueOf(getChunk(end)).trim());
-		
-//		Criteria criteria = session.createCriteria(GenomeSequence.class).add(Restrictions.eq("chromosome", chromosome)).add( Restrictions.ge("start", start)).add(Restrictions.le("end", end));
-		List query = queryHql.list();
-		
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < query.size(); i++) {
-			GenomeSequence genomeSequence = (GenomeSequence)query.get(i);
-			sb.append(genomeSequence.getSequence());
-		}
-		session.close();
-		String sequence = sb.toString().substring(getOffset(start)   , getOffset(start) + (end-start) );
-		return new GenomeSequenceDBAdaptor(chromosome, start, end, sequence);
-	}
-
-	public String getChromosome() {
-		return chromosome;
-	}
-
-	public int getStart() {
-		return start;
-	}
-
-	public int getEnd() {
-		return end;
-	}
-
-	public String getSequence() {
-		return sequence;
-	}
 }

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface FeatureDBAdaptor {
 
-	public List<String> getAllStringIds();
+	public List<String> getAllIds();
 	
 //	public String getChromosome();
 //	
