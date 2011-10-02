@@ -19,15 +19,15 @@ public interface GeneDBAdaptor extends FeatureDBAdaptor {
 
 	public Gene getByEnsemblId(String ensemblId);
 	
-	public List<Gene> getAllByEnsemblIdList(List<String> ensemblIds);
+	public List<Gene> getAllByEnsemblIdList(List<String> ensemblIdList);
 
 	public List<Gene> getAllById(String id);
 
-	public List<List<Gene>> getAllByIdList(List<String> ids);
+	public List<List<Gene>> getAllByIdList(List<String> idList);
 	
 	public Gene getByEnsemblTranscriptId(String transcriptId);
 	
-	public List<Gene> getByEnsemblTranscriptIdList(List<String> transcriptIds);
+	public List<Gene> getByEnsemblTranscriptIdList(List<String> transcriptIdList);
 
 	
 	public List<Gene> getAllByBiotype(String biotype);
@@ -39,7 +39,7 @@ public interface GeneDBAdaptor extends FeatureDBAdaptor {
 
 	public List<Gene> getAllByPosition(Position position);
 
-	public List<List<Gene>> getAllByPositionList(List<Position> positions);
+	public List<List<Gene>> getAllByPositionList(List<Position> positionList);
 	
 
 	public List<Gene> getAllByRegion(String chromosome);
@@ -48,22 +48,22 @@ public interface GeneDBAdaptor extends FeatureDBAdaptor {
 
 	public List<Gene> getAllByRegion(String chromosome, int start, int end);
 
-	public List<Gene> getAllByRegion(String chromosome, int start, int end, List<String> biotypes);
+	public List<Gene> getAllByRegion(String chromosome, int start, int end, List<String> biotypeList);
 
 	public List<Gene> getAllByRegion(Region region);
 
-	public List<Gene> getAllByRegion(Region region, List<String> biotypes);
+	public List<Gene> getAllByRegion(Region region, List<String> biotypeList);
 
-	public List<List<Gene>> getAllByRegionList(List<Region> regions);
+	public List<List<Gene>> getAllByRegionList(List<Region> regionList);
 	
-	public List<List<Gene>> getAllByRegionList(List<Region> regions, List<String> biotypes);
+	public List<List<Gene>> getAllByRegionList(List<Region> regions, List<String> biotypeList);
 
 	public List<Gene> getAllByCytoband(String chromosome, String cytoband);
 	
 	
 	public List<Gene> getAllBySnpId(String snpId);
 	
-	public List<List<Gene>> getAllBySnpIdList(List<String> snpIds);
+	public List<List<Gene>> getAllBySnpIdList(List<String> snpIdList);
 
 //	public String getSequenceByEnsemblId(String ensemblId);
 

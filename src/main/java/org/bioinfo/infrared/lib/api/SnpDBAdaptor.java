@@ -1,59 +1,70 @@
 package org.bioinfo.infrared.lib.api;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.bioinfo.infrared.core.Snp;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 
-public interface SnpDBAdaptor {
+public interface SnpDBAdaptor extends FeatureDBAdaptor {
 
-	public List<String> getAllNamesByRegion(String chromosome, int start, int end) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
+	
+	public List<Snp> getAll();
 
-	public List<String> getAllNamesByConsequenceType(String consequenceType) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public List<String> getAllNamesByConsequenceTypes(List<String> consequenceTypes) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public List<String> getAllConsequenceTypes() throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public List<String> getAllNamesByLocation(String chromosome, int start, int end) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public List<Snp> getAll() throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public Snp getByName(String name) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public List<Snp> getByNames(List<String> names) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public List<Snp> getSnpListByIds(List<String> snpIds) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public List<Snp> getAllByPosition(String chromosome, int position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public List<Snp> getAllByPosition(Position position) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public List<List<Snp>> getAllByPositions(List<Position> positions) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public List<Snp> getAllByRegion(String chromosome) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public List<Snp> getAllByRegion(String chromosome, int start) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public List<Snp> getAllByRegion(String chromosome, int start, int end) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public List<Snp> getAllByRegion(Region region) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public List<List<Snp>> getAllByRegions(List<Region> regions) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public List<Snp> getAllByConsequenceType(String consequence) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public List<Snp> getAllFilteredByConsequenceType(List<String> snpIds, String consequence) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public List<Snp> getAllFilteredByConsequenceType(List<String> snpIds, List<String> consequenceTypes) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public void writeAllFilteredByConsequenceType(String consequence, String outfile) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException, IOException;
-	
-	public List<Snp> getByExternalId(String externalId) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
-	
-	public List<List<Snp>> getByExternalId(List<String> externalIds) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException;
+	public Snp getById(String name);
 
+	public List<Snp> getAllByIdList(List<String> idList);
+
+	public List<String> getAllSnpIdByRegion(String chromosome, int start, int end);
+
+	public List<Snp> getByGeneId(String externalId);
+	
+	public List<List<Snp>> getByGeneIdList(List<String> externalIds);
+	
+	public List<String> getAllConsequenceTypes();
+
+	public List<String> getAllIdsByConsequenceType(String consequenceType);
+	
+	public List<List<String>> getAllIdsByConsequenceTypeList(List<String> consequenceTypeList);
+	
+	public List<String> getAllIdsByRegion(String chromosome, int start, int end);
+	
+	
+	public List<Snp> getAllByConsequenceType(String consequenceType);
+	
+	public List<Snp> getAllByConsequenceTypeList(List<String> consequenceTypeList);
+	
+	
+	public List<Snp> getAllByPosition(String chromosome, int position);
+	
+	public List<Snp> getAllByPosition(Position position);
+	
+	public List<List<Snp>> getAllByPositionList(List<Position> positionList);
+	
+	
+	public List<Snp> getAllByRegion(String chromosome);
+	
+	public List<Snp> getAllByRegion(String chromosome, int start);
+	
+	public List<Snp> getAllByRegion(String chromosome, int start, int end);
+	
+	public List<Snp> getAllByRegion(String chromosome, int start, int end, List<String> consequenceTypeList);
+	
+	public List<Snp> getAllByRegion(Region region);
+	
+	public List<Snp> getAllByRegion(Region region, List<String> consequenceTypeList);
+	
+	public List<List<Snp>> getAllByRegionList(List<Region> regionList);
+	
+	public List<List<Snp>> getAllByRegionList(List<Region> regionList, List<String> consequenceTypeList);
+	
+	public List<Snp> getAllByCytoband(String chromosome, String cytoband);
+	
+	
+	public List<Snp> getAllFilteredByConsequenceType(List<String> snpIds, String consequence);
+
+	public List<Snp> getAllFilteredByConsequenceType(List<String> snpIds, List<String> consequenceTypes);
+
+	public void writeAllFilteredByConsequenceType(String consequence, String outfile);
+	
 }

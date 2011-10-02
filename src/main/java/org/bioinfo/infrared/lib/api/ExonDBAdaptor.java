@@ -15,31 +15,26 @@ public interface ExonDBAdaptor extends FeatureDBAdaptor {
 
 	public Exon getByEnsemblId(String ensemblId);
 	
-	public List<Exon> getAllByEnsemblIdList(List<String> ensemblIds);
+	public List<Exon> getAllByEnsemblIdList(List<String> ensemblIdList);
 
 	public List<Exon> getAllById(String id);
 
-	public List<List<Exon>> getAllByIdList(List<String> ids);
+	public List<List<Exon>> getAllByIdList(List<String> idList);
 	
 	public List<Exon> getByEnsemblTranscriptId(String transcriptId);
 	
-	public List<List<Exon>> getByEnsemblTranscriptIdList(List<String> transcriptIds);
+	public List<List<Exon>> getByEnsemblTranscriptIdList(List<String> transcriptIdList);
 
 	public List<Exon> getByEnsemblGeneId(String geneId);
 	
-	public List<List<Exon>> getByEnsemblGeneIdList(List<String> geneIds);
+	public List<List<Exon>> getByEnsemblGeneIdList(List<String> geneIdList);
 	
 	
-//	public List<Exon> getAllByBiotype(String biotype);
-//	
-//	public List<Exon> getAllByBiotypeList(List<String> biotypeList);
-	
-
 	public List<Exon> getAllByPosition(String chromosome, int position);
 
 	public List<Exon> getAllByPosition(Position position);
 
-	public List<List<Exon>> getAllByPositionList(List<Position> positions);
+	public List<List<Exon>> getAllByPositionList(List<Position> positionList);
 	
 
 	public List<Exon> getAllByRegion(String chromosome);
@@ -48,22 +43,16 @@ public interface ExonDBAdaptor extends FeatureDBAdaptor {
 
 	public List<Exon> getAllByRegion(String chromosome, int start, int end);
 
-//	public List<Exon> getAllByRegion(String chromosome, int start, int end, List<String> biotypes);
-
 	public List<Exon> getAllByRegion(Region region);
 
-//	public List<Exon> getAllByRegion(Region region, List<String> biotypes);
-
-	public List<List<Exon>> getAllByRegionList(List<Region> regions);
+	public List<List<Exon>> getAllByRegionList(List<Region> regionList);
 	
-//	public List<List<Exon>> getAllByRegionList(List<Region> regions, List<String> biotypes);
-
 	public List<Exon> getAllByCytoband(String chromosome, String cytoband);
 	
 	
 	public List<Exon> getAllBySnpId(String snpId);
 	
-	public List<List<Exon>> getAllBySnpIdList(List<String> snpIds);
+	public List<List<Exon>> getAllBySnpIdList(List<String> snpIdList);
 
 	
 }

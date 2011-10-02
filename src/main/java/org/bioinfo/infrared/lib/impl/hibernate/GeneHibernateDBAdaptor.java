@@ -93,8 +93,8 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Gene> getByEnsemblTranscriptIdList(List<String> transcriptIds) {
-		Criteria criteria = this.getSession().createCriteria(Gene.class).createCriteria("transcripts").add(Restrictions.in("stableId", transcriptIds));
+	public List<Gene> getByEnsemblTranscriptIdList(List<String> transcriptIdList) {
+		Criteria criteria = this.getSession().createCriteria(Gene.class).createCriteria("transcripts").add(Restrictions.in("stableId", transcriptIdList));
 		return (List<Gene>) execute(criteria);
 	}
 
@@ -140,9 +140,9 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 
 
 	@Override
-	public List<List<Gene>> getAllByPositionList(List<Position> positions) {
-		List<List<Gene>> genes = new ArrayList<List<Gene>>(positions.size());
-		for(Position position: positions) {
+	public List<List<Gene>> getAllByPositionList(List<Position> positionList) {
+		List<List<Gene>> genes = new ArrayList<List<Gene>>(positionList.size());
+		for(Position position: positionList) {
 			genes.add(getAllByPosition(position));
 		}
 		return genes;

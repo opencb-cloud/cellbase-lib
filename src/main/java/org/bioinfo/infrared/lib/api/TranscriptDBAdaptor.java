@@ -15,15 +15,15 @@ public interface TranscriptDBAdaptor extends FeatureDBAdaptor {
 
 	public Transcript getByEnsemblId(String ensemblId);
 	
-	public List<Transcript> getAllByEnsemblIdList(List<String> ensemblIds);
+	public List<Transcript> getAllByEnsemblIdList(List<String> ensemblIdList);
 
 	public List<Transcript> getAllById(String id);
 
-	public List<List<Transcript>> getAllByIdList(List<String> ids);
+	public List<List<Transcript>> getAllByIdList(List<String> idList);
 	
 	public List<Transcript> getByEnsemblGeneId(String ensemblGeneId);
 	
-	public List<List<Transcript>> getByEnsemblGeneIdList(List<String> ensemblGeneIds);
+	public List<List<Transcript>> getByEnsemblGeneIdList(List<String> ensemblGeneIdList);
 
 	
 	public List<Transcript> getAllByBiotype(String biotype);
@@ -35,7 +35,7 @@ public interface TranscriptDBAdaptor extends FeatureDBAdaptor {
 
 	public List<Transcript> getAllByPosition(Position position);
 
-	public List<List<Transcript>> getAllByPositionList(List<Position> positions);
+	public List<List<Transcript>> getAllByPositionList(List<Position> positionList);
 	
 
 	public List<Transcript> getAllByRegion(String chromosome);
@@ -44,22 +44,22 @@ public interface TranscriptDBAdaptor extends FeatureDBAdaptor {
 
 	public List<Transcript> getAllByRegion(String chromosome, int start, int end);
 
-	public List<Transcript> getAllByRegion(String chromosome, int start, int end, List<String> biotypes);
+	public List<Transcript> getAllByRegion(String chromosome, int start, int end, List<String> biotypeList);
 
 	public List<Transcript> getAllByRegion(Region region);
 
-	public List<Transcript> getAllByRegion(Region region, List<String> biotypes);
+	public List<Transcript> getAllByRegion(Region region, List<String> biotypeList);
 
-	public List<List<Transcript>> getAllByRegionList(List<Region> regions);
+	public List<List<Transcript>> getAllByRegionList(List<Region> regionList);
 	
-	public List<List<Transcript>> getAllByRegionList(List<Region> regions, List<String> biotypes);
+	public List<List<Transcript>> getAllByRegionList(List<Region> regions, List<String> biotypeList);
 
 	public List<Transcript> getAllByCytoband(String chromosome, String cytoband);
 	
 	
 	public List<Transcript> getAllBySnpId(String snpId);
 	
-	public List<List<Transcript>> getAllBySnpIdList(List<String> snpIds);
+	public List<List<Transcript>> getAllBySnpIdList(List<String> snpIdList);
 	
 	
 }
