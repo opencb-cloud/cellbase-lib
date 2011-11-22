@@ -11,7 +11,7 @@ public interface ExonDBAdaptor extends FeatureDBAdaptor {
 
 	
 	@Override
-	public List<Transcript> getAll();
+	public List<Exon> getAll();
 
 	
 	public List<String> getAllEnsemblIds();
