@@ -132,7 +132,7 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
+	//@Override
 	public List<Exon> getAllById(String id) {
 		Criteria criteria = this.getSession().createCriteria(Exon.class);
 		criteria.add(Restrictions.eq("stableId", id.trim()));
@@ -140,7 +140,7 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	}
 
 
-	@Override
+	//@Override
 	public List<List<Exon>> getAllByIdList(List<String> ids) {
 		List<List<Exon>> exonList = new ArrayList<List<Exon>>(ids.size());
 		for(String id: ids) {
