@@ -14,7 +14,7 @@ public class GenomeSequenceDBAdaptorTest {
 
 	@Test
 	public void testGetByRegion() {
-		genomeSequenceDBAdaptor = dbAdaptorFact.getGenomeSequenceDBAdaptor("hsapiens");
+		genomeSequenceDBAdaptor = dbAdaptorFact.getGenomeSequenceDBAdaptor("drerio");
 		System.out.println(genomeSequenceDBAdaptor.getByRegion("1", 1000001, 1000501));
 
 		dbAdaptorFact.close();

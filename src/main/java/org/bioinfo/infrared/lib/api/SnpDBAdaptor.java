@@ -2,20 +2,20 @@ package org.bioinfo.infrared.lib.api;
 
 import java.util.List;
 
-import org.bioinfo.infrared.core.Snp;
+import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 
 public interface SnpDBAdaptor extends FeatureDBAdaptor {
 
 	
+	@Override
 	public List<Snp> getAll();
 
-	public Snp getById(String name);
+	
+	public Snp getById(String id);
 
 	public List<Snp> getAllByIdList(List<String> idList);
-
-	public List<String> getAllSnpIdByRegion(String chromosome, int start, int end);
 
 	public List<Snp> getByGeneId(String externalId);
 	
@@ -28,7 +28,7 @@ public interface SnpDBAdaptor extends FeatureDBAdaptor {
 	public List<List<String>> getAllIdsByConsequenceTypeList(List<String> consequenceTypeList);
 	
 	public List<String> getAllIdsByRegion(String chromosome, int start, int end);
-	
+
 	
 	public List<Snp> getAllByConsequenceType(String consequenceType);
 	

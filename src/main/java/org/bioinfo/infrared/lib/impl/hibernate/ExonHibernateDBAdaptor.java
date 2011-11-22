@@ -2,8 +2,9 @@ package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import org.bioinfo.infrared.core.Exon;
+import org.bioinfo.infrared.core.cellbase.Exon;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
@@ -68,6 +69,20 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 //		}
 //		return result;
 //	}
+
+
+	@Override
+	public Map<String, Object> getInfo(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Map<String, Object> getFullInfo(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	
 	@SuppressWarnings("unchecked")
@@ -318,6 +333,48 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 
 	@Override
 	public List<List<Exon>> getAllBySnpIdList(List<String> snpIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<Map<String, Object>> getInfoByIdList(List<String> idList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<Map<String, Object>> getFullInfoByIdList(List<String> idList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Region getRegionById(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<Region> getAllRegionsByIdList(List<String> idList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public String getSequenceById(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<String> getAllSequencesByIdList(List<String> idList) {
 		// TODO Auto-generated method stub
 		return null;
 	}

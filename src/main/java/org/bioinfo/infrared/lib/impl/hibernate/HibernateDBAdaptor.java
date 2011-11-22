@@ -2,7 +2,7 @@ package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.List;
 
-import org.bioinfo.infrared.lib.api.DBAdaptor;
+import org.bioinfo.infrared.lib.impl.DBAdaptor;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -21,7 +21,7 @@ public class HibernateDBAdaptor extends DBAdaptor{
 		this.setSessionFactory(sessionFactory);
 	}
 	
-	protected Session getSession() {
+	protected Session openSession() {
 		if(session == null || !session.isOpen()) {
 			long t1 = System.currentTimeMillis();
 			session = sessionFactory.openSession();
@@ -32,14 +32,13 @@ public class HibernateDBAdaptor extends DBAdaptor{
 	
 	
 
-	protected List<?> execute(Criteria criteria){
+	protected List<?> executeAndClose(Criteria criteria){
 		List<?> result = criteria.list();
-//		hibernateDBConnector.openSession();
 		closeSession();
 		return result;
 	}
 
-	protected List<?> execute(Query query){
+	protected List<?> executeAndClose(Query query){
 		List<?> result = query.list();
 		closeSession();
 		return result;

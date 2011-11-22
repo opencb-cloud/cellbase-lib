@@ -3,11 +3,10 @@ package org.bioinfo.infrared.lib.impl.hibernate;
 import static org.junit.Assert.fail;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bioinfo.infrared.core.Gene;
+import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
@@ -26,7 +25,7 @@ public class GeneHibernateDBAdaptorTest {
 
 	@Before
 	public void beforeTestStart() {
-		//		System.out.println("beforeTestStart");
+//		System.out.println("beforeTestStart");
 		geneDBAdaptor = dbAdaptorFact.getGeneDBAdaptor("hsapiens");
 		startExecTime = System.currentTimeMillis();
 	}
@@ -60,6 +59,8 @@ public class GeneHibernateDBAdaptorTest {
 	@Test
 	public void testGeneHibernateDBAdaptorGetByEnsemblId() {
 		Gene gene = geneDBAdaptor.getByEnsemblId("ENSG00000252775");
+		System.out.println(gene.toString());
+		System.out.println(gene.getTranscripts());
 		printGeneList("testGeneHibernateDBAdaptorGetByEnsemblId", Arrays.asList(gene), 5);
 	}
 

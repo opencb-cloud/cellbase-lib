@@ -2,15 +2,17 @@ package org.bioinfo.infrared.lib.api;
 
 import java.util.List;
 
-import org.bioinfo.infrared.core.Transcript;
+import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 
 public interface TranscriptDBAdaptor extends FeatureDBAdaptor {
 
 	
+	@Override
 	public List<Transcript> getAll();
 
+	
 	public List<String> getAllEnsemblIds();
 
 	public Transcript getByEnsemblId(String ensemblId);

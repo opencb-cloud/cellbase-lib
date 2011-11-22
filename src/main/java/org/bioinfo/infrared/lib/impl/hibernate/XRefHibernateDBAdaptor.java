@@ -1,16 +1,8 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.bioinfo.infrared.core.Dbname;
-import org.bioinfo.infrared.core.Gene;
-import org.bioinfo.infrared.coreold.common.FeatureList;
-import org.bioinfo.infrared.coreold.feature.DBName;
-import org.bioinfo.infrared.lib.common.XRef;
+import org.bioinfo.infrared.core.cellbase.Dbname;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 
@@ -24,8 +16,8 @@ public class XRefHibernateDBAdaptor extends HibernateDBAdaptor {
 	
 	@SuppressWarnings("unchecked")
 	public List<Dbname> getAllDBNamesById(String id) {
-		Query query = this.getSession().createQuery("select db.* from Xref x, Dbname db where x.display_id = :Id and x.dbname_id=db.dbname_id").setParameter("Id", id);
-		return (List<Dbname>)execute(query);
+		Query query = this.openSession().createQuery("select db.* from Xref x, Dbname db where x.display_id = :Id and x.dbname_id=db.dbname_id").setParameter("Id", id);
+		return (List<Dbname>)executeAndClose(query);
 	}
 	
 	// Returns all possible DB names
@@ -49,8 +41,8 @@ public class XRefHibernateDBAdaptor extends HibernateDBAdaptor {
 //		return dbnames;
 //	}
 //
-//	// Returns an XRef object according to a single ID and DB (used in FeatureId.java)
-//	public XRef getByDBName(String id, String dbname) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+//	// Returns an XRefs object according to a single ID and DB (used in FeatureId.java)
+//	public XRefs getByDBName(String id, String dbname) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 //		if(id != null && !id.equals("")) {
 //			if(id.contains("'")) {
 //				id = id.replace("'", "\\\\'");
@@ -59,26 +51,26 @@ public class XRefHibernateDBAdaptor extends HibernateDBAdaptor {
 //				PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_TRANSLATION);
 //				prepQuery.setParams(id, dbname);
 //				Object[][] result = (Object[][])prepQuery.execute(new MatrixHandler());
-//				XRef xref = new XRef(id, dbname);
+//				XRefs xref = new XRefs(id, dbname);
 //				for(int i=0; i<result.length; i++) {
 //					xref.addXRefItem(dbname, result[i][1].toString(), result[i][2].toString());
 //				}
 //				prepQuery.close();
 //				return xref;
 //			}else {
-//				return new XRef(id);
+//				return new XRefs(id);
 //			}
 //		}else {
 //			return null;
 //		}
 //	}
 //
-//	// Returns a list of XRef objects according to a list of IDs and single DB (used in FeatureId.java)
-//	public List<XRef> getByDBName(List<String> ids, String dbname) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+//	// Returns a list of XRefs objects according to a list of IDs and single DB (used in FeatureId.java)
+//	public List<XRefs> getByDBName(List<String> ids, String dbname) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 //		if(ids != null) {
-//			List<XRef> xrefs = new ArrayList<XRef>(ids.size());
+//			List<XRefs> xrefs = new ArrayList<XRefs>(ids.size());
 //			if(dbname != null && !dbname.equals("")) {
-//				XRef xref;
+//				XRefs xref;
 //				PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_TRANSLATION);
 //				Object[][] result;
 //				for(String id: ids) {
@@ -88,7 +80,7 @@ public class XRefHibernateDBAdaptor extends HibernateDBAdaptor {
 //						}
 //						prepQuery.setParams(id, dbname);
 //						result = (Object[][])prepQuery.execute(new MatrixHandler());
-//						xref = new XRef(id, dbname);
+//						xref = new XRefs(id, dbname);
 //						for(int i=0; i<result.length; i++) {
 //							xref.addXRefItem(dbname, result[i][1].toString(), result[i][2].toString());
 //						}
@@ -100,7 +92,7 @@ public class XRefHibernateDBAdaptor extends HibernateDBAdaptor {
 //				prepQuery.close();
 //			}else {
 //				for(String id: ids) {
-//					xrefs.add(new XRef(id));
+//					xrefs.add(new XRefs(id));
 //				}
 //			}
 //			return xrefs;
@@ -109,14 +101,14 @@ public class XRefHibernateDBAdaptor extends HibernateDBAdaptor {
 //		}
 //	}
 //
-//	// Returns an XRef object according to a single ID in the specified list of DDBB (used in FeatureId.java)
-//	public XRef getByDBName(String id, List<String> dbnames) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+//	// Returns an XRefs object according to a single ID in the specified list of DDBB (used in FeatureId.java)
+//	public XRefs getByDBName(String id, List<String> dbnames) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 //		if(id != null && !id.equals("")) {
 //			if(id.contains("'")) {
 //				id = id.replace("'", "\\\\'");
 //			}
 //			PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_TRANSLATION);
-//			XRef xref = new XRef(id);
+//			XRefs xref = new XRefs(id);
 //			Object[][] result;
 //			if(dbnames != null) {
 //				for(String dbname: dbnames) {
@@ -137,19 +129,19 @@ public class XRefHibernateDBAdaptor extends HibernateDBAdaptor {
 //		}
 //	}
 //
-//	// Returns a list of XRef objects according to a list of ID in the specified list of DDBB (used in FeatureId.java)
-//	public List<XRef> getByDBName(List<String> ids, List<String> dbnames) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+//	// Returns a list of XRefs objects according to a list of ID in the specified list of DDBB (used in FeatureId.java)
+//	public List<XRefs> getByDBName(List<String> ids, List<String> dbnames) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 //		if(ids != null) {
-//			List<XRef> xrefs = new ArrayList<XRef>(ids.size());
+//			List<XRefs> xrefs = new ArrayList<XRefs>(ids.size());
 //			PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_TRANSLATION);
-//			XRef xref;
+//			XRefs xref;
 //			Object[][] result;
 //			for(String id: ids) {
 //				if(id != null && !id.equals("")) {
 //					if(id.contains("'")) {
 //						id = id.replace("'", "\\\\'");
 //					}
-//					xref = new XRef(id);
+//					xref = new XRefs(id);
 //					if(dbnames != null) {
 //						for(String dbname: dbnames) {
 //							if(dbname != null && !dbname.equals("")) {
@@ -175,18 +167,18 @@ public class XRefHibernateDBAdaptor extends HibernateDBAdaptor {
 //	}
 //
 //
-//	// Returns a list of XRef objects with all the possible identifiers for every single ID in a list (used in FeatureId.java)
-//	public List<XRef> getAllIdentifiersByIds(List<String> ids) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+//	// Returns a list of XRefs objects with all the possible identifiers for every single ID in a list (used in FeatureId.java)
+//	public List<XRefs> getAllIdentifiersByIds(List<String> ids) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 //		//		if(ids != null) {
-//		//			List<XRef> xrefs = new ArrayList<XRef>(ids.size());
-//		//			XRef xref;
+//		//			List<XRefs> xrefs = new ArrayList<XRefs>(ids.size());
+//		//			XRefs xref;
 //		//			PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_ALL_IDENTIFIERS);
 //		//			Object[][] result;
 //		//			for(String id: ids) {
 //		//				if(id != null && !id.equals("")) {
 //		//					prepQuery.setParams(id);
 //		//					result = (Object[][])prepQuery.execute(new MatrixHandler());
-//		//					xref = new XRef(id);
+//		//					xref = new XRefs(id);
 //		//					for(int i=0; i<result.length; i++) {
 //		//						xref.addXRefItem(result[i][0].toString(), result[i][1].toString(), result[i][2].toString());
 //		//					}
@@ -204,17 +196,17 @@ public class XRefHibernateDBAdaptor extends HibernateDBAdaptor {
 //	}
 //
 //
-//	public List<XRef> getAllFunctionalAnnotByIds(List<String> ids) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+//	public List<XRefs> getAllFunctionalAnnotByIds(List<String> ids) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 //		//		if(ids != null) {
-//		//			List<XRef> xrefs = new ArrayList<XRef>(ids.size());
-//		//			XRef xref;
+//		//			List<XRefs> xrefs = new ArrayList<XRefs>(ids.size());
+//		//			XRefs xref;
 //		//			PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(GET_ALL_FUNCTIONAL_ANNOTATIONS);
 //		//			Object[][] result;
 //		//			for(String id: ids) {
 //		//				if(id != null && !id.equals("")) {
 //		//					prepQuery.setParams(id);
 //		//					result = (Object[][])prepQuery.execute(new MatrixHandler());
-//		//					xref = new XRef(id);
+//		//					xref = new XRefs(id);
 //		//					for(int i=0; i<result.length; i++) {
 //		//						xref.addXRefItem(result[i][0].toString(), result[i][1].toString(), result[i][2].toString());
 //		//					}
@@ -231,10 +223,10 @@ public class XRefHibernateDBAdaptor extends HibernateDBAdaptor {
 //		return getAllXRefsByPrepQuery(ids, GET_ALL_FUNCTIONAL_ANNOTATIONS);
 //	}
 //
-//	private List<XRef> getAllXRefsByPrepQuery(List<String> ids, String prepQuerySql) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+//	private List<XRefs> getAllXRefsByPrepQuery(List<String> ids, String prepQuerySql) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 //		if(ids != null) {
-//			List<XRef> xrefs = new ArrayList<XRef>(ids.size());
-//			XRef xref;
+//			List<XRefs> xrefs = new ArrayList<XRefs>(ids.size());
+//			XRefs xref;
 //			PreparedQuery prepQuery = dBConnector.getDbConnection().createSQLPrepQuery(prepQuerySql);
 //			Object[][] result;
 //			for(String id: ids) {
@@ -244,7 +236,7 @@ public class XRefHibernateDBAdaptor extends HibernateDBAdaptor {
 //					}
 //					prepQuery.setParams(id);
 //					result = (Object[][])prepQuery.execute(new MatrixHandler());
-//					xref = new XRef(id);
+//					xref = new XRefs(id);
 //					for(int i=0; i<result.length; i++) {
 //						xref.addXRefItem(result[i][0].toString(), result[i][1].toString(), result[i][2].toString());
 //					}
@@ -262,8 +254,8 @@ public class XRefHibernateDBAdaptor extends HibernateDBAdaptor {
 //
 //	@SuppressWarnings("unchecked")
 //	@Deprecated
-//	public FeatureList<XRef> getByDBNameOld(String id, String dbname) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-//		return getFeatureListById(GET_TRANSLATION.replaceFirst("\\?", "'"+id+"'"), dbname, new BeanArrayListHandler(XRef.class));
+//	public FeatureList<XRefs> getByDBNameOld(String id, String dbname) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+//		return getFeatureListById(GET_TRANSLATION.replaceFirst("\\?", "'"+id+"'"), dbname, new BeanArrayListHandler(XRefs.class));
 //	}
 //
 //	public List<String> getAllIdsByDBName(String dbname) throws Exception{
@@ -285,17 +277,17 @@ public class XRefHibernateDBAdaptor extends HibernateDBAdaptor {
 //
 //	@SuppressWarnings("unchecked")
 //	@Deprecated
-//	public Map<String, FeatureList<XRef>> getByDBNames(String id, List<String> dbnames) throws Exception {
-//		Map<String,FeatureList<XRef>> featureMap = new HashMap<String, FeatureList<XRef>>((int)Math.round(dbnames.size()*1.4));
+//	public Map<String, FeatureList<XRefs>> getByDBNames(String id, List<String> dbnames) throws Exception {
+//		Map<String,FeatureList<XRefs>> featureMap = new HashMap<String, FeatureList<XRefs>>((int)Math.round(dbnames.size()*1.4));
 //		for(String dbname: dbnames) {
-//			featureMap.put(dbname, getFeatureListById(GET_TRANSLATION.replaceFirst("\\?", "'"+id+"'"), dbname, new BeanArrayListHandler(XRef.class)));
+//			featureMap.put(dbname, getFeatureListById(GET_TRANSLATION.replaceFirst("\\?", "'"+id+"'"), dbname, new BeanArrayListHandler(XRefs.class)));
 //		}
 //		return featureMap;
 //	}
 //
 //	@Deprecated
-//	public List<Map<String, FeatureList<XRef>>> getListByDBNames(List<String> ids, List<String> dbnames) throws Exception {
-//		List<Map<String, FeatureList<XRef>>> xrefList = new ArrayList<Map<String,FeatureList<XRef>>>(ids.size());
+//	public List<Map<String, FeatureList<XRefs>>> getListByDBNames(List<String> ids, List<String> dbnames) throws Exception {
+//		List<Map<String, FeatureList<XRefs>>> xrefList = new ArrayList<Map<String,FeatureList<XRefs>>>(ids.size());
 //		for(String id: ids) {
 //			xrefList.add(getByDBNames(id, dbnames));
 //		}

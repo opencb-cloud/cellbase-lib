@@ -1,4 +1,4 @@
-package org.bioinfo.infrared.lib.api;
+package org.bioinfo.infrared.lib.impl;
 
 import org.bioinfo.commons.log.Logger;
 

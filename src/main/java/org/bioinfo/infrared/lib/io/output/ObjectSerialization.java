@@ -2,7 +2,7 @@ package org.bioinfo.infrared.lib.io.output;
 
 import java.util.List;
 
-import org.bioinfo.infrared.core.Gene;
+import org.bioinfo.infrared.core.cellbase.Gene;
 
 public abstract class ObjectSerialization {
 

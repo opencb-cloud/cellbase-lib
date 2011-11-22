@@ -2,7 +2,7 @@ package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.List;
 
-import org.bioinfo.infrared.core.Transcript;
+import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.db.HibernateDBAdaptor;
 import org.bioinfo.infrared.lib.db.HibernateDBUtils;
 import org.hibernate.criterion.Restrictions;

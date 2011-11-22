@@ -2,19 +2,17 @@ package org.bioinfo.infrared.lib.api;
 
 import java.util.List;
 
-import org.bioinfo.infrared.core.Gene;
+import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 
 public interface GeneDBAdaptor extends FeatureDBAdaptor {
 
 	
-//	public List<Gene> getGeneById(String geneId);
-	
-//	public List<List<Gene>> getGeneByIdList(List<String> geneIdList);
-	
+	@Override
 	public List<Gene> getAll();
-
+	
+	
 	public List<String> getAllEnsemblIds();
 
 	public Gene getByEnsemblId(String ensemblId);
@@ -27,7 +25,7 @@ public interface GeneDBAdaptor extends FeatureDBAdaptor {
 	
 	public Gene getByEnsemblTranscriptId(String transcriptId);
 	
-	public List<Gene> getByEnsemblTranscriptIdList(List<String> transcriptIdList);
+	public List<Gene> getAllByEnsemblTranscriptIdList(List<String> transcriptIdList);
 
 	
 	public List<Gene> getAllByBiotype(String biotype);
@@ -64,8 +62,5 @@ public interface GeneDBAdaptor extends FeatureDBAdaptor {
 	public List<Gene> getAllBySnpId(String snpId);
 	
 	public List<List<Gene>> getAllBySnpIdList(List<String> snpIdList);
-
-//	public String getSequenceByEnsemblId(String ensemblId);
-
 
 }

@@ -57,7 +57,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		long t1 = System.currentTimeMillis();
 
 		// initial load and setup from hibernate.cfg.xml
-		Configuration cfg = new Configuration().configure();
+		Configuration cfg = new Configuration().configure("cell_db_v1_hibernate.cfg.xml");
 		if(speciesVersionPrefix != null && !speciesVersionPrefix.trim().equals("")) {
 			// read DB configuration for that SPECIES.VERSION, by default PRIMARY_DB is selected 
 			String dbPrefix = applicationProperties.getProperty(speciesVersionPrefix+".DB", "PRIMARY_DB");
@@ -122,6 +122,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 
 	@Override
 	public GeneDBAdaptor getTranscriptDBAdaptor(String species) {
+		
 		// TODO Auto-generated method stub
 		return null;
 	}

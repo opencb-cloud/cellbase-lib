@@ -3,7 +3,7 @@ package org.bioinfo.infrared.lib.impl.hibernate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bioinfo.infrared.core.GenomeSequence;
+import org.bioinfo.infrared.core.cellbase.GenomeSequence;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -26,7 +26,7 @@ public class GenomeSequenceDBAdaptor extends HibernateDBAdaptor {
 	
 	@SuppressWarnings("unchecked")
 	public String getByRegion(String chromosome, int start, int end) {
-		Query query = this.getSession().createQuery("from GenomeSequence where chromosome = :chromosome and chunk >= :start and chunk <= :end")
+		Query query = this.openSession().createQuery("from GenomeSequence where chromosome = :chromosome and chunk >= :start and chunk <= :end")
 		.setParameter("chromosome", chromosome.trim())
 		.setParameter("start", String.valueOf(getChunk(start)))
 		.setParameter("end", String.valueOf(getChunk(end)));
@@ -38,7 +38,7 @@ public class GenomeSequenceDBAdaptor extends HibernateDBAdaptor {
 		for(GenomeSequence genomeSequence: genomeSequenceList) {
 			sb.append(genomeSequence.getSequence());
 		}
-		this.getSession().close();
+		this.openSession().close();
 		
 		return sb.toString().substring(getOffset(start), getOffset(start) + (end-start));
 	}

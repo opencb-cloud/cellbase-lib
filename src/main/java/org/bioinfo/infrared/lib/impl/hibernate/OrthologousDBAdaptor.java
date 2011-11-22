@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bioinfo.commons.utils.StringUtils;
-import org.bioinfo.infrared.core.Orthologous;
+import org.bioinfo.infrared.core.cellbase.Orthologous;
 import org.bioinfo.infrared.lib.db.HibernateDBAdaptor;
 import org.bioinfo.infrared.lib.db.HibernateDBConnector;
 import org.hibernate.Criteria;

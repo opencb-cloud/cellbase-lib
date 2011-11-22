@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.bioinfo.commons.utils.ListUtils;
 
-public class XRef {
+public class XRefs {
 	
 	private String id;
 	
@@ -16,7 +16,7 @@ public class XRef {
 	private List<String> dbNames;
 
 
-	public XRef(String id) {
+	public XRefs(String id) {
 		this.id = id;
 
 		// create structures
@@ -24,7 +24,7 @@ public class XRef {
 		dbNames = new ArrayList<String>();
 	}
 
-	public XRef(String id, String dbname) {
+	public XRefs(String id, String dbname) {
 		this.id = id;
 
 		// create structures
@@ -35,19 +35,19 @@ public class XRef {
 		addDbName(dbname);
 	}
 
-	public XRef(String id, String dbname, String displayName) {
+	public XRefs(String id, String dbname, String displayName) {
 		this(id, dbname, displayName, "");
 	}
 
-	public XRef(String id, String dbname, List<String> displayName) {
+	public XRefs(String id, String dbname, List<String> displayName) {
 		this(id, dbname, displayName, ListUtils.initialize(displayName.size(), ""));
 	}
 
-	public XRef(String id, String dbname, String displayName, String description) {
+	public XRefs(String id, String dbname, String displayName, String description) {
 		this(id, dbname, Arrays.asList(displayName), Arrays.asList(description));
 	}
 
-	public XRef(String id, String dbname, List<String> displayName, List<String> description) {
+	public XRefs(String id, String dbname, List<String> displayName, List<String> description) {
 		this.id = id;
 
 		// create structures
@@ -79,7 +79,7 @@ public class XRef {
 
 	public void addDbName(String dbName) {
 		if(!xrefItems.containsKey(dbName)) {
-			xrefItems.put(dbName, new ArrayList<XRef.XRefItem>());
+			xrefItems.put(dbName, new ArrayList<XRefs.XRefItem>());
 			dbNames.add(dbName);
 		}
 	}

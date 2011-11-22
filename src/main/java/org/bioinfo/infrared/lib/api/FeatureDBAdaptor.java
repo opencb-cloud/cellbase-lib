@@ -1,27 +1,38 @@
 package org.bioinfo.infrared.lib.api;
 
 import java.util.List;
+import java.util.Map;
 
+import org.bioinfo.infrared.lib.common.Region;
 
 
 public interface FeatureDBAdaptor {
 
+	
+	public List<? extends Object> getAll();
+	
 	public List<String> getAllIds();
-	
-//	public String getChromosome();
-//	
-//	public int getStart();
-//	
-//	public int getEnd();
-//	
-//	public int getStrand();
-	
-//	public Region getRegion(String id);
 
-//	public String getCytoband();
 	
-//	public String getSequence();
+	public Map<String, Object> getInfo(String id);
 	
-//	public String getSequence(String strand);
+	public List<Map<String, Object>> getInfoByIdList(List<String> idList);
 	
+	public Map<String, Object> getFullInfo(String id);
+	
+	public List<Map<String, Object>> getFullInfoByIdList(List<String> idList);
+	
+	
+	
+	
+	public Region getRegionById(String id);
+	
+	public List<Region> getAllRegionsByIdList(List<String> idList);
+	
+	
+	public String getSequenceById(String id);
+
+	public List<String> getAllSequencesByIdList(List<String> idList);
+
+
 }

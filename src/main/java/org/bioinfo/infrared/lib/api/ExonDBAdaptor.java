@@ -2,25 +2,24 @@ package org.bioinfo.infrared.lib.api;
 
 import java.util.List;
 
-import org.bioinfo.infrared.core.Exon;
+import org.bioinfo.infrared.core.cellbase.Exon;
+import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 
 public interface ExonDBAdaptor extends FeatureDBAdaptor {
 
 	
-	public List<Exon> getAll();
+	@Override
+	public List<Transcript> getAll();
 
+	
 	public List<String> getAllEnsemblIds();
 
 	public Exon getByEnsemblId(String ensemblId);
 	
 	public List<Exon> getAllByEnsemblIdList(List<String> ensemblIdList);
 
-	public List<Exon> getAllById(String id);
-
-	public List<List<Exon>> getAllByIdList(List<String> idList);
-	
 	public List<Exon> getByEnsemblTranscriptId(String transcriptId);
 	
 	public List<List<Exon>> getByEnsemblTranscriptIdList(List<String> transcriptIdList);

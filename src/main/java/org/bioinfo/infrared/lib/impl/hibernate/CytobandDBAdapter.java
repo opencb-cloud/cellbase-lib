@@ -3,8 +3,8 @@ package org.bioinfo.infrared.lib.impl.hibernate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bioinfo.infrared.core.Cytoband;
-import org.bioinfo.infrared.core.Gene;
+import org.bioinfo.infrared.core.cellbase.Cytoband;
+import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.lib.common.Region;
 import org.bioinfo.infrared.lib.db.HibernateDBAdaptor;
 import org.hibernate.Criteria;
