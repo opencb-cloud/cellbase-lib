@@ -7,7 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.Gene;
-import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
+import org.bioinfo.infrared.core.cellbase.Transcript;
+import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.bioinfo.infrared.lib.io.output.StringWriter;
@@ -19,13 +20,13 @@ public class TranscriptHibernateDBAdaptorTest {
 
 	private DBAdaptorFactory dbAdaptorFact = new HibernateDBAdaptorFactory();
 
-	private GeneDBAdaptor geneDBAdaptor;
+	private TranscriptDBAdaptor transcriptDBAdaptor;
 
 	private long startExecTime;
 
 	@Before
 	public void beforeTestStart() {
-		geneDBAdaptor = dbAdaptorFact.getGeneDBAdaptor("hsapiens");
+		transcriptDBAdaptor = dbAdaptorFact.getTranscriptDBAdaptor("hsapiens");
 		startExecTime = System.currentTimeMillis();
 	}
 
@@ -37,61 +38,60 @@ public class TranscriptHibernateDBAdaptorTest {
 
 
 	@Test
-	public void testGeneHibernateDBAdaptorGetAll() {
-		List<Gene> genes = geneDBAdaptor.getAll();
-		printGeneList("testGeneHibernateDBAdaptorGetAll", genes, 5);
+	public void testTranscriptHibernateDBAdaptorGetAll() {
+		List<Transcript> transcripts = transcriptDBAdaptor.getAll();
+		printGeneList("testTranscriptHibernateDBAdaptorGetAll", transcripts, 5);
 	}
 	@Test
-	public void testGeneHibernateDBAdaptorGetAll2() {
-		List<Gene> genes = geneDBAdaptor.getAll();
-		printGeneList("testGeneHibernateDBAdaptorGetAll2", genes, 5);
-	}
-
-	@Test
-	public void testGeneHibernateDBAdaptorGetAllEnsemblIds() {
-		List<String> genes = geneDBAdaptor.getAllEnsemblIds();
-		printGeneList("testGeneHibernateDBAdaptorGetAllEnsemblIds", genes, 5);
+	public void testTranscriptHibernateDBAdaptorGetAll2() {
+		List<Transcript> transcripts = transcriptDBAdaptor.getAll();
+		printGeneList("testTranscriptHibernateDBAdaptorGetAll2", transcripts, 5);
 	}
 
 	@Test
-	public void testGeneHibernateDBAdaptorGetByEnsemblId() {
-		Gene gene = geneDBAdaptor.getByEnsemblId("ENSG00000252775");
-		System.out.println(gene.toString());
-		System.out.println(gene.getTranscripts());
-		printGeneList("testGeneHibernateDBAdaptorGetByEnsemblId", Arrays.asList(gene), 5);
+	public void testTranscriptHibernateDBAdaptorGetAllEnsemblIds() {
+		List<String> transcripts = transcriptDBAdaptor.getAllEnsemblIds();
+		printGeneList("testTranscriptHibernateDBAdaptorGetAllEnsemblIds", transcripts, 5);
 	}
 
 	@Test
-	public void testGeneHibernateDBAdaptorGetByEnsemblIdList() {
-		List<Gene> genes = geneDBAdaptor.getAllByEnsemblIdList(Arrays.asList("ENSG00000252775", "ENSG00000000419", "ENSG00000187642"));
-		printGeneList("testGeneHibernateDBAdaptorGetByEnsemblIdList", genes, 5);
+	public void testTranscriptHibernateDBAdaptorGetByEnsemblId() {
+		Transcript transcript = transcriptDBAdaptor.getByEnsemblId("ENST00000493562");
+		System.out.println(transcript.toString());
+		System.out.println(transcript.getGene());
+		printGeneList("testTranscriptHibernateDBAdaptorGetByEnsemblId", Arrays.asList(transcript), 5);
 	}
 
 	@Test
-	public void testGeneHibernateDBAdaptorGetAllById() {
-		List<Gene> genes = geneDBAdaptor.getAllById("ENSG00000252775");
-		printGeneList("testGeneHibernateDBAdaptorGetByEnsemblIdList", genes, 5);
+	public void testTranscriptHibernateDBAdaptorGetByEnsemblIdList() {
+		List<Transcript> transcripts = transcriptDBAdaptor.getAllByEnsemblIdList(Arrays.asList("ENST00000493562", "ENST00000472808", "ENST00000465089"));
+		printGeneList("testTranscriptHibernateDBAdaptorGetByEnsemblIdList", transcripts, 5);
 	}
 
 	@Test
-	public void testGeneHibernateDBAdaptorGetAllByIdList() {
-		List<Gene> genes = geneDBAdaptor.getAllById("ENSG00000252775");
-		printGeneList("testGeneHibernateDBAdaptorGetByEnsemblIdList", genes, 5);
-	}
-
-
-
-
-	@Test
-	public void testGeneHibernateDBAdaptorGetAllByBiotype() {
-		List<Gene> genes = geneDBAdaptor.getAllByBiotype("protein_coding");
-		printGeneList("testGeneHibernateDBAdaptorGetAllByBiotype", genes, 5);
+	public void testTranscriptHibernateDBAdaptorGetAllById() {
+		List<Transcript> transcripts = transcriptDBAdaptor.getAllById("brca2");
+		printGeneList("testTranscriptHibernateDBAdaptorGetAllById", transcripts, 5);
 	}
 
 	@Test
-	public void testGeneHibernateDBAdaptorGetAllByBiotypeList() {
-		List<Gene> genes = geneDBAdaptor.getAllByBiotypeList(Arrays.asList("processed_transcript", "protein_coding"));
-		printGeneList("testGeneHibernateDBAdaptorGetAllByBiotypeList", genes, 5);
+	public void testTranscriptHibernateDBAdaptorGetAllByIdList() {
+		List<List<Transcript>> transcripts = transcriptDBAdaptor.getAllByIdList(Arrays.asList("ENST00000493562","brca2","brca1"));
+		printGeneList("testTranscriptHibernateDBAdaptorGetAllByIdList", transcripts, 5);
+	}
+
+	
+
+	@Test
+	public void testTranscriptHibernateDBAdaptorGetAllByBiotype() {
+		List<Transcript> transcripts = transcriptDBAdaptor.getAllByBiotype("protein_coding");
+		printGeneList("testTranscriptHibernateDBAdaptorGetAllByBiotype", transcripts, 5);
+	}
+
+	@Test
+	public void testTranscriptHibernateDBAdaptorGetAllByBiotypeList() {
+		List<Transcript> transcripts = transcriptDBAdaptor.getAllByBiotypeList(Arrays.asList("processed_transcript", "protein_coding"));
+		printGeneList("testTranscriptHibernateDBAdaptorGetAllByBiotypeList", transcripts, 5);
 	}
 
 
@@ -99,14 +99,14 @@ public class TranscriptHibernateDBAdaptorTest {
 
 	@Test
 	public void testGetAllByPosition() {
-		List<Gene> genes = geneDBAdaptor.getAllByPosition("1", 244515940);
-		printGeneList("testGetAllByPosition", genes, 5);
+		List<Transcript> transcripts = transcriptDBAdaptor.getAllByPosition("1", 244515940);
+		printGeneList("testGetAllByPosition", transcripts, 5);
 	}
 
 	@Test
 	public void testGetAllByPositionList() {
-		List<List<Gene>> genes = geneDBAdaptor.getAllByPositionList(Arrays.asList(new Position("1", 244515940), new Position("10", 24451594), new Position("11", 244515)));
-		printGeneList("testGetAllByPositionList", genes, 5);
+		List<List<Transcript>> transcripts = transcriptDBAdaptor.getAllByPositionList(Arrays.asList(new Position("1", 244515940), new Position("10", 24451594), new Position("11", 244515)));
+		printGeneList("testGetAllByPositionList", transcripts, 5);
 	}
 
 
@@ -114,26 +114,26 @@ public class TranscriptHibernateDBAdaptorTest {
 
 	@Test
 	public void testGetAllByRegionString() {
-		List<Gene> genes = geneDBAdaptor.getAllByRegion("Y");
-		printGeneList("testGetAllByRegionString", genes, 5);
+		List<Transcript> transcripts = transcriptDBAdaptor.getAllByRegion("Y");
+		printGeneList("testGetAllByRegionString", transcripts, 5);
 	}
 
 	@Test
 	public void testGetAllByRegionStringInt() {
-		List<Gene> genes = geneDBAdaptor.getAllByRegion("1", 240000000);
-		printGeneList("testGetAllByRegionStringInt", genes, 5);
+		List<Transcript> transcripts = transcriptDBAdaptor.getAllByRegion("1", 240000000);
+		printGeneList("testGetAllByRegionStringInt", transcripts, 5);
 	}
 
 	@Test
 	public void testGetAllByRegionStringIntInt() {
-		List<Gene> genes = geneDBAdaptor.getAllByRegion("1", 1, 300000);
-		printGeneList("testGetAllByRegionStringIntInt", genes, 5);
+		List<Transcript> transcripts = transcriptDBAdaptor.getAllByRegion("1", 1, 300000);
+		printGeneList("testGetAllByRegionStringIntInt", transcripts, 5);
 	}
 
 	@Test
 	public void testGetAllByRegionStringIntIntStringList() {
-		List<Gene> genes = geneDBAdaptor.getAllByRegion("1", 1, 300000, Arrays.asList("protein_coding", "processed_transcript"));
-		printGeneList("testGetAllByRegionStringIntIntStringList", genes, 5);
+		List<Transcript> transcripts = transcriptDBAdaptor.getAllByRegion("1", 1, 300000, Arrays.asList("protein_coding", "processed_transcript"));
+		printGeneList("testGetAllByRegionStringIntIntStringList", transcripts, 5);
 	}
 
 	public void testGetGeneByRegionString() {
@@ -162,8 +162,8 @@ public class TranscriptHibernateDBAdaptorTest {
 
 	@Test
 	public void testGetAllByCytoband() {
-		List<Gene> genes = geneDBAdaptor.getAllByCytoband("9", "q31.3");
-		printGeneList("testGetAllByCytoband", genes, 5);
+		List<Transcript> transcript = transcriptDBAdaptor.getAllByCytoband("9", "q31.3");
+		printGeneList("testGetAllByCytoband", transcript, 5);
 	}
 
 

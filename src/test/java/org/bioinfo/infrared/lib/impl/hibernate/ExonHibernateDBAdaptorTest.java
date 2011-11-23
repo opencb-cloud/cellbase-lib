@@ -6,8 +6,9 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bioinfo.infrared.core.cellbase.Exon;
 import org.bioinfo.infrared.core.cellbase.Gene;
-import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
+import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.bioinfo.infrared.lib.io.output.StringWriter;
@@ -19,13 +20,13 @@ public class ExonHibernateDBAdaptorTest {
 
 	private DBAdaptorFactory dbAdaptorFact = new HibernateDBAdaptorFactory();
 
-	private GeneDBAdaptor geneDBAdaptor;
+	private ExonDBAdaptor exonDBAdaptor;
 
 	private long startExecTime;
 
 	@Before
 	public void beforeTestStart() {
-		geneDBAdaptor = dbAdaptorFact.getGeneDBAdaptor("hsapiens");
+		exonDBAdaptor = dbAdaptorFact.getExonDBAdaptor("hsapiens");
 		startExecTime = System.currentTimeMillis();
 	}
 
@@ -37,61 +38,61 @@ public class ExonHibernateDBAdaptorTest {
 
 
 	@Test
-	public void testGeneHibernateDBAdaptorGetAll() {
-		List<Gene> genes = geneDBAdaptor.getAll();
-		printGeneList("testGeneHibernateDBAdaptorGetAll", genes, 5);
+	public void testExonHibernateDBAdaptorGetAll() {
+		List<Exon> exons = exonDBAdaptor.getAll();
+		printGeneList("testExonHibernateDBAdaptorGetAll", exons, 5);
 	}
 	@Test
-	public void testGeneHibernateDBAdaptorGetAll2() {
-		List<Gene> genes = geneDBAdaptor.getAll();
-		printGeneList("testGeneHibernateDBAdaptorGetAll2", genes, 5);
-	}
-
-	@Test
-	public void testGeneHibernateDBAdaptorGetAllEnsemblIds() {
-		List<String> genes = geneDBAdaptor.getAllEnsemblIds();
-		printGeneList("testGeneHibernateDBAdaptorGetAllEnsemblIds", genes, 5);
+	public void testExonHibernateDBAdaptorGetAll2() {
+		List<Exon> exons = exonDBAdaptor.getAll();
+		printGeneList("testExonHibernateDBAdaptorGetAll2", exons, 5);
 	}
 
 	@Test
-	public void testGeneHibernateDBAdaptorGetByEnsemblId() {
-		Gene gene = geneDBAdaptor.getByEnsemblId("ENSG00000252775");
-		System.out.println(gene.toString());
-		System.out.println(gene.getTranscripts());
-		printGeneList("testGeneHibernateDBAdaptorGetByEnsemblId", Arrays.asList(gene), 5);
+	public void testExonHibernateDBAdaptorGetAllEnsemblIds() {
+		List<String> exons = exonDBAdaptor.getAllEnsemblIds();
+		printGeneList("testExonHibernateDBAdaptorGetAllEnsemblIds", exons, 5);
 	}
 
 	@Test
-	public void testGeneHibernateDBAdaptorGetByEnsemblIdList() {
-		List<Gene> genes = geneDBAdaptor.getAllByEnsemblIdList(Arrays.asList("ENSG00000252775", "ENSG00000000419", "ENSG00000187642"));
-		printGeneList("testGeneHibernateDBAdaptorGetByEnsemblIdList", genes, 5);
+	public void testExonHibernateDBAdaptorGetByEnsemblId() {
+		Exon exon = exonDBAdaptor.getByEnsemblId("ENSG00000252775");
+		System.out.println(exon.toString());
+		System.out.println(exon.getStrand());
+		printGeneList("testExonHibernateDBAdaptorGetByEnsemblId", Arrays.asList(exon), 5);
 	}
 
 	@Test
-	public void testGeneHibernateDBAdaptorGetAllById() {
-		List<Gene> genes = geneDBAdaptor.getAllById("ENSG00000252775");
-		printGeneList("testGeneHibernateDBAdaptorGetByEnsemblIdList", genes, 5);
+	public void testExonHibernateDBAdaptorGetByEnsemblIdList() {
+		List<Exon> exons = exonDBAdaptor.getAllByEnsemblIdList(Arrays.asList("ENSG00000252775", "ENSG00000000419", "ENSG00000187642"));
+		printGeneList("testExonHibernateDBAdaptorGetByEnsemblIdList", exons, 5);
 	}
 
 	@Test
-	public void testGeneHibernateDBAdaptorGetAllByIdList() {
-		List<Gene> genes = geneDBAdaptor.getAllById("ENSG00000252775");
-		printGeneList("testGeneHibernateDBAdaptorGetByEnsemblIdList", genes, 5);
+	public void testExonHibernateDBAdaptorGetAllById() {
+		List<Exon> exons = exonDBAdaptor.getAllById("ENSG00000252775");
+		printGeneList("testExonHibernateDBAdaptorGetByEnsemblIdList", exons, 5);
+	}
+
+	@Test
+	public void testExonHibernateDBAdaptorGetAllByIdList() {
+		List<Exon> exons = exonDBAdaptor.getAllById("ENSG00000252775");
+		printGeneList("testExonHibernateDBAdaptorGetByEnsemblIdList", exons, 5);
 	}
 
 
 
 
 	@Test
-	public void testGeneHibernateDBAdaptorGetAllByBiotype() {
-		List<Gene> genes = geneDBAdaptor.getAllByBiotype("protein_coding");
-		printGeneList("testGeneHibernateDBAdaptorGetAllByBiotype", genes, 5);
+	public void testExonHibernateDBAdaptorGetAllByBiotype() {
+		List<Exon> exons = exonDBAdaptor.getAllByBiotype("protein_coding");
+		printGeneList("testExonHibernateDBAdaptorGetAllByBiotype", exons, 5);
 	}
 
 	@Test
-	public void testGeneHibernateDBAdaptorGetAllByBiotypeList() {
-		List<Gene> genes = geneDBAdaptor.getAllByBiotypeList(Arrays.asList("processed_transcript", "protein_coding"));
-		printGeneList("testGeneHibernateDBAdaptorGetAllByBiotypeList", genes, 5);
+	public void testExonHibernateDBAdaptorGetAllByBiotypeList() {
+		List<Exon> exons = exonDBAdaptor.getAllByBiotypeList(Arrays.asList("processed_transcript", "protein_coding"));
+		printGeneList("testExonHibernateDBAdaptorGetAllByBiotypeList", exons, 5);
 	}
 
 
@@ -99,14 +100,14 @@ public class ExonHibernateDBAdaptorTest {
 
 	@Test
 	public void testGetAllByPosition() {
-		List<Gene> genes = geneDBAdaptor.getAllByPosition("1", 244515940);
-		printGeneList("testGetAllByPosition", genes, 5);
+		List<Exon> exons = exonDBAdaptor.getAllByPosition("1", 244515940);
+		printGeneList("testGetAllByPosition", exons, 5);
 	}
 
 	@Test
 	public void testGetAllByPositionList() {
-		List<List<Gene>> genes = geneDBAdaptor.getAllByPositionList(Arrays.asList(new Position("1", 244515940), new Position("10", 24451594), new Position("11", 244515)));
-		printGeneList("testGetAllByPositionList", genes, 5);
+		List<List<Exon>> exons = exonDBAdaptor.getAllByPositionList(Arrays.asList(new Position("1", 244515940), new Position("10", 24451594), new Position("11", 244515)));
+		printGeneList("testGetAllByPositionList", exons, 5);
 	}
 
 
@@ -114,25 +115,25 @@ public class ExonHibernateDBAdaptorTest {
 
 	@Test
 	public void testGetAllByRegionString() {
-		List<Gene> genes = geneDBAdaptor.getAllByRegion("Y");
-		printGeneList("testGetAllByRegionString", genes, 5);
+		List<Exon> exons = exonDBAdaptor.getAllByRegion("Y");
+		printGeneList("testGetAllByRegionString", exons, 5);
 	}
 
 	@Test
 	public void testGetAllByRegionStringInt() {
-		List<Gene> genes = geneDBAdaptor.getAllByRegion("1", 240000000);
-		printGeneList("testGetAllByRegionStringInt", genes, 5);
+		List<Exon> exons = exonDBAdaptor.getAllByRegion("1", 240000000);
+		printGeneList("testGetAllByRegionStringInt", exons, 5);
 	}
 
 	@Test
 	public void testGetAllByRegionStringIntInt() {
-		List<Gene> genes = geneDBAdaptor.getAllByRegion("1", 1, 300000);
-		printGeneList("testGetAllByRegionStringIntInt", genes, 5);
+		List<Exon> exons = exonDBAdaptor.getAllByRegion("1", 1, 300000);
+		printGeneList("testGetAllByRegionStringIntInt", exons, 5);
 	}
 
 	@Test
 	public void testGetAllByRegionStringIntIntStringList() {
-		List<Gene> genes = geneDBAdaptor.getAllByRegion("1", 1, 300000, Arrays.asList("protein_coding", "processed_transcript"));
+		List<Exon> genes = exonDBAdaptor.getAllByRegion("1", 1, 300000, Arrays.asList("protein_coding", "processed_transcript"));
 		printGeneList("testGetAllByRegionStringIntIntStringList", genes, 5);
 	}
 
@@ -162,8 +163,8 @@ public class ExonHibernateDBAdaptorTest {
 
 	@Test
 	public void testGetAllByCytoband() {
-		List<Gene> genes = geneDBAdaptor.getAllByCytoband("9", "q31.3");
-		printGeneList("testGetAllByCytoband", genes, 5);
+		List<Exon> exons = exonDBAdaptor.getAllByCytoband("9", "q31.3");
+		printGeneList("testGetAllByCytoband", exons, 5);
 	}
 
 

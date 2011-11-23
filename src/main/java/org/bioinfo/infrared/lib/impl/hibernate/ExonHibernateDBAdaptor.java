@@ -5,22 +5,28 @@ import java.util.List;
 import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.Exon;
+import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
-import org.bioinfo.infrared.lib.db.HibernateDBAdaptor;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
 
 public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDBAdaptor {
 
+	
+	public ExonHibernateDBAdaptor(SessionFactory sessionFactory) {
+		super(sessionFactory);
+	}
+	
 	/** BY GENE **/
 //	@SuppressWarnings("unchecked")
 //	public List<Exon> getByGeneId(String geneId){
-//		Criteria criteria =  this.getSession().createCriteria(Exon.class).setFetchMode("exon2transcripts", FetchMode.SELECT)
+//		Criteria criteria =  this.openSession().createCriteria(Exon.class).setFetchMode("exon2transcripts", FetchMode.SELECT)
 //				.createCriteria("exon2transcripts").setFetchMode("transcript", FetchMode.SELECT)
 //				.createCriteria("transcript").setFetchMode("gene", FetchMode.SELECT)
 //				.createCriteria("gene").add( Restrictions.eq("stableId", geneId.trim()));
@@ -39,7 +45,7 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	/** BY TRANSCRIPT **/
 //	@SuppressWarnings("unchecked")
 //	public List<Exon> getBytranscriptId(String transcriptId){
-//		Criteria criteria =  this.getSession().createCriteria(Exon.class)
+//		Criteria criteria =  this.openSession().createCriteria(Exon.class)
 //				.createCriteria("exon2transcripts")
 //				.createCriteria("transcript").add( Restrictions.eq("stableId", transcriptId.trim()));
 //		return (List<Exon>)execute(criteria);
@@ -56,7 +62,7 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	/** BY REGION **/
 //	@SuppressWarnings("unchecked")
 //	public List<Exon> getExonByRegion(String chromosome, int start, int end){
-//		Criteria criteria =  this.getSession().createCriteria(Exon.class);
+//		Criteria criteria =  this.openSession().createCriteria(Exon.class);
 //		criteria.add(Restrictions.eq("chromosome", chromosome)).add( Restrictions.ge("start", start)).add(Restrictions.le("end", end));
 //		return  (List<Exon>)execute(criteria);
 //	}
@@ -84,37 +90,36 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Exon> getAll() {
+		Query query = this.openSession().createQuery("select e from Exon e").setCacheable(true);
+		return (List<Exon>) executeAndClose(query);
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getAllIds() {
-		Query query = this.getSession().createQuery("select e.stableId from Exon e");
-		return (List<String>) execute(query);
+		Query query = this.openSession().createQuery("select e.stableId from Exon e");
+		return (List<String>) executeAndClose(query);
 	}
 
 
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Exon> getAll() {
-		Query query = this.getSession().createQuery("select e from Exon e");
-		return (List<Exon>) execute(query);
-	}
 
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getAllEnsemblIds() {
-		Query query = this.getSession().createQuery("select e.stableId from Exon e");
-		return (List<String>) execute(query);
+		Query query = this.openSession().createQuery("select e.stableId from Exon e");
+		return (List<String>) executeAndClose(query);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Exon getByEnsemblId(String ensemblId) {
-		Criteria criteria = this.getSession().createCriteria(Exon.class);
+		Criteria criteria = this.openSession().createCriteria(Exon.class);
 		criteria.add(Restrictions.eq("stableId", ensemblId.trim()));
-		List<Exon> exons = (List<Exon>) execute(criteria);
+		List<Exon> exons = (List<Exon>) executeAndClose(criteria);
 		if(exons != null && exons.size() > 0) {
 			return exons.get(0);
 		}else {
@@ -134,9 +139,9 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	@SuppressWarnings("unchecked")
 	//@Override
 	public List<Exon> getAllById(String id) {
-		Criteria criteria = this.getSession().createCriteria(Exon.class);
+		Criteria criteria = this.openSession().createCriteria(Exon.class);
 		criteria.add(Restrictions.eq("stableId", id.trim()));
-		return (List<Exon>)execute(criteria);
+		return (List<Exon>)executeAndClose(criteria);
 	}
 
 
@@ -152,17 +157,17 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Exon> getByEnsemblTranscriptId(String transcriptId) {
-//		Criteria criteria = this.getSession().createCriteria(Exon.class).createCriteria("transcripts").add(Restrictions.eq("stableId", transcriptId.trim()));
+//		Criteria criteria = this.openSession().createCriteria(Exon.class).createCriteria("transcripts").add(Restrictions.eq("stableId", transcriptId.trim()));
 //		return (List<Exon>) execute(criteria).get(0);
-		Criteria criteria =  this.getSession().createCriteria(Exon.class)
+		Criteria criteria =  this.openSession().createCriteria(Exon.class)
 				.createCriteria("exon2transcripts")
 				.createCriteria("transcript").add( Restrictions.eq("stableId", transcriptId.trim()));
-		return (List<Exon>)execute(criteria);
+		return (List<Exon>)executeAndClose(criteria);
 	}
 
 	@Override
 	public List<List<Exon>> getByEnsemblTranscriptIdList(List<String> transcriptIds) {
-//		Criteria criteria = this.getSession().createCriteria(Exon.class).createCriteria("transcripts").add(Restrictions.in("stableId", transcriptIds));
+//		Criteria criteria = this.openSession().createCriteria(Exon.class).createCriteria("transcripts").add(Restrictions.in("stableId", transcriptIds));
 //		return (List<List<Exon>>) execute(criteria);
 		List<List<Exon>> exonsList = new ArrayList<List<Exon>>(transcriptIds.size());
 		for(String id: transcriptIds) {
@@ -174,11 +179,11 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Exon> getByEnsemblGeneId(String geneId) {
-		Criteria criteria =  this.getSession().createCriteria(Exon.class).setFetchMode("exon2transcripts", FetchMode.SELECT)
+		Criteria criteria =  this.openSession().createCriteria(Exon.class).setFetchMode("exon2transcripts", FetchMode.SELECT)
 				.createCriteria("exon2transcripts").setFetchMode("transcript", FetchMode.SELECT)
 				.createCriteria("transcript").setFetchMode("gene", FetchMode.SELECT)
 				.createCriteria("gene").add( Restrictions.eq("stableId", geneId.trim()));
-		return (List<Exon>)execute(criteria);
+		return (List<Exon>)executeAndClose(criteria);
 	}
 
 
@@ -196,7 +201,7 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	//	@SuppressWarnings("unchecked")
 	//	@Override
 	//	public List<Exon> getAllByBiotype(String biotype) {
-	//		Criteria criteria = this.getSession().createCriteria(Exon.class);
+	//		Criteria criteria = this.openSession().createCriteria(Exon.class);
 	//		criteria.add(Restrictions.eq("biotype", biotype)).addOrder(Order.asc("chromosome")).addOrder(Order.asc("start"));
 	//		return (List<Exon>)execute(criteria);
 	//	}
@@ -204,7 +209,7 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	//	@SuppressWarnings("unchecked")
 	//	@Override
 	//	public List<Exon> getAllByBiotypeList(List<String> biotypeList) {
-	//		Criteria criteria = this.getSession().createCriteria(Exon.class);
+	//		Criteria criteria = this.openSession().createCriteria(Exon.class);
 	//		criteria.add(Restrictions.in("biotype", biotypeList));
 	//		return (List<Exon>)execute(criteria);
 	//	}
@@ -215,9 +220,9 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Exon> getAllByPosition(String chromosome, int position) {
-		Criteria criteria =  this.getSession().createCriteria(Exon.class);
+		Criteria criteria =  this.openSession().createCriteria(Exon.class);
 		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", position)).add(Restrictions.le("start", position));
-		return (List<Exon>)execute(criteria);
+		return (List<Exon>)executeAndClose(criteria);
 	}
 
 
@@ -246,34 +251,34 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Exon> getAllByRegion(String chromosome) {
-		Criteria criteria =  this.getSession().createCriteria(Exon.class);
+		Criteria criteria =  this.openSession().createCriteria(Exon.class);
 		criteria.add(Restrictions.eq("chromosome", chromosome));
-		return (List<Exon>)execute(criteria);
+		return (List<Exon>)executeAndClose(criteria);
 	}
 
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Exon> getAllByRegion(String chromosome, int start) {
-		Criteria criteria =  this.getSession().createCriteria(Exon.class);
+		Criteria criteria =  this.openSession().createCriteria(Exon.class);
 		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", start));
-		return (List<Exon>)execute(criteria);
+		return (List<Exon>)executeAndClose(criteria);
 	}
 
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Exon> getAllByRegion(String chromosome, int start, int end) {
-		Criteria criteria =  this.getSession().createCriteria(Exon.class);
+		Criteria criteria =  this.openSession().createCriteria(Exon.class);
 		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", start)).add(Restrictions.le("start", end));
-		return (List<Exon>)execute(criteria);
+		return (List<Exon>)executeAndClose(criteria);
 	}
 
 
 	//	@SuppressWarnings("unchecked")
 	//	@Override
 	//	public List<Exon> getAllByRegion(String chromosome, int start, int end,	List<String> biotypes) {
-	//		Criteria criteria =  this.getSession().createCriteria(Exon.class);
+	//		Criteria criteria =  this.openSession().createCriteria(Exon.class);
 	//		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", start)).add(Restrictions.le("start", end)).add(Restrictions.in("biotype", biotypes));
 	//		return (List<Exon>)execute(criteria);
 	//	}
@@ -318,8 +323,8 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Exon> getAllByCytoband(String chromosome, String cytoband) {
-		Query query = this.getSession().createQuery("select e from Exon e, Cytoband k where k.chromosome= :chromosome and k.cytoband = :cytoband and k.chromosome=e.chromosome and e.end>=k.start and e.start<=k.end").setParameter("chromosome", chromosome).setParameter("cytoband", cytoband);
-		return (List<Exon>)execute(query);
+		Query query = this.openSession().createQuery("select e from Exon e, Cytoband k where k.chromosome= :chromosome and k.cytoband = :cytoband and k.chromosome=e.chromosome and e.end>=k.start and e.start<=k.end").setParameter("chromosome", chromosome).setParameter("cytoband", cytoband);
+		return (List<Exon>)executeAndClose(query);
 	}
 
 

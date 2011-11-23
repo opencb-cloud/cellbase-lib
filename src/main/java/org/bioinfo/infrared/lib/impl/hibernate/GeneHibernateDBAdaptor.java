@@ -96,7 +96,6 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	}
 	
 	@Override
-
 	public List<Gene> getAllByEnsemblIdList(List<String> ensemblIds) {
 		List<Gene> genes = new ArrayList<Gene>(ensemblIds.size());
 		for(String ensemblId: ensemblIds) {

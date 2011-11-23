@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
@@ -22,35 +23,14 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 	
 	
-
 	@Override
-	public Map<String, Object> getInfo(String id) {
-		// TODO Auto-generated method stub
-		return null;
+	@SuppressWarnings("unchecked")
+	public List<Transcript> getAll() {
+//		Criteria criteria = this.getSession().createCriteria(Gene.class);
+//		return (List<Gene>) execute(criteria);
+		Query query = this.openSession().createQuery("select t from Transcript t").setCacheable(true);
+		return (List<Transcript>) executeAndClose(query);
 	}
-
-	@Override
-	public Map<String, Object> getFullInfo(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-
-	@Override
-	public List<Map<String, Object>> getInfoByIdList(List<String> idList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public List<Map<String, Object>> getFullInfoByIdList(List<String> idList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -59,27 +39,51 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		return (List<String>) executeAndClose(query);
 	}
 
-
 	
-	@SuppressWarnings("unchecked")
+	
+	
 	@Override
-	public List<Transcript> getAll() {
-//		Criteria criteria = this.getSession().createCriteria(Gene.class);
-//		return (List<Gene>) execute(criteria);
-		Query query = this.openSession().createQuery("select t from Transcript t").setCacheable(true);
-		return (List<Transcript>) executeAndClose(query);
+	public Map<String, Object> getInfo(String id) {
+		Query query = this.openSession().createQuery("select t from Transcript t");
+		@SuppressWarnings("unchecked")
+		List<Transcript> transcripts =  (List<Transcript>)query.list();
+		
+		System.out.println(transcripts.toString());
+//		System.out.println(gene.getTranscripts());
+		return null;
 	}
 
-
-	@SuppressWarnings("unchecked")
 	@Override
+	public List<Map<String, Object>> getInfoByIdList(List<String> idList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	@Override
+	public Map<String, Object> getFullInfo(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Map<String, Object>> getFullInfoByIdList(List<String> idList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+
+
+	@Override
+	@SuppressWarnings("unchecked")
 	public List<String> getAllEnsemblIds() {
 		Query query = this.openSession().createQuery("select t.stableId from Transcript t");
 		return (List<String>) executeAndClose(query);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("unchecked")
 	public Transcript getByEnsemblId(String ensemblId) {
 		Criteria criteria = this.openSession().createCriteria(Transcript.class);
 		criteria.add(Restrictions.eq("stableId", ensemblId.trim()));
@@ -131,7 +135,6 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 
 
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Transcript> getAllByBiotype(String biotype) {
