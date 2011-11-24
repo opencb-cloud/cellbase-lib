@@ -13,6 +13,7 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 
@@ -311,21 +312,21 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 
 
 
-	//	@SuppressWarnings("unchecked")
-	//	@Override
-	//	public List<Exon> getAllByBiotype(String biotype) {
-	//		Criteria criteria = this.openSession().createCriteria(Exon.class);
-	//		criteria.add(Restrictions.eq("biotype", biotype)).addOrder(Order.asc("chromosome")).addOrder(Order.asc("start"));
-	//		return (List<Exon>)execute(criteria);
-	//	}
-	//
-	//	@SuppressWarnings("unchecked")
-	//	@Override
-	//	public List<Exon> getAllByBiotypeList(List<String> biotypeList) {
-	//		Criteria criteria = this.openSession().createCriteria(Exon.class);
-	//		criteria.add(Restrictions.in("biotype", biotypeList));
-	//		return (List<Exon>)execute(criteria);
-	//	}
+		@SuppressWarnings("unchecked")
+		@Override
+		public List<Exon> getAllByBiotype(String biotype) {
+			Criteria criteria = this.openSession().createCriteria(Exon.class);
+			criteria.add(Restrictions.eq("biotype", biotype)).addOrder(Order.asc("chromosome")).addOrder(Order.asc("start"));
+			return (List<Exon>)executeAndClose(criteria);
+		}
+	
+		@SuppressWarnings("unchecked")
+		@Override
+		public List<Exon> getAllByBiotypeList(List<String> biotypeList) {
+			Criteria criteria = this.openSession().createCriteria(Exon.class);
+			criteria.add(Restrictions.in("biotype", biotypeList));
+			return (List<Exon>)executeAndClose(criteria);
+		}
 
 
 
@@ -336,13 +337,13 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 
 
 
-	//	@SuppressWarnings("unchecked")
-	//	@Override
-	//	public List<Exon> getAllByRegion(String chromosome, int start, int end,	List<String> biotypes) {
-	//		Criteria criteria =  this.openSession().createCriteria(Exon.class);
-	//		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", start)).add(Restrictions.le("start", end)).add(Restrictions.in("biotype", biotypes));
-	//		return (List<Exon>)execute(criteria);
-	//	}
+		@SuppressWarnings("unchecked")
+		@Override
+		public List<Exon> getAllByRegion(String chromosome, int start, int end,	List<String> biotypes) {
+			Criteria criteria =  this.openSession().createCriteria(Exon.class);
+			criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", start)).add(Restrictions.le("start", end)).add(Restrictions.in("biotype", biotypes));
+			return (List<Exon>)executeAndClose(criteria);
+		}
 
 
 
