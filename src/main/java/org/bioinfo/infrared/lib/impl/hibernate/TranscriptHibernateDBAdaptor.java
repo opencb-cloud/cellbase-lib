@@ -1,14 +1,18 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bioinfo.infrared.core.cellbase.Exon;
+import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -26,7 +30,24 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	@Override
 	public Map<String, Object> getInfo(String id) {
 		// TODO Auto-generated method stub
-		return null;
+		Map<String, Object> infoMap = new HashMap<String, Object>();
+		
+		Criteria criteria = this.openSession().createCriteria(Transcript.class).add(Restrictions.eq("stableId", id)).setFetchMode("exonToTranscript", FetchMode.JOIN);
+		List<Exon> exons = (List<Exon>) executeAndClose(criteria);
+		infoMap.put("snps", exons);
+		
+		
+		criteria = this.openSession().createCriteria(Snp.class);
+		List<Exon> exons= (List<Exon>) executeAndClose(criteria);
+		infoMap.put("exons", exons);
+		
+		
+//		criteria = this.openSession().createCriteria(Snp.class);
+//		List<Snp> snps = (List<Snp>) executeAndClose(criteria);
+//		infoMap.put("snps", snps);
+		
+		
+		return infoMap;
 	}
 
 	@Override
