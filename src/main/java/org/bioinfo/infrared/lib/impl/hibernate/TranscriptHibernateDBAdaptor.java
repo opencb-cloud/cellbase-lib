@@ -26,10 +26,10 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Transcript> getAll() {
-//		Criteria criteria = this.getSession().createCriteria(Gene.class);
-//		return (List<Gene>) execute(criteria);
-		Query query = this.openSession().createQuery("select t from Transcript t").setCacheable(true);
-		return (List<Transcript>) executeAndClose(query);
+		Criteria criteria = this.openSession().createCriteria(Gene.class);
+		return (List<Transcript>) executeAndClose(criteria);
+//		Query query = this.openSession().createQuery("select t from Transcript t").setCacheable(true);
+//		return (List<Transcript>) executeAndClose(query);
 	}
 	
 	@SuppressWarnings("unchecked")
