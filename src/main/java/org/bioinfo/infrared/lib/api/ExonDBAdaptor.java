@@ -20,9 +20,6 @@ public interface ExonDBAdaptor extends FeatureDBAdaptor {
 	
 	public List<Exon> getAllByEnsemblIdList(List<String> ensemblIdList);
 	
-	public List<Exon> getAllById(String id);
-
-	public List<List<Exon>> getAllByIdList(List<String> idList);
 
 	public List<Exon> getByEnsemblTranscriptId(String transcriptId);
 	
@@ -32,9 +29,6 @@ public interface ExonDBAdaptor extends FeatureDBAdaptor {
 	
 	public List<List<Exon>> getByEnsemblGeneIdList(List<String> geneIdList);
 	
-	public List<Exon> getAllByBiotype(String biotype);
-	
-	public List<Exon> getAllByBiotypeList(List<String> biotypeList);
 	
 	public List<Exon> getAllByPosition(String chromosome, int position);
 

@@ -36,7 +36,6 @@ public class ExonHibernateDBAdaptorTest {
 	}
 
 
-
 	@Test
 	public void testExonHibernateDBAdaptorGetAll() {
 		List<Exon> exons = exonDBAdaptor.getAll();
@@ -67,35 +66,6 @@ public class ExonHibernateDBAdaptorTest {
 		List<Exon> exons = exonDBAdaptor.getAllByEnsemblIdList(Arrays.asList("ENSG00000252775", "ENSG00000000419", "ENSG00000187642"));
 		printGeneList("testExonHibernateDBAdaptorGetByEnsemblIdList", exons, 5);
 	}
-
-	@Test
-	public void testExonHibernateDBAdaptorGetAllById() {
-		List<Exon> exons = exonDBAdaptor.getAllById("ENSG00000252775");
-		printGeneList("testExonHibernateDBAdaptorGetByEnsemblIdList", exons, 5);
-	}
-
-	@Test
-	public void testExonHibernateDBAdaptorGetAllByIdList() {
-		List<Exon> exons = exonDBAdaptor.getAllById("ENSG00000252775");
-		printGeneList("testExonHibernateDBAdaptorGetByEnsemblIdList", exons, 5);
-	}
-
-
-
-
-	@Test
-	public void testExonHibernateDBAdaptorGetAllByBiotype() {
-		List<Exon> exons = exonDBAdaptor.getAllByBiotype("protein_coding");
-		printGeneList("testExonHibernateDBAdaptorGetAllByBiotype", exons, 5);
-	}
-
-	@Test
-	public void testExonHibernateDBAdaptorGetAllByBiotypeList() {
-		List<Exon> exons = exonDBAdaptor.getAllByBiotypeList(Arrays.asList("processed_transcript", "protein_coding"));
-		printGeneList("testExonHibernateDBAdaptorGetAllByBiotypeList", exons, 5);
-	}
-
-
 
 
 	@Test

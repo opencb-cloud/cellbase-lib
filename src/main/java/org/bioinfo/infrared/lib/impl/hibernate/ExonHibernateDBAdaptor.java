@@ -285,55 +285,6 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	
 	/**/
 	
-	
-	
-	
-	
-	@SuppressWarnings("unchecked")
-	//@Override
-	public List<Exon> getAllById(String id) {
-		Criteria criteria = this.openSession().createCriteria(Exon.class);
-		criteria.add(Restrictions.eq("stableId", id.trim()));
-		return (List<Exon>)executeAndClose(criteria);
-	}
-
-
-	//@Override
-	public List<List<Exon>> getAllByIdList(List<String> ids) {
-		List<List<Exon>> exonList = new ArrayList<List<Exon>>(ids.size());
-		for(String id: ids) {
-			exonList.add(getAllById(id));
-		}
-		return exonList;
-	}
-
-
-
-
-
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public List<Exon> getAllByBiotype(String biotype) {
-			Criteria criteria = this.openSession().createCriteria(Exon.class);
-			criteria.add(Restrictions.eq("biotype", biotype)).addOrder(Order.asc("chromosome")).addOrder(Order.asc("start"));
-			return (List<Exon>)executeAndClose(criteria);
-		}
-	
-		@SuppressWarnings("unchecked")
-		@Override
-		public List<Exon> getAllByBiotypeList(List<String> biotypeList) {
-			Criteria criteria = this.openSession().createCriteria(Exon.class);
-			criteria.add(Restrictions.in("biotype", biotypeList));
-			return (List<Exon>)executeAndClose(criteria);
-		}
-
-
-
-
-
-
-
 
 
 
