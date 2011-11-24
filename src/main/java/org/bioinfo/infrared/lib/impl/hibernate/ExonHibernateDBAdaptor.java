@@ -76,36 +76,45 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 //		return result;
 //	}
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Exon> getAll() {
+		Query query = this.openSession().createQuery("select e from Exon e").setCacheable(true);
+		return (List<Exon>) executeAndClose(query);
+	}
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<String> getAllIds() {
+		Query query = this.openSession().createQuery("select e.stableId from Exon e");
+		return (List<String>) executeAndClose(query);
+	}
+	
 	@Override
 	public Map<String, Object> getInfo(String id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-
+	@Override
+	public List<Map<String, Object>> getInfoByIdList(List<String> idList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	@Override
 	public Map<String, Object> getFullInfo(String id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Exon> getAll() {
-		Query query = this.openSession().createQuery("select e from Exon e").setCacheable(true);
-		return (List<Exon>) executeAndClose(query);
-	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<String> getAllIds() {
-		Query query = this.openSession().createQuery("select e.stableId from Exon e");
-		return (List<String>) executeAndClose(query);
+	public List<Map<String, Object>> getFullInfoByIdList(List<String> idList) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-
-
+	/****/
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -137,6 +146,149 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
+	public List<Exon> getByEnsemblTranscriptId(String transcriptId) {
+//		Criteria criteria = this.openSession().createCriteria(Exon.class).createCriteria("transcripts").add(Restrictions.eq("stableId", transcriptId.trim()));
+//		return (List<Exon>) execute(criteria).get(0);
+		Criteria criteria =  this.openSession().createCriteria(Exon.class)
+				.createCriteria("exon2transcripts")
+				.createCriteria("transcript").add( Restrictions.eq("stableId", transcriptId.trim()));
+		return (List<Exon>)executeAndClose(criteria);
+	}
+	
+	@Override
+	public List<List<Exon>> getByEnsemblTranscriptIdList(List<String> transcriptIds) {
+//		Criteria criteria = this.openSession().createCriteria(Exon.class).createCriteria("transcripts").add(Restrictions.in("stableId", transcriptIds));
+//		return (List<List<Exon>>) execute(criteria);
+		List<List<Exon>> exonsList = new ArrayList<List<Exon>>(transcriptIds.size());
+		for(String id: transcriptIds) {
+			exonsList.add(getByEnsemblTranscriptId(id));
+		}
+		return exonsList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Exon> getByEnsemblGeneId(String geneId) {
+		Criteria criteria =  this.openSession().createCriteria(Exon.class).setFetchMode("exon2transcripts", FetchMode.SELECT)
+				.createCriteria("exon2transcripts").setFetchMode("transcript", FetchMode.SELECT)
+				.createCriteria("transcript").setFetchMode("gene", FetchMode.SELECT)
+				.createCriteria("gene").add( Restrictions.eq("stableId", geneId.trim()));
+		return (List<Exon>)executeAndClose(criteria);
+	}
+	
+	@Override
+	public List<List<Exon>> getByEnsemblGeneIdList(List<String> geneIds) {
+		List<List<Exon>> exonsList = new ArrayList<List<Exon>>(geneIds.size());
+		for (String id: geneIds) {
+			exonsList.add(getByEnsemblGeneId(id));
+		}
+		return exonsList;
+	}
+	
+	/**/
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Exon> getAllByPosition(String chromosome, int position) {
+		Criteria criteria =  this.openSession().createCriteria(Exon.class);
+		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", position)).add(Restrictions.le("start", position));
+		return (List<Exon>)executeAndClose(criteria);
+	}
+	
+	
+	@Override
+	public List<Exon> getAllByPosition(Position position) {
+		if(position == null) {
+			return null;
+		}else {
+			return getAllByPosition(position.getChromosome(), position.getPosition());	
+		}
+	}
+	
+	@Override
+	public List<List<Exon>> getAllByPositionList(List<Position> positions) {
+		List<List<Exon>> genes = new ArrayList<List<Exon>>(positions.size());
+		for(Position position: positions) {
+			genes.add(getAllByPosition(position));
+		}
+		return genes;
+	}
+	
+	/**/
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Exon> getAllByRegion(String chromosome) {
+		Criteria criteria =  this.openSession().createCriteria(Exon.class);
+		criteria.add(Restrictions.eq("chromosome", chromosome));
+		return (List<Exon>)executeAndClose(criteria);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Exon> getAllByRegion(String chromosome, int start) {
+		Criteria criteria =  this.openSession().createCriteria(Exon.class);
+		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", start));
+		return (List<Exon>)executeAndClose(criteria);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Exon> getAllByRegion(String chromosome, int start, int end) {
+		Criteria criteria =  this.openSession().createCriteria(Exon.class);
+		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", start)).add(Restrictions.le("start", end));
+		return (List<Exon>)executeAndClose(criteria);
+	}
+	
+	@Override
+	public List<Exon> getAllByRegion(Region region) {
+		if(region == null) {
+			return null;
+		}else {
+			return getAllByRegion(region.getChromosome(), region.getStart(), region.getEnd());	
+		}
+	}
+
+	@Override
+	public List<List<Exon>> getAllByRegionList(List<Region> regions) {
+		List<List<Exon>> exonsList = new ArrayList<List<Exon>>(regions.size());
+		for(Region region: regions) {
+			exonsList.add(getAllByRegion(region));
+		}
+		return exonsList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Exon> getAllByCytoband(String chromosome, String cytoband) {
+		Query query = this.openSession().createQuery("select e from Exon e, Cytoband k where k.chromosome= :chromosome and k.cytoband = :cytoband and k.chromosome=e.chromosome and e.end>=k.start and e.start<=k.end").setParameter("chromosome", chromosome).setParameter("cytoband", cytoband);
+		return (List<Exon>)executeAndClose(query);
+	}
+	
+	/**/
+	
+	@Override
+	public List<Exon> getAllBySnpId(String snpId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<List<Exon>> getAllBySnpIdList(List<String> snpIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	/**/
+	
+	
+	
+	
+	
+	@SuppressWarnings("unchecked")
 	//@Override
 	public List<Exon> getAllById(String id) {
 		Criteria criteria = this.openSession().createCriteria(Exon.class);
@@ -154,47 +306,8 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 		return exonList;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Exon> getByEnsemblTranscriptId(String transcriptId) {
-//		Criteria criteria = this.openSession().createCriteria(Exon.class).createCriteria("transcripts").add(Restrictions.eq("stableId", transcriptId.trim()));
-//		return (List<Exon>) execute(criteria).get(0);
-		Criteria criteria =  this.openSession().createCriteria(Exon.class)
-				.createCriteria("exon2transcripts")
-				.createCriteria("transcript").add( Restrictions.eq("stableId", transcriptId.trim()));
-		return (List<Exon>)executeAndClose(criteria);
-	}
-
-	@Override
-	public List<List<Exon>> getByEnsemblTranscriptIdList(List<String> transcriptIds) {
-//		Criteria criteria = this.openSession().createCriteria(Exon.class).createCriteria("transcripts").add(Restrictions.in("stableId", transcriptIds));
-//		return (List<List<Exon>>) execute(criteria);
-		List<List<Exon>> exonsList = new ArrayList<List<Exon>>(transcriptIds.size());
-		for(String id: transcriptIds) {
-			exonsList.add(getByEnsemblTranscriptId(id));
-		}
-		return exonsList;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Exon> getByEnsemblGeneId(String geneId) {
-		Criteria criteria =  this.openSession().createCriteria(Exon.class).setFetchMode("exon2transcripts", FetchMode.SELECT)
-				.createCriteria("exon2transcripts").setFetchMode("transcript", FetchMode.SELECT)
-				.createCriteria("transcript").setFetchMode("gene", FetchMode.SELECT)
-				.createCriteria("gene").add( Restrictions.eq("stableId", geneId.trim()));
-		return (List<Exon>)executeAndClose(criteria);
-	}
 
 
-	@Override
-	public List<List<Exon>> getByEnsemblGeneIdList(List<String> geneIds) {
-		List<List<Exon>> exonsList = new ArrayList<List<Exon>>(geneIds.size());
-		for (String id: geneIds) {
-			exonsList.add(getByEnsemblGeneId(id));
-		}
-		return exonsList;
-	}
 
 
 
@@ -217,62 +330,10 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 
 
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Exon> getAllByPosition(String chromosome, int position) {
-		Criteria criteria =  this.openSession().createCriteria(Exon.class);
-		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", position)).add(Restrictions.le("start", position));
-		return (List<Exon>)executeAndClose(criteria);
-	}
-
-
-	@Override
-	public List<Exon> getAllByPosition(Position position) {
-		if(position == null) {
-			return null;
-		}else {
-			return getAllByPosition(position.getChromosome(), position.getPosition());	
-		}
-	}
-
-
-	@Override
-	public List<List<Exon>> getAllByPositionList(List<Position> positions) {
-		List<List<Exon>> genes = new ArrayList<List<Exon>>(positions.size());
-		for(Position position: positions) {
-			genes.add(getAllByPosition(position));
-		}
-		return genes;
-	}
 
 
 
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Exon> getAllByRegion(String chromosome) {
-		Criteria criteria =  this.openSession().createCriteria(Exon.class);
-		criteria.add(Restrictions.eq("chromosome", chromosome));
-		return (List<Exon>)executeAndClose(criteria);
-	}
-
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Exon> getAllByRegion(String chromosome, int start) {
-		Criteria criteria =  this.openSession().createCriteria(Exon.class);
-		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", start));
-		return (List<Exon>)executeAndClose(criteria);
-	}
-
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Exon> getAllByRegion(String chromosome, int start, int end) {
-		Criteria criteria =  this.openSession().createCriteria(Exon.class);
-		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", start)).add(Restrictions.le("start", end));
-		return (List<Exon>)executeAndClose(criteria);
-	}
 
 
 	//	@SuppressWarnings("unchecked")
@@ -284,14 +345,6 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	//	}
 
 
-	@Override
-	public List<Exon> getAllByRegion(Region region) {
-		if(region == null) {
-			return null;
-		}else {
-			return getAllByRegion(region.getChromosome(), region.getStart(), region.getEnd());	
-		}
-	}
 
 
 	//	@Override
@@ -304,14 +357,7 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	//	}
 
 
-	@Override
-	public List<List<Exon>> getAllByRegionList(List<Region> regions) {
-		List<List<Exon>> exonsList = new ArrayList<List<Exon>>(regions.size());
-		for(Region region: regions) {
-			exonsList.add(getAllByRegion(region));
-		}
-		return exonsList;
-	}
+
 
 	//	@Override
 	//	public List<List<Exon>> getAllByRegionList(List<Region> regions, List<String> biotypes) {
@@ -320,43 +366,15 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	//	}
 
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Exon> getAllByCytoband(String chromosome, String cytoband) {
-		Query query = this.openSession().createQuery("select e from Exon e, Cytoband k where k.chromosome= :chromosome and k.cytoband = :cytoband and k.chromosome=e.chromosome and e.end>=k.start and e.start<=k.end").setParameter("chromosome", chromosome).setParameter("cytoband", cytoband);
-		return (List<Exon>)executeAndClose(query);
-	}
 
 
 
 
-	@Override
-	public List<Exon> getAllBySnpId(String snpId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<List<Exon>> getAllBySnpIdList(List<String> snpIds) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 
-	@Override
-	public List<Map<String, Object>> getInfoByIdList(List<String> idList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-
-	@Override
-	public List<Map<String, Object>> getFullInfoByIdList(List<String> idList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
+	/****/
+	
 	@Override
 	public Region getRegionById(String id) {
 		// TODO Auto-generated method stub

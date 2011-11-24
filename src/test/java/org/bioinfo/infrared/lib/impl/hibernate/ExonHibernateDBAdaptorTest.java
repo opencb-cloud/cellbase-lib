@@ -133,8 +133,8 @@ public class ExonHibernateDBAdaptorTest {
 
 	@Test
 	public void testGetAllByRegionStringIntIntStringList() {
-		List<Exon> genes = exonDBAdaptor.getAllByRegion("1", 1, 300000, Arrays.asList("protein_coding", "processed_transcript"));
-		printGeneList("testGetAllByRegionStringIntIntStringList", genes, 5);
+		List<Exon> exons = exonDBAdaptor.getAllByRegion("1", 1, 300000, Arrays.asList("protein_coding", "processed_transcript"));
+		printGeneList("testGetAllByRegionStringIntIntStringList", exons, 5);
 	}
 
 	public void testGetGeneByRegionString() {
