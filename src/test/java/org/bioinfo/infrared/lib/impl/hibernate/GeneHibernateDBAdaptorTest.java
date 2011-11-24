@@ -26,7 +26,7 @@ public class GeneHibernateDBAdaptorTest {
 	@Before
 	public void beforeTestStart() {
 //		System.out.println("beforeTestStart");
-		geneDBAdaptor = dbAdaptorFact.getGeneDBAdaptor("hsapiens");
+		geneDBAdaptor = dbAdaptorFact.getGeneDBAdaptor("drerio");
 		startExecTime = System.currentTimeMillis();
 	}
 
@@ -58,7 +58,7 @@ public class GeneHibernateDBAdaptorTest {
 
 	@Test
 	public void testGeneHibernateDBAdaptorGetByEnsemblId() {
-		Gene gene = geneDBAdaptor.getByEnsemblId("ENSG00000252775");
+		Gene gene = geneDBAdaptor.getByEnsemblId("ENSDARG00000024771");
 		System.out.println(gene.toString());
 		System.out.println(gene.getTranscripts());
 		printGeneList("testGeneHibernateDBAdaptorGetByEnsemblId", Arrays.asList(gene), 5);

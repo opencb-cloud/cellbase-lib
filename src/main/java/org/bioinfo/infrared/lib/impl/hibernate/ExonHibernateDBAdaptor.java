@@ -133,24 +133,6 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Exon> getAllById(String id) {
-		Criteria criteria = this.getSession().createCriteria(Exon.class);
-		criteria.add(Restrictions.eq("stableId", id.trim()));
-		return (List<Exon>)execute(criteria);
-	}
-
-
-	@Override
-	public List<List<Exon>> getAllByIdList(List<String> ids) {
-		List<List<Exon>> exonList = new ArrayList<List<Exon>>(ids.size());
-		for(String id: ids) {
-			exonList.add(getAllById(id));
-		}
-		return exonList;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
 	public List<Exon> getByEnsemblTranscriptId(String transcriptId) {
 //		Criteria criteria = this.getSession().createCriteria(Exon.class).createCriteria("transcripts").add(Restrictions.eq("stableId", transcriptId.trim()));
 //		return (List<Exon>) execute(criteria).get(0);
