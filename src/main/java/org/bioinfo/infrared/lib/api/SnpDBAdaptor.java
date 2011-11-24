@@ -13,7 +13,7 @@ public interface SnpDBAdaptor extends FeatureDBAdaptor {
 	public List<Snp> getAll();
 
 	
-	public Snp getById(String id);
+	public List<Snp> getById(String id);
 
 	public List<Snp> getAllByIdList(List<String> idList);
 

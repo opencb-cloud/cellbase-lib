@@ -5,7 +5,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.bioinfo.commons.log.Logger;
+import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
+import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
+import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.impl.hibernate.GenomeSequenceDBAdaptor;
 
 public abstract class DBAdaptorFactory {
@@ -42,13 +45,19 @@ public abstract class DBAdaptorFactory {
 	public abstract GeneDBAdaptor getGeneDBAdaptor(String species, String version);
 
 	
-	public abstract GeneDBAdaptor getTranscriptDBAdaptor(String species);
+	public abstract TranscriptDBAdaptor getTranscriptDBAdaptor(String species);
+	
+	public abstract TranscriptDBAdaptor getTranscriptDBAdaptor(String species,  String version);
 
-	public abstract GeneDBAdaptor getExonDBAdaptor(String species);
+	
+	public abstract ExonDBAdaptor getExonDBAdaptor(String species);
 
 	public abstract GeneDBAdaptor getProteinDBAdaptor(String species);
 
-	public abstract GeneDBAdaptor getSnpDBAdaptor(String species);
+	public abstract SnpDBAdaptor getSnpDBAdaptor(String species);
+	
+	public abstract SnpDBAdaptor getSnpDBAdaptor(String species,  String version);
+	
 
 	public abstract GeneDBAdaptor getCytobandDBAdaptor(String species);
 

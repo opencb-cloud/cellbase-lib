@@ -16,7 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ExonHibernateDBAdaptorTest {
-
+/*
 	private DBAdaptorFactory dbAdaptorFact = new HibernateDBAdaptorFactory();
 
 	private GeneDBAdaptor geneDBAdaptor;
@@ -197,5 +197,5 @@ public class ExonHibernateDBAdaptorTest {
 		System.out.println("Number of results per ms: "+df.format((double)genes.size()/executionTime)+" rows/ms");
 		System.out.println("************************************************************\n");
 
-	}
+	}*/
 }

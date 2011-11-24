@@ -7,7 +7,10 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.bioinfo.commons.Config;
+import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
+import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
+import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -121,14 +124,19 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 
 
 	@Override
-	public GeneDBAdaptor getTranscriptDBAdaptor(String species) {
-		
+	public TranscriptDBAdaptor getTranscriptDBAdaptor(String species) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public TranscriptDBAdaptor getTranscriptDBAdaptor(String species, String version) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public GeneDBAdaptor getExonDBAdaptor(String species) {
+	public ExonDBAdaptor getExonDBAdaptor(String species) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -140,9 +148,19 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 	}
 
 	@Override
-	public GeneDBAdaptor getSnpDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
+	public SnpDBAdaptor getSnpDBAdaptor(String species) {
+		return getSnpDBAdaptor(species, null);
+	}
+	
+	@Override
+	public SnpDBAdaptor getSnpDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)) {
+			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+		
+		return (SnpDBAdaptor) new SnpHibernateDBAdapator(sessionFactories.get(speciesVersionPrefix));
 	}
 
 	@Override

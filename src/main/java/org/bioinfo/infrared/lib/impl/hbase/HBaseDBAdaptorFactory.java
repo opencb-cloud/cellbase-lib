@@ -2,7 +2,10 @@ package org.bioinfo.infrared.lib.impl.hbase;
 
 import java.util.Properties;
 
+import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
+import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
+import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.bioinfo.infrared.lib.impl.hibernate.GenomeSequenceDBAdaptor;
 
@@ -29,13 +32,19 @@ public class HBaseDBAdaptorFactory extends DBAdaptorFactory{
 	
 
 	@Override
-	public GeneDBAdaptor getTranscriptDBAdaptor(String species) {
+	public TranscriptDBAdaptor getTranscriptDBAdaptor(String species) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public TranscriptDBAdaptor getTranscriptDBAdaptor(String species, String version) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public GeneDBAdaptor getExonDBAdaptor(String species) {
+	public ExonDBAdaptor getExonDBAdaptor(String species) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -47,10 +56,18 @@ public class HBaseDBAdaptorFactory extends DBAdaptorFactory{
 	}
 
 	@Override
-	public GeneDBAdaptor getSnpDBAdaptor(String species) {
+	public SnpDBAdaptor getSnpDBAdaptor(String species) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public SnpDBAdaptor getSnpDBAdaptor(String species, String version) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
 
 	@Override
 	public GeneDBAdaptor getCytobandDBAdaptor(String species) {

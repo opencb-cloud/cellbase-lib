@@ -16,25 +16,24 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class GeneHibernateDBAdaptorTest {
-
+	/*
 	private DBAdaptorFactory dbAdaptorFact = new HibernateDBAdaptorFactory();
 
 	private GeneDBAdaptor geneDBAdaptor;
 
 	private long startExecTime;
+	
+	private String species = "drerio";
 
 	@Before
 	public void beforeTestStart() {
-//		System.out.println("beforeTestStart");
-		geneDBAdaptor = dbAdaptorFact.getGeneDBAdaptor("hsapiens");
+		geneDBAdaptor = dbAdaptorFact.getGeneDBAdaptor(species);
 		startExecTime = System.currentTimeMillis();
 	}
 
 	@After
 	public void afterTestStart() {
-		//		System.out.println("afterTestStart");
 		dbAdaptorFact.close();
-		//		startExecTime = System.currentTimeMillis() - startExecTime;
 	}
 
 
@@ -59,8 +58,8 @@ public class GeneHibernateDBAdaptorTest {
 	@Test
 	public void testGeneHibernateDBAdaptorGetByEnsemblId() {
 		Gene gene = geneDBAdaptor.getByEnsemblId("ENSG00000252775");
-		System.out.println(gene.toString());
-		System.out.println(gene.getTranscripts());
+		//System.out.println(gene.toString());
+		//System.out.println(gene.getTranscripts());
 		printGeneList("testGeneHibernateDBAdaptorGetByEnsemblId", Arrays.asList(gene), 5);
 	}
 
@@ -201,4 +200,5 @@ public class GeneHibernateDBAdaptorTest {
 		System.out.println("************************************************************\n");
 
 	}
+	*/
 }

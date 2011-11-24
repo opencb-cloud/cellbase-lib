@@ -1,29 +1,296 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.List;
+import java.util.Map;
 
-import org.bioinfo.infrared.core.cellbase.Transcript;
-import org.bioinfo.infrared.lib.db.HibernateDBAdaptor;
-import org.bioinfo.infrared.lib.db.HibernateDBUtils;
+import org.bioinfo.infrared.core.cellbase.Gene;
+import org.bioinfo.infrared.core.cellbase.Snp;
+import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
+import org.bioinfo.infrared.lib.common.Position;
+import org.bioinfo.infrared.lib.common.Region;
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
-public class SnpHibernateDBAdapator extends HibernateDBAdaptor {
+public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor {
+
+	public SnpHibernateDBAdapator(SessionFactory sessionFactory) {
+		super(sessionFactory);
+	}
+
 
 	@SuppressWarnings("unchecked")
-	public String getAllNames() {
+	@Override
+	public List<Snp> getAll(){
+		Criteria criteria = this.openSession().createCriteria(Snp.class);
+		return (List<Snp>) this.executeAndClose(criteria);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Snp> getById(String id){
+		Criteria criteria = this.openSession().createCriteria(Snp.class).setFetchMode("SnpToTranscript", FetchMode.JOIN);
+		criteria.add(Restrictions.eq("name", id.trim()));
+		return (List<Snp>)executeAndClose(criteria);
+	}
+	
+	@Override
+	public List<Snp> getAllByIdList(List<String> idList){
+		return null;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Snp> getAllByConsequenceType(String consequenceType) {
+		Criteria criteria = this.openSession().createCriteria(Snp.class).setFetchMode("SnpToTranscript", FetchMode.JOIN);
+		criteria.add(Restrictions.eq("displayConsequence", consequenceType.trim()));
+		return (List<Snp>)executeAndClose(criteria);
+	}
+
+
+	@Override
+	public List<Snp> getAllByConsequenceTypeList(List<String> consequenceTypeList) {
+		Criteria criteria = this.openSession().createCriteria(Snp.class).setCacheable(true).setFetchMode("SnpToTranscript", FetchMode.JOIN);
+		for (String consequenceType : consequenceTypeList) {
+			criteria.add(Restrictions.disjunction().add(Restrictions.eq("displayConsequence", consequenceType)));
+		}
+	
+		return (List<Snp>)executeAndClose(criteria);
+	}
+
+
+	@Override
+	public List<Snp> getAllByCytoband(String chromosome, String cytoband) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<Snp> getAllByPosition(String chromosome, int position) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<Snp> getAllByPosition(Position position) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<List<Snp>> getAllByPositionList(List<Position> positionList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<Snp> getAllByRegion(String chromosome) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<Snp> getAllByRegion(String chromosome, int start) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<Snp> getAllByRegion(String chromosome, int start, int end) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<Snp> getAllByRegion(String chromosome, int start, int end,
+			List<String> consequenceTypeList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<Snp> getAllByRegion(Region region) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<Snp> getAllByRegion(Region region,
+			List<String> consequenceTypeList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<List<Snp>> getAllByRegionList(List<Region> regionList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<List<Snp>> getAllByRegionList(List<Region> regionList,
+			List<String> consequenceTypeList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<String> getAllConsequenceTypes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<Snp> getAllFilteredByConsequenceType(List<String> snpIds,
+			String consequence) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<Snp> getAllFilteredByConsequenceType(List<String> snpIds,
+			List<String> consequenceTypes) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<String> getAllIdsByConsequenceType(String consequenceType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<List<String>> getAllIdsByConsequenceTypeList(
+			List<String> consequenceTypeList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<String> getAllIdsByRegion(String chromosome, int start, int end) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<Snp> getByGeneId(String externalId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<List<Snp>> getByGeneIdList(List<String> externalIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public void writeAllFilteredByConsequenceType(String consequence,
+			String outfile) {
+		// TODO Auto-generated method stub
 		
-		return HibernateDBUtils.getStaticTest();
-//		criteria = this.getSession().createCriteria(Transcript.class);
-//		return (List<String>) execute(criteria);
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<String> getAllNamesByRegion(String chromosome) {
-//		return getStringList(GET_ALL_SNP_NAMES + " where s.chromosome = '"+chromosome+"'");
-		criteria = this.getSession().createCriteria(Transcript.class);
-		criteria.add(Restrictions.eq("chromosome", chromosome));
-		return (List<String>) execute(criteria);
+
+	@Override
+	public List<String> getAllIds() {
+		// TODO Auto-generated method stub
+		return null;
 	}
+
+
+	@Override
+	public List<Region> getAllRegionsByIdList(List<String> idList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<String> getAllSequencesByIdList(List<String> idList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Map<String, Object> getFullInfo(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<Map<String, Object>> getFullInfoByIdList(List<String> idList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Map<String, Object> getInfo(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<Map<String, Object>> getInfoByIdList(List<String> idList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Region getRegionById(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public String getSequenceById(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
+//	@SuppressWarnings("unchecked")
+//	public String getAllNames() {
+//		
+//		return HibernateDBUtils.getStaticTest();
+//	}
+
+//	@SuppressWarnings("unchecked")
+//	public List<String> getAllNamesByRegion(String chromosome) {
+//		criteria = this.getSession().createCriteria(Transcript.class);
+//		criteria.add(Restrictions.eq("chromosome", chromosome));
+//		return (List<String>) execute(criteria);
+//	}
 
 //	public List<String> getAllNamesByRegion(String chromosome, int start, int end) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 //		return getStringList(GET_ALL_SNP_NAMES + " where s.chromosome = '"+chromosome+"' and s.start >= "+start +" and s.end <= "+end+" ");
