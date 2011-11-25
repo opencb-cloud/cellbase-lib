@@ -2,17 +2,17 @@ package org.bioinfo.infrared.serialization;
 
 import java.util.ArrayList;
 import java.util.List;
-/*
-import org.bioinfo.infrared.core.Cytoband;
-import org.bioinfo.infrared.core.Exon;
-import org.bioinfo.infrared.core.Exon2transcript;
-import org.bioinfo.infrared.core.Gene;
-import org.bioinfo.infrared.core.GenomeSequence;
-import org.bioinfo.infrared.core.Transcript;
-*/
+
+import org.bioinfo.infrared.core.cellbase.Cytoband;
+import org.bioinfo.infrared.core.cellbase.Exon;
+import org.bioinfo.infrared.core.cellbase.Gene;
+import org.bioinfo.infrared.core.cellbase.GenomeSequence;
+import org.bioinfo.infrared.core.cellbase.Snp;
+import org.bioinfo.infrared.core.cellbase.Transcript;
+
 
 public class InfraredSerializer {
-	/*
+	
 	
 	public static String serialize(Gene gene){
 		return new StringBuilder().append(gene.getStableId()).append("\t").append(gene.getExternalName()).append("\t").append(gene.getExternalDb()).append("\t").append(gene.getBiotype()).append("\t").append(gene.getStatus()).append("\t").append(gene.getChromosome()).append("\t").append(gene.getStart()).append("\t").append(gene.getEnd()).append("\t").append(gene.getStrand()).append("\t").append(gene.getSource()).append("\t").append(gene.getDescription()).toString(); 
@@ -28,6 +28,10 @@ public class InfraredSerializer {
 	
 	public static String serialize(GenomeSequence genomeSequence){
 		return new StringBuilder().append(genomeSequence.getId().getChromosome()).append("\t").append(genomeSequence.getId().getChunk()).append("\t").append(genomeSequence.getStart()).append("\t").append(genomeSequence.getEnd()).append(genomeSequence.getSequence()).toString();
+	}
+	
+	public static String serialize(Snp snp){
+		return new StringBuilder().append(snp.getName()).append("\t").append(snp.getChromosome()).append("\t").append(snp.getStart()).append("\t").append(snp.getDisplayConsequence()).append("\t").append(snp.getDisplaySoConsequence()).append("\t").append(snp.getSequence()).toString(); 
 	}
 	
 	public static String serialize(Transcript transcript){
@@ -48,17 +52,7 @@ public class InfraredSerializer {
 								  .toString();
 	}
 	
-	public static String serialize(Exon2transcript exon2transcript){
-		return new StringBuilder().append(exon2transcript.getGenomicCodingStart()).append("\t")
-								  .append(exon2transcript.getGenomicCodingEnd()).append("\t")
-								  .append(exon2transcript.getCdnaCodingStart()).append("\t")
-								  .append(exon2transcript.getCdnaCodingEnd()).append("\t")
-								  .append(exon2transcript.getCdsStart()).append("\t")
-								  .append(exon2transcript.getCdsEnd()).append("\t")
-								  .append(exon2transcript.getPhase()).append("\t")
-								  .append(exon2transcript.getIsConstitutive()).append("\t")
-								  .toString();
-	}
+	
 	
 	public static String serialize(List<?> list){
 		StringBuilder sb = new StringBuilder();
@@ -83,15 +77,16 @@ public class InfraredSerializer {
 				sb.append(InfraredSerializer.serialize((Transcript) object)).append("\n");
 				continue;
 			}
-			if (object instanceof Exon2transcript){
-				sb.append(InfraredSerializer.serialize((Exon2transcript) object)).append("\n");
+			if (object instanceof Snp){
+				sb.append(InfraredSerializer.serialize((Snp) object)).append("\n");
 				continue;
 			}
+			
 			if (object instanceof List){
 				sb.append(InfraredSerializer.serialize((List)object));
 				continue;
 			}
 		}
 		return sb.toString();
-	}*/
+	}
 }

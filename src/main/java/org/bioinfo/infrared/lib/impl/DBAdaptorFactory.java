@@ -7,6 +7,8 @@ import java.util.Properties;
 import org.bioinfo.commons.log.Logger;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
+import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
+import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.impl.hibernate.GenomeSequenceDBAdaptor;
 
@@ -30,7 +32,7 @@ public abstract class DBAdaptorFactory {
 	
 	public DBAdaptorFactory() {
 		logger = new Logger();
-		logger.setLevel(Logger.DEBUG_LEVEL);
+		logger.setLevel(Logger.ERROR_LEVEL);
 	}
 
 
@@ -54,18 +56,24 @@ public abstract class DBAdaptorFactory {
 	public abstract ExonDBAdaptor getExonDBAdaptor(String species, String version);
 	
 
-	public abstract GeneDBAdaptor getProteinDBAdaptor(String species);
-
-	public abstract GeneDBAdaptor getSnpDBAdaptor(String species);
-
-	public abstract GeneDBAdaptor getCytobandDBAdaptor(String species);
-
-	public abstract GeneDBAdaptor getChromosomeDBAdaptor(String species);
+	public abstract ProteinDBAdaptor getProteinDBAdaptor(String species);
+	
+	public abstract ProteinDBAdaptor getProteinDBAdaptor(String species, String version);
+	
+	
+	public abstract SnpDBAdaptor getSnpDBAdaptor(String species);
+	
+	public abstract SnpDBAdaptor getSnpDBAdaptor(String species,  String version);
 
 	
 	public abstract GenomeSequenceDBAdaptor getGenomeSequenceDBAdaptor(String species);
 	
 	public abstract GenomeSequenceDBAdaptor getGenomeSequenceDBAdaptor(String species, String version);
+
+
+	public abstract GeneDBAdaptor getCytobandDBAdaptor(String species);
+
+	public abstract GeneDBAdaptor getChromosomeDBAdaptor(String species);
 
 	
 	public abstract GeneDBAdaptor getXRefDBAdaptor(String species);

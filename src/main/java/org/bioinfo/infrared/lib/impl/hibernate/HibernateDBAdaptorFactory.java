@@ -9,6 +9,8 @@ import java.util.ResourceBundle;
 import org.bioinfo.commons.Config;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
+import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
+import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.hibernate.SessionFactory;
@@ -55,7 +57,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 	}
 
 	private SessionFactory createSessionFactory(String speciesVersionPrefix) {
-		logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): creating Hibernate SessionFactory object for SPECIES.VERSION: '"+speciesVersionPrefix+"' ...");
+		//logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): creating Hibernate SessionFactory object for SPECIES.VERSION: '"+speciesVersionPrefix+"' ...");
 		long t1 = System.currentTimeMillis();
 
 		// initial load and setup from hibernate.cfg.xml
@@ -69,11 +71,11 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			cfg.setProperty("hibernate.connection.url", "jdbc:"+ applicationProperties.getProperty(dbPrefix+".DRIVER_CLASS")+"://"+applicationProperties.getProperty(dbPrefix + ".HOST")+":"+applicationProperties.getProperty(dbPrefix + ".PORT", "3306")+"/"+applicationProperties.getProperty(speciesVersionPrefix+".DATABASE"));
 //			cfg.setProperty("hibernate.connection.pool_size", "30");
 		}else {
-			logger.debug("HibernateDBAdaptorFactory in createSessionFactory(): 'species' parameter is null or empty");
+			//logger.debug("HibernateDBAdaptorFactory in createSessionFactory(): 'species' parameter is null or empty");
 		}
 
 		SessionFactory sessionFactory = cfg.buildSessionFactory();
-		logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): Hibernate SessionFactory object for '"+speciesVersionPrefix+"' created in "+(System.currentTimeMillis()-t1)+" ms");
+		//logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): Hibernate SessionFactory object for '"+speciesVersionPrefix+"' created in "+(System.currentTimeMillis()-t1)+" ms");
 
 		return sessionFactory;
 	}
@@ -126,6 +128,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 	public TranscriptDBAdaptor getTranscriptDBAdaptor(String species) {
 		return getTranscriptDBAdaptor(species, null);
 	}
+	
 	@Override
 	public TranscriptDBAdaptor getTranscriptDBAdaptor(String species, String version) {
 		String speciesVersionPrefix = getSpeciesVersionPrefix(species,version);
@@ -136,7 +139,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		return (TranscriptDBAdaptor) new TranscriptHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 	
-
+	
 	@Override
 	public ExonDBAdaptor getExonDBAdaptor(String species) {
 		return getExonDBAdaptor(species, null);
@@ -151,28 +154,34 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		return (ExonDBAdaptor) new ExonHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 
+	
 	@Override
-	public GeneDBAdaptor getProteinDBAdaptor(String species) {
+	public ProteinDBAdaptor getProteinDBAdaptor(String species) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public ProteinDBAdaptor getProteinDBAdaptor(String species, String version) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
-	public GeneDBAdaptor getSnpDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
-	public GeneDBAdaptor getCytobandDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
+	public SnpDBAdaptor getSnpDBAdaptor(String species) {
+		return getSnpDBAdaptor(species, null);
 	}
-
+	
 	@Override
-	public GeneDBAdaptor getChromosomeDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
+	public SnpDBAdaptor getSnpDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)) {
+			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+		
+		return (SnpDBAdaptor) new SnpHibernateDBAdapator(sessionFactories.get(speciesVersionPrefix));
 	}
 
 	
@@ -195,12 +204,25 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 
 	
 	@Override
-	public GeneDBAdaptor getXRefDBAdaptor(String species) {
+	public GeneDBAdaptor getCytobandDBAdaptor(String species) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
+	public GeneDBAdaptor getChromosomeDBAdaptor(String species) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
+	
+	
+	
+	@Override
+	public GeneDBAdaptor getXRefDBAdaptor(String species) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
 }

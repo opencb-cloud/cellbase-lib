@@ -12,11 +12,11 @@ public class GenomeSequenceDBAdaptorTest {
 
 	private GenomeSequenceDBAdaptor genomeSequenceDBAdaptor;
 
-	@Test
+	/*@Test
 	public void testGetByRegion() {
 		genomeSequenceDBAdaptor = dbAdaptorFact.getGenomeSequenceDBAdaptor("drerio");
 		System.out.println(genomeSequenceDBAdaptor.getByRegion("1", 1000001, 1000501));
 		dbAdaptorFact.close();
-	}
+	}*/
 
 }
