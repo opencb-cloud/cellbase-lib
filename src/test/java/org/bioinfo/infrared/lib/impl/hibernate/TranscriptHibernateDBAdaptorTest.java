@@ -4,7 +4,9 @@ import static org.junit.Assert.fail;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.Transcript;
@@ -47,7 +49,31 @@ public class TranscriptHibernateDBAdaptorTest {
 		List<Transcript> transcripts = transcriptDBAdaptor.getAll();
 		printGeneList("testTranscriptHibernateDBAdaptorGetAll2", transcripts, 5);
 	}
+	
+	@Test
+	public void testTranscriptHibernateDBAdaptorGetAllIds() {
+		List<String> transcripts = transcriptDBAdaptor.getAllIds();
+		printGeneList("testTranscriptHibernateDBAdaptorGetAllIds", transcripts, 5);
+	}
 
+
+//	@Test
+//	public void testTranscriptHibernateDBAdaptorGetInfo() {
+//
+//	}
+//	@Test
+//	public void testTranscriptHibernateDBAdaptorGetInfoByIdList() {
+//		
+//	}
+//	@Test
+//	public void testTranscriptHibernateDBAdaptorGetFullInfo() {
+//		
+//	}
+//	@Test
+//	public void testTranscriptHibernateDBAdaptorGetFullInfoByIdList() {
+//		
+//	}
+	
 	@Test
 	public void testTranscriptHibernateDBAdaptorGetAllEnsemblIds() {
 		List<String> transcripts = transcriptDBAdaptor.getAllEnsemblIds();
@@ -57,8 +83,6 @@ public class TranscriptHibernateDBAdaptorTest {
 	@Test
 	public void testTranscriptHibernateDBAdaptorGetByEnsemblId() {
 		Transcript transcript = transcriptDBAdaptor.getByEnsemblId("ENST00000493562");
-		System.out.println(transcript.toString());
-		System.out.println(transcript.getGene());
 		printGeneList("testTranscriptHibernateDBAdaptorGetByEnsemblId", Arrays.asList(transcript), 5);
 	}
 
