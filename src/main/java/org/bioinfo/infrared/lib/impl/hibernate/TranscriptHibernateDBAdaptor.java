@@ -282,7 +282,8 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 	@Override
 	public List<Transcript> getAllBySnpId(String snpId) {
-		// TODO Auto-generated method stub
+		// TODO DOING
+		Query query = this.openSession().createQuery("")
 		return null;
 	}
 
