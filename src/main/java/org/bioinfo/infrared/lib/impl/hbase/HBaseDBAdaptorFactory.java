@@ -2,7 +2,9 @@ package org.bioinfo.infrared.lib.impl.hbase;
 
 import java.util.Properties;
 
+import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
+import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.bioinfo.infrared.lib.impl.hibernate.GenomeSequenceDBAdaptor;
 
@@ -29,17 +31,29 @@ public class HBaseDBAdaptorFactory extends DBAdaptorFactory{
 	
 
 	@Override
-	public GeneDBAdaptor getTranscriptDBAdaptor(String species) {
+	public TranscriptDBAdaptor getTranscriptDBAdaptor(String species) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public GeneDBAdaptor getExonDBAdaptor(String species) {
+	public TranscriptDBAdaptor getTranscriptDBAdaptor(String species, String version) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	
+	@Override
+	public ExonDBAdaptor getExonDBAdaptor(String species) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public ExonDBAdaptor getExonDBAdaptor(String species, String version) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	@Override
 	public GeneDBAdaptor getProteinDBAdaptor(String species) {
 		// TODO Auto-generated method stub
@@ -89,6 +103,5 @@ public class HBaseDBAdaptorFactory extends DBAdaptorFactory{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 }

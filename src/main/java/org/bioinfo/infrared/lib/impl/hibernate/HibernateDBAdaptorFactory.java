@@ -7,7 +7,9 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.bioinfo.commons.Config;
+import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
+import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -121,16 +123,32 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 
 
 	@Override
-	public GeneDBAdaptor getTranscriptDBAdaptor(String species) {
-		
-		// TODO Auto-generated method stub
-		return null;
+	public TranscriptDBAdaptor getTranscriptDBAdaptor(String species) {
+		return getTranscriptDBAdaptor(species, null);
 	}
+	@Override
+	public TranscriptDBAdaptor getTranscriptDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species,version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)){
+			SessionFactory sessionFactory  = createSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+		return (TranscriptDBAdaptor) new TranscriptHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+	}
+	
 
 	@Override
-	public GeneDBAdaptor getExonDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
+	public ExonDBAdaptor getExonDBAdaptor(String species) {
+		return getExonDBAdaptor(species, null);
+	}
+	@Override
+	public ExonDBAdaptor getExonDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species,version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)){
+			SessionFactory sessionFactory  = createSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+		return (ExonDBAdaptor) new ExonHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 
 	@Override
@@ -181,6 +199,8 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
 
 
 }

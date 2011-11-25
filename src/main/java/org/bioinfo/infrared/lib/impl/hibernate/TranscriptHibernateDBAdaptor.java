@@ -1,21 +1,19 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.bioinfo.infrared.core.cellbase.Exon;
-import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements TranscriptDBAdaptor {
@@ -26,63 +24,63 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 	
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Transcript> getAll() {
+		Criteria criteria = this.openSession().createCriteria(Transcript.class);
+		return (List<Transcript>) executeAndClose(criteria);
+//		Query query = this.openSession().createQuery("select t from Transcript t").setCacheable(true);
+//		return (List<Transcript>) executeAndClose(query);
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<String> getAllIds() {
+		Criteria criteria = this.openSession().createCriteria(Transcript.class);
+		ProjectionList projections = Projections.projectionList();
+		projections.add(Projections.property("stableId"));
+		criteria.setProjection(projections);
+		return (List<String>) executeAndClose(criteria);
+	}
 
+	
 	@Override
 	public Map<String, Object> getInfo(String id) {
 		return null;
 	}
 
 	@Override
-	public Map<String, Object> getFullInfo(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-
-	@Override
 	public List<Map<String, Object>> getInfoByIdList(List<String> idList) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	
+	@Override
+	public Map<String, Object> getFullInfo(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public List<Map<String, Object>> getFullInfoByIdList(List<String> idList) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 	
-	
-	
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<String> getAllIds() {
-		Query query = this.openSession().createQuery("select t.stableId from Transcript t");
-		return (List<String>) executeAndClose(query);
-	}
-
-
-	
 	@SuppressWarnings("unchecked")
-	@Override
-	public List<Transcript> getAll() {
-//		Criteria criteria = this.getSession().createCriteria(Gene.class);
-//		return (List<Gene>) execute(criteria);
-		Query query = this.openSession().createQuery("select t from Transcript t").setCacheable(true);
-		return (List<Transcript>) executeAndClose(query);
-	}
-
-
-	@SuppressWarnings("unchecked")
-	@Override
 	public List<String> getAllEnsemblIds() {
-		Query query = this.openSession().createQuery("select t.stableId from Transcript t");
-		return (List<String>) executeAndClose(query);
+		Criteria criteria = this.openSession().createCriteria(Transcript.class);
+		ProjectionList projections = Projections.projectionList();
+		projections.add(Projections.property("stableId"));
+		criteria.setProjection(projections);
+		return (List<String>) executeAndClose(criteria);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("unchecked")
 	public Transcript getByEnsemblId(String ensemblId) {
 		Criteria criteria = this.openSession().createCriteria(Transcript.class);
 		criteria.add(Restrictions.eq("stableId", ensemblId.trim()));
@@ -96,11 +94,11 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	
 	@Override
 	public List<Transcript> getAllByEnsemblIdList(List<String> ensemblIds) {
-		List<Transcript> genes = new ArrayList<Transcript>(ensemblIds.size());
+		List<Transcript> transcripts = new ArrayList<Transcript>(ensemblIds.size());
 		for(String ensemblId: ensemblIds) {
-			genes.add(getByEnsemblId(ensemblId));
+			transcripts.add(getByEnsemblId(ensemblId));
 		}
-		return genes;
+		return transcripts;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -114,8 +112,12 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 	@Override
 	public List<List<Transcript>> getAllByIdList(List<String> ids) {
-		// TODO Auto-generated method stub
-		return null;
+		//TODO DONE
+		List<List<Transcript>> transcripts =  new ArrayList<List<Transcript>>(ids.size());
+		for(String id: ids){
+			transcripts.add(getAllById(id));
+		}
+		return transcripts;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -134,7 +136,6 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 
 
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Transcript> getAllByBiotype(String biotype) {
@@ -243,22 +244,26 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 	@Override
 	public List<List<Transcript>> getAllByRegionList(List<Region> regions) {
-		List<List<Transcript>> genes = new ArrayList<List<Transcript>>(regions.size());
+		List<List<Transcript>> transcripts = new ArrayList<List<Transcript>>(regions.size());
 		for(Region region: regions) {
-			genes.add(getAllByRegion(region));
+			transcripts.add(getAllByRegion(region));
 		}
-		return genes;
+		return transcripts;
 	}
 
 	@Override
 	public List<List<Transcript>> getAllByRegionList(List<Region> regions, List<String> biotypes) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO DONE
+		List<List<Transcript>> transcripts = new ArrayList<List<Transcript>>(regions.size());
+		for(Region region: regions){
+			transcripts.add(getAllByRegion(region, biotypes));
+		}
+		return transcripts;
 	}
 
 
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<Transcript> getAllByCytoband(String chromosome, String cytoband) {
 		Query query = this.openSession().createQuery("select t from Transcript t, Cytoband k where k.chromosome= :chromosome and k.cytoband = :cytoband and k.chromosome=g.chromosome and g.end>=k.start and g.start<=k.end").setParameter("chromosome", chromosome).setParameter("cytoband", cytoband);
 		return (List<Transcript>)executeAndClose(query);
@@ -266,9 +271,13 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 
 	@Override
-	public List<Transcript> getAllBySnpId(String snpId) {
-		// TODO Auto-generated method stub
-		return null;
+	@SuppressWarnings("unchecked")
+	public List<Transcript> getAllBySnpId(String snpNameId) {
+		// TODO DOING
+		//select t.* from snp s, snp_to_transcript st, transcript t where s.name='rs41163904' and s.snp_id=st.snp_id and st.transcript_id=t.transcript_id;
+
+		Query query = this.openSession().createQuery("select t from snp s, snp_to_transcript st, transcript t where s.name= :snpName and s.snp_id=st.snp_id and st.transcript_id=t.transcript_id;").setParameter("snpName", snpNameId);
+		return (List<Transcript>)executeAndClose(query);
 	}
 
 	@Override
