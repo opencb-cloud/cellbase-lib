@@ -11,9 +11,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import org.bioinfo.commons.utils.ListUtils;
+import org.bioinfo.infrared.core.cellbase.ConsequenceType;
 import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
+import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.dao.utils.HibernateUtil;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
@@ -28,6 +31,9 @@ import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class SnpHibernateDBAdaptorTest {
 
@@ -54,23 +60,101 @@ public class SnpHibernateDBAdaptorTest {
 		//printGeneList("testGeneHibernateDBAdaptorGetAll", genes, 5);
 	//}
 	
-/*	@Test
+	@Test
 	public void testSnpHibernateDBAdaptorGetById() {
-		List<Snp> snps = snpDBAdaptor.getById("rs40908337");
-		Set<SnpToTranscript> ma = snps.get(0).getSnpToTranscripts();
-		System.out.println("Size: " + ma.size());
-		printGeneList("testSnpHibernateDBAdaptorGetById", snps, 5);
-	}
+		System.out.println("......................");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		
+		List<String> query = new ArrayList<String>();
+		for (int i = 0; i <2000; i++) {
+			
+			StringBuilder br = new StringBuilder();
+			br.append("rs407");
+			int size = String.valueOf(i).length();
+			for (int j = size; j < 5; j++) {
+				br.append("0");
+			}
+			br.append(i);
+			System.out.println(br.toString());
+			query.add(br.toString());
+			
+		
+			
+		}
+		long t1 = System.currentTimeMillis();
+		List<Snp> snps = snpDBAdaptor.getByIdList(query);
+		long t2 = System.currentTimeMillis();
+		for (int x = 0; x < snps.size(); x++) {
+			Snp snp = snps.get(x);
+			System.out.print("\t\t\tSNP:\t " + snp.getName() + " " + snp.getStart() );
+		
+			for (SnpToTranscript transcript : snp.getSnpToTranscripts()) {
+				ConsequenceType consequenceTypes =  transcript.getConsequenceType();
+				System.out.println("\t\tConsequenceType:\t\t " + consequenceTypes.getDisplayTerm());
+			}
+		}
+		System.out.println("tiempo: "+(t2-t1));
+	//"rs40961296");
+		/*
+		Gson gson1 = new GsonBuilder()
+		.serializeNulls()
+		.setExclusionStrategies(new SNPFeatureExclusionStrategy(Snp.class)).create();
+		
+		System.out.println(snps.size());
+		System.out.println("");
+		System.out.println("");
+		
+		for (int i = 0; i < snps.size(); i++) {
+			Snp snp = snps.get(i);
+			System.out.println("SNP:\t\t " + gson1.toJson(snp));
+		
+			for (SnpToTranscript transcript : snp.getSnpToTranscripts()) {
+				System.out.println("\nSnpToTranscript:\t\t " + gson1.toJson(transcript));
+				
+				ConsequenceType consequenceTypes =  transcript.getConsequenceType();
+				System.out.println("\nConsequenceType:\t\t " + gson1.toJson(consequenceTypes));
+			}
+		}
+		
+		*/
+		
+		//System.out.println("SNP: "  + (snp.get(0)).getAncestralAllele());
+		
+		
+		
+		//System.out.println("SNP: "  + ((Snp) snp.get(0)).getName());
+		
+	/*	for (SnpToTranscript snpToTranscript : snpToTranscripts) {
+			System.out.println("SNPtoTranscript codon: "  + snpToTranscript.getCodon() + snpToTranscript.getSnpToTranscriptId());
+			System.out.println("SNPtoTranscript desc: "  + snpToTranscript.getSnpToTranscriptConsequenceTypes());
+		}
 	*/
-	@Test
-	public void testSnpHibernateDBAdaptorGetById3() {
-	EntityManagerFactory emf = Persistence.createEntityManagerFactory("manager1");
-	EntityManager em = emf.createEntityManager(); 
-	
-	Snp snp  = em.find(Snp.class, 1);
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		
+		System.out.println("......................");
+		
+		/*
+		Gson gson = new GsonBuilder()
+						.serializeNulls()
+						.setExclusionStrategies(new SNPFeatureExclusionStrategy(Snp.class)).create();
+		*/
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+	//	System.out.println("JSON:" + gson.toJson(snps.get(0)));
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		//printGeneList("testSnpHibernateDBAdaptorGetById", snps, 5);
 	}
 	
-	@Test
+	
+	
+	/*@Test
 	public void testSnpHibernateDBAdaptorGetById2() {
 		Configuration cfg = new Configuration().configure("cell_db_v1_hibernate.cfg.xml");
 		Session session = cfg.buildSessionFactory().openSession();
@@ -95,7 +179,7 @@ public class SnpHibernateDBAdaptorTest {
 	      }  finally { 
 	           session.close();
 	      }
-	}
+	}*/
 /*
 	@Test
 	public void testSnpHibernateDBAdaptorgetAllByConsequenceType() {

@@ -16,15 +16,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class GeneHibernateDBAdaptorTest {
-	/*
 	private DBAdaptorFactory dbAdaptorFact = new HibernateDBAdaptorFactory();
-
 	private GeneDBAdaptor geneDBAdaptor;
-
 	private long startExecTime;
-	
 	private String species = "drerio";
-
+	
 	@Before
 	public void beforeTestStart() {
 		geneDBAdaptor = dbAdaptorFact.getGeneDBAdaptor(species);
@@ -35,6 +31,20 @@ public class GeneHibernateDBAdaptorTest {
 	public void afterTestStart() {
 		dbAdaptorFact.close();
 	}
+	/*
+	@Test
+	public void testGeneHibernateDBAdaptorGetByEnsemblId() {
+		Gene gene = geneDBAdaptor.getByEnsemblId("ENSDARG00000000606");
+		System.out.println(gene.toString());
+		System.out.println("size: " + gene.getTranscripts().size());
+		printGeneList("testGeneHibernateDBAdaptorGetByEnsemblId", Arrays.asList(gene), 5);
+	}
+	*/
+	
+	/*
+	
+
+
 
 
 
@@ -55,13 +65,7 @@ public class GeneHibernateDBAdaptorTest {
 		printGeneList("testGeneHibernateDBAdaptorGetAllEnsemblIds", genes, 5);
 	}
 
-	@Test
-	public void testGeneHibernateDBAdaptorGetByEnsemblId() {
-		Gene gene = geneDBAdaptor.getByEnsemblId("ENSG00000252775");
-		//System.out.println(gene.toString());
-		//System.out.println(gene.getTranscripts());
-		printGeneList("testGeneHibernateDBAdaptorGetByEnsemblId", Arrays.asList(gene), 5);
-	}
+	
 
 	@Test
 	public void testGeneHibernateDBAdaptorGetByEnsemblIdList() {
@@ -167,7 +171,7 @@ public class GeneHibernateDBAdaptorTest {
 		List<Gene> genes = geneDBAdaptor.getAllByCytoband("9", "q31.3");
 		printGeneList("testGetAllByCytoband", genes, 5);
 	}
-
+*/
 
 	private void printGeneList(String title, List<?> genes, int numResults) {
 		System.out.println("************************************************************");
@@ -200,5 +204,5 @@ public class GeneHibernateDBAdaptorTest {
 		System.out.println("************************************************************\n");
 
 	}
-	*/
+	
 }

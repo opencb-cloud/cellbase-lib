@@ -1,20 +1,29 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.criteria.JoinType;
+
+import org.bioinfo.commons.utils.StringUtils;
+import org.bioinfo.infrared.core.cellbase.ConsequenceType;
 import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.Snp;
+import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
+import org.hibernate.Hibernate;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.Type;
 
 public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor {
-
+	private int MAX_BATCH_QUERIES_LIST = 50;
 	public SnpHibernateDBAdapator(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
@@ -26,21 +35,42 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 		Criteria criteria = this.openSession().createCriteria(Snp.class);
 		return (List<Snp>) this.executeAndClose(criteria);
 	}
+	
+	
+	private List<Snp> queryByIdList(List<String> idList){
+		Query query = this.openSession().createQuery("select snp from Snp as snp left join fetch snp.snpToTranscripts as stt  left join fetch snp.snpXrefs as sxr  left join fetch snp.snp2functionals as s2f left join fetch stt.consequenceType as consequenceType where snp.name in :name ");
+		query.setParameterList("name", idList);
+		return (List<Snp>)query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Snp> getByIdList(List<String> idList){
+		List<Snp> result = new ArrayList<Snp>();
+		
+		if (idList.size() > MAX_BATCH_QUERIES_LIST){
+			for (int i = 0; i < idList.size()/MAX_BATCH_QUERIES_LIST; i = i + MAX_BATCH_QUERIES_LIST) {
+				result.addAll(queryByIdList((ArrayList)idList).subList(i, i + MAX_BATCH_QUERIES_LIST -1));
+			}
+			//result.addAll(queryByIdList((ArrayList)idList).subList( (idList.size()/MAX_BATCH_QUERIES_LIST)*MAX_BATCH_QUERIES_LIST , idList.size()));
+		}
+		else{
+			
+			
+		}
+		
+	
+		return result;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Snp> getById(String id){
-		Criteria criteria = this.openSession().createCriteria(Snp.class).setFetchMode("SnpToTranscript", FetchMode.JOIN);
-		criteria.add(Restrictions.eq("name", id.trim()));
-		return (List<Snp>)executeAndClose(criteria);
+	public List<Snp> getById(String name){
+		List<String> ids = new ArrayList<String>();
+		ids.add(name);
+		return getByIdList(ids);
 	}
 	
-	@Override
-	public List<Snp> getAllByIdList(List<String> idList){
-		return null;
-	}
-
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Snp> getAllByConsequenceType(String consequenceType) {
@@ -78,6 +108,7 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 	@Override
 	public List<Snp> getAllByPosition(Position position) {
 		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -98,14 +129,12 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 
 	@Override
 	public List<Snp> getAllByRegion(String chromosome, int start) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 
 	@Override
 	public List<Snp> getAllByRegion(String chromosome, int start, int end) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

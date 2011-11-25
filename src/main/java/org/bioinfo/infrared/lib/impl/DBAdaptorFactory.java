@@ -31,7 +31,7 @@ public abstract class DBAdaptorFactory {
 	
 	public DBAdaptorFactory() {
 		logger = new Logger();
-		logger.setLevel(Logger.DEBUG_LEVEL);
+		logger.setLevel(Logger.ERROR_LEVEL);
 	}
 
 
