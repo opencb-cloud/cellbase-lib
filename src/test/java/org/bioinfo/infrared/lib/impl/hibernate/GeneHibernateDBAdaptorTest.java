@@ -65,7 +65,13 @@ public class GeneHibernateDBAdaptorTest {
 		printGeneList("testGeneHibernateDBAdaptorGetAllEnsemblIds", genes, 5);
 	}
 
-	
+	@Test
+	public void testGeneHibernateDBAdaptorGetByEnsemblId() {
+		Gene gene = geneDBAdaptor.getByEnsemblId("ENSDARG00000024771");
+		System.out.println(gene.toString());
+		System.out.println(gene.getTranscripts());
+		printGeneList("testGeneHibernateDBAdaptorGetByEnsemblId", Arrays.asList(gene), 5);
+	}
 
 	@Test
 	public void testGeneHibernateDBAdaptorGetByEnsemblIdList() {

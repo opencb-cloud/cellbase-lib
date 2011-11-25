@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import org.bioinfo.commons.Config;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
+import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
@@ -125,27 +126,47 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 
 	@Override
 	public TranscriptDBAdaptor getTranscriptDBAdaptor(String species) {
+		return getTranscriptDBAdaptor(species, null);
+	}
+	
+	@Override
+	public TranscriptDBAdaptor getTranscriptDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species,version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)){
+			SessionFactory sessionFactory  = createSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+		return (TranscriptDBAdaptor) new TranscriptHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+	}
+	
+	
+	@Override
+	public ExonDBAdaptor getExonDBAdaptor(String species) {
+		return getExonDBAdaptor(species, null);
+	}
+	@Override
+	public ExonDBAdaptor getExonDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species,version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)){
+			SessionFactory sessionFactory  = createSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+		return (ExonDBAdaptor) new ExonHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+	}
+
+	
+	@Override
+	public ProteinDBAdaptor getProteinDBAdaptor(String species) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	@Override
-	public TranscriptDBAdaptor getTranscriptDBAdaptor(String species, String version) {
+	public ProteinDBAdaptor getProteinDBAdaptor(String species, String version) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
-	public ExonDBAdaptor getExonDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public GeneDBAdaptor getProteinDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public SnpDBAdaptor getSnpDBAdaptor(String species) {
@@ -161,18 +182,6 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		}
 		
 		return (SnpDBAdaptor) new SnpHibernateDBAdapator(sessionFactories.get(speciesVersionPrefix));
-	}
-
-	@Override
-	public GeneDBAdaptor getCytobandDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public GeneDBAdaptor getChromosomeDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	
@@ -193,6 +202,21 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		return (GenomeSequenceDBAdaptor) new GenomeSequenceDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 
+	
+	@Override
+	public GeneDBAdaptor getCytobandDBAdaptor(String species) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GeneDBAdaptor getChromosomeDBAdaptor(String species) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
 	
 	@Override
 	public GeneDBAdaptor getXRefDBAdaptor(String species) {

@@ -8,7 +8,7 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
 
-
+@Deprecated
 public class HibernateDBAdaptor {
 
 	private HibernateDBConnector hibernateDBConnector;
