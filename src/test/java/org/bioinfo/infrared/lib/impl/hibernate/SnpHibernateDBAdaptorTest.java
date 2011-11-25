@@ -68,7 +68,7 @@ public class SnpHibernateDBAdaptorTest {
 		System.out.println("");
 		
 		List<String> query = new ArrayList<String>();
-		for (int i = 0; i <1000; i++) {
+		for (int i = 0; i <105; i++) {
 			
 			StringBuilder br = new StringBuilder();
 			br.append("rs407");
@@ -92,68 +92,9 @@ public class SnpHibernateDBAdaptorTest {
 		for (int x = 0; x < snps.size(); x++) {
 			Snp snp = snps.get(x);
 			System.out.println("\t " + count +"   SNP:\t " + snp.getName() + " " + snp.getStart());
-			/*for (SnpToTranscript transcript : snp.getSnpToTranscripts()) {
-				ConsequenceType consequenceTypes =  transcript.getConsequenceType();
-				System.out.println("\t " + count +"   SNP:\t " + snp.getName() + " " + snp.getStart() + "\t\tConsequenceType:\t\t " + consequenceTypes.getDisplayTerm());
-			}
-			*/
 			count++;
 		}
 		System.out.println("tiempo: "+(t2-t1));
-	//"rs40961296");
-		/*
-		Gson gson1 = new GsonBuilder()
-		.serializeNulls()
-		.setExclusionStrategies(new SNPFeatureExclusionStrategy(Snp.class)).create();
-		
-		System.out.println(snps.size());
-		System.out.println("");
-		System.out.println("");
-		
-		for (int i = 0; i < snps.size(); i++) {
-			Snp snp = snps.get(i);
-			System.out.println("SNP:\t\t " + gson1.toJson(snp));
-		
-			for (SnpToTranscript transcript : snp.getSnpToTranscripts()) {
-				System.out.println("\nSnpToTranscript:\t\t " + gson1.toJson(transcript));
-				
-				ConsequenceType consequenceTypes =  transcript.getConsequenceType();
-				System.out.println("\nConsequenceType:\t\t " + gson1.toJson(consequenceTypes));
-			}
-		}
-		
-		*/
-		
-		//System.out.println("SNP: "  + (snp.get(0)).getAncestralAllele());
-		
-		
-		
-		//System.out.println("SNP: "  + ((Snp) snp.get(0)).getName());
-		
-	/*	for (SnpToTranscript snpToTranscript : snpToTranscripts) {
-			System.out.println("SNPtoTranscript codon: "  + snpToTranscript.getCodon() + snpToTranscript.getSnpToTranscriptId());
-			System.out.println("SNPtoTranscript desc: "  + snpToTranscript.getSnpToTranscriptConsequenceTypes());
-		}
-	*/
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		
-		System.out.println("......................");
-		
-		/*
-		Gson gson = new GsonBuilder()
-						.serializeNulls()
-						.setExclusionStrategies(new SNPFeatureExclusionStrategy(Snp.class)).create();
-		*/
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-	//	System.out.println("JSON:" + gson.toJson(snps.get(0)));
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		//printGeneList("testSnpHibernateDBAdaptorGetById", snps, 5);
 	}
 	
 	
