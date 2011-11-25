@@ -38,8 +38,8 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 		
 		List<Snp> result = new ArrayList<Snp>();
 		if (idList.size() > MAX_BATCH_QUERIES_LIST){
-			for (int i = 0; i < (idList.size() / MAX_BATCH_QUERIES_LIST); i++) {
-				int start = (i * MAX_BATCH_QUERIES_LIST );
+			for (int i = 0; i < (idList.size() / MAX_BATCH_QUERIES_LIST); i = i + MAX_BATCH_QUERIES_LIST) {
+				int start = (i);// * MAX_BATCH_QUERIES_LIST );
 				int end = start + MAX_BATCH_QUERIES_LIST;
 
 				query.setParameterList("name", idList.subList(start, end));
