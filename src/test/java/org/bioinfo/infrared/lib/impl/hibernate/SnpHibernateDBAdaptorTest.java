@@ -68,7 +68,7 @@ public class SnpHibernateDBAdaptorTest {
 		System.out.println("");
 		
 		List<String> query = new ArrayList<String>();
-		for (int i = 0; i <2000; i++) {
+		for (int i = 0; i <1000; i++) {
 			
 			StringBuilder br = new StringBuilder();
 			br.append("rs407");
@@ -83,17 +83,21 @@ public class SnpHibernateDBAdaptorTest {
 		
 			
 		}
+		
+		int count = 0;
 		long t1 = System.currentTimeMillis();
 		List<Snp> snps = snpDBAdaptor.getByIdList(query);
 		long t2 = System.currentTimeMillis();
+		System.out.println("\t Query result size: " + snps.size());
 		for (int x = 0; x < snps.size(); x++) {
 			Snp snp = snps.get(x);
-			System.out.print("\t\t\tSNP:\t " + snp.getName() + " " + snp.getStart() );
-		
-			for (SnpToTranscript transcript : snp.getSnpToTranscripts()) {
+			System.out.println("\t " + count +"   SNP:\t " + snp.getName() + " " + snp.getStart());
+			/*for (SnpToTranscript transcript : snp.getSnpToTranscripts()) {
 				ConsequenceType consequenceTypes =  transcript.getConsequenceType();
-				System.out.println("\t\tConsequenceType:\t\t " + consequenceTypes.getDisplayTerm());
+				System.out.println("\t " + count +"   SNP:\t " + snp.getName() + " " + snp.getStart() + "\t\tConsequenceType:\t\t " + consequenceTypes.getDisplayTerm());
 			}
+			*/
+			count++;
 		}
 		System.out.println("tiempo: "+(t2-t1));
 	//"rs40961296");

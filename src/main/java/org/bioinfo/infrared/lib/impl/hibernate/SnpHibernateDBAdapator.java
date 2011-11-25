@@ -4,23 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.criteria.JoinType;
-
-import org.bioinfo.commons.utils.StringUtils;
-import org.bioinfo.infrared.core.cellbase.ConsequenceType;
-import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.Snp;
-import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.type.Type;
 
 public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor {
 	private int MAX_BATCH_QUERIES_LIST = 50;
@@ -39,6 +31,8 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 	
 	private List<Snp> queryByIdList(List<String> idList){
 		Query query = this.openSession().createQuery("select snp from Snp as snp left join fetch snp.snpToTranscripts as stt  left join fetch snp.snpXrefs as sxr  left join fetch snp.snp2functionals as s2f left join fetch stt.consequenceType as consequenceType where snp.name in :name ");
+		
+		
 		query.setParameterList("name", idList);
 		return (List<Snp>)query.list();
 	}
@@ -49,13 +43,18 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 		List<Snp> result = new ArrayList<Snp>();
 		
 		if (idList.size() > MAX_BATCH_QUERIES_LIST){
-			for (int i = 0; i < idList.size()/MAX_BATCH_QUERIES_LIST; i = i + MAX_BATCH_QUERIES_LIST) {
-				result.addAll(queryByIdList((ArrayList)idList).subList(i, i + MAX_BATCH_QUERIES_LIST -1));
+			for (int i = 0; i < (idList.size()/MAX_BATCH_QUERIES_LIST); i++) {
+				int start = (i * MAX_BATCH_QUERIES_LIST );
+				int end = start + MAX_BATCH_QUERIES_LIST - 1;
+				//System.out.println("size: " + idList.size() +"  i: " + start + " : " + end );
+				
+				
+				result.addAll(queryByIdList(((ArrayList)idList).subList(start, end)));
 			}
-			//result.addAll(queryByIdList((ArrayList)idList).subList( (idList.size()/MAX_BATCH_QUERIES_LIST)*MAX_BATCH_QUERIES_LIST , idList.size()));
+			//result.addAll(queryByIdList((ArrayList)idList).subList( idList.size() - 1 - MAX_BATCH_QUERIES_LIST , idList.size() - 1));
 		}
 		else{
-			
+			result.addAll(queryByIdList(idList));
 			
 		}
 		
