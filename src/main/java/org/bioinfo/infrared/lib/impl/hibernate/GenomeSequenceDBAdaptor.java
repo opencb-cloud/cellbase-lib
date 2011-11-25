@@ -3,6 +3,7 @@ package org.bioinfo.infrared.lib.impl.hibernate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.GenomeSequence;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Query;
@@ -32,7 +33,8 @@ public class GenomeSequenceDBAdaptor extends HibernateDBAdaptor {
 		.setParameter("end", String.valueOf(getChunk(end)));
 		
 //		Criteria criteria = session.createCriteria(GenomeSequence.class).add(Restrictions.eq("chromosome", chromosome)).add( Restrictions.ge("start", start)).add(Restrictions.le("end", end));
-		List<GenomeSequence> genomeSequenceList = (List<GenomeSequence>)query.list();
+//		List<GenomeSequence> genomeSequenceList = (List<GenomeSequence>)query.list();
+		List<GenomeSequence> genomeSequenceList = (List<GenomeSequence>) executeAndClose(query);
 		
 		StringBuilder sb = new StringBuilder();
 		for(GenomeSequence genomeSequence: genomeSequenceList) {
