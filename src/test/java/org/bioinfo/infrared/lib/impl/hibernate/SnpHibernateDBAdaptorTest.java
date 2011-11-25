@@ -68,7 +68,7 @@ public class SnpHibernateDBAdaptorTest {
 		System.out.println("");
 		
 		List<String> query = new ArrayList<String>();
-		for (int i = 0; i <53; i++) {
+		for (int i = 0; i < 10000; i++) {
 			
 			StringBuilder br = new StringBuilder();
 			br.append("rs407");
@@ -77,7 +77,7 @@ public class SnpHibernateDBAdaptorTest {
 				br.append("0");
 			}
 			br.append(i);
-			System.out.println(br.toString());
+		//	System.out.println(br.toString());
 			query.add(br.toString());
 			
 		
@@ -92,10 +92,10 @@ public class SnpHibernateDBAdaptorTest {
 		for (int x = 0; x < snps.size(); x++) {
 			Snp snp = snps.get(x);
 			if (snp != null){
-				System.out.println("\t " + count +"   " + snp.getName() +"\t " + snp.getStart());
+			//	System.out.println("\t " + count +"   " + snp.getName() +"\t " + snp.getStart() + "\t" + snp.getDisplaySoConsequence());
 			}
 			else{
-				System.out.println("\t " + count +"   " + query.get(count) +"\t --------------");
+			//	System.out.println("\t " + count +"   " + query.get(count) +"\t --------------");
 			}
 			count++;
 		}

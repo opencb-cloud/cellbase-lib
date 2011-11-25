@@ -1,6 +1,7 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
@@ -31,36 +33,34 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 	
 	@SuppressWarnings("unchecked")
 	private List<Snp> query(String queryHQL, List<String> idList){
+		Session session = this.openSession();
+		Query query = session.createQuery(queryHQL);
+		
 		List<Snp> result = new ArrayList<Snp>();
 		if (idList.size() > MAX_BATCH_QUERIES_LIST){
-			for (int i = 0; i < (idList.size()/MAX_BATCH_QUERIES_LIST); i++) {
+			for (int i = 0; i < (idList.size() / MAX_BATCH_QUERIES_LIST); i++) {
 				int start = (i * MAX_BATCH_QUERIES_LIST );
 				int end = start + MAX_BATCH_QUERIES_LIST;
-				System.out.println("Start: " + start + " End: " + end);
-				Query query = this.openSession().createQuery(queryHQL);
-				
-				
+
 				query.setParameterList("name", idList.subList(start, end));
+				result.addAll((Collection<? extends Snp>) this.execute(query));
 				
-				result.addAll(query.list());
-				
-				System.out.println("Start: " + start + " End: " + end );
-				System.out.println(idList.subList(start, end));
 			}
 			
-			Query query = this.openSession().createQuery(queryHQL);
-			int start = (idList.size()/MAX_BATCH_QUERIES_LIST) * MAX_BATCH_QUERIES_LIST;
-			int end = idList.size();
-			System.out.println("Start: " + start + " End: " + end);
-			query.setParameterList("name",idList.subList(start, end));
-			System.out.println(idList.subList(start, end));
-			result.addAll(query.list());
+			if ( (idList.size() % MAX_BATCH_QUERIES_LIST) != 0){
+				int start = ( idList.size() / MAX_BATCH_QUERIES_LIST ) * MAX_BATCH_QUERIES_LIST;
+				int end = idList.size();
+				
+				query.setParameterList("name",idList.subList(start, end));
+				result.addAll((Collection<? extends Snp>) this.execute(query));
+			}
 		}
 		else{
-			Query query = this.openSession().createQuery(queryHQL);
 			query.setParameterList("name", idList);
-			result.addAll(query.list());
+			result.addAll((Collection<? extends Snp>) this.execute(query));
 		}
+		
+		closeSession();
 		
 		return result;
 	}
@@ -72,35 +72,53 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 		
 		List<Snp> result = query(query, idList);
 		
-		List<Snp> cleanResult = new ArrayList<Snp>();
+		List<Snp> cleanResult = new ArrayList<Snp>(idList.size());
 		
 		
 		if(result.size() != idList.size()) {
 			
+			String queryId = new String(); 
+			String resultId = new String(); 
+			String prevResultId = new String();
+			
 			
 			for(int i=0,j=0; i<idList.size();) {
 				if (j < result.size()){
-					if( idList.get(i).equals(result.get(j).getName())) {
-						cleanResult.add(result.get(j));
-						i++;
+					resultId = result.get(j).getName();
+//					System.out.println("resultId ID: " + resultId);
+					if (resultId.equals(prevResultId)){
+						/** REPETIDO **/
+						System.out.println("REPETIDO: " + prevResultId);
+						prevResultId = resultId;
 						j++;
-					}else{
-						cleanResult.add(null);
-						i++;
 						
+					}
+					else{
+						if( idList.get(i).equals(result.get(j).getName())) {
+							cleanResult.add(result.get(j));
+							prevResultId = resultId;
+							i++;
+							j++;
+						}else{
+							cleanResult.add(null);
+//							System.out.println(result.get(j).getName() + " " + idList.get(i));
+							i++;
+						}
 					}
 				}
 				else{
 					cleanResult.add(null);
 					i++;
 				}
+				
+			
 			}	
 			
 			
 		}
 		
 		
-		return result;
+		return cleanResult;
 	}
 
 	@SuppressWarnings("unchecked")
