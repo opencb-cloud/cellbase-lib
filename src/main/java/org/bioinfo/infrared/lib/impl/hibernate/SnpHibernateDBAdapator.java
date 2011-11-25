@@ -35,20 +35,25 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 		if (idList.size() > MAX_BATCH_QUERIES_LIST){
 			for (int i = 0; i < (idList.size()/MAX_BATCH_QUERIES_LIST); i++) {
 				int start = (i * MAX_BATCH_QUERIES_LIST );
-				int end = start + MAX_BATCH_QUERIES_LIST - 1;
-				
+				int end = start + MAX_BATCH_QUERIES_LIST;
+				System.out.println("Start: " + start + " End: " + end);
 				Query query = this.openSession().createQuery(queryHQL);
+				
+				
 				query.setParameterList("name", idList.subList(start, end));
 				
 				result.addAll(query.list());
 				
-				System.out.println("Start: " + start + " End: " + end);
+				System.out.println("Start: " + start + " End: " + end );
+				System.out.println(idList.subList(start, end));
 			}
 			
 			Query query = this.openSession().createQuery(queryHQL);
 			int start = (idList.size()/MAX_BATCH_QUERIES_LIST) * MAX_BATCH_QUERIES_LIST;
-			System.out.println("Start: " + start + " End: " + (idList.size() - 1));
-			query.setParameterList("name", idList.subList(idList.size() - 1 - MAX_BATCH_QUERIES_LIST, idList.size() - 1));
+			int end = idList.size();
+			System.out.println("Start: " + start + " End: " + end);
+			query.setParameterList("name",idList.subList(start, end));
+			System.out.println(idList.subList(start, end));
 			result.addAll(query.list());
 		}
 		else{
@@ -64,7 +69,38 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 	@Override
 	public List<Snp> getByIdList(List<String> idList){
 		String query = "select snp from Snp as snp left join fetch snp.snpToTranscripts as stt  left join fetch snp.snpXrefs as sxr  left join fetch snp.snp2functionals as s2f left join fetch stt.consequenceType as consequenceType where snp.name in :name";
-		return query(query, idList);
+		
+		List<Snp> result = query(query, idList);
+		
+		List<Snp> cleanResult = new ArrayList<Snp>();
+		
+		
+		if(result.size() != idList.size()) {
+			
+			
+			for(int i=0,j=0; i<idList.size();) {
+				if (j < result.size()){
+					if( idList.get(i).equals(result.get(j).getName())) {
+						cleanResult.add(result.get(j));
+						i++;
+						j++;
+					}else{
+						cleanResult.add(null);
+						i++;
+						
+					}
+				}
+				else{
+					cleanResult.add(null);
+					i++;
+				}
+			}	
+			
+			
+		}
+		
+		
+		return result;
 	}
 
 	@SuppressWarnings("unchecked")

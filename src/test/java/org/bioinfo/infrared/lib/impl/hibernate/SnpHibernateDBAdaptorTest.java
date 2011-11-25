@@ -68,7 +68,7 @@ public class SnpHibernateDBAdaptorTest {
 		System.out.println("");
 		
 		List<String> query = new ArrayList<String>();
-		for (int i = 0; i <105; i++) {
+		for (int i = 0; i <53; i++) {
 			
 			StringBuilder br = new StringBuilder();
 			br.append("rs407");
@@ -91,7 +91,12 @@ public class SnpHibernateDBAdaptorTest {
 		System.out.println("\t Query result size: " + snps.size());
 		for (int x = 0; x < snps.size(); x++) {
 			Snp snp = snps.get(x);
-			System.out.println("\t " + count +"   SNP:\t " + snp.getName() + " " + snp.getStart());
+			if (snp != null){
+				System.out.println("\t " + count +"   " + snp.getName() +"\t " + snp.getStart());
+			}
+			else{
+				System.out.println("\t " + count +"   " + query.get(count) +"\t --------------");
+			}
 			count++;
 		}
 		System.out.println("tiempo: "+(t2-t1));
