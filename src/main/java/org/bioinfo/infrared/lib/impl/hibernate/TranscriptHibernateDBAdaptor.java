@@ -272,8 +272,8 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 
 
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<Transcript> getAllByCytoband(String chromosome, String cytoband) {
 		Query query = this.openSession().createQuery("select t from Transcript t, Cytoband k where k.chromosome= :chromosome and k.cytoband = :cytoband and k.chromosome=g.chromosome and g.end>=k.start and g.start<=k.end").setParameter("chromosome", chromosome).setParameter("cytoband", cytoband);
 		return (List<Transcript>)executeAndClose(query);
@@ -281,10 +281,13 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 
 	@Override
-	public List<Transcript> getAllBySnpId(String snpId) {
+	@SuppressWarnings("unchecked")
+	public List<Transcript> getAllBySnpId(String snpNameId) {
 		// TODO DOING
-		Query query = this.openSession().createQuery("")
-		return null;
+		//select t.* from snp s, snp_to_transcript st, transcript t where s.name='rs41163904' and s.snp_id=st.snp_id and st.transcript_id=t.transcript_id;
+
+		Query query = this.openSession().createQuery("select t from snp s, snp_to_transcript st, transcript t where s.name= :snpName and s.snp_id=st.snp_id and st.transcript_id=t.transcript_id;").setParameter("snpName", snpNameId);
+		return (List<Transcript>)executeAndClose(query);
 	}
 
 	@Override
