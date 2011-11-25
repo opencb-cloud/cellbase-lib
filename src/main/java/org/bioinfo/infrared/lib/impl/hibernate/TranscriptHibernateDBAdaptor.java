@@ -17,6 +17,7 @@ import org.hibernate.FetchMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.criterion.CriteriaQuery;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
@@ -283,10 +284,8 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Transcript> getAllBySnpId(String snpNameId) {
-		// TODO DOING
-		//select t.* from snp s, snp_to_transcript st, transcript t where s.name='rs41163904' and s.snp_id=st.snp_id and st.transcript_id=t.transcript_id;
-
-		Query query = this.openSession().createQuery("select t from snp s, snp_to_transcript st, transcript t where s.name= :snpName and s.snp_id=st.snp_id and st.transcript_id=t.transcript_id;").setParameter("snpName", snpNameId);
+		// TODO DONE
+		Query query = this.openSession().createQuery("select transcript from Transcript as transcript  left join fetch transcript.snpToTranscripts as stt left join fetch stt.snp as snp where snp.name = :snpName").setParameter("snpName",snpNameId);
 		return (List<Transcript>)executeAndClose(query);
 	}
 
