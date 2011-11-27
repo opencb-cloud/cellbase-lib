@@ -3,22 +3,144 @@ package org.bioinfo.infrared.lib.impl.hibernate;
 import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.Dbname;
+import org.bioinfo.infrared.lib.api.XRefsDBAdaptor;
+import org.bioinfo.infrared.lib.common.XRefs;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 
-public class XRefHibernateDBAdaptor extends HibernateDBAdaptor {
+public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefsDBAdaptor {
 	
 	
-	public XRefHibernateDBAdaptor(SessionFactory sessionFactory) {
+	public XRefsHibernateDBAdaptor(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
 
 	
+	@Override
+	public List<Dbname> getAllDBNames() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 	@SuppressWarnings("unchecked")
+	@Override
 	public List<Dbname> getAllDBNamesById(String id) {
 		Query query = this.openSession().createQuery("select db.* from Xref x, Dbname db where x.display_id = :Id and x.dbname_id=db.dbname_id").setParameter("Id", id);
 		return (List<Dbname>)executeAndClose(query);
 	}
+
+
+	@Override
+	public List<String> getAllTypes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<Dbname> getAllDBNamesByType(String type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<String> getAllIdsByDBName(String dbname) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
+
+	@Override
+	public XRefs getById(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<XRefs> getAllByIdList(List<String> ids) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public XRefs getById(String id, String type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<XRefs> getAllByIdList(List<String> ids, String type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
+
+	@Override
+	public XRefs getByDBName(String id, String dbname) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<XRefs> getAllByDBName(List<String> ids, String dbname) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public XRefs getByDBNameList(String id, List<String> dbnames) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<XRefs> getAllByDBNameList(List<String> ids, List<String> dbnames) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
+
+	@Override
+	public XRefs getByDBName(String id, String dbname, String type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<XRefs> getAllByDBName(List<String> ids, String dbname, String type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public XRefs getByDBNameList(String id, List<String> dbnames, String type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<XRefs> getAllByDBNameList(List<String> ids, List<String> dbnames, String type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	
 	// Returns all possible DB names
 //	@SuppressWarnings("unchecked")
