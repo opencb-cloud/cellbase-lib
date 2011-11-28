@@ -30,6 +30,10 @@ public class HibernateDBAdaptor extends DBAdaptor{
 		return session;
 	}
 	
+	protected List<?> execute(Query query){
+		List<?> result = query.list();
+		return result;
+	}
 	
 
 	protected List<?> executeAndClose(Criteria criteria){
@@ -44,7 +48,7 @@ public class HibernateDBAdaptor extends DBAdaptor{
 		return result;
 	}
 	
-	private void closeSession() {
+	protected void closeSession() {
 		if(session != null && session.isOpen()) {
 			session.close();
 		}

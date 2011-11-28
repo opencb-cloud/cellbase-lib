@@ -68,7 +68,7 @@ public class SnpHibernateDBAdaptorTest {
 		System.out.println("");
 		
 		List<String> query = new ArrayList<String>();
-		for (int i = 0; i <105; i++) {
+		for (int i = 0; i < 10000; i++) {
 			
 			StringBuilder br = new StringBuilder();
 			br.append("rs407");
@@ -77,7 +77,7 @@ public class SnpHibernateDBAdaptorTest {
 				br.append("0");
 			}
 			br.append(i);
-			System.out.println(br.toString());
+		//	System.out.println(br.toString());
 			query.add(br.toString());
 			
 		
@@ -86,12 +86,21 @@ public class SnpHibernateDBAdaptorTest {
 		
 		int count = 0;
 		long t1 = System.currentTimeMillis();
-		List<Snp> snps = snpDBAdaptor.getByIdList(query);
+		List<List<Snp>> snpsList = snpDBAdaptor.getByNameList(query);
 		long t2 = System.currentTimeMillis();
-		System.out.println("\t Query result size: " + snps.size());
-		for (int x = 0; x < snps.size(); x++) {
-			Snp snp = snps.get(x);
-			System.out.println("\t " + count +"   SNP:\t " + snp.getName() + " " + snp.getStart());
+		System.out.println("\t Query result size: " + snpsList.size());
+		for (int x = 0; x < snpsList.size(); x++) {
+			List<Snp> snps = snpsList.get(x);
+			if (snps != null){
+				for (Snp snp : snps) {
+					if (snp != null){
+							System.out.println("\t " + count +"   " + snp.getName() +"\t " + snp.getStart() + "\t" + snp.getDisplaySoConsequence());
+					}
+				}
+			}
+			else{
+				System.out.println("\t " + count +"   " + query.get(count) +"\t --------------");
+			}
 			count++;
 		}
 		System.out.println("tiempo: "+(t2-t1));
