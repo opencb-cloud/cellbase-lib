@@ -13,9 +13,9 @@ public interface SnpDBAdaptor extends FeatureDBAdaptor {
 	public List<Snp> getAll();
 
 	
-	public List<Snp> getById(String id);
+	public List<Snp> getByDbSnpId(String dbSnpId);
 
-	public List<Snp> getByIdList(List<String> idList);
+	public List<List<Snp>> getByDbSnpIdList(List<String> dbSnpIdList);
 
 	public List<Snp> getByGeneId(String externalId);
 	
