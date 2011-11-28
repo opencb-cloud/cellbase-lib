@@ -13,6 +13,7 @@ import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
+import org.bioinfo.infrared.lib.common.Region;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.bioinfo.infrared.lib.io.output.StringWriter;
 import org.junit.After;
@@ -219,6 +220,22 @@ public class TranscriptHibernateDBAdaptorTest {
 		
 	
 	}
+	
+//	transcrito: ENST00000482343
+	
+	@Test
+	public void TestGetRegionById(){
+		System.out.println("TestGetRegionById");
+		Region region = transcriptDBAdaptor.getRegionById("ENST00000493561");
+		System.out.println(region.toString());
+	}
+	@Test
+	public void TestGetAllRegionsByIdList(){
+		System.out.println("TestGetAllRegionsByIdList");
+		List<Region> regions = transcriptDBAdaptor.getAllRegionsByIdList(Arrays.asList("ENST00000493561","ENST00000482343"));
+		System.out.println(regions.toString());
+	}
+	
 	
 	@Test
 	public void testGetSequenceById(){
