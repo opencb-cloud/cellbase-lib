@@ -46,8 +46,17 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 	
 	@Override
-	public Map<String, Object> getInfo(String id) {
-		return null;
+	public List<Transcript> getInfo(String id) {
+//		 TODO DOING
+		Query query = this.openSession().createQuery("select t from Xref as x1, Xref as x2, TranscriptToXref as tx1, TranscriptToXref as tx2, Dbname as db, Transcript as t where" +
+				 " x1.displayId= :id and" +
+				 " x1.xrefId=tx1.xref and" +
+				 " tx1.transcript=tx2.transcript and" +
+				 " tx2.xref=x2.xrefId and" +
+				 " x2.dbname=db.dbnameId and" +
+				 " db.name='ensembl_transcript' and" +
+				 " x2.displayId=t.stableId").setParameter("id",id);
+		return (List<Transcript>)executeAndClose(query);
 	}
 
 	@Override
@@ -292,17 +301,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 	@Override
 	public Region getRegionById(String ensemblId) {
-		// TODO DOING
-//		Query query = this.openSession().createQuery("select t from Xref as x1, Xref as x2, TranscriptToXref as tx1, TranscriptToXref as tx2, Dbname as db, Transcript as t where" +
-//				 " x1.displayId= :id and" +
-//				 " x1.xrefId=tx1.xref and" +
-//				 " tx1.transcript=tx2.transcript and" +
-//				 " tx2.xref=x2.xrefId and" +
-//				 " x2.dbname=db.dbnameId and" +
-//				 " db.name='ensembl_transcript' and" +
-//				 " x2.displayId=t.stableId").setParameter("id",id);
-//		Transcript t =  (Transcript)executeAndClose(query).get(0);
-//		return new Region(t.getChromosome(),t.getStart(),t.getEnd());
+
 		
 		
 		Criteria criteria = this.openSession().createCriteria(Transcript.class);
