@@ -16,26 +16,35 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class GeneHibernateDBAdaptorTest {
-
 	private DBAdaptorFactory dbAdaptorFact = new HibernateDBAdaptorFactory();
-
 	private GeneDBAdaptor geneDBAdaptor;
-
 	private long startExecTime;
-
+	private String species = "drerio";
+	
 	@Before
 	public void beforeTestStart() {
-//		System.out.println("beforeTestStart");
-		geneDBAdaptor = dbAdaptorFact.getGeneDBAdaptor("hsapiens");
+		geneDBAdaptor = dbAdaptorFact.getGeneDBAdaptor(species);
 		startExecTime = System.currentTimeMillis();
 	}
 
 	@After
 	public void afterTestStart() {
-		//		System.out.println("afterTestStart");
 		dbAdaptorFact.close();
-		//		startExecTime = System.currentTimeMillis() - startExecTime;
 	}
+	/*
+	@Test
+	public void testGeneHibernateDBAdaptorGetByEnsemblId() {
+		Gene gene = geneDBAdaptor.getByEnsemblId("ENSDARG00000000606");
+		System.out.println(gene.toString());
+		System.out.println("size: " + gene.getTranscripts().size());
+		printGeneList("testGeneHibernateDBAdaptorGetByEnsemblId", Arrays.asList(gene), 5);
+	}
+	*/
+	
+	/*
+	
+
+
 
 
 
@@ -58,7 +67,7 @@ public class GeneHibernateDBAdaptorTest {
 
 	@Test
 	public void testGeneHibernateDBAdaptorGetByEnsemblId() {
-		Gene gene = geneDBAdaptor.getByEnsemblId("ENSG00000252775");
+		Gene gene = geneDBAdaptor.getByEnsemblId("ENSDARG00000024771");
 		System.out.println(gene.toString());
 		System.out.println(gene.getTranscripts());
 		printGeneList("testGeneHibernateDBAdaptorGetByEnsemblId", Arrays.asList(gene), 5);
@@ -168,7 +177,7 @@ public class GeneHibernateDBAdaptorTest {
 		List<Gene> genes = geneDBAdaptor.getAllByCytoband("9", "q31.3");
 		printGeneList("testGetAllByCytoband", genes, 5);
 	}
-
+*/
 
 	private void printGeneList(String title, List<?> genes, int numResults) {
 		System.out.println("************************************************************");
@@ -201,4 +210,5 @@ public class GeneHibernateDBAdaptorTest {
 		System.out.println("************************************************************\n");
 
 	}
+	
 }

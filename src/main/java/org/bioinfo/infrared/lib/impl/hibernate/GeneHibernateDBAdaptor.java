@@ -107,6 +107,16 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Gene> getAllById(String id) {
+		
+		Query query = this.openSession().createQuery("select x2.displayId from Gene as g, Xref as x1, Xref as x2, TranscriptToXref as tx1, TranscriptToXref tx2, Dbname as db where" +
+				 " x1.displayId= :id and" +
+				 " x1.xrefId=tx1.xref and" +
+				 " tx1.transcript=tx2.transcript and" +
+				 " tx2.xref=x2.xrefId and" +
+				 " x2.dbname=db.dbnameId and" +
+				 " db.name='ensembl_transcript'").setParameter("id",id);
+		String eid =  (String)executeAndClose(query).get(0);
+		
 		Criteria criteria = this.openSession().createCriteria(Gene.class);
 		criteria.add(Restrictions.eq("stableId", id.trim()));
 		return (List<Gene>)executeAndClose(criteria);

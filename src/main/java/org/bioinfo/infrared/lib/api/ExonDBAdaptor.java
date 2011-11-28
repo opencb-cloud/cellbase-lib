@@ -20,7 +20,6 @@ public interface ExonDBAdaptor extends FeatureDBAdaptor {
 	
 	public List<Exon> getAllByEnsemblIdList(List<String> ensemblIdList);
 	
-
 	public List<Exon> getByEnsemblTranscriptId(String transcriptId);
 	
 	public List<List<Exon>> getByEnsemblTranscriptIdList(List<String> transcriptIdList);
