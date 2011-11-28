@@ -325,13 +325,38 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 //		x2.dbname_id=db.dbname_id and 
 //		db.name='ensembl_transcript' and 
 //		x2.display_id=t.stable_id;
-		Query query = this.openSession().createQuery("select x2.displayId from Xref as x1, Xref as x2, TranscriptToXref as tx1, TranscriptToXref tx2, Dbname as db where" +
-													 " x1.displayId= :id and" +
-													 " x1.xrefId=tx1.xref and" +
-													 " tx1.transcript=tx2.transcript and" +
-													 " tx2.xref=x2.xrefId and" +
-													 " x2.dbname=db.dbnameId and" +
-													 " db.name='ensembl_transcript'").setParameter("id",id);
+		
+		
+//		Query query = this.openSession().createQuery("select x2.displayId from Xref as x1, Xref as x2, TranscriptToXref as tx1, TranscriptToXref tx2, Dbname as db where" +
+//													 " x1.displayId= :id and" +
+//													 " x1.xrefId=tx1.xref and" +
+//													 " tx1.transcript=tx2.transcript and" +
+//													 " tx2.xref=x2.xrefId and" +
+//													 " x2.dbname=db.dbnameId and" +
+//													 " db.name='ensembl_transcript'").setParameter("id",id);
+//		return (String)executeAndClose(query).get(0);
+		
+//	*************************
+//		select t.* from 
+//		((((xref x1 left join transcript_to_xref tx1 on x1.xref_id=tx1.xref_id) left join 
+//		 transcript_to_xref tx2 on tx1.transcript_id=tx2.transcript_id) left join 
+//		 xref x2 on tx2.xref_id=x2.xref_id) left join 
+//		 dbname db on x2.dbname_id=db.dbname_id) left join 
+//		 transcript t on x2.display_id=t.stable_id
+//
+//		where 
+//
+//		x1.display_id='ENST00000493561' 
+//		and db.name='ensembl_transcript' ;
+		
+		Query query = this.openSession().createQuery("select x2.displayId from" +
+				 " (((Xref as x1 left join fetch TranscriptToXref as tx1 on x1.xrefId=tx1.xref) left join fetch" +
+				 " TranscriptToXref as tx2 on tx1.transcript=tx2.transcript) left join fetch" +
+				 " Xref as x2 on tx2.xref=x2.xrefId) left join fetch" +
+				 " Dbname as db on x2.dbname=db.dbnameId" +
+				 " where" +
+				 " x1.displayId= :id" +
+				 " db.name='ensembl_transcript'").setParameter("id",id);
 		return (String)executeAndClose(query).get(0);
 	}
 
