@@ -106,15 +106,15 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Gene> getAllById(String id) {
+	public List<Gene> getAllByName(String name) {
 		Criteria criteria = this.openSession().createCriteria(Gene.class);
-		criteria.add(Restrictions.eq("stableId", id.trim()));
+		criteria.add(Restrictions.eq("stableId", name.trim()));
 		return (List<Gene>)executeAndClose(criteria);
 	}
 	
 
 	@Override
-	public List<List<Gene>> getAllByIdList(List<String> ids) {
+	public List<List<Gene>> getAllByNameList(List<String> names) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -96,13 +96,13 @@ public class TranscriptHibernateDBAdaptorTest {
 
 	@Test
 	public void testTranscriptHibernateDBAdaptorGetAllById() {
-		List<Transcript> transcripts = transcriptDBAdaptor.getAllById("brca2");
+		List<Transcript> transcripts = transcriptDBAdaptor.getAllByName("brca2");
 		printGeneList("testTranscriptHibernateDBAdaptorGetAllById", transcripts, 5);
 	}
 
 	@Test
 	public void testTranscriptHibernateDBAdaptorGetAllByIdList() {
-		List<List<Transcript>> transcripts = transcriptDBAdaptor.getAllByIdList(Arrays.asList("ENST00000493562","brca2","brca1"));
+		List<List<Transcript>> transcripts = transcriptDBAdaptor.getAllByNameList(Arrays.asList("ENST00000493562","brca2","brca1"));
 		printGeneList("testTranscriptHibernateDBAdaptorGetAllByIdList", transcripts, 5);
 	}
 

@@ -104,19 +104,19 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Transcript> getAllById(String id) {
+	public List<Transcript> getAllByName(String name) {
 		Criteria criteria = this.openSession().createCriteria(Transcript.class);
-		criteria.add(Restrictions.eq("stableId", id.trim()));
+		criteria.add(Restrictions.eq("stableId", name.trim()));
 		return (List<Transcript>)executeAndClose(criteria);
 	}
 	
 
 	@Override
-	public List<List<Transcript>> getAllByIdList(List<String> ids) {
+	public List<List<Transcript>> getAllByNameList(List<String> names) {
 		//TODO DONE
-		List<List<Transcript>> transcripts =  new ArrayList<List<Transcript>>(ids.size());
-		for(String id: ids){
-			transcripts.add(getAllById(id));
+		List<List<Transcript>> transcripts =  new ArrayList<List<Transcript>>(names.size());
+		for(String id: names){
+			transcripts.add(getAllByName(id));
 		}
 		return transcripts;
 	}

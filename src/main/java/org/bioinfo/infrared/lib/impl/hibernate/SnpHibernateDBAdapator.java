@@ -66,7 +66,7 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<List<Snp>> getByNameList(List<String> idList){
+	public List<List<Snp>> getByDbSnpIdList(List<String> idList){
 		String query = "select snp from Snp as snp left join fetch snp.snpToTranscripts as stt  left join fetch snp.snpXrefs as sxr  left join fetch snp.snp2functionals as s2f left join fetch stt.consequenceType as consequenceType where snp.name in :name";
 		List<Snp> result = query(query, idList);
 		List<List<Snp>> cleanResult = new ArrayList<List<Snp>>();
@@ -109,8 +109,8 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<List<Snp>> getByName(String name){
-		return getByNameList(Arrays.asList(name));
+	public List<Snp> getByDbSnpId(String name){
+		return getByDbSnpIdList(Arrays.asList(name)).get(0);
 	}
 	
 	

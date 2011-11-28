@@ -13,9 +13,13 @@ public interface ProteinDBAdaptor extends FeatureDBAdaptor {
 	
 	public List<String> getAllUniprotIds();
 
-	public Protein getById(String id);
+	public Protein getByUniprotId(String uniprotId);
 
-	public List<Protein> getAllByIdList(List<String> idList);
+	public List<Protein> getAllByUniprotIdList(List<String> uniprotIdList);
+	
+	public List<Protein> getAllByName(String name);
+
+	public List<List<Protein>> getAllByNameList(List<String> nameList);
 	
 	public List<String> getAllEnsemblIds();
 
