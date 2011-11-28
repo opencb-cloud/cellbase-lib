@@ -46,17 +46,18 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 	
 	@Override
-	public List<Transcript> getInfo(String id) {
-//		 TODO DOING
-		Query query = this.openSession().createQuery("select t from Xref as x1, Xref as x2, TranscriptToXref as tx1, TranscriptToXref as tx2, Dbname as db, Transcript as t where" +
-				 " x1.displayId= :id and" +
-				 " x1.xrefId=tx1.xref and" +
-				 " tx1.transcript=tx2.transcript and" +
-				 " tx2.xref=x2.xrefId and" +
-				 " x2.dbname=db.dbnameId and" +
-				 " db.name='ensembl_transcript' and" +
-				 " x2.displayId=t.stableId").setParameter("id",id);
-		return (List<Transcript>)executeAndClose(query);
+	public Map<String, Object> getInfo(String id) {
+////		 TODO DOING
+//		Query query = this.openSession().createQuery("select t from Xref as x1, Xref as x2, TranscriptToXref as tx1, TranscriptToXref as tx2, Dbname as db, Transcript as t where" +
+//				 " x1.displayId= :id and" +
+//				 " x1.xrefId=tx1.xref and" +
+//				 " tx1.transcript=tx2.transcript and" +
+//				 " tx2.xref=x2.xrefId and" +
+//				 " x2.dbname=db.dbnameId and" +
+//				 " db.name='ensembl_transcript' and" +
+//				 " x2.displayId=t.stableId").setParameter("id",id);
+//		return (List<Transcript)executeAndClose(query)
+		return null;
 	}
 
 	@Override
@@ -301,23 +302,18 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 	@Override
 	public Region getRegionById(String ensemblId) {
-
-		
-		
+//		TODO DONE
 		Criteria criteria = this.openSession().createCriteria(Transcript.class);
 		criteria.add(Restrictions.eq("stableId", ensemblId.trim()));
-		Transcript t =  (Transcript)executeAndClose(criteria).get(0);
-		return new Region(t.getChromosome(),t.getStart(),t.getEnd());
-		
+		Transcript transcript =  (Transcript)executeAndClose(criteria).get(0);
+		return new Region(transcript.getChromosome(),transcript.getStart(),transcript.getEnd());
 	}
 	
-	
-	
 	@Override
-	public List<Region> getAllRegionsByIdList(List<String> idList) {
+	public List<Region> getAllRegionsByIdList(List<String> ensemblIdList) {
 		// TODO DOING
-		List<Region> regions = new ArrayList<Region>(idList.size());
-		for(String id: idList) {
+		List<Region> regions = new ArrayList<Region>(ensemblIdList.size());
+		for(String id: ensemblIdList) {
 			regions.add(getRegionById(id));
 		}
 		return regions;

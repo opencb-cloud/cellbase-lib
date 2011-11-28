@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.Exon;
 import org.bioinfo.infrared.core.cellbase.Gene;
+import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
@@ -328,16 +329,23 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	/****/
 	
 	@Override
-	public Region getRegionById(String id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Region getRegionById(String ensemblId) {		
+//		TODO DONE
+		Criteria criteria = this.openSession().createCriteria(Exon.class);
+		criteria.add(Restrictions.eq("stableId", ensemblId.trim()));
+		Exon exon =  (Exon)executeAndClose(criteria).get(0);
+		return new Region(exon.getChromosome(),exon.getStart(),exon.getEnd());
 	}
 
 
 	@Override
-	public List<Region> getAllRegionsByIdList(List<String> idList) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Region> getAllRegionsByIdList(List<String> ensemblIdList) {
+		// TODO DOING
+		List<Region> regions = new ArrayList<Region>(ensemblIdList.size());
+		for(String id: ensemblIdList) {
+			regions.add(getRegionById(id));
+		}
+		return regions;
 	}
 
 
