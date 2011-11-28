@@ -70,7 +70,7 @@ public class XRefs {
 		}
 	}
 
-	public void deleteXRefItem(String displayName) {
+	public void removeXRefItem(String displayName) {
 		for(String dbname: dbNames) {
 			xrefItems.get(dbname).remove(displayName);
 		}
@@ -84,7 +84,7 @@ public class XRefs {
 		}
 	}
 
-	public void deleteDbNameItems(String dbName) {
+	public void removeDbNameItems(String dbName) {
 		if(xrefItems.containsKey(dbName)) {
 			xrefItems.remove(dbName);
 			dbNames.remove(dbName);

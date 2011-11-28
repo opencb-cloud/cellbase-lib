@@ -354,5 +354,4 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 		return null;
 	}
 
-
 }

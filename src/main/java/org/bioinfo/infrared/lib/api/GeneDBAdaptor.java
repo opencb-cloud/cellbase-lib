@@ -19,9 +19,9 @@ public interface GeneDBAdaptor extends FeatureDBAdaptor {
 	
 	public List<Gene> getAllByEnsemblIdList(List<String> ensemblIdList);
 
-	public List<Gene> getAllById(String id);
+	public List<Gene> getAllByName(String name);
 
-	public List<List<Gene>> getAllByIdList(List<String> idList);
+	public List<List<Gene>> getAllByNameList(List<String> nameList);
 	
 	public Gene getByEnsemblTranscriptId(String transcriptId);
 	

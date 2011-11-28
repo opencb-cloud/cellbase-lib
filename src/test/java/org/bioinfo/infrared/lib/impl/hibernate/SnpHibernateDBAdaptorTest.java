@@ -86,7 +86,7 @@ public class SnpHibernateDBAdaptorTest {
 		
 		int count = 0;
 		long t1 = System.currentTimeMillis();
-		List<List<Snp>> snpsList = snpDBAdaptor.getByNameList(query);
+		List<List<Snp>> snpsList = snpDBAdaptor.getByDbSnpIdList(query);
 		long t2 = System.currentTimeMillis();
 		System.out.println("\t Query result size: " + snpsList.size());
 		for (int x = 0; x < snpsList.size(); x++) {

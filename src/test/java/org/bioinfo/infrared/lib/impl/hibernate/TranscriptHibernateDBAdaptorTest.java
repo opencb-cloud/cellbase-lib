@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.Gene;
+import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
+import org.bioinfo.infrared.lib.common.Region;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.bioinfo.infrared.lib.io.output.StringWriter;
 import org.junit.After;
@@ -94,13 +96,13 @@ public class TranscriptHibernateDBAdaptorTest {
 
 	@Test
 	public void testTranscriptHibernateDBAdaptorGetAllById() {
-		List<Transcript> transcripts = transcriptDBAdaptor.getAllById("brca2");
+		List<Transcript> transcripts = transcriptDBAdaptor.getAllByName("brca2");
 		printGeneList("testTranscriptHibernateDBAdaptorGetAllById", transcripts, 5);
 	}
 
 	@Test
 	public void testTranscriptHibernateDBAdaptorGetAllByIdList() {
-		List<List<Transcript>> transcripts = transcriptDBAdaptor.getAllByIdList(Arrays.asList("ENST00000493562","brca2","brca1"));
+		List<List<Transcript>> transcripts = transcriptDBAdaptor.getAllByNameList(Arrays.asList("ENST00000493562","brca2","brca1"));
 		printGeneList("testTranscriptHibernateDBAdaptorGetAllByIdList", transcripts, 5);
 	}
 
@@ -183,11 +185,69 @@ public class TranscriptHibernateDBAdaptorTest {
 	public void testGetRegion() {
 		fail("Not yet implemented");
 	}
-
+	
+	@Test
+	public void testGetAllBySnpId(){
+		List<Transcript> transcripts = transcriptDBAdaptor.getAllBySnpId("rs1333049");
+		printGeneList("testGetAllBySnpId", transcripts, 5);
+		System.out.println("Transcrits: "+transcripts.get(0).getStableId());
+		System.out.println("Transcrits size: "+transcripts.size());
+		
+		for (SnpToTranscript snpToTranscript : transcripts.get(0).getSnpToTranscripts()) {
+			System.out.println("SNP2TRanscript: " + snpToTranscript.getSnpToTranscriptId()); 
+			System.out.println("Snp: " + snpToTranscript.getSnp().getName()); 
+		}
+	
+	}
+	@Test
+	public void testgetAllBySnpIdList(){
+		List<List<Transcript>> trans = transcriptDBAdaptor.getAllBySnpIdList(Arrays.asList("rs1333049","rs1333049"));
+		printGeneList("testgetAllBySnpIdList", trans, 5);
+		
+		int c = 0;
+		
+		for(List<Transcript> transcripts : trans){
+			System.out.println(c);
+			System.out.println("Transcrits: "+transcripts.get(0).getStableId());
+			System.out.println("Transcrits size: "+transcripts.size());
+			
+			for (SnpToTranscript snpToTranscript : transcripts.get(0).getSnpToTranscripts()) {
+				System.out.println("SNP2TRanscript: " + snpToTranscript.getSnpToTranscriptId()); 
+				System.out.println("Snp: " + snpToTranscript.getSnp().getName()); 
+			}
+			c++;			
+		}
+		
+	
+	}
+	
+//	transcrito: ENST00000482343
+	
+	@Test
+	public void TestGetRegionById(){
+		System.out.println("TestGetRegionById");
+		Region region = transcriptDBAdaptor.getRegionById("ENST00000493561");
+		System.out.println(region.toString());
+	}
+	@Test
+	public void TestGetAllRegionsByIdList(){
+		System.out.println("TestGetAllRegionsByIdList");
+		List<Region> regions = transcriptDBAdaptor.getAllRegionsByIdList(Arrays.asList("ENST00000493561","ENST00000482343"));
+		System.out.println(regions.toString());
+	}
+	
+	
+	@Test
+	public void testGetSequenceById(){
+		String s = transcriptDBAdaptor.getSequenceById("ENST00000493561");
+		System.out.println(s);
+	}
+	
+	
 	@Test
 	public void testGetAllByCytoband() {
-		List<Transcript> transcript = transcriptDBAdaptor.getAllByCytoband("9", "q31.3");
-		printGeneList("testGetAllByCytoband", transcript, 5);
+		List<Transcript> transcripts = transcriptDBAdaptor.getAllByCytoband("9", "q31.3");
+		printGeneList("testGetAllByCytoband", transcripts, 5);
 	}
 
 
