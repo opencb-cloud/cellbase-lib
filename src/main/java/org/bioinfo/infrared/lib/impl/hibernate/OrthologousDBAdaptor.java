@@ -11,7 +11,6 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.criterion.Restrictions;
 
-
 public class OrthologousDBAdaptor extends HibernateDBAdaptor {
 	
 	public OrthologousDBAdaptor(HibernateDBConnector hibernateDBConnector) {
