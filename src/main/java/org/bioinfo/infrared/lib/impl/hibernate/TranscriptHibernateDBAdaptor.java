@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
@@ -273,28 +274,29 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Transcript> getAllBySnpId(String snpNameId) {
-		// TODO DOING
-		//select t.* from snp s, snp_to_transcript st, transcript t where s.name='rs41163904' and s.snp_id=st.snp_id and st.transcript_id=t.transcript_id;
-
-		Query query = this.openSession().createQuery("select t from snp s, snp_to_transcript st, transcript t where s.name= :snpName and s.snp_id=st.snp_id and st.transcript_id=t.transcript_id;").setParameter("snpName", snpNameId);
+		// TODO DONE
+		Query query = this.openSession().createQuery("select transcript from Transcript as transcript  left join fetch transcript.snpToTranscripts as stt left join fetch stt.snp as snp where snp.name = :snpName").setParameter("snpName",snpNameId);
 		return (List<Transcript>)executeAndClose(query);
 	}
 
 	@Override
-	public List<List<Transcript>> getAllBySnpIdList(List<String> snpIds) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<List<Transcript>> getAllBySnpIdList(List<String> snpNameIds) {
+		// TODO DONE
+		List<List<Transcript>> transcripts = new ArrayList<List<Transcript>>(snpNameIds.size());
+		for(String snpNameId: snpNameIds) {
+			transcripts.add(getAllBySnpId(snpNameId));
+		}
+		return transcripts;
 	}
 
 
-
-	
 	@Override
 	public Region getRegionById(String id) {
-		// TODO Auto-generated method stub
+		// TODO DOING
 		return null;
 	}
-
+	
+	
 	
 	@Override
 	public List<Region> getAllRegionsByIdList(List<String> idList) {
@@ -305,8 +307,32 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	
 	@Override
 	public String getSequenceById(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO DOING
+//		select x2.* from xref x1, xref x2, transcript_to_xref tx1, transcript_to_xref tx2, dbname db where 
+//		x1.display_id='ENST00000493561' and 
+//		x1.xref_id=tx1.xref_id and 
+//		tx1.transcript_id=tx2.transcript_id and 
+//		tx2.xref_id=x2.xref_id and 
+//		x2.dbname_id=db.dbname_id and 
+//		db.name='ensembl_transcript';
+
+//	cruzada 	
+//		select t.* from xref x1, xref x2, transcript_to_xref tx1, transcript_to_xref tx2, dbname db, transcript t 
+//		where x1.display_id='ENST00000493561' and 
+//		x1.xref_id=tx1.xref_id and 
+//		tx1.transcript_id=tx2.transcript_id and 
+//		tx2.xref_id=x2.xref_id and 
+//		x2.dbname_id=db.dbname_id and 
+//		db.name='ensembl_transcript' and 
+//		x2.display_id=t.stable_id;
+		Query query = this.openSession().createQuery("select x2.displayId from Xref as x1, Xref as x2, TranscriptToXref as tx1, TranscriptToXref tx2, Dbname as db where" +
+													 " x1.displayId= :id and" +
+													 " x1.xrefId=tx1.xref and" +
+													 " tx1.transcript=tx2.transcript and" +
+													 " tx2.xref=x2.xrefId and" +
+													 " x2.dbname=db.dbnameId and" +
+													 " db.name='ensembl_transcript'").setParameter("id",id);
+		return (String)executeAndClose(query).get(0);
 	}
 
 	
