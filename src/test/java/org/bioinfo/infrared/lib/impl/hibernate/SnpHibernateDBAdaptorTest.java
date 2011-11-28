@@ -86,16 +86,20 @@ public class SnpHibernateDBAdaptorTest {
 		
 		int count = 0;
 		long t1 = System.currentTimeMillis();
-		List<Snp> snps = snpDBAdaptor.getByIdList(query);
+		List<List<Snp>> snpsList = snpDBAdaptor.getByNameList(query);
 		long t2 = System.currentTimeMillis();
-		System.out.println("\t Query result size: " + snps.size());
-		for (int x = 0; x < snps.size(); x++) {
-			Snp snp = snps.get(x);
-			if (snp != null){
-			//	System.out.println("\t " + count +"   " + snp.getName() +"\t " + snp.getStart() + "\t" + snp.getDisplaySoConsequence());
+		System.out.println("\t Query result size: " + snpsList.size());
+		for (int x = 0; x < snpsList.size(); x++) {
+			List<Snp> snps = snpsList.get(x);
+			if (snps != null){
+				for (Snp snp : snps) {
+					if (snp != null){
+							System.out.println("\t " + count +"   " + snp.getName() +"\t " + snp.getStart() + "\t" + snp.getDisplaySoConsequence());
+					}
+				}
 			}
 			else{
-			//	System.out.println("\t " + count +"   " + query.get(count) +"\t --------------");
+				System.out.println("\t " + count +"   " + query.get(count) +"\t --------------");
 			}
 			count++;
 		}

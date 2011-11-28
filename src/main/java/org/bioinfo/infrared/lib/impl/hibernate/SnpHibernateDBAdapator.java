@@ -1,6 +1,7 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +39,8 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 		
 		List<Snp> result = new ArrayList<Snp>();
 		if (idList.size() > MAX_BATCH_QUERIES_LIST){
-			for (int i = 0; i < (idList.size() / MAX_BATCH_QUERIES_LIST); i = i + MAX_BATCH_QUERIES_LIST) {
-				int start = (i);// * MAX_BATCH_QUERIES_LIST );
+			for (int i = 0; i < (idList.size()/MAX_BATCH_QUERIES_LIST); i++) {
+				int start = (i * MAX_BATCH_QUERIES_LIST );
 				int end = start + MAX_BATCH_QUERIES_LIST;
 
 				query.setParameterList("name", idList.subList(start, end));
@@ -48,10 +49,10 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 			}
 			
 			if ( (idList.size() % MAX_BATCH_QUERIES_LIST) != 0){
-				int start = ( idList.size() / MAX_BATCH_QUERIES_LIST ) * MAX_BATCH_QUERIES_LIST;
+				int start = ( idList.size() /MAX_BATCH_QUERIES_LIST) * MAX_BATCH_QUERIES_LIST;
 				int end = idList.size();
 				
-				query.setParameterList("name",idList.subList(start, end));
+				query.setParameterList("name", idList.subList(start, end));
 				result.addAll((Collection<? extends Snp>) this.execute(query));
 			}
 		}
@@ -59,49 +60,40 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 			query.setParameterList("name", idList);
 			result.addAll((Collection<? extends Snp>) this.execute(query));
 		}
-		
 		closeSession();
-		
 		return result;
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Snp> getByIdList(List<String> idList){
+	public List<List<Snp>> getByNameList(List<String> idList){
 		String query = "select snp from Snp as snp left join fetch snp.snpToTranscripts as stt  left join fetch snp.snpXrefs as sxr  left join fetch snp.snp2functionals as s2f left join fetch stt.consequenceType as consequenceType where snp.name in :name";
-		
 		List<Snp> result = query(query, idList);
-		
-		List<Snp> cleanResult = new ArrayList<Snp>(idList.size());
-		
+		List<List<Snp>> cleanResult = new ArrayList<List<Snp>>();
 		
 		if(result.size() != idList.size()) {
-			
 			String queryId = new String(); 
 			String resultId = new String(); 
 			String prevResultId = new String();
-			
-			
 			for(int i=0,j=0; i<idList.size();) {
 				if (j < result.size()){
 					resultId = result.get(j).getName();
-//					System.out.println("resultId ID: " + resultId);
 					if (resultId.equals(prevResultId)){
-						/** REPETIDO **/
-						System.out.println("REPETIDO: " + prevResultId);
+						// REPETIDO 
+						cleanResult.get(cleanResult.size() -1).add(result.get(j));
 						prevResultId = resultId;
 						j++;
-						
 					}
 					else{
 						if( idList.get(i).equals(result.get(j).getName())) {
-							cleanResult.add(result.get(j));
+							List<Snp> list = new ArrayList<Snp>();
+							list.add(result.get(j));
+							cleanResult.add(list);
 							prevResultId = resultId;
 							i++;
 							j++;
 						}else{
 							cleanResult.add(null);
-//							System.out.println(result.get(j).getName() + " " + idList.get(i));
 							i++;
 						}
 					}
@@ -110,24 +102,17 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 					cleanResult.add(null);
 					i++;
 				}
-				
-			
 			}	
-			
-			
 		}
-		
-		
 		return cleanResult;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Snp> getById(String name){
-		List<String> ids = new ArrayList<String>();
-		ids.add(name);
-		return getByIdList(ids);
+	public List<List<Snp>> getByName(String name){
+		return getByNameList(Arrays.asList(name));
 	}
+	
 	
 	@SuppressWarnings("unchecked")
 	@Override
