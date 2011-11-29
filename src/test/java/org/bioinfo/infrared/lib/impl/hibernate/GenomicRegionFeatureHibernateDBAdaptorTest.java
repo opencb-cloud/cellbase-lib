@@ -24,6 +24,7 @@ import org.bioinfo.infrared.dao.utils.HibernateUtil;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.common.GenomicRegionFeatures;
+import org.bioinfo.infrared.lib.common.Region;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.bioinfo.infrared.lib.io.output.StringWriter;
 import org.hibernate.Criteria;
@@ -50,7 +51,7 @@ public class GenomicRegionFeatureHibernateDBAdaptorTest {
 
 	@Before
 	public void beforeTestStart() {
-		genomicRegionFeatureDBAdaptor = dbAdaptorFact.getFeatureMapDBAdaptor("drerio");
+		genomicRegionFeatureDBAdaptor = dbAdaptorFact.getFeatureMapDBAdaptor("hsapiens");
 		startExecTime = System.currentTimeMillis();
 	}
 
@@ -59,43 +60,72 @@ public class GenomicRegionFeatureHibernateDBAdaptorTest {
 		dbAdaptorFact.close();
 	}
 
-	//@Test
-	//public void testGeneHibernateDBAdaptorGetAll() {
-		//List<Snp> genes = snpDBAdaptor.getAll();
-		//printGeneList("testGeneHibernateDBAdaptorGetAll", genes, 5);
-	//}
 	
 	@Test
-	public void testSnpHibernateDBAdaptorGetById() {
-		GenomicRegionFeatures maps = this.genomicRegionFeatureDBAdaptor.getByRegion("1", 4986414, 4986414);
-		print(maps);
+	public void testGenomicRegionGetByRegion() {
+		GenomicRegionFeatures maps = this.genomicRegionFeatureDBAdaptor.getByRegion("1", 4985398, 4987398);
+		print("testGenomicRegionGetByRegion", maps);
 	}
 	
-	private void print(GenomicRegionFeatures maps){
-		System.out.println("\nGENES (" + maps.getGenes().size() + ")");
-		System.out.println("--------------------------------------");
-		for (Gene gene : maps.getGenes()) {
-			System.out.println(gene.getStableId() + "\t" + gene.getStart() + "\t" + gene.getEnd());
+	
+	@Test
+	public void testGenomicRegionGetByRegionSource() {
+		GenomicRegionFeatures maps = this.genomicRegionFeatureDBAdaptor.getByRegion(new Region("1", 4985398, 4987398), Arrays.asList("snp"));
+		print("testGenomicRegionGetByRegionSource", maps);
+	}
+	
+	
+	
+	
+	
+	private void print(String title, GenomicRegionFeatures maps){
+		
+		long executionTime = System.currentTimeMillis() - startExecTime;
+		System.out.println("\nTest:" + title);
+		if (maps.getGenes() != null){
+			System.out.println("\n\tGENES (" + maps.getGenes().size() + ")");
+			System.out.println("\t--------------------------------------");
+			for (Gene gene : maps.getGenes()) {
+				System.out.println("\t\t" + gene.getStableId() + "\t" + gene.getStart() + "\t" + gene.getEnd());
+			}
+		}
+		else{
+			System.out.println("\n\tGENES: NULL");
 		}
 		
-		System.out.println("\nTRANSCRIPT (" + maps.getTranscripts().size() + ")");
-		System.out.println("--------------------------------------");
-		for (Transcript transcript : maps.getTranscripts()) {
-			System.out.println(transcript.getStableId() + "\t" + transcript.getStart() + "\t" + transcript.getEnd());
+		if (maps.getTranscripts() != null){
+			System.out.println("\n\tTRANSCRIPT (" + maps.getTranscripts().size() + ")");
+			System.out.println("\t--------------------------------------");
+			for (Transcript transcript : maps.getTranscripts()) {
+				System.out.println("\t\t" + transcript.getStableId() + "\t" + transcript.getStart() + "\t" + transcript.getEnd());
+			}
+		}
+		else{
+			System.out.println("\n\tTRANSCRIPT: NULL");
 		}
 		
-		System.out.println("\nEXON (" + maps.getExons().size() + ")");
-		System.out.println("--------------------------------------");
-		for (Exon exon : maps.getExons()) {
-			System.out.println(exon.getStableId() + "\t" + exon.getStart() + "\t" + exon.getEnd());
+		if (maps.getExons() != null){
+			System.out.println("\n\tEXON (" + maps.getExons().size() + ")");
+			System.out.println("\t--------------------------------------");
+			for (Exon exon : maps.getExons()) {
+				System.out.println("\t\t" +exon.getStableId() + "\t" + exon.getStart() + "\t" + exon.getEnd());
+			}
+		}
+		else{
+			System.out.println("\n\tEXON: NULL");
 		}
 		
-		System.out.println("\nSNP (" + maps.getSnp().size() + ")");
-		System.out.println("--------------------------------------");
-		for (Snp snp : maps.getSnp()) {
-			System.out.println(snp.getName() + "\t" + snp.getStart() + "\t" + snp.getEnd());
+		if (maps.getSnp() != null){
+			System.out.println("\n\tSNP (" + maps.getSnp().size() + ")");
+			System.out.println("\t--------------------------------------");
+			for (Snp snp : maps.getSnp()) {
+				System.out.println("\t\t" + snp.getName() + "\t" + snp.getStart() + "\t" + snp.getEnd());
+			}
 		}
-		
+		else{
+			System.out.println("\n\tSNP: NULL");
+		}
+		System.out.println("\n\nTest executed in: "+ executionTime +" ms");
 		
 	}
 	

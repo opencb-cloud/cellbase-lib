@@ -25,71 +25,54 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 		super(sessionFactory);
 	}
 	
-	
-	/*
-	@SuppressWarnings("unchecked")
-	public List<FeatureMapId> getAllByRegion(String chromosome, int start, int end) {
-		int chunk_start = start / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
-		int chunk_end = end / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
-		
-		System.out.println("getAllByRegion: " + chromosome + " : " + start + ", "+ end + " ----> " + chunk_start + "," + chunk_end);
-		
-		Criteria criteria = this.openSession().createCriteria(FeatureMapId.class);
-		
-		criteria.add(Restrictions.ge("chunk_id", chunk_start));
-		criteria.add(Restrictions.le("chunk_id", chunk_end));
-		criteria.add(Restrictions.eq("chromosome", chromosome));
-		
-		List<FeatureMapId> list = (List<FeatureMapId>)executeAndClose(criteria);
-		
-		System.out.println("result: " + list.size());
-		return list;
-	
-	}*/
-	
-	public List<FeatureMapId> getAllByRegion(String chromosome, int start, int end, List<String> features) {
-		
-		if(features.contains("")) {
-			
-		}
-		return null;
-	
-	}
-
-
 
 	@Override
 	public List<GenomicRegionFeatures> getAllByRegionList(List<Region> regions) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getAllByRegionList(regions, null);
 	}
-
-
 
 	@Override
-	public List<GenomicRegionFeatures> getAllByRegionList(List<Region> regions,List<String> sources) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<GenomicRegionFeatures> getAllByRegionList(List<Region> regions, List<String> sources) {
+		 List<GenomicRegionFeatures> result = new ArrayList<GenomicRegionFeatures>();
+		 for (int i = 0; i < regions.size(); i++) {
+			 result.add(this.getByRegion(regions.get(i), sources));
+		 }
+		return result;
 	}
 
-	private List<Snp> cleanSnpByRegion(Region region, List<List<Snp>> snpResult) {
-		// Es posible que para el mismo dbName nos devuelva varios snp's de regiones diferentes, filtro los que esten dentro de la region indicada
-		List<Snp> snps = new ArrayList<Snp>();
-		for (List<Snp> list : snpResult) {
-			if (list != null){
-				for (Snp snp : list) {
-					if (snp != null){
-						if (snp.getChromosome().equals(region.getChromosome())){
-							if (region.getStart() <=snp.getStart() && (region.getEnd() >= snp.getEnd())){
-								snps.add(snp);
-							}
-						}
-					}
-				}
-			}
-		}
-		return snps;
+	
+	@Override
+	public GenomicRegionFeatures getByRegion(String chromosome, int start, int end) {
+		return getByRegion(chromosome, start, end, null);
 	}
+
+	@Override
+	public GenomicRegionFeatures getByRegion(Region region) {
+		return getByRegion(region.getChromosome(), region.getStart(), region.getEnd(), null);
+	}
+
+	@Override
+	public GenomicRegionFeatures getByRegion(Region region, List<String> sources) {
+		return getByRegion(region.getChromosome(), region.getStart(), region.getEnd(), sources);
+	}
+	
+	private GenomicRegionFeatures getByRegion(String chromosome, int start, int end, List<String> sources) {
+		int chunk_start = start / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
+		int chunk_end = end / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
+		
+		Query query = this.openSession()
+		.createQuery("select featureMap from FeatureMap as featureMap left join fetch featureMap.id " +
+				"where id.chunkId >= :start_chunk and id.chunkId <= :end_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam")
+		.setParameter("start_chunk", chunk_start)
+		.setParameter("end_chunk", chunk_end)
+		.setParameter("startparam", start)
+		.setParameter("endparam", end);
+		List<FeatureMap> list = (List<FeatureMap>)executeAndClose(query);
+		
+		GenomicRegionFeatures genomicRegionFeatures = this.getGenomicRegionFeature(list, new Region(chromosome, start, end), sources);
+		return genomicRegionFeatures;
+	}
+	
 	
 	
 	private GenomicRegionFeatures getGenomicRegionFeature(List<FeatureMap> featuresMap, Region region, List<String> sources) {
@@ -157,41 +140,30 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 			genomicRegionFeatures.getExons().addAll(new ExonHibernateDBAdaptor(this.getSessionFactory()).getAllByEnsemblIdList(exonsIds));
 			
 			List<List<Snp>> snpResult = new SnpHibernateDBAdapator(this.getSessionFactory()).getByDbSnpIdList(snpsIds);
-			System.out.println("rrrr " + snpResult.size() + " " + snpsIds);
 			genomicRegionFeatures.getSnp().addAll(this.cleanSnpByRegion(region, snpResult));
 		}
 		
 		
 		return genomicRegionFeatures;
 	}
-
-	private GenomicRegionFeatures getByRegion(String chromosome, int start, int end, List<String> sources) {
-		int chunk_start = start / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
-		int chunk_end = end / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
-		
-		Query query = this.openSession()
-		.createQuery("select featureMap from FeatureMap as featureMap left join fetch featureMap.id where id.chunkId >= :start and id.chunkId <= :end")
-		.setParameter("start", chunk_start)
-		.setParameter("end", chunk_end);
-		List<FeatureMap> list = (List<FeatureMap>)executeAndClose(query);
-		
-		GenomicRegionFeatures genomicRegionFeatures = this.getGenomicRegionFeature(list, new Region(chromosome, start, end), sources);
-		return genomicRegionFeatures;
-	}
 	
-	@Override
-	public GenomicRegionFeatures getByRegion(String chromosome, int start, int end) {
-		return getByRegion(chromosome, start, end, null);
-	}
-
-	@Override
-	public GenomicRegionFeatures getByRegion(Region region) {
-		return getByRegion(region.getChromosome(), region.getStart(), region.getEnd(), null);
-	}
-
-	@Override
-	public GenomicRegionFeatures getByRegion(Region region, List<String> sources) {
-		return getByRegion(region.getChromosome(), region.getStart(), region.getEnd(), sources);
+	private List<Snp> cleanSnpByRegion(Region region, List<List<Snp>> snpResult) {
+		// Es posible que para el mismo dbName nos devuelva varios snp's de regiones diferentes, filtro los que esten dentro de la region indicada
+		List<Snp> snps = new ArrayList<Snp>();
+		for (List<Snp> list : snpResult) {
+			if (list != null){
+				for (Snp snp : list) {
+					if (snp != null){
+						if (snp.getChromosome().equals(region.getChromosome())){
+							if (region.getStart() <=snp.getStart() && (region.getEnd() >= snp.getEnd())){
+								snps.add(snp);
+							}
+						}
+					}
+				}
+			}
+		}
+		return snps;
 	}
 
 }

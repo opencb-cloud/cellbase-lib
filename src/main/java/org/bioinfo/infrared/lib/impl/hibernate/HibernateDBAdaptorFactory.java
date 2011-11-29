@@ -57,7 +57,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 	}
 
 	private SessionFactory createSessionFactory(String speciesVersionPrefix) {
-		//logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): creating Hibernate SessionFactory object for SPECIES.VERSION: '"+speciesVersionPrefix+"' ...");
+		logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): creating Hibernate SessionFactory object for SPECIES.VERSION: '"+speciesVersionPrefix+"' ...");
 		long t1 = System.currentTimeMillis();
 
 		// initial load and setup from hibernate.cfg.xml
@@ -71,7 +71,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			cfg.setProperty("hibernate.connection.url", "jdbc:"+ applicationProperties.getProperty(dbPrefix+".DRIVER_CLASS")+"://"+applicationProperties.getProperty(dbPrefix + ".HOST")+":"+applicationProperties.getProperty(dbPrefix + ".PORT", "3306")+"/"+applicationProperties.getProperty(speciesVersionPrefix+".DATABASE"));
 //			cfg.setProperty("hibernate.connection.pool_size", "30");
 		}else {
-			//logger.debug("HibernateDBAdaptorFactory in createSessionFactory(): 'species' parameter is null or empty");
+			logger.debug("HibernateDBAdaptorFactory in createSessionFactory(): 'species' parameter is null or empty");
 		}
 
 		SessionFactory sessionFactory = cfg.buildSessionFactory();
