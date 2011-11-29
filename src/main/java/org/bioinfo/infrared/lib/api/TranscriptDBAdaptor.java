@@ -62,6 +62,4 @@ public interface TranscriptDBAdaptor extends FeatureDBAdaptor {
 	public List<Transcript> getAllBySnpId(String snpId);
 	
 	public List<List<Transcript>> getAllBySnpIdList(List<String> snpIdList);
-	
-	
 }

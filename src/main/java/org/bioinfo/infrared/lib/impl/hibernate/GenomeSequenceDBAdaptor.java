@@ -36,11 +36,22 @@ public class GenomeSequenceDBAdaptor extends HibernateDBAdaptor {
 //		List<GenomeSequence> genomeSequenceList = (List<GenomeSequence>)query.list();
 		List<GenomeSequence> genomeSequenceList = (List<GenomeSequence>) executeAndClose(query);
 		
+		System.out.println(genomeSequenceList.size());
+		
 		StringBuilder sb = new StringBuilder();
 		for(GenomeSequence genomeSequence: genomeSequenceList) {
 			sb.append(genomeSequence.getSequence());
 		}
-		this.openSession().close();
+//		this.openSession().close();
+		
+		System.out.println( chromosome+":"  + start +"-"+ end);
+		
+		System.out.println( getChunk(start));
+		System.out.println( getChunk(end));
+		
+		System.out.println( sb.toString().length());
+		System.out.println( getOffset(start));
+		System.out.println( getOffset(start) + (end-start));
 		
 		return sb.toString().substring(getOffset(start), getOffset(start) + (end-start));
 	}
