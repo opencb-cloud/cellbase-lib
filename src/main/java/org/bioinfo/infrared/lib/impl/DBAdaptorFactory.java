@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.bioinfo.commons.log.Logger;
+import org.bioinfo.infrared.lib.api.CytobandDBAdaptor;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
@@ -75,12 +76,15 @@ public abstract class DBAdaptorFactory {
 	public abstract GenomeSequenceDBAdaptor getGenomeSequenceDBAdaptor(String species, String version);
 
 
-	public abstract GeneDBAdaptor getCytobandDBAdaptor(String species);
-
 	public abstract GeneDBAdaptor getChromosomeDBAdaptor(String species);
 
 	
 	public abstract GeneDBAdaptor getXRefDBAdaptor(String species);
+
+
+	public abstract CytobandDBAdaptor getCytobandDBAdaptor(String species);
+	
+	public abstract CytobandDBAdaptor getCytobandDBAdaptor(String species, String version);
 
 	
 }

@@ -2,6 +2,7 @@ package org.bioinfo.infrared.lib.impl.hbase;
 
 import java.util.Properties;
 
+import org.bioinfo.infrared.lib.api.CytobandDBAdaptor;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
@@ -115,7 +116,7 @@ public class HBaseDBAdaptorFactory extends DBAdaptorFactory{
 	
 	
 	@Override
-	public GeneDBAdaptor getCytobandDBAdaptor(String species) {
+	public CytobandDBAdaptor getCytobandDBAdaptor(String species) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -139,6 +140,15 @@ public class HBaseDBAdaptorFactory extends DBAdaptorFactory{
 	public void close() {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+
+
+	@Override
+	public CytobandDBAdaptor getCytobandDBAdaptor(String species, String version) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
