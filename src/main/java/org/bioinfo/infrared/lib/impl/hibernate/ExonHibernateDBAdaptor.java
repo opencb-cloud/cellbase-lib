@@ -6,12 +6,14 @@ import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.Exon;
 import org.bioinfo.infrared.core.cellbase.Gene;
+import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -139,11 +141,10 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 
 	@Override
 	public List<Exon> getAllByEnsemblIdList(List<String> ensemblIds) {
-		List<Exon> exons = new ArrayList<Exon>(ensemblIds.size());
-		for(String ensemblId: ensemblIds) {
-			exons.add(getByEnsemblId(ensemblId));
-		}
-		return exons;
+		Session session = this.openSession();
+		Criteria criteria = session.createCriteria(Exon.class);
+		criteria.add(Restrictions.in("stableId", ensemblIds));
+		return (List<Exon>)this.executeAndClose(criteria);
 	}
 
 	@SuppressWarnings("unchecked")

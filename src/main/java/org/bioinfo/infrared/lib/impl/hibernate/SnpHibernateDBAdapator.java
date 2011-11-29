@@ -72,7 +72,10 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 		String query = "select snp from Snp as snp left join fetch snp.snpToTranscripts as stt  left join fetch snp.snpXrefs as sxr  left join fetch snp.snp2functionals as s2f left join fetch stt.consequenceType as consequenceType where snp.name in :name";
 		List<Snp> result = query(query, idList);
 		List<List<Snp>> cleanResult = new ArrayList<List<Snp>>();
-		
+//		System.out.println("ID LIST " + idList);
+//		for (Snp snp : result) {
+//			System.out.println(snp.getName());
+//		}
 		if(result.size() != idList.size()) {
 			String resultId = new String(); 
 			String prevResultId = new String();
@@ -105,6 +108,7 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 				}
 			}	
 		}
+		System.out.println("cleanResult " + cleanResult.size());
 		return cleanResult;
 	}
 
@@ -184,7 +188,7 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 		criteria.add(Restrictions.ge("chunk_id", chunk_start));
 		criteria.add(Restrictions.le("chunk_id", chunk_end));
 		criteria.add(Restrictions.eq("chromosome", chromosome));
-		return (List<Snp>)executeAndClose(criteria);
+//		return (List<Snp>)executeAndClose(criteria);
 		
 		
 		return null;

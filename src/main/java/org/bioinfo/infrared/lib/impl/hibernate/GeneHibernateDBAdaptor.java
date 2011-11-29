@@ -11,6 +11,7 @@ import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -97,11 +98,10 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	
 	@Override
 	public List<Gene> getAllByEnsemblIdList(List<String> ensemblIds) {
-		List<Gene> genes = new ArrayList<Gene>(ensemblIds.size());
-		for(String ensemblId: ensemblIds) {
-			genes.add(getByEnsemblId(ensemblId));
-		}
-		return genes;
+		Session session = this.openSession();
+		Criteria criteria = session.createCriteria(Gene.class);
+		criteria.add(Restrictions.in("stableId", ensemblIds));
+		return (List<Gene>)this.executeAndClose(criteria);
 	}
 
 	@SuppressWarnings("unchecked")

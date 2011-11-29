@@ -154,6 +154,20 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		return (ExonDBAdaptor) new ExonHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 
+	@Override
+	public GenomicRegionFeatureHibernateDBAdaptor getFeatureMapDBAdaptor(String species) {
+		return getFeatureMapDBAdaptor(species, null);
+	}
+	@Override
+	public GenomicRegionFeatureHibernateDBAdaptor getFeatureMapDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species,version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)){
+			SessionFactory sessionFactory  = createSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+		return (GenomicRegionFeatureHibernateDBAdaptor) new GenomicRegionFeatureHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+	}
+	
 	
 	@Override
 	public ProteinDBAdaptor getProteinDBAdaptor(String species) {
@@ -168,6 +182,8 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 	}
 
 
+	
+	
 	@Override
 	public SnpDBAdaptor getSnpDBAdaptor(String species) {
 		return getSnpDBAdaptor(species, null);

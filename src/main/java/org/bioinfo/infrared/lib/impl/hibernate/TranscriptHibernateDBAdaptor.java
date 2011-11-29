@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
@@ -11,6 +12,7 @@ import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
@@ -95,11 +97,10 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	
 	@Override
 	public List<Transcript> getAllByEnsemblIdList(List<String> ensemblIds) {
-		List<Transcript> transcripts = new ArrayList<Transcript>(ensemblIds.size());
-		for(String ensemblId: ensemblIds) {
-			transcripts.add(getByEnsemblId(ensemblId));
-		}
-		return transcripts;
+		Session session = this.openSession();
+		Criteria criteria = session.createCriteria(Transcript.class);
+		criteria.add(Restrictions.in("stableId", ensemblIds));
+		return (List<Transcript>)this.executeAndClose(criteria);
 	}
 
 	@SuppressWarnings("unchecked")

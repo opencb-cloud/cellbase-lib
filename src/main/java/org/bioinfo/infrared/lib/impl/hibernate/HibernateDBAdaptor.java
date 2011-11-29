@@ -25,7 +25,11 @@ public class HibernateDBAdaptor extends DBAdaptor{
 		if(session == null || !session.isOpen()) {
 			long t1 = System.currentTimeMillis();
 			session = sessionFactory.openSession();
-			logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): Hibernate Session object for SessionFactory created in "+(System.currentTimeMillis()-t1)+" ms");
+			logger.debug("HibernateDBAdaptorFactory: Hibernate Session object for SessionFactory created in "+(System.currentTimeMillis()-t1)+" ms");
+		}
+		else{
+			logger.debug("HibernateDBAdaptorFactory: Session was null or closed");
+			
 		}
 		return session;
 	}

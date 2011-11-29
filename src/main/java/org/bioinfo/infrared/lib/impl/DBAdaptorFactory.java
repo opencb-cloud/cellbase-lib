@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import org.bioinfo.commons.log.Logger;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
+import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
@@ -56,6 +57,11 @@ public abstract class DBAdaptorFactory {
 	public abstract ExonDBAdaptor getExonDBAdaptor(String species, String version);
 	
 
+	public abstract GenomicRegionFeatureDBAdaptor getFeatureMapDBAdaptor(String species);
+	
+	public abstract GenomicRegionFeatureDBAdaptor getFeatureMapDBAdaptor(String species, String version);
+	
+	
 	public abstract ProteinDBAdaptor getProteinDBAdaptor(String species);
 	
 	public abstract ProteinDBAdaptor getProteinDBAdaptor(String species, String version);
