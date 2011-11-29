@@ -104,12 +104,14 @@ public class CytobandHibernateDBAdaptor extends HibernateDBAdaptor implements Cy
 
 	@Override
 	public List<Cytoband> getAllByRegion(Region region) {
+		System.out.println("rrrrrrrrrrrr");
 		return this.getAllByRegion(region.getChromosome(), region.getStart(), region.getEnd());
 	}
 
 
 	@Override
 	public List<List<Cytoband>> getAllByRegionList(List<Region> regionList) {
+		System.out.println("rrrrrrrrrrrr");
 		List<List<Cytoband>> results = new ArrayList<List<Cytoband>>();
 		for (Region region : regionList) {
 			results.add(this.getAllByRegion(region));
