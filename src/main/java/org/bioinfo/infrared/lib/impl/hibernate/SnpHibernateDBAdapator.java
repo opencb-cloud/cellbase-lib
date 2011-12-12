@@ -66,7 +66,7 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 
 
 	@Override
-	public List<Snp> getByGeneId(String ensemblId) {
+	public List<Snp> getAllByGeneId(String ensemblId) {
 		GeneHibernateDBAdaptor geneHibernateDBAdaptor = new GeneHibernateDBAdaptor(this.getSessionFactory());
 		Gene gene = geneHibernateDBAdaptor.getByEnsemblId(ensemblId);
 		return this.getAllByRegion(gene.getChromosome(), gene.getStart(), gene.getEnd());
@@ -74,16 +74,30 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 
 
 	@Override
-	public List<List<Snp>> getByGeneIdList(List<String> ensemblIds) {
+	public List<List<Snp>> getAllByGeneIdList(List<String> ensemblIds) {
 		GeneHibernateDBAdaptor geneHibernateDBAdaptor = new GeneHibernateDBAdaptor(this.getSessionFactory());
 		List<Gene> genes = geneHibernateDBAdaptor.getAllByEnsemblIdList(ensemblIds);
 		List<List<Snp>> result = new ArrayList<List<Snp>>();
 		for (Gene gene : genes) {
-			result.add(this.getByGeneId(gene.getStableId()));
+			result.add(this.getAllByGeneId(gene.getStableId()));
 		}
 		return result;
 	}
 	
+	
+	@Override
+	public List<Snp> getAllByEnsemblTranscriptId(String externalId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	@Override
+	public List<List<Snp>> getAllByEnsemblTranscriptList(List<String> externalIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 
 	@SuppressWarnings("unchecked")
@@ -387,6 +401,5 @@ private List<Snp> query(String queryHQL, List<String> idList){
 	closeSession();
 	return result;
 }
-
 
 }
