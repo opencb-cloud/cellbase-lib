@@ -41,7 +41,6 @@ public interface ExonDBAdaptor extends FeatureDBAdaptor {
 
 	public List<Exon> getAllByRegion(String chromosome, int start, int end);
 	
-	public List<Exon> getAllByRegion(String chromosome, int start, int end, List<String> biotypes);
 
 	public List<Exon> getAllByRegion(Region region);
 

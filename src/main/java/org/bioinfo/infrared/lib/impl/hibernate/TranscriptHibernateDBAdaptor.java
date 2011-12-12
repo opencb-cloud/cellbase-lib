@@ -24,7 +24,6 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		super(sessionFactory);
 	}
 	
-	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Transcript> getAll() {
@@ -35,18 +34,14 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<String> getAllIds() {
-		Criteria criteria = this.openSession().createCriteria(Transcript.class);
-		ProjectionList projections = Projections.projectionList();
-		projections.add(Projections.property("stableId"));
-		criteria.setProjection(projections);
-		return (List<String>) executeAndClose(criteria);
+		return this.getAllEnsemblIds();
 	}
 
-	
+	/*********************No se implementan todavia*/
 	@Override
 	public Map<String, Object> getInfo(String id) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -68,7 +63,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	/**********************/
 	
 	@Override
 	@SuppressWarnings("unchecked")
@@ -81,70 +76,98 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 	
 
+	
+	/****/
+	@Override
+	public Transcript getByEnsemblId(String ensemblId) {
+		Session session = this.openSession();
+		Transcript transcript =  this.getByEnsemblId(ensemblId, session);
+		session.close();
+		return transcript;		
+	}
 	@SuppressWarnings("unchecked")
+	private Transcript getByEnsemblId(String ensemblId, Session session) {
+		Criteria criteria = session.createCriteria(Transcript.class);
+		criteria.add(Restrictions.eq("stableId", ensemblId.trim()));
+		List<Transcript> transcripts = (List<Transcript>) criteria.list();
+		
+		if(transcripts != null && transcripts.size() > 0) {
+			return transcripts.get(0);
+		}else {
+			return null;
+		}
+	}
+	@Override
+	public List<Transcript> getAllByEnsemblIdList(List<String> ensemblIds) {
+		Session session = this.openSession();
+		List<Transcript> transcripts = new ArrayList<Transcript>(ensemblIds.size());
+		for(String ensemblId: ensemblIds) {
+			transcripts.add(this.getByEnsemblId(ensemblId, session));
+		}
+		session.close();
+		return transcripts;
+	}
+	/****/
+	
 	@Override
 	public List<Transcript> getAllByName(String name) {
-		Criteria criteria = this.openSession().createCriteria(Transcript.class);
-		criteria.add(Restrictions.eq("stableId", name.trim()));
-		return (List<Transcript>)executeAndClose(criteria);
+		Session session = this.openSession();
+		List<Transcript> transcripts = this.getAllByName(name, session);
+		session.close();
+		return transcripts;
 	}
-	
+	@SuppressWarnings("unchecked")
+	private List<Transcript> getAllByName(String name, Session session) {
+		Query query = session.createQuery("select t from Xref as x1, Xref as x2, TranscriptToXref as tx1, TranscriptToXref as tx2, Dbname as db, Transcript as t where" +
+			 " x1.displayId= :name and" +
+			 " x1.xrefId=tx1.xref and" +
+			 " tx1.transcript=tx2.transcript and" +
+			 " tx2.xref=x2.xrefId and" +
+			 " x2.dbname=db.dbnameId and" +
+			 " db.name='ensembl_transcript' and" +
+			 " x2.displayId=t.stableId").setParameter("name",name.trim());
+		return (List<Transcript>)query.list();
+	}
 
 	@Override
 	public List<List<Transcript>> getAllByNameList(List<String> names) {
-		//TODO DONE
+		Session session = this.openSession();
 		List<List<Transcript>> transcripts =  new ArrayList<List<Transcript>>(names.size());
-		for(String id: names){
-			transcripts.add(getAllByName(id));
+		for(String name: names){
+			transcripts.add(this.getAllByName(name,session));
 		}
+		session.close();
 		return transcripts;
 	}
-    @Override
-    public Transcript getByEnsemblId(String ensemblId) {
-            Session session = this.openSession();
-            Transcript transcript =  this.getByEnsemblId(ensemblId, session);
-            session.close();
-            return transcript;                
-    }
-    @SuppressWarnings("unchecked")
-    private Transcript getByEnsemblId(String ensemblId, Session session) {
-            Criteria criteria = session.createCriteria(Transcript.class);
-            criteria.add(Restrictions.eq("stableId", ensemblId.trim()));
-            List<Transcript> transcripts = (List<Transcript>) criteria.list();
-            
-            if(transcripts != null && transcripts.size() > 0) {
-                    return transcripts.get(0);
-            }else {
-                    return null;
-            }
-    }
-    @Override
-    public List<Transcript> getAllByEnsemblIdList(List<String> ensemblIds) {
-            Session session = this.openSession();
-            List<Transcript> transcripts = new ArrayList<Transcript>(ensemblIds.size());
-            for(String ensemblId: ensemblIds) {
-                    transcripts.add(this.getByEnsemblId(ensemblId, session));
-            }
-            session.close();
-            return transcripts;
-    }
-	@SuppressWarnings("unchecked")
+
 	@Override
 	public List<Transcript> getByEnsemblGeneId(String ensemblGeneId) {
-		Criteria criteria = this.openSession().createCriteria(Transcript.class).createCriteria("transcripts").add(Restrictions.eq("stableId", ensemblGeneId.trim()));
-		return (List<Transcript>) executeAndClose(criteria).get(0);
+		Session session = this.openSession();
+		List<Transcript> transcripts = this.getByEnsemblGeneId(ensemblGeneId, session);
+		session.close();
+		return transcripts;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<Transcript> getByEnsemblGeneId(String ensemblGeneId, Session session) {
+		Criteria criteria = session
+		.createCriteria(Transcript.class)
+		.createCriteria("gene").add(Restrictions.eq("stableId", ensemblGeneId.trim()));
+		return (List<Transcript>) criteria.list();
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<List<Transcript>> getByEnsemblGeneIdList(List<String> ensemblGeneIds) {
-		Criteria criteria = this.openSession().createCriteria(Transcript.class).createCriteria("transcripts").add(Restrictions.in("stableId", ensemblGeneIds));
-		return (List<List<Transcript>>) executeAndClose(criteria);
+		Session session = this.openSession();
+		List<List<Transcript>> transcripts =  new ArrayList<List<Transcript>>(ensemblGeneIds.size());
+		for(String ensemblGeneId: ensemblGeneIds){
+			transcripts.add(this.getAllByName(ensemblGeneId,session));
+		}
+		session.close();
+		return transcripts;
 	}
-
-
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Transcript> getAllByBiotype(String biotype) {
@@ -153,6 +176,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		return (List<Transcript>)executeAndClose(criteria);
 	}
 
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Transcript> getAllByBiotypeList(List<String> biotypeList) {
@@ -161,9 +185,6 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		return (List<Transcript>)executeAndClose(criteria);
 	}
 
-	
-	
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Transcript> getAllByPosition(String chromosome, int position) {
@@ -171,7 +192,6 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", position)).add(Restrictions.le("start", position));
 		return (List<Transcript>)executeAndClose(criteria);
 	}
-
 
 	@Override
 	public List<Transcript> getAllByPosition(Position position) {
@@ -182,7 +202,6 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		}
 	}
 
-
 	@Override
 	public List<List<Transcript>> getAllByPositionList(List<Position> positions) {
 		List<List<Transcript>> transcripts = new ArrayList<List<Transcript>>(positions.size());
@@ -191,8 +210,6 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		}
 		return transcripts;
 	}
-
-	
 	
 
 	@SuppressWarnings("unchecked")
@@ -262,7 +279,6 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 	@Override
 	public List<List<Transcript>> getAllByRegionList(List<Region> regions, List<String> biotypes) {
-		// TODO DONE
 		List<List<Transcript>> transcripts = new ArrayList<List<Transcript>>(regions.size());
 		for(Region region: regions){
 			transcripts.add(getAllByRegion(region, biotypes));
@@ -274,106 +290,71 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Transcript> getAllByCytoband(String chromosome, String cytoband) {
-		Query query = this.openSession().createQuery("select t from Transcript t, Cytoband k where k.chromosome= :chromosome and k.cytoband = :cytoband and k.chromosome=g.chromosome and g.end>=k.start and g.start<=k.end").setParameter("chromosome", chromosome).setParameter("cytoband", cytoband);
+		Query query = this.openSession().createQuery("select t from Transcript t, Cytoband k where k.chromosome= :chromosome and k.cytoband = :cytoband and k.chromosome=t.chromosome and t.end>=k.start and t.start<=k.end").setParameter("chromosome", chromosome).setParameter("cytoband", cytoband);
 		return (List<Transcript>)executeAndClose(query);
 	}
 
-
+	/****/
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<Transcript> getAllBySnpId(String snpNameId) {
-		// TODO DONE
-		Query query = this.openSession().createQuery("select transcript from Transcript as transcript  left join fetch transcript.snpToTranscripts as stt left join fetch stt.snp as snp where snp.name = :snpName").setParameter("snpName",snpNameId);
-		return (List<Transcript>)executeAndClose(query);
+		Session session = this.openSession();
+		List<Transcript> list =  this.getAllBySnpId(snpNameId, session);
+		session.close();
+		return list;
 	}
-
+	@SuppressWarnings("unchecked")
+	private List<Transcript> getAllBySnpId(String snpNameId, Session session) {
+		Criteria criteria = session
+				.createCriteria(Transcript.class)
+				.createCriteria("snpToTranscripts")
+				.createCriteria("snp").add(Restrictions.eq("name", snpNameId));
+		return (List<Transcript>)criteria.list();
+	}
 	@Override
 	public List<List<Transcript>> getAllBySnpIdList(List<String> snpNameIds) {
-		// TODO DONE
+		Session session = this.openSession();
 		List<List<Transcript>> transcripts = new ArrayList<List<Transcript>>(snpNameIds.size());
-		for(String snpNameId: snpNameIds) {
-			transcripts.add(getAllBySnpId(snpNameId));
+		for(String id: snpNameIds) {
+			transcripts.add(getAllBySnpId(id,session));
 		}
+		session.close();
 		return transcripts;
 	}
-
-
+	/****/
+	
 	@Override
 	public Region getRegionById(String ensemblId) {
-		// TODO DOING
-//		Query query = this.openSession().createQuery("select t from Xref as x1, Xref as x2, TranscriptToXref as tx1, TranscriptToXref as tx2, Dbname as db, Transcript as t where" +
-//				 " x1.displayId= :id and" +
-//				 " x1.xrefId=tx1.xref and" +
-//				 " tx1.transcript=tx2.transcript and" +
-//				 " tx2.xref=x2.xrefId and" +
-//				 " x2.dbname=db.dbnameId and" +
-//				 " db.name='ensembl_transcript' and" +
-//				 " x2.displayId=t.stableId").setParameter("id",id);
-//		Transcript t =  (Transcript)executeAndClose(query).get(0);
-//		return new Region(t.getChromosome(),t.getStart(),t.getEnd());
-		
-		
-		Criteria criteria = this.openSession().createCriteria(Transcript.class);
-		criteria.add(Restrictions.eq("stableId", ensemblId.trim()));
-		Transcript t =  (Transcript)executeAndClose(criteria).get(0);
-		return new Region(t.getChromosome(),t.getStart(),t.getEnd());
-		
+		Transcript transcript = this.getByEnsemblId(ensemblId);
+		return new Region(transcript.getChromosome(),transcript.getStart(),transcript.getEnd());
 	}
 	
-	
-	
 	@Override
-	public List<Region> getAllRegionsByIdList(List<String> idList) {
-		// TODO DOING
-		List<Region> regions = new ArrayList<Region>(idList.size());
-		for(String id: idList) {
-			regions.add(getRegionById(id));
+	public List<Region> getAllRegionsByIdList(List<String> ensemblIdList) {
+		List<Region> regions = new ArrayList<Region>(ensemblIdList.size());
+		List<Transcript> transcripts = getAllByEnsemblIdList(ensemblIdList);
+		for(Transcript transcript: transcripts) {
+			regions.add(new Region(transcript.getChromosome(),transcript.getStart(),transcript.getEnd()));
 		}
 		return regions;
 	}
 
 	
 	@Override
-	public String getSequenceById(String id) {
-		// TODO DOING
-//		select x2.* from xref x1, xref x2, transcript_to_xref tx1, transcript_to_xref tx2, dbname db where 
-//		x1.display_id='ENST00000493561' and 
-//		x1.xref_id=tx1.xref_id and 
-//		tx1.transcript_id=tx2.transcript_id and 
-//		tx2.xref_id=x2.xref_id and 
-//		x2.dbname_id=db.dbname_id and 
-//		db.name='ensembl_transcript';
-
-//	cruzada 	
-//		select t.* from xref x1, xref x2, transcript_to_xref tx1, transcript_to_xref tx2, dbname db, transcript t 
-//		where x1.display_id='ENST00000493561' and 
-//		x1.xref_id=tx1.xref_id and 
-//		tx1.transcript_id=tx2.transcript_id and 
-//		tx2.xref_id=x2.xref_id and 
-//		x2.dbname_id=db.dbname_id and 
-//		db.name='ensembl_transcript' and 
-//		x2.display_id=t.stable_id;
-		
-		
-		Query query = this.openSession().createQuery("select x2.displayId from Xref as x1, Xref as x2, TranscriptToXref as tx1, TranscriptToXref tx2, Dbname as db where" +
-													 " x1.displayId= :id and" +
-													 " x1.xrefId=tx1.xref and" +
-													 " tx1.transcript=tx2.transcript and" +
-													 " tx2.xref=x2.xrefId and" +
-													 " x2.dbname=db.dbnameId and" +
-													 " db.name='ensembl_transcript'").setParameter("id",id);
-		return (String)executeAndClose(query).get(0);
-		
-		
+	public String getSequenceById(String ensemblId) {
+		Transcript transcript = this.getByEnsemblId(ensemblId);
+		GenomeSequenceDBAdaptor da = new GenomeSequenceDBAdaptor(this.getSessionFactory());
+		return da.getByRegion(transcript.getChromosome(),transcript.getStart(),transcript.getEnd()).getSequence();
 	}
 
 	
 	@Override
-	public List<String> getAllSequencesByIdList(List<String> idList) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> getAllSequencesByIdList(List<String> ensemblIdList) {
+		List<String> sequence = new ArrayList<String>(ensemblIdList.size());
+		List<Transcript> transcripts = getAllByEnsemblIdList(ensemblIdList);
+		GenomeSequenceDBAdaptor da = new GenomeSequenceDBAdaptor(this.getSessionFactory());
+		for(Transcript transcript: transcripts) {
+			sequence.add(da.getByRegion(transcript.getChromosome(),transcript.getStart(),transcript.getEnd()).getSequence());
+		}
+		return sequence;
 	}
-
-
-
 }

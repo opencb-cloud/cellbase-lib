@@ -3,13 +3,16 @@ package org.bioinfo.infrared.lib.impl.hibernate;
 import static org.junit.Assert.fail;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.Exon;
 import org.bioinfo.infrared.core.cellbase.Gene;
+import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
+import org.bioinfo.infrared.lib.common.Region;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.bioinfo.infrared.lib.io.output.StringWriter;
 import org.junit.After;
@@ -17,7 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ExonHibernateDBAdaptorTest {
-/*
+
 	private DBAdaptorFactory dbAdaptorFact = new HibernateDBAdaptorFactory();
 
 	private ExonDBAdaptor exonDBAdaptor;
@@ -55,7 +58,7 @@ public class ExonHibernateDBAdaptorTest {
 
 	@Test
 	public void testExonHibernateDBAdaptorGetByEnsemblId() {
-		Exon exon = exonDBAdaptor.getByEnsemblId("ENSG00000252775");
+		Exon exon = exonDBAdaptor.getByEnsemblId("ENSE00002084795");
 		System.out.println(exon.toString());
 		System.out.println(exon.getStrand());
 		printGeneList("testExonHibernateDBAdaptorGetByEnsemblId", Arrays.asList(exon), 5);
@@ -63,10 +66,34 @@ public class ExonHibernateDBAdaptorTest {
 
 	@Test
 	public void testExonHibernateDBAdaptorGetByEnsemblIdList() {
-		List<Exon> exons = exonDBAdaptor.getAllByEnsemblIdList(Arrays.asList("ENSG00000252775", "ENSG00000000419", "ENSG00000187642"));
+		List<Exon> exons = exonDBAdaptor.getAllByEnsemblIdList(Arrays.asList("ENSE00002084795", "ENSE00001448904", "ENSE00001260858"));
 		printGeneList("testExonHibernateDBAdaptorGetByEnsemblIdList", exons, 5);
 	}
 
+	
+	@Test
+	public void TestGetByEnsemblTranscriptId() {
+		List<Exon> exons =exonDBAdaptor.getByEnsemblTranscriptId("ENST00000482343");
+		System.out.println(exons);
+	}
+	@Test
+	public void TestGetByEnsemblTranscriptIdList() {
+		List<List<Exon>> exons = exonDBAdaptor.getByEnsemblTranscriptIdList(Arrays.asList("ENST00000482343","ENST00000358595"));
+		System.out.println(exons);
+	}
+	
+	@Test
+	public void TestGetByEnsemblGeneId() {
+		List<Exon> exons = exonDBAdaptor.getByEnsemblGeneId("ENSG00000102181");
+		System.out.println(exons);
+	}
+	@Test
+	public void TestGetByEnsemblGeneIdList() {
+		List<List<Exon>> exons = exonDBAdaptor.getByEnsemblGeneIdList(Arrays.asList("ENSG00000102181","brca2","brca1"));
+		System.out.println(exons);
+	}
+	
+	
 
 	@Test
 	public void testGetAllByPosition() {
@@ -103,33 +130,17 @@ public class ExonHibernateDBAdaptorTest {
 
 	@Test
 	public void testGetAllByRegionStringIntIntStringList() {
-		List<Exon> exons = exonDBAdaptor.getAllByRegion("1", 1, 300000, Arrays.asList("protein_coding", "processed_transcript"));
+		Region reg1 = new Region("1", 4000, 76465);
+		Region reg2 = new Region("2", 7777, 23454);
+		Region reg3 = new Region("3", 6543, 542366);
+		List<Region> regions = new ArrayList<Region>();
+		regions.add(reg1);
+		regions.add(reg2);
+		regions.add(reg3);
+		List<List<Exon>> exons = exonDBAdaptor.getAllByRegionList(regions);
 		printGeneList("testGetAllByRegionStringIntIntStringList", exons, 5);
 	}
 
-	public void testGetGeneByRegionString() {
-
-	}
-
-	public void testGetGeneByTranscript() {
-		fail("Not yet implemented");
-	}
-
-	public void testGetGeneByTranscriptList() {
-		fail("Not yet implemented");
-	}
-
-	public void testGetSequence() {
-		fail("Not yet implemented");
-	}
-
-	public void testGetSequenceString() {
-		fail("Not yet implemented");
-	}
-
-	public void testGetRegion() {
-		fail("Not yet implemented");
-	}
 
 	@Test
 	public void testGetAllByCytoband() {
@@ -137,6 +148,56 @@ public class ExonHibernateDBAdaptorTest {
 		printGeneList("testGetAllByCytoband", exons, 5);
 	}
 
+	
+	@Test
+	public void testGetAllBySnpId(){
+		List<Exon> exons = exonDBAdaptor.getAllBySnpId("rs1333049");
+		printGeneList("testGetAllBySnpId", exons, 5);
+		System.out.println("Transcrits: "+exons.get(0).getStableId());
+		System.out.println("Transcrits size: "+exons.size());
+	}
+	@Test
+	public void testgetAllBySnpIdList(){
+		List<List<Exon>> exonList = exonDBAdaptor.getAllBySnpIdList(Arrays.asList("rs1333049","rs1333049"));
+		printGeneList("testgetAllBySnpIdList", exonList, 5);
+		
+		int c = 0;
+		for(List<Exon> exons : exonList){
+			System.out.println("Results for "+c+" element: ");
+			System.out.println("Transcrits: "+exons.get(0).getStableId());
+			System.out.println("Transcrits size: "+exons.size());			
+			c++;			
+		}
+	}
+	
+	
+	@Test
+	public void TestGetRegionById(){
+		System.out.println("TestGetRegionById");
+		Region region = exonDBAdaptor.getRegionById("ENSE00002084795");
+		System.out.println(region.toString());
+	}
+	@Test
+	public void TestGetAllRegionsByIdList(){
+		System.out.println("TestGetAllRegionsByIdList");
+		List<Region> regions = exonDBAdaptor.getAllRegionsByIdList(Arrays.asList("ENSE00002084795","ENSE00001448904"));
+		System.out.println(regions.toString());
+	}
+	
+	@Test
+	public void testGetSequenceById(){
+		System.out.println("testGetSequenceById");
+		String s = exonDBAdaptor.getSequenceById("ENSE00002084795");
+		System.out.println(s);
+	}
+	
+	@Test
+	public void testGetAllSequencesByIdList(){
+		System.out.println("testGetAllSequencesByIdList");
+		List<String> strings = exonDBAdaptor.getAllSequencesByIdList(Arrays.asList("ENSE00002084795","ENSE00001448904"));
+		System.out.println(strings);
+	}
+	
 
 	private void printGeneList(String title, List<?> genes, int numResults) {
 		System.out.println("************************************************************");
@@ -168,5 +229,5 @@ public class ExonHibernateDBAdaptorTest {
 		System.out.println("Number of results per ms: "+df.format((double)genes.size()/executionTime)+" rows/ms");
 		System.out.println("************************************************************\n");
 
-	}*/
+	}
 }

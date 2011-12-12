@@ -1,15 +1,10 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
-import static org.junit.Assert.fail;
-
 import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.Gene;
-import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
@@ -95,18 +90,28 @@ public class TranscriptHibernateDBAdaptorTest {
 	}
 
 	@Test
-	public void testTranscriptHibernateDBAdaptorGetAllById() {
+	public void testTranscriptHibernateDBAdaptorGetAllByName() {
 		List<Transcript> transcripts = transcriptDBAdaptor.getAllByName("brca2");
-		printGeneList("testTranscriptHibernateDBAdaptorGetAllById", transcripts, 5);
+		printGeneList("testTranscriptHibernateDBAdaptorGetAllByName", transcripts, 5);
 	}
 
 	@Test
-	public void testTranscriptHibernateDBAdaptorGetAllByIdList() {
+	public void testTranscriptHibernateDBAdaptorGetAllByNameList() {
 		List<List<Transcript>> transcripts = transcriptDBAdaptor.getAllByNameList(Arrays.asList("ENST00000493562","brca2","brca1"));
-		printGeneList("testTranscriptHibernateDBAdaptorGetAllByIdList", transcripts, 5);
+		printGeneList("testTranscriptHibernateDBAdaptorGetAllByNameList", transcripts, 5);
 	}
 
+	@Test
+	public void testTranscriptHibernateDBAdaptorGetByEnsemblGeneId() {
+		List<Transcript> transcript = transcriptDBAdaptor.getByEnsemblGeneId("ENSG00000102181");
+		System.out.println(transcript);
+	}
 	
+	@Test
+	public void testTranscriptHibernateDBAdaptorGetByEnsemblGeneIdList() {
+		List<List<Transcript>> transcripts = transcriptDBAdaptor.getByEnsemblGeneIdList(Arrays.asList("ENSG00000102181","brca2","brca1"));
+		System.out.println(transcripts);
+	}
 
 	@Test
 	public void testTranscriptHibernateDBAdaptorGetAllByBiotype() {
@@ -156,35 +161,19 @@ public class TranscriptHibernateDBAdaptorTest {
 		printGeneList("testGetAllByRegionStringIntInt", transcripts, 5);
 	}
 
+	
 	@Test
 	public void testGetAllByRegionStringIntIntStringList() {
 		List<Transcript> transcripts = transcriptDBAdaptor.getAllByRegion("1", 1, 300000, Arrays.asList("protein_coding", "processed_transcript"));
 		printGeneList("testGetAllByRegionStringIntIntStringList", transcripts, 5);
 	}
-
-	public void testGetGeneByRegionString() {
-
+	
+	@Test
+	public void testGetAllByCytoband() {
+		List<Transcript> transcripts = transcriptDBAdaptor.getAllByCytoband("9", "q31.3");
+		printGeneList("testGetAllByCytoband", transcripts, 5);
 	}
-
-	public void testGetGeneByTranscript() {
-		fail("Not yet implemented");
-	}
-
-	public void testGetGeneByTranscriptList() {
-		fail("Not yet implemented");
-	}
-
-	public void testGetSequence() {
-		fail("Not yet implemented");
-	}
-
-	public void testGetSequenceString() {
-		fail("Not yet implemented");
-	}
-
-	public void testGetRegion() {
-		fail("Not yet implemented");
-	}
+	
 	
 	@Test
 	public void testGetAllBySnpId(){
@@ -192,12 +181,6 @@ public class TranscriptHibernateDBAdaptorTest {
 		printGeneList("testGetAllBySnpId", transcripts, 5);
 		System.out.println("Transcrits: "+transcripts.get(0).getStableId());
 		System.out.println("Transcrits size: "+transcripts.size());
-		
-		for (SnpToTranscript snpToTranscript : transcripts.get(0).getSnpToTranscripts()) {
-			System.out.println("SNP2TRanscript: " + snpToTranscript.getSnpToTranscriptId()); 
-			System.out.println("Snp: " + snpToTranscript.getSnp().getName()); 
-		}
-	
 	}
 	@Test
 	public void testgetAllBySnpIdList(){
@@ -207,14 +190,9 @@ public class TranscriptHibernateDBAdaptorTest {
 		int c = 0;
 		
 		for(List<Transcript> transcripts : trans){
-			System.out.println(c);
+			System.out.println("Results for "+c+" element: ");
 			System.out.println("Transcrits: "+transcripts.get(0).getStableId());
-			System.out.println("Transcrits size: "+transcripts.size());
-			
-			for (SnpToTranscript snpToTranscript : transcripts.get(0).getSnpToTranscripts()) {
-				System.out.println("SNP2TRanscript: " + snpToTranscript.getSnpToTranscriptId()); 
-				System.out.println("Snp: " + snpToTranscript.getSnp().getName()); 
-			}
+			System.out.println("Transcrits size: "+transcripts.size());			
 			c++;			
 		}
 		
@@ -236,20 +214,17 @@ public class TranscriptHibernateDBAdaptorTest {
 		System.out.println(regions.toString());
 	}
 	
-	
 	@Test
 	public void testGetSequenceById(){
-		String s = transcriptDBAdaptor.getSequenceById("ENST00000493561");
+		String s = transcriptDBAdaptor.getSequenceById("ENST00000482343");
 		System.out.println(s);
 	}
 	
-	
 	@Test
-	public void testGetAllByCytoband() {
-		List<Transcript> transcripts = transcriptDBAdaptor.getAllByCytoband("9", "q31.3");
-		printGeneList("testGetAllByCytoband", transcripts, 5);
+	public void testGetAllSequencesByIdList(){
+		List<String> strings = transcriptDBAdaptor.getAllSequencesByIdList(Arrays.asList("ENST00000370377","ENST00000482343"));
+		System.out.println(strings);
 	}
-
 
 	private void printGeneList(String title, List<?> genes, int numResults) {
 		System.out.println("************************************************************");
