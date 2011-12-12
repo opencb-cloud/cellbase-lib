@@ -91,12 +91,23 @@ public class CytobandHibernateDBAdaptor extends HibernateDBAdaptor implements Cy
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Cytoband> getAllByRegion(String chromosome) {
+	public List<Cytoband> getAllByChromosome(String chromosome) {
 		Criteria criteria = this.openSession().createCriteria(Cytoband.class);
-		criteria.add(Restrictions.le("chromosome", chromosome));
+		criteria.add(Restrictions.eq("chromosome", chromosome));
 		criteria.addOrder(Order.asc("start"));
 		return (List<Cytoband>) this.executeAndClose(criteria);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<List<Cytoband>> getAllByChromosomeList(List<String> chromosomes) {
+		List<List<Cytoband>> cytobands = new ArrayList<List<Cytoband>>(); 
+		for (String chromosome : chromosomes) {
+			 cytobands.add(this.getAllByChromosome(chromosome));
+		}
+		 return cytobands;
+	}
+	
 
 	@Override
 	public List<Cytoband> getAllByRegion(String chromosome, int start) {
@@ -107,7 +118,7 @@ public class CytobandHibernateDBAdaptor extends HibernateDBAdaptor implements Cy
 	@Override
 	public List<Cytoband> getAllByRegion(String chromosome, int start, int end) {
 		Criteria criteria = this.openSession().createCriteria(Cytoband.class);
-		criteria.add(Restrictions.le("chromosome", chromosome));
+		criteria.add(Restrictions.eq("chromosome", chromosome));
 		criteria.add(Restrictions.le("start", end));
 		criteria.add(Restrictions.ge("end", start));
 		criteria.addOrder(Order.asc("start"));
@@ -128,6 +139,11 @@ public class CytobandHibernateDBAdaptor extends HibernateDBAdaptor implements Cy
 			results.add(this.getAllByRegion(region));
 		}
 		return results;
+	}
+
+	@Override
+	public List<Cytoband> getAllByRegion(String chromosome) {
+		return this.getAllByChromosome(chromosome);
 	}
 
 	
