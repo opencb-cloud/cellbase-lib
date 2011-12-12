@@ -58,7 +58,9 @@ public class StringWriter {
 		
 	}
 	
-	
+	public static String serialize(String string){
+		return string;
+	}
 	
 	public static String serialize(List<?> list){
 		StringBuilder sb = new StringBuilder();
@@ -85,6 +87,11 @@ public class StringWriter {
 			}
 			if (object instanceof Snp){
 				sb.append(StringWriter.serialize((Snp) object)).append("\n");
+				continue;
+			}
+			
+			if (object instanceof String){
+				sb.append(StringWriter.serialize((String) object)).append("\n");
 				continue;
 			}
 			

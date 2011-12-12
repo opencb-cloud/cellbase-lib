@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.bioinfo.infrared.core.cellbase.Gene;
-import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
@@ -82,26 +80,6 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		return (List<String>) executeAndClose(criteria);
 	}
 	
-	@Override
-	@SuppressWarnings("unchecked")
-	public Transcript getByEnsemblId(String ensemblId) {
-		Criteria criteria = this.openSession().createCriteria(Transcript.class);
-		criteria.add(Restrictions.eq("stableId", ensemblId.trim()));
-		List<Transcript> transcripts = (List<Transcript>) executeAndClose(criteria);
-		if(transcripts != null && transcripts.size() > 0) {
-			return transcripts.get(0);
-		}else {
-			return null;
-		}
-	}
-	
-	@Override
-	public List<Transcript> getAllByEnsemblIdList(List<String> ensemblIds) {
-		Session session = this.openSession();
-		Criteria criteria = session.createCriteria(Transcript.class);
-		criteria.add(Restrictions.in("stableId", ensemblIds));
-		return (List<Transcript>)this.executeAndClose(criteria);
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -121,13 +99,42 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		}
 		return transcripts;
 	}
-	
+    @Override
+    public Transcript getByEnsemblId(String ensemblId) {
+            Session session = this.openSession();
+            Transcript transcript =  this.getByEnsemblId(ensemblId, session);
+            session.close();
+            return transcript;                
+    }
+    @SuppressWarnings("unchecked")
+    private Transcript getByEnsemblId(String ensemblId, Session session) {
+            Criteria criteria = session.createCriteria(Transcript.class);
+            criteria.add(Restrictions.eq("stableId", ensemblId.trim()));
+            List<Transcript> transcripts = (List<Transcript>) criteria.list();
+            
+            if(transcripts != null && transcripts.size() > 0) {
+                    return transcripts.get(0);
+            }else {
+                    return null;
+            }
+    }
+    @Override
+    public List<Transcript> getAllByEnsemblIdList(List<String> ensemblIds) {
+            Session session = this.openSession();
+            List<Transcript> transcripts = new ArrayList<Transcript>(ensemblIds.size());
+            for(String ensemblId: ensemblIds) {
+                    transcripts.add(this.getByEnsemblId(ensemblId, session));
+            }
+            session.close();
+            return transcripts;
+    }
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Transcript> getByEnsemblGeneId(String ensemblGeneId) {
 		Criteria criteria = this.openSession().createCriteria(Transcript.class).createCriteria("transcripts").add(Restrictions.eq("stableId", ensemblGeneId.trim()));
 		return (List<Transcript>) executeAndClose(criteria).get(0);
 	}
+	
 	
 	@SuppressWarnings("unchecked")
 	@Override

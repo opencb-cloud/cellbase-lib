@@ -18,6 +18,8 @@ public interface CytobandDBAdaptor extends FeatureDBAdaptor {
 	public List<Cytoband> getAllByRegion(Region region);
 
 	public List<List<Cytoband>> getAllByRegionList(List<Region> regionList);
+
+	List<String> getAllChromosomesName();
 	
 
 	

@@ -86,7 +86,7 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@Override
 	@SuppressWarnings("unchecked")
 	public Gene getByEnsemblId(String ensemblId) {
-		Criteria criteria = this.openSession().createCriteria(Gene.class).setFetchMode("transcripts", FetchMode.JOIN);
+		Criteria criteria = this.openSession().createCriteria(Gene.class);
 		criteria.add(Restrictions.eq("stableId", ensemblId.trim()));
 		List<Gene> genes = (List<Gene>) executeAndClose(criteria);
 		if(genes != null && genes.size() > 0) {
@@ -98,10 +98,12 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	
 	@Override
 	public List<Gene> getAllByEnsemblIdList(List<String> ensemblIds) {
-		Session session = this.openSession();
-		Criteria criteria = session.createCriteria(Gene.class);
-		criteria.add(Restrictions.in("stableId", ensemblIds));
-		return (List<Gene>)this.executeAndClose(criteria);
+		List<Gene> result = new ArrayList<Gene>();
+		for (String id : ensemblIds) {
+			result.add(this.getByEnsemblId(id));
+		}
+		
+		return result;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -128,7 +130,8 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Gene> getAllByEnsemblTranscriptIdList(List<String> transcriptIdList) {
-		Criteria criteria = this.openSession().createCriteria(Gene.class).createCriteria("transcripts").add(Restrictions.in("stableId", transcriptIdList));
+		Criteria criteria = this.openSession().createCriteria(Gene.class)
+		.createCriteria("transcripts").add(Restrictions.in("stableId", transcriptIdList));
 		return (List<Gene>) executeAndClose(criteria);
 	}
 

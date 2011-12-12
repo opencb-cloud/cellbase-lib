@@ -10,6 +10,9 @@ import org.bioinfo.infrared.lib.api.CytobandDBAdaptor;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.mapping.Array;
 
@@ -29,6 +32,13 @@ public class CytobandHibernateDBAdaptor extends HibernateDBAdaptor implements Cy
 	public List<String> getAllIds() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public List<String> getAllChromosomesName() {
+		Criteria criteria = this.openSession().createCriteria(Cytoband.class)
+		.setProjection(Projections.distinct(Projections.property("chromosome"))).addOrder(Order.asc("chromosome"));
+		return criteria.list();
 	}
 
 	@Override
@@ -79,39 +89,40 @@ public class CytobandHibernateDBAdaptor extends HibernateDBAdaptor implements Cy
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Cytoband> getAllByRegion(String chromosome) {
-		// TODO Auto-generated method stub
-		return null;
+		Criteria criteria = this.openSession().createCriteria(Cytoband.class);
+		criteria.add(Restrictions.le("chromosome", chromosome));
+		criteria.addOrder(Order.asc("start"));
+		return (List<Cytoband>) this.executeAndClose(criteria);
 	}
 
 	@Override
 	public List<Cytoband> getAllByRegion(String chromosome, int start) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getAllByRegion(chromosome, start, start);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Cytoband> getAllByRegion(String chromosome, int start, int end) {
-		System.err.println("toy" + chromosome+":" + start + "_" + end);
 		Criteria criteria = this.openSession().createCriteria(Cytoband.class);
 		criteria.add(Restrictions.le("chromosome", chromosome));
 		criteria.add(Restrictions.le("start", end));
 		criteria.add(Restrictions.ge("end", start));
+		criteria.addOrder(Order.asc("start"));
 		return (List<Cytoband>) this.executeAndClose(criteria);
 	}
 
 
 	@Override
 	public List<Cytoband> getAllByRegion(Region region) {
-		System.out.println("rrrrrrrrrrrr");
 		return this.getAllByRegion(region.getChromosome(), region.getStart(), region.getEnd());
 	}
 
 
 	@Override
 	public List<List<Cytoband>> getAllByRegionList(List<Region> regionList) {
-		System.out.println("rrrrrrrrrrrr");
 		List<List<Cytoband>> results = new ArrayList<List<Cytoband>>();
 		for (Region region : regionList) {
 			results.add(this.getAllByRegion(region));

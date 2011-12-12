@@ -32,8 +32,6 @@ public class GenomeSequenceDBAdaptor extends HibernateDBAdaptor {
 		.setParameter("start", String.valueOf(getChunk(start)))
 		.setParameter("end", String.valueOf(getChunk(end)));
 		
-//		Criteria criteria = session.createCriteria(GenomeSequence.class).add(Restrictions.eq("chromosome", chromosome)).add( Restrictions.ge("start", start)).add(Restrictions.le("end", end));
-//		List<GenomeSequence> genomeSequenceList = (List<GenomeSequence>)query.list();
 		List<GenomeSequence> genomeSequenceList = (List<GenomeSequence>) executeAndClose(query);
 		
 		StringBuilder sb = new StringBuilder();
