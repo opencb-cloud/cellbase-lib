@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.bioinfo.infrared.core.cellbase.Exon;
 import org.bioinfo.infrared.core.cellbase.FeatureMap;
 import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.Snp;
@@ -84,20 +85,46 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 		return result;
 	}
 	
-	
 	@Override
-	public List<Snp> getAllByEnsemblTranscriptId(String externalId) {
+	public List<Snp> getAllByEnsemblGeneId(String externalId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	
 	@Override
-	public List<List<Snp>> getAllByEnsemblTranscriptList(List<String> externalIds) {
+	public List<List<Snp>> getAllByEnsemblGeneList(List<String> externalIds) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	
+	/****/
+	@Override
+	public List<Snp> getAllByEnsemblTranscriptId(String transcriptId) {		
+		Session session =  this.openSession();
+		List<Snp> snps = this.getAllByEnsemblTranscriptId(transcriptId,session);
+		session.close();
+		return snps;
+	}
+	@SuppressWarnings("unchecked")
+	private List<Snp> getAllByEnsemblTranscriptId(String transcriptId, Session session) {		
+		Criteria criteria = session
+				.createCriteria(Snp.class)
+				.createCriteria("snpToTranscripts")
+				.createCriteria("transcript").add( Restrictions.eq("stableId",transcriptId.trim()));
+		return (List<Snp>)criteria.list();
+	}
+	@Override
+	public List<List<Snp>> getAllByEnsemblTranscriptList(List<String> transcriptIds) {
+		Session session =  this.openSession();
+		List<List<Snp>> snpList = new ArrayList<List<Snp>>(transcriptIds.size());
+		for(String transcriptId: transcriptIds) {
+			snpList.add(this.getAllByEnsemblTranscriptId(transcriptId, session));
+		}
+		session.close();
+		return snpList;
+	}
+	/****/
 	
 
 	@SuppressWarnings("unchecked")
