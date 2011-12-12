@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.GenomeSequence;
-import org.bioinfo.infrared.lib.common.GenomeSequenceBean;
+import org.bioinfo.infrared.lib.common.GenomeSequenceFeature;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -26,7 +26,7 @@ public class GenomeSequenceDBAdaptor extends HibernateDBAdaptor {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public GenomeSequenceBean getByRegion(String chromosome, int start, int end) {
+	public GenomeSequenceFeature getByRegion(String chromosome, int start, int end) {
 		Query query = this.openSession().createQuery("from GenomeSequence where chromosome = :chromosome and chunk >= :start and chunk <= :end")
 		.setParameter("chromosome", chromosome.trim())
 		.setParameter("start", String.valueOf(getChunk(start)))
@@ -50,11 +50,11 @@ public class GenomeSequenceDBAdaptor extends HibernateDBAdaptor {
 		System.out.println( getOffset(start));
 		System.out.println( getOffset(start) + (end-start));
 		*/
-		return new GenomeSequenceBean(chromosome, start - 1, end - 1, sb.toString().substring(getOffset(start), getOffset(start) + (end-start) + 1));
+		return new GenomeSequenceFeature(chromosome, start - 1, end - 1, sb.toString().substring(getOffset(start), getOffset(start) + (end-start) + 1));
 	}
 	
-	public List<GenomeSequenceBean> getByRegionList(List<Region> regions){
-		List<GenomeSequenceBean> result = new ArrayList<GenomeSequenceBean>(regions.size());
+	public List<GenomeSequenceFeature> getByRegionList(List<Region> regions){
+		List<GenomeSequenceFeature> result = new ArrayList<GenomeSequenceFeature>(regions.size());
 		for(Region region: regions) {
 			result.add(getByRegion(region.getChromosome(), region.getStart(), region.getEnd()));
 		}

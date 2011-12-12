@@ -1,13 +1,13 @@
 package org.bioinfo.infrared.lib.common;
 
-public class GenomeSequenceBean {
+public class GenomeSequenceFeature {
 
 	private int start;
 	private String chromosome;
 	private int end;
 	private String sequence;
 
-	public GenomeSequenceBean(String chromosome, int start, int end, String sequence){
+	public GenomeSequenceFeature(String chromosome, int start, int end, String sequence){
 		this.chromosome = chromosome;
 		this.start = start;
 		this.end = end;
