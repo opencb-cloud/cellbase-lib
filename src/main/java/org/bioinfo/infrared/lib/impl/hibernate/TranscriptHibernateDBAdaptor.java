@@ -150,7 +150,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		return transcripts;
 	}
 	@SuppressWarnings("unchecked")
-	public List<Transcript> getByEnsemblGeneId(String ensemblGeneId, Session session) {
+	private List<Transcript> getByEnsemblGeneId(String ensemblGeneId, Session session) {
 		Criteria criteria = session
 		.createCriteria(Transcript.class)
 		.createCriteria("gene").add(Restrictions.eq("stableId", ensemblGeneId.trim()));

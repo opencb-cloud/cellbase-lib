@@ -198,8 +198,6 @@ public class ExonHibernateDBAdaptorTest {
 		System.out.println(strings);
 	}
 	
-	
-	
 
 	private void printGeneList(String title, List<?> genes, int numResults) {
 		System.out.println("************************************************************");

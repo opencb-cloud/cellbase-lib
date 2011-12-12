@@ -7,6 +7,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.bioinfo.commons.Config;
+import org.bioinfo.infrared.lib.api.CytobandDBAdaptor;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
@@ -57,7 +58,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 	}
 
 	private SessionFactory createSessionFactory(String speciesVersionPrefix) {
-		//logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): creating Hibernate SessionFactory object for SPECIES.VERSION: '"+speciesVersionPrefix+"' ...");
+		logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): creating Hibernate SessionFactory object for SPECIES.VERSION: '"+speciesVersionPrefix+"' ...");
 		long t1 = System.currentTimeMillis();
 
 		// initial load and setup from hibernate.cfg.xml
@@ -71,7 +72,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			cfg.setProperty("hibernate.connection.url", "jdbc:"+ applicationProperties.getProperty(dbPrefix+".DRIVER_CLASS")+"://"+applicationProperties.getProperty(dbPrefix + ".HOST")+":"+applicationProperties.getProperty(dbPrefix + ".PORT", "3306")+"/"+applicationProperties.getProperty(speciesVersionPrefix+".DATABASE"));
 //			cfg.setProperty("hibernate.connection.pool_size", "30");
 		}else {
-			//logger.debug("HibernateDBAdaptorFactory in createSessionFactory(): 'species' parameter is null or empty");
+			logger.debug("HibernateDBAdaptorFactory in createSessionFactory(): 'species' parameter is null or empty");
 		}
 
 		SessionFactory sessionFactory = cfg.buildSessionFactory();
@@ -154,6 +155,20 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		return (ExonDBAdaptor) new ExonHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 
+	@Override
+	public GenomicRegionFeatureHibernateDBAdaptor getFeatureMapDBAdaptor(String species) {
+		return getFeatureMapDBAdaptor(species, null);
+	}
+	@Override
+	public GenomicRegionFeatureHibernateDBAdaptor getFeatureMapDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species,version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)){
+			SessionFactory sessionFactory  = createSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+		return (GenomicRegionFeatureHibernateDBAdaptor) new GenomicRegionFeatureHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+	}
+	
 	
 	@Override
 	public ProteinDBAdaptor getProteinDBAdaptor(String species) {
@@ -168,6 +183,8 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 	}
 
 
+	
+	
 	@Override
 	public SnpDBAdaptor getSnpDBAdaptor(String species) {
 		return getSnpDBAdaptor(species, null);
@@ -195,19 +212,29 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
 		if(!sessionFactories.containsKey(speciesVersionPrefix)) {
 			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
-//			sessionFactories.put(speciesVersionPrefix, new GenomeSequenceDBAdaptor(sessionFactory));
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-//		return (GenomeSequenceDBAdaptor) sessionFactories.get(speciesVersionPrefix);
 		return (GenomeSequenceDBAdaptor) new GenomeSequenceDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 
+	@Override
+	public CytobandDBAdaptor getCytobandDBAdaptor(String species){
+		return getCytobandDBAdaptor(species, null);
+		
+	}
 	
 	@Override
-	public GeneDBAdaptor getCytobandDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
+	public CytobandDBAdaptor getCytobandDBAdaptor(String species, String version){
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)) {
+			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+		return (CytobandDBAdaptor) new CytobandHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+		
 	}
+	
+	
 
 	@Override
 	public GeneDBAdaptor getChromosomeDBAdaptor(String species) {
