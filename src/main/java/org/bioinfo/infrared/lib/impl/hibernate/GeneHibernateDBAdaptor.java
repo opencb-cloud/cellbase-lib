@@ -121,6 +121,7 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		return null;
 	}
 	
+	
 	@Override
 	public Gene getByEnsemblTranscriptId(String transcriptId) {
 		Criteria criteria = this.openSession().createCriteria(Gene.class).createCriteria("transcripts").add(Restrictions.eq("stableId", transcriptId.trim()));
