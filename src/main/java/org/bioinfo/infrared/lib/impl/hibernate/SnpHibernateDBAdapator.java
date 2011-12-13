@@ -92,11 +92,10 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 	}
 
 	@Override
-	public List<List<Snp>> getAllByEnsemblGeneList(List<String> externalIds) {
+	public List<List<Snp>> getAllByEnsemblGeneIdList(List<String> externalIds) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
 	
 	/****/
 	@Override
@@ -115,7 +114,7 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 		return (List<Snp>)criteria.list();
 	}
 	@Override
-	public List<List<Snp>> getAllByEnsemblTranscriptList(List<String> transcriptIds) {
+	public List<List<Snp>> getAllByEnsemblTranscriptIdList(List<String> transcriptIds) {
 		Session session =  this.openSession();
 		List<List<Snp>> snpList = new ArrayList<List<Snp>>(transcriptIds.size());
 		for(String transcriptId: transcriptIds) {
@@ -123,7 +122,7 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 		}
 		session.close();
 		return snpList;
-	}
+	}	
 	/****/
 	
 
@@ -417,6 +416,5 @@ private List<Snp> query(String queryHQL, List<String> idList){
 	closeSession();
 	return result;
 }
-
 
 }
