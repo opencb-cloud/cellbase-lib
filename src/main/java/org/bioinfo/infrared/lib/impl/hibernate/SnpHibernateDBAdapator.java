@@ -343,17 +343,6 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 @Deprecated
 private List<List<Snp>> Reorder(List<String> idList){
@@ -428,5 +417,6 @@ private List<Snp> query(String queryHQL, List<String> idList){
 	closeSession();
 	return result;
 }
+
 
 }

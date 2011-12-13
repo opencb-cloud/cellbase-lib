@@ -13,6 +13,7 @@ import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
+import org.bioinfo.infrared.lib.api.XRefsDBAdaptor;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -244,11 +245,20 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 
 	
 	
+	@Override
+	public XRefsDBAdaptor getXRefDBAdaptor(String species){
+		return getXRefDBAdaptor(species, null);
+	}
+	
 	
 	@Override
-	public GeneDBAdaptor getXRefDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
+	public XRefsDBAdaptor getXRefDBAdaptor(String species, String version){
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)) {
+			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+		return (XRefsHibernateDBAdaptor) new XRefsHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 
 

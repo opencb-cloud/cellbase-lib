@@ -12,6 +12,7 @@ import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
+import org.bioinfo.infrared.lib.api.XRefsDBAdaptor;
 import org.bioinfo.infrared.lib.impl.hibernate.GenomeSequenceDBAdaptor;
 
 public abstract class DBAdaptorFactory {
@@ -79,12 +80,16 @@ public abstract class DBAdaptorFactory {
 	public abstract GeneDBAdaptor getChromosomeDBAdaptor(String species);
 
 	
-	public abstract GeneDBAdaptor getXRefDBAdaptor(String species);
 
 
 	public abstract CytobandDBAdaptor getCytobandDBAdaptor(String species);
 	
 	public abstract CytobandDBAdaptor getCytobandDBAdaptor(String species, String version);
+
+
+	public abstract XRefsDBAdaptor getXRefDBAdaptor(String species);
+	
+	public abstract XRefsDBAdaptor getXRefDBAdaptor(String species, String version);
 
 	
 }

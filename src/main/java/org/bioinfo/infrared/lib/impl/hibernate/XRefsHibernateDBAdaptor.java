@@ -1,12 +1,19 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.Dbname;
+import org.bioinfo.infrared.core.cellbase.Xref;
 import org.bioinfo.infrared.lib.api.XRefsDBAdaptor;
 import org.bioinfo.infrared.lib.common.XRefs;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 
 public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefsDBAdaptor {
 	
@@ -55,16 +62,20 @@ public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefs
 	
 
 	@Override
-	public XRefs getById(String id) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Xref> getById(String id) {
+		Criteria criteria = this.openSession().createCriteria(Xref.class)
+		.add(Restrictions.eq("displayId", id));
+		return (List<Xref>) executeAndClose(criteria);
 	}
 
 
 	@Override
-	public List<XRefs> getAllByIdList(List<String> ids) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<List<Xref>> getAllByIdList(List<String> ids) {
+		List<List<Xref>> results = new ArrayList<List<Xref>>(ids.size());
+		for (String id : ids) {
+			results.add(this.getById(id));
+		}
+		return results;
 	}
 
 
@@ -85,30 +96,75 @@ public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefs
 	
 
 	@Override
-	public XRefs getByDBName(String id, String dbname) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Xref> getByDBName(String id, String dbname) {
+		Criteria criteria = this.openSession().createCriteria(Xref.class)
+		.add(Restrictions.eq("displayId", id))
+		.createCriteria("dbname").add(Restrictions.eq("name", dbname));
+		return (List<Xref>) executeAndClose(criteria);
 	}
 
 
 	@Override
-	public List<XRefs> getAllByDBName(List<String> ids, String dbname) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<List<Xref>> getAllByDBName(List<String> ids, String dbname) {
+		List<List<Xref>> result = new ArrayList<List<Xref>>(ids.size());
+		for (String id : ids) {
+			if (dbname.equals("")){
+				result.add(this.getByDBNameList(id, null));
+			}
+			else{
+				result.add(this.getByDBNameList(id, Arrays.asList(dbname)));
+			}
+		}
+		return result;
 	}
 
 
 	@Override
-	public XRefs getByDBNameList(String id, List<String> dbnames) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Xref> getByDBNameList(String id, List<String> dbnames) {
+		List<Xref> result =  new ArrayList<Xref>();
+		
+		//TODO: ESTA QUERY ME DEVUELVE DUPLICADOS Y HABRA QUE MEJORARLA
+		if (dbnames != null){
+			String query = "select x2.* from xref x1, xref x2, transcript_to_xref tx1, transcript_to_xref tx2, dbname db where x1.display_id=:id and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.name in :dbNameParam";
+			result = (List<Xref>)this.openSession().createSQLQuery(query)
+			.addEntity(Xref.class)
+			.setParameterList("dbNameParam", dbnames )
+			.setParameter("id", id)
+			.list();
+		}
+		else{
+			String query = "select x2.* from xref x1, xref x2, transcript_to_xref tx1, transcript_to_xref tx2 where x1.display_id=:id and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id";
+			result = (List<Xref>)this.openSession().createSQLQuery(query)
+			.addEntity(Xref.class)
+			.setParameter("id", id)
+			.list();
+		}
+		
+		this.closeSession();
+		
+	
+		
+		//TODO: ESTE CODIGO BORRA LOS DUPLICADOS, ES SOLO UNA SOLUCIÓN RAPIDA
+		List<Xref> result_clean = new ArrayList<Xref>();
+		HashSet<String> keys = new HashSet<String>();
+		for (Xref xref : result) {
+			if (!keys.contains(String.valueOf(xref.getXrefId()))){
+				result_clean.add(xref);
+				keys.add(String.valueOf(xref.getXrefId()));
+			}
+		}
+		return result_clean;
 	}
 
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<XRefs> getAllByDBNameList(List<String> ids, List<String> dbnames) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<List<Xref>> getAllByDBNameList(List<String> ids, List<String> dbnames) {
+		List<List<Xref>> result = new ArrayList<List<Xref>>(ids.size());
+		for (String id : ids) {
+			result.add(this.getByDBNameList(id, dbnames));
+		}
+		return result;
 	}
 
 	

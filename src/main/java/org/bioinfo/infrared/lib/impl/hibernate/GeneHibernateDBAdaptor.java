@@ -13,6 +13,8 @@ import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
@@ -102,7 +104,6 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		for (String id : ensemblIds) {
 			result.add(this.getByEnsemblId(id));
 		}
-		
 		return result;
 	}
 
@@ -110,15 +111,23 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@Override
 	public List<Gene> getAllByName(String name) {
 		Criteria criteria = this.openSession().createCriteria(Gene.class);
-		criteria.add(Restrictions.eq("stableId", name.trim()));
+		Criterion ensemblId = Restrictions.eq("stableId", name.trim());
+		Criterion nameCriterio = Restrictions.eq("externalName", name.trim());
+		LogicalExpression log = Restrictions.or(ensemblId, nameCriterio);
+		criteria.addOrder(Order.asc("chromosome"));
+		criteria.addOrder(Order.asc("start"));
+		criteria.add(log);
 		return (List<Gene>)executeAndClose(criteria);
 	}
 	
 
 	@Override
 	public List<List<Gene>> getAllByNameList(List<String> names) {
-		// TODO Auto-generated method stub
-		return null;
+		List<List<Gene>> genes = new ArrayList<List<Gene>>();
+		for (String name : names) {
+			genes.add(this.getAllByName(name));
+		}
+		return genes;
 	}
 	
 	
