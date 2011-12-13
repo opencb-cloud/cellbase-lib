@@ -12,6 +12,8 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -116,9 +118,12 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		session.close();
 		return transcripts;
 	}
+	
 	@SuppressWarnings("unchecked")
 	private List<Transcript> getAllByName(String name, Session session) {
-		Query query = session.createQuery("select t from Xref as x1, Xref as x2, TranscriptToXref as tx1, TranscriptToXref as tx2, Dbname as db, Transcript as t where" +
+		
+		/**WARNING Xref no estan rellenos para todas las especies **/
+		/*Query query = session.createQuery("select t from Xref as x1, Xref as x2, TranscriptToXref as tx1, TranscriptToXref as tx2, Dbname as db, Transcript as t where" +
 			 " x1.displayId= :name and" +
 			 " x1.xrefId=tx1.xref and" +
 			 " tx1.transcript=tx2.transcript and" +
@@ -126,7 +131,17 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 			 " x2.dbname=db.dbnameId and" +
 			 " db.name='ensembl_transcript' and" +
 			 " x2.displayId=t.stableId").setParameter("name",name.trim());
-		return (List<Transcript>)query.list();
+		return (List<Transcript>)query.list();*/
+		
+
+		Criterion stable = Restrictions.eq("stableId", name);
+	    Criterion nameCrit = Restrictions.eq("externalName", name);
+		LogicalExpression orExp = Restrictions.or(stable,nameCrit);
+		
+		Criteria criteria = this.openSession().createCriteria(Transcript.class)
+		.createCriteria("gene").add(orExp);
+		 
+		 return (List<Transcript>)criteria.list();
 	}
 
 	@Override
@@ -153,12 +168,14 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		Criteria criteria = session
 		.createCriteria(Transcript.class)
 		.createCriteria("gene").add(Restrictions.eq("stableId", ensemblGeneId.trim()));
+		
 		return (List<Transcript>) criteria.list();
 	}
 	
 	
 	@Override
 	public List<List<Transcript>> getByEnsemblGeneIdList(List<String> ensemblGeneIds) {
+		
 		Session session = this.openSession();
 		List<List<Transcript>> transcripts =  new ArrayList<List<Transcript>>(ensemblGeneIds.size());
 		for(String ensemblGeneId: ensemblGeneIds){

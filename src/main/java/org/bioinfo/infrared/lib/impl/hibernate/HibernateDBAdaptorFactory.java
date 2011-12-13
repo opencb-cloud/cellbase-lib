@@ -45,7 +45,6 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		if(species != null && !species.equals("")) {
 			// coding an alias to application code species
 			species = speciesAlias.get(species);
-
 			// if 'version' parameter has not been provided the default version is selected
 			if(version == null || version.trim().equals("")) {
 				version = applicationProperties.getProperty(species+".DEFAULT.VERSION").toUpperCase();
@@ -55,6 +54,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			// setting database configuration for the 'species.version'
 			speciesPrefix = species.toUpperCase() + "." + version.toUpperCase();
 		}
+		
 		return speciesPrefix;
 	}
 

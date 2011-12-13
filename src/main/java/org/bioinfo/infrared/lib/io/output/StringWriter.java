@@ -27,10 +27,11 @@ public class StringWriter {
 	
 	public static String serialize(Xref xref){
 		return new StringBuilder()
-//								.append(xref.getXrefId()).append("\t")
 								.append(xref.getDisplayId()).append("\t")
 								.append(xref.getDescription()).toString();
 	}
+	
+
 	
 	public static String serialize(GenomeSequence genomeSequence){
 		return new StringBuilder().append(genomeSequence.getId().getChromosome()).append("\t").append(genomeSequence.getId().getChunk()).append("\t").append(genomeSequence.getStart()).append("\t").append(genomeSequence.getEnd()).append(genomeSequence.getSequence()).toString();
