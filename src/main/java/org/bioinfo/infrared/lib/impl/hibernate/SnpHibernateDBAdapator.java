@@ -100,7 +100,7 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 	
 	/****/
 	@Override
-	public List<Snp> getAllByEnsemblTranscriptId(String transcriptId) {		
+	public List<Snp> getAllByEnsemblTranscriptId(String transcriptId) {
 		Session session =  this.openSession();
 		List<Snp> snps = this.getAllByEnsemblTranscriptId(transcriptId,session);
 		session.close();
