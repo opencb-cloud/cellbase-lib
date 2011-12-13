@@ -114,6 +114,8 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		Criterion ensemblId = Restrictions.eq("stableId", name.trim());
 		Criterion nameCriterio = Restrictions.eq("externalName", name.trim());
 		LogicalExpression log = Restrictions.or(ensemblId, nameCriterio);
+		criteria.addOrder(Order.asc("chromosome"));
+		criteria.addOrder(Order.asc("start"));
 		criteria.add(log);
 		return (List<Gene>)executeAndClose(criteria);
 	}

@@ -92,12 +92,7 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 	}
 
 	
-	@Override
-	public List<List<Snp>> getAllByEnsemblTranscriptList(List<String> externalIds) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	
 
 	@SuppressWarnings("unchecked")
@@ -400,6 +395,25 @@ private List<Snp> query(String queryHQL, List<String> idList){
 	}
 	closeSession();
 	return result;
+}
+
+@Override
+public List<Snp> getAllByEnsemblGeneId(String ensemblGeneId) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public List<List<Snp>> getAllByEnsemblGeneIdList(List<String> ensemblGeneIds) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public List<List<Snp>> getAllByEnsemblTranscriptIdList(
+		List<String> ensemblTranscriptIds) {
+	// TODO Auto-generated method stub
+	return null;
 }
 
 }

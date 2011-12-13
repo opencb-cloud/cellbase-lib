@@ -21,13 +21,13 @@ public interface SnpDBAdaptor extends FeatureDBAdaptor {
 	
 	public List<List<Snp>> getAllByGeneIdList(List<String> externalIds);
 	
-	public List<Snp> getAllByEnsemblGeneId(String externalId);
+	public List<Snp> getAllByEnsemblGeneId(String ensemblGeneId);
 	
-	public List<List<Snp>> getAllByEnsemblGeneList(List<String> externalIds);
+	public List<List<Snp>> getAllByEnsemblGeneIdList(List<String> ensemblGeneIds);
 	
-	public List<Snp> getAllByEnsemblTranscriptId(String externalId);
+	public List<Snp> getAllByEnsemblTranscriptId(String ensemblTranscriptId);
 	
-	public List<List<Snp>> getAllByEnsemblTranscriptList(List<String> externalIds);
+	public List<List<Snp>> getAllByEnsemblTranscriptIdList(List<String> ensemblTranscriptIds);
 	
 	public List<String> getAllConsequenceTypes();
 

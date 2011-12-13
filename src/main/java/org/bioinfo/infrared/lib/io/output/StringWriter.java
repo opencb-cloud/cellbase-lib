@@ -8,6 +8,7 @@ import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.GenomeSequence;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Transcript;
+import org.bioinfo.infrared.core.cellbase.Xref;
 import org.bioinfo.infrared.serialization.InfraredSerializer;
 
 public class StringWriter {
@@ -22,6 +23,13 @@ public class StringWriter {
 	
 	public static String serialize(Cytoband cytoband){
 		return new StringBuilder().append(cytoband.getCytoband()).append("\t").append(cytoband.getChromosome()).append("\t").append(cytoband.getStart()).append("\t").append(cytoband.getEnd()).append("\t").append(cytoband.getStain()).toString();
+	}
+	
+	public static String serialize(Xref xref){
+		return new StringBuilder()
+//								.append(xref.getXrefId()).append("\t")
+								.append(xref.getDisplayId()).append("\t")
+								.append(xref.getDescription()).toString();
 	}
 	
 	public static String serialize(GenomeSequence genomeSequence){
@@ -92,6 +100,11 @@ public class StringWriter {
 			
 			if (object instanceof String){
 				sb.append(StringWriter.serialize((String) object)).append("\n");
+				continue;
+			}
+			
+			if (object instanceof Xref){
+				sb.append(StringWriter.serialize((Xref)object)).append("\n");
 				continue;
 			}
 			
