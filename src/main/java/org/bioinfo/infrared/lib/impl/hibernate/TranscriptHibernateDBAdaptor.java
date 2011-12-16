@@ -139,6 +139,8 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		LogicalExpression orExp = Restrictions.or(stable,nameCrit);
 		
 		Criteria criteria = this.openSession().createCriteria(Transcript.class)
+		.addOrder(Order.asc("chromosome"))
+		.addOrder(Order.asc("start"))
 		.createCriteria("gene").add(orExp);
 		 
 		 return (List<Transcript>)criteria.list();
@@ -167,8 +169,11 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	private List<Transcript> getByEnsemblGeneId(String ensemblGeneId, Session session) {
 		Criteria criteria = session
 		.createCriteria(Transcript.class)
-		.createCriteria("gene").add(Restrictions.eq("stableId", ensemblGeneId.trim()));
+		.addOrder(Order.asc("start"))
+		.createCriteria("gene")
+		.add(Restrictions.eq("stableId", ensemblGeneId.trim()));
 		
+	
 		return (List<Transcript>) criteria.list();
 	}
 	
@@ -189,7 +194,9 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	@Override
 	public List<Transcript> getAllByBiotype(String biotype) {
 		Criteria criteria = this.openSession().createCriteria(Transcript.class);
-		criteria.add(Restrictions.eq("biotype", biotype)).addOrder(Order.asc("chromosome")).addOrder(Order.asc("start"));
+		criteria.add(Restrictions.eq("biotype", biotype))
+		.addOrder(Order.asc("chromosome"))
+		.addOrder(Order.asc("start"));
 		return (List<Transcript>)executeAndClose(criteria);
 	}
 

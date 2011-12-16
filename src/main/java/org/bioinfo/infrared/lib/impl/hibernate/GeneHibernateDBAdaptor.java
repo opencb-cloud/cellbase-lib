@@ -132,7 +132,11 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	
 	@Override
 	public Gene getByEnsemblTranscriptId(String transcriptId) {
-		Criteria criteria = this.openSession().createCriteria(Gene.class).createCriteria("transcripts").add(Restrictions.eq("stableId", transcriptId.trim()));
+		Criteria criteria = this.openSession().createCriteria(Gene.class)
+		.createCriteria("transcripts")
+		.add(Restrictions.eq("stableId", transcriptId.trim()))
+		.addOrder(Order.asc("chromosome"))
+		.addOrder(Order.asc("start"));
 		return (Gene) executeAndClose(criteria).get(0);
 	}
 	
@@ -140,7 +144,10 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@Override
 	public List<Gene> getAllByEnsemblTranscriptIdList(List<String> transcriptIdList) {
 		Criteria criteria = this.openSession().createCriteria(Gene.class)
-		.createCriteria("transcripts").add(Restrictions.in("stableId", transcriptIdList));
+		.createCriteria("transcripts")
+		.add(Restrictions.in("stableId", transcriptIdList))
+		.addOrder(Order.asc("chromosome"))
+		.addOrder(Order.asc("start"));
 		return (List<Gene>) executeAndClose(criteria);
 	}
 
@@ -170,7 +177,11 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@Override
 	public List<Gene> getAllByPosition(String chromosome, int position) {
 		Criteria criteria =  this.openSession().createCriteria(Gene.class);
-		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", position)).add(Restrictions.le("start", position));
+		criteria.add(Restrictions.eq("chromosome", chromosome))
+		.add(Restrictions.ge("end", position))
+		.add(Restrictions.le("start", position))
+		.addOrder(Order.asc("chromosome"))
+		.addOrder(Order.asc("start"));
 		return (List<Gene>)executeAndClose(criteria);
 	}
 
@@ -201,7 +212,9 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@Override
 	public List<Gene> getAllByRegion(String chromosome) {
 		Criteria criteria =  this.openSession().createCriteria(Gene.class);
-		criteria.add(Restrictions.eq("chromosome", chromosome));
+		criteria.add(Restrictions.eq("chromosome", chromosome))
+		.addOrder(Order.asc("chromosome"))
+		.addOrder(Order.asc("start"));
 		return (List<Gene>)executeAndClose(criteria);
 	}
 
@@ -210,7 +223,10 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@Override
 	public List<Gene> getAllByRegion(String chromosome, int start) {
 		Criteria criteria =  this.openSession().createCriteria(Gene.class);
-		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", start));
+		criteria.add(Restrictions.eq("chromosome", chromosome))
+		.add(Restrictions.ge("end", start))
+		.addOrder(Order.asc("chromosome"))
+		.addOrder(Order.asc("start"));
 		return (List<Gene>)executeAndClose(criteria);
 	}
 
@@ -219,7 +235,11 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@Override
 	public List<Gene> getAllByRegion(String chromosome, int start, int end) {
 		Criteria criteria =  this.openSession().createCriteria(Gene.class);
-		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", start)).add(Restrictions.le("start", end));
+		criteria.add(Restrictions.eq("chromosome", chromosome))
+		.add(Restrictions.ge("end", start))
+		.add(Restrictions.le("start", end))
+		.addOrder(Order.asc("chromosome"))
+		.addOrder(Order.asc("start"));
 		return (List<Gene>)executeAndClose(criteria);
 	}
 
@@ -228,7 +248,12 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@Override
 	public List<Gene> getAllByRegion(String chromosome, int start, int end,	List<String> biotypes) {
 		Criteria criteria =  this.openSession().createCriteria(Gene.class);
-		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", start)).add(Restrictions.le("start", end)).add(Restrictions.in("biotype", biotypes));
+		criteria.add(Restrictions.eq("chromosome", chromosome))
+		.add(Restrictions.ge("end", start))
+		.add(Restrictions.le("start", end))
+		.add(Restrictions.in("biotype", biotypes))
+		.addOrder(Order.asc("chromosome"))
+		.addOrder(Order.asc("start"));
 		return (List<Gene>)executeAndClose(criteria);
 	}
 

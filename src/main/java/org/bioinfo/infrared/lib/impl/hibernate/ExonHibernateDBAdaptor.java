@@ -13,6 +13,7 @@ import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 
@@ -112,8 +113,11 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	private List<Exon> getByEnsemblTranscriptId(String transcriptId, Session session) {
 		Criteria criteria =  session
 		.createCriteria(Exon.class)
+		.addOrder(Order.asc("chromosome"))
+		.addOrder(Order.asc("start"))
 		.createCriteria("exonToTranscripts")
-		.createCriteria("transcript").add( Restrictions.eq("stableId", transcriptId.trim()));
+		.createCriteria("transcript")
+		.add( Restrictions.eq("stableId", transcriptId.trim()));
 		return (List<Exon>)criteria.list();
 	}
 	@Override
@@ -139,7 +143,10 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	@SuppressWarnings("unchecked")
 	private List<Exon> getByEnsemblGeneId(String geneId, Session session) {
 		Criteria criteria =  session
-				.createCriteria(Exon.class).setFetchMode("exon2transcripts", FetchMode.SELECT)
+				.createCriteria(Exon.class)
+				.addOrder(Order.asc("chromosome"))
+				.addOrder(Order.asc("start"))
+				.setFetchMode("exon2transcripts", FetchMode.SELECT)
 				.createCriteria("exonToTranscripts").setFetchMode("transcript", FetchMode.SELECT)
 				.createCriteria("transcript").setFetchMode("gene", FetchMode.SELECT)
 				.createCriteria("gene").add( Restrictions.eq("stableId", geneId.trim()));
@@ -176,7 +183,9 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	}
 	@SuppressWarnings("unchecked")
 	private List<Exon> getAllByPosition(String chromosome, int position, Session session) {
-		Criteria criteria =  session.createCriteria(Exon.class);
+		Criteria criteria =  session.createCriteria(Exon.class)
+		.addOrder(Order.asc("chromosome"))
+		.addOrder(Order.asc("start"));
 		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", position)).add(Restrictions.le("start", position));
 		return (List<Exon>)criteria.list();
 	}
@@ -204,14 +213,19 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	@Override
 	public List<Exon> getAllByRegion(String chromosome, int start) {
 		Criteria criteria =  this.openSession().createCriteria(Exon.class);
-		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", start));
+		criteria.add(Restrictions.eq("chromosome", chromosome))
+		.addOrder(Order.asc("chromosome"))
+		.addOrder(Order.asc("start"))
+		.add(Restrictions.ge("end", start));
 		return (List<Exon>)executeAndClose(criteria);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Exon> getAllByRegion(String chromosome, int start, int end) {
-		Criteria criteria =  this.openSession().createCriteria(Exon.class);
+		Criteria criteria =  this.openSession().createCriteria(Exon.class)
+		.addOrder(Order.asc("chromosome"))
+		.addOrder(Order.asc("start"));
 		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", start)).add(Restrictions.le("start", end));
 		return (List<Exon>)executeAndClose(criteria);
 	}
@@ -253,6 +267,8 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	public List<Exon> getAllBySnpId(String snpNameId, Session session) {
 		Criteria criteria = session
 				.createCriteria(Exon.class)
+				.addOrder(Order.asc("chromosome"))
+				.addOrder(Order.asc("start"))
 				.createCriteria("exonToTranscripts")
 				.createCriteria("transcript")
 				.createCriteria("snpToTranscripts")
