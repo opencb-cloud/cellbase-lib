@@ -250,7 +250,6 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		return getXRefDBAdaptor(species, null);
 	}
 	
-	
 	@Override
 	public XRefsDBAdaptor getXRefDBAdaptor(String species, String version){
 		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
@@ -258,7 +257,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (XRefsHibernateDBAdaptor) new XRefsHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+		return (XRefsDBAdaptor) new XRefsHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 
 
