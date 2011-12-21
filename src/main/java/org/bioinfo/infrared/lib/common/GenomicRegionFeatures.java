@@ -1,6 +1,7 @@
 package org.bioinfo.infrared.lib.common;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.Exon;
@@ -20,16 +21,53 @@ public class GenomicRegionFeatures {
 
 	private List<String> sources;
 	
+//	private List<String> positionConsequenceType = new ArrayList<String>();
+	private HashMap<String, String> consequenceTypes = new HashMap<String, String>();
 	
 	public GenomicRegionFeatures(Region region){
 		this.region = region;
 		this.sources = sources;
-		
-		
-		
 	}
 
 
+	public HashMap<String, String> getConsequenceType(){
+		HashMap<String, String> types = new HashMap<String, String>();
+		
+		
+		if (this.getTranscripts().size() > 0){
+			
+			
+			if (this.getExons().size() == 0){
+				for (Transcript transcript : this.getTranscripts()) {
+					types.put(transcript.getStableId(), "INTRONIC");
+				}
+			}
+			else{
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			}
+		
+		
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		return types;
+	}
+	
 	public Region getRegion() {
 		return region;
 	}

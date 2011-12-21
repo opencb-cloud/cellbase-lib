@@ -111,14 +111,20 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	}
 	@SuppressWarnings("unchecked")
 	private List<Exon> getByEnsemblTranscriptId(String transcriptId, Session session) {
-		Criteria criteria =  session
-		.createCriteria(Exon.class)
-		.addOrder(Order.asc("chromosome"))
-		.addOrder(Order.asc("start"))
-		.createCriteria("exonToTranscripts")
-		.createCriteria("transcript")
-		.add( Restrictions.eq("stableId", transcriptId.trim()));
-		return (List<Exon>)criteria.list();
+//		Criteria criteria =  session
+//		.createCriteria(Exon.class)
+//		.addOrder(Order.asc("chromosome"))
+//		.addOrder(Order.asc("start"))
+//		.createCriteria("exonToTranscripts").setFetchMode("exonToTranscripts", FetchMode.JOIN)
+//		.createCriteria("transcript")
+//		.add( Restrictions.eq("stableId", transcriptId.trim()));
+		
+		
+		String query = "select exon from Exon as exon left join fetch exon.exonToTranscripts as ett left join fetch ett.transcript as t where t.stableId = :stableId order by exon.start asc";
+		Query HQLQuery = session.createQuery(query);
+		HQLQuery.setParameter("stableId", transcriptId.trim());
+
+		return (List<Exon>)HQLQuery.list();
 	}
 	@Override
 	public List<List<Exon>> getByEnsemblTranscriptIdList(List<String> transcriptIds) {

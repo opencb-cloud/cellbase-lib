@@ -381,4 +381,25 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		}
 		return sequence;
 	}
+	
+	
+	@Override
+	public List<Transcript> getAllByEnsemblExonId(String ensemblExonId) {
+		Criteria criteria =  this.openSession().createCriteria(Transcript.class)
+		.createCriteria("exonToTranscripts")
+		.createCriteria("exon")
+		.add(Restrictions.eq("stableId", ensemblExonId));
+		return (List<Transcript>) executeAndClose(criteria);
+	}
+	
+	@Override
+	public List<List<Transcript>> getAllByEnsemblExonId(List<String> ensemblExonId) {
+		List<List<Transcript>> result = new ArrayList<List<Transcript>>();
+		for (String id : ensemblExonId) {
+			result.add(this.getAllByEnsemblExonId(id));
+		}
+		return result;
+	}
+	
+	
 }

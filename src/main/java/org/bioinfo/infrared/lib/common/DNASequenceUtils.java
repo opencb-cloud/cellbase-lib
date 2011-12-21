@@ -1,13 +1,14 @@
 package org.bioinfo.infrared.lib.common;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class DNASequenceUtils {
 	
-	public static Map<String, String> complement;
+	public static Map<String, String> complement = new HashMap<String, String>();
 	
-	public static Map<String, String> codonToAminoacid;
-	public static Map<String, String> codonToAminoacidShort;
+	public static Map<String, String> codonToAminoacid = new HashMap<String, String>();
+	public static Map<String, String> codonToAminoacidShort = new HashMap<String, String>();
 	
 	static {
 		complement.put("A", "T");complement.put("T", "A");complement.put("C", "G");complement.put("G", "C");
@@ -19,7 +20,7 @@ public class DNASequenceUtils {
 		codonToAminoacid.put("UAU", "Tyr");codonToAminoacid.put("UAC", "Tyr");codonToAminoacid.put("UAA", "Stop");codonToAminoacid.put("UAG", "Stop");
 		codonToAminoacid.put("UGU", "Cys");codonToAminoacid.put("UGC", "Cys");codonToAminoacid.put("UGA", "Stop");codonToAminoacid.put("UGG", "Trp");
 		codonToAminoacid.put("CUU", "Leu");codonToAminoacid.put("CUC", "Leu");codonToAminoacid.put("CUA", "Leu");codonToAminoacid.put("CUG", "Leu");
-		codonToAminoacid.put("CCU", "Pro");codonToAminoacid.put("CCC", "Pro");codonToAminoacid.put("CCA", "Pro");codonToAminoacid.put("CAG", "Pro");
+		codonToAminoacid.put("CCU", "Pro");codonToAminoacid.put("CCC", "Pro");codonToAminoacid.put("CCA", "Pro");codonToAminoacid.put("CCG", "Pro");
 		codonToAminoacid.put("CAU", "His");codonToAminoacid.put("CAC", "His");codonToAminoacid.put("CAA", "Gln");codonToAminoacid.put("CAG", "Gln");
 		codonToAminoacid.put("CGU", "Arg");codonToAminoacid.put("CGC", "Arg");codonToAminoacid.put("CGA", "Arg");codonToAminoacid.put("CGG", "Arg");
 		codonToAminoacid.put("AUU", "Ile");codonToAminoacid.put("AUC", "Ile");codonToAminoacid.put("AUA", "Ile");codonToAminoacid.put("AUG", "Met");
@@ -37,14 +38,17 @@ public class DNASequenceUtils {
 		codonToAminoacidShort.put("UCU", "S");codonToAminoacidShort.put("UCC", "S");codonToAminoacidShort.put("UCA", "S");codonToAminoacidShort.put("UCG", "S");
 		codonToAminoacidShort.put("UAU", "Y");codonToAminoacidShort.put("UAC", "Y");codonToAminoacidShort.put("UAA", "Stop");codonToAminoacidShort.put("UAG", "Stop");
 		codonToAminoacidShort.put("UGU", "C");codonToAminoacidShort.put("UGC", "C");codonToAminoacidShort.put("UGA", "Stop");codonToAminoacidShort.put("UGG", "W");
+		
 		codonToAminoacidShort.put("CUU", "L");codonToAminoacidShort.put("CUC", "L");codonToAminoacidShort.put("CUA", "L");codonToAminoacidShort.put("CUG", "L");
-		codonToAminoacidShort.put("CCU", "P");codonToAminoacidShort.put("CCC", "P");codonToAminoacidShort.put("CCA", "P");codonToAminoacidShort.put("CAG", "P");
+		codonToAminoacidShort.put("CCU", "P");codonToAminoacidShort.put("CCC", "P");codonToAminoacidShort.put("CCA", "P");codonToAminoacidShort.put("CCG", "P");
 		codonToAminoacidShort.put("CAU", "H");codonToAminoacidShort.put("CAC", "H");codonToAminoacidShort.put("CAA", "Q");codonToAminoacidShort.put("CAG", "Q");
 		codonToAminoacidShort.put("CGU", "R");codonToAminoacidShort.put("CGC", "R");codonToAminoacidShort.put("CGA", "R");codonToAminoacidShort.put("CGG", "R");
+		
 		codonToAminoacidShort.put("AUU", "I");codonToAminoacidShort.put("AUC", "I");codonToAminoacidShort.put("AUA", "I");codonToAminoacidShort.put("AUG", "M");
 		codonToAminoacidShort.put("ACU", "T");codonToAminoacidShort.put("ACC", "T");codonToAminoacidShort.put("ACA", "T");codonToAminoacidShort.put("ACG", "T");
 		codonToAminoacidShort.put("AAU", "N");codonToAminoacidShort.put("AAC", "N");codonToAminoacidShort.put("AAA", "K");codonToAminoacidShort.put("AAG", "K");
 		codonToAminoacidShort.put("AGU", "S");codonToAminoacidShort.put("AGC", "S");codonToAminoacidShort.put("AGA", "R");codonToAminoacidShort.put("AGG", "R");
+		
 		codonToAminoacidShort.put("GUU", "V");codonToAminoacidShort.put("GUC", "V");codonToAminoacidShort.put("GUA", "V");codonToAminoacidShort.put("GUG", "V");
 		codonToAminoacidShort.put("GCU", "A");codonToAminoacidShort.put("GCC", "A");codonToAminoacidShort.put("GCA", "A");codonToAminoacidShort.put("GCG", "A");
 		codonToAminoacidShort.put("GAU", "D");codonToAminoacidShort.put("GAC", "D");codonToAminoacidShort.put("GAA", "E");codonToAminoacidShort.put("GAG", "E");

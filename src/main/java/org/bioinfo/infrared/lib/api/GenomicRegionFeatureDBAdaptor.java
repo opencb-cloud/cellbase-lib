@@ -1,5 +1,6 @@
 package org.bioinfo.infrared.lib.api;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.bioinfo.infrared.lib.common.GenomicRegionFeatures;
@@ -22,6 +23,10 @@ public interface GenomicRegionFeatureDBAdaptor {
 	public GenomicRegionFeatures getByRegion(Region region, List<String> sources);	// sources: gene, exon, snp, ...
 	
 	public List<GenomicRegionFeatures> getAllByRegionList(List<Region> regions, List<String> sources);
+
+	public HashMap<String, List<String>> getConsequenceType(String chromosome, int position);
+
+	HashMap<String, List<String>> getConsequenceType(String chromosome,int position, String alternativeAllele);
 	
 	
 //	public GenomicRegionFeatures getAllByRegion(Region region, List<String> featureTypes); // types: variation, regulatory, core, ...

@@ -1,17 +1,26 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.bioinfo.infrared.core.cellbase.Exon;
+import org.bioinfo.infrared.core.cellbase.ExonToTranscript;
 import org.bioinfo.infrared.core.cellbase.FeatureMap;
 import org.bioinfo.infrared.core.cellbase.FeatureMapId;
 import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
+import org.bioinfo.infrared.lib.common.DNASequenceUtils;
+import org.bioinfo.infrared.lib.common.GenomeSequenceFeature;
 import org.bioinfo.infrared.lib.common.GenomicRegionFeatures;
 import org.bioinfo.infrared.lib.common.Region;
+import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
@@ -60,13 +69,16 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 		int chunk_start = start / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
 		int chunk_end = end / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
 		
+//		System.out.println("Chunks: " + chunk_start + "   " + chunk_end);
+		
 		Query query = this.openSession()
 		.createQuery("select featureMap from FeatureMap as featureMap left join fetch featureMap.id " +
-				"where id.chunkId >= :start_chunk and id.chunkId <= :end_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam")
+				"where id.chunkId >= :start_chunk and id.chunkId <= :end_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome")
 		.setParameter("start_chunk", chunk_start)
 		.setParameter("end_chunk", chunk_end)
 		.setParameter("startparam", start)
-		.setParameter("endparam", end);
+		.setParameter("endparam", end)
+		.setParameter("chromosome", chromosome);
 		List<FeatureMap> list = (List<FeatureMap>)executeAndClose(query);
 		
 		GenomicRegionFeatures genomicRegionFeatures = this.getGenomicRegionFeature(list, new Region(chromosome, start, end), sources);
@@ -166,4 +178,231 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 		return snps;
 	}
 
+	
+	
+	
+	
+	/** Consequence Type by Position **/
+	
+	@SuppressWarnings("unused")
+	private void addElement(String key, String value, HashMap<String, List<String>> collection ){
+		if(!collection.containsKey(key)){
+			collection.put(key, new ArrayList<String>());
+		}
+		collection.get(key).add(value);
+	}
+	
+	private List<Exon> getExonByPosition(List<Exon> exons, String chromosome, int position){
+		List<Exon> result = new ArrayList<Exon>();
+		for (Exon exon : exons) {
+			if(exon.getChromosome().equals(chromosome)){
+				if ((exon.getStart()<= position)&&(exon.getEnd()>=position)){
+					result.add(exon);
+				}
+			}
+		}
+		return result;
+	}
+
+	
+	
+	private int getCodonPosition(Transcript transcript, List<Exon> exons,  int position){
+		int cdna_length = 0;
+//		System.out.println("-----------------------------------------");
+//		System.out.println("TRANSCRIPT: " + transcript.getStableId());
+		for (Exon exonIntranscript : exons) {
+			if (position > exonIntranscript.getEnd()){
+				/** Primer exon **/
+				if ((exonIntranscript.getStart() <= transcript.getCodingRegionStart()) && (exonIntranscript.getEnd() >= transcript.getCodingRegionStart())){
+					cdna_length = cdna_length + (exonIntranscript.getEnd() - transcript.getCodingRegionStart()) +1 ;
+//					System.out.println("\t  EXON: " + exonIntranscript.getStableId()+ " " + cdna_length);
+				}
+				
+				/** Los demas **/
+				if ((exonIntranscript.getStart() >  transcript.getCodingRegionStart())&&(exonIntranscript.getEnd() <= transcript.getCodingRegionEnd())){
+					cdna_length = cdna_length + (exonIntranscript.getEnd() - exonIntranscript.getStart()) + 1;
+//					System.out.println("\t +EXON: " + exonIntranscript.getStableId()+ " " + cdna_length);
+				}
+			}
+			else{
+				if ((exonIntranscript.getStart() <= transcript.getCodingRegionStart())&&(exonIntranscript.getEnd()>= transcript.getCodingRegionEnd())){
+					cdna_length = cdna_length + (position -  transcript.getCodingRegionStart()) + 1;
+				}
+				else{
+					cdna_length = cdna_length + (position - exonIntranscript.getStart()) + 1;
+//					System.out.println("\t *EXON: " + exonIntranscript.getStableId()+ " " + cdna_length);
+//					System.out.println(transcript.getStableId() + "   Phase: " + (cdna_length%3)); 
+				break;
+				}
+				
+			}
+		}	
+		return cdna_length % 3 ;
+		
+		
+	}
+	
+	private List<String> getConsequenceTypeByAlternativeAllele(Transcript transcript, List<Exon> exons, int position, String alternativeAllele) {
+		int codon_position = this.getCodonPosition(transcript, exons, position);
+		 List<String> consequenceTypes = new ArrayList<String>();
+		
+		
+		GenomeSequenceDBAdaptor sequenceDbAdaptor = new GenomeSequenceDBAdaptor(this.getSessionFactory());
+		
+		GenomeSequenceFeature sequence = null;
+		if (codon_position == 1){
+			sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position, position + 2);
+		}
+		
+		if (codon_position == 2){
+			sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position - 1, position + 1);
+		}
+		/** Caso del 3 **/
+		if (codon_position == 0){
+			sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position - 2, position);
+			codon_position = 3;
+		}
+		
+		String referenceSequence = sequence.getSequence();
+	
+		char[] x = referenceSequence.toCharArray();
+		x[codon_position - 1] = alternativeAllele.toCharArray()[0]; 
+		
+		String alternative = new String();
+		
+		for (int i = 0; i < x.length; i++) {
+			alternative = alternative + x[i];
+		}
+			
+//		
+		referenceSequence = referenceSequence.replaceAll("T", "U");
+		alternative = alternative.replaceAll("T", "U");
+		
+		
+		consequenceTypes.add("coding_sequence_variant");
+		
+		if (DNASequenceUtils.codonToAminoacidShort.get(referenceSequence).equals(DNASequenceUtils.codonToAminoacidShort.get(alternative))){
+			consequenceTypes.add("SYNONYMOUS_CODING (" + DNASequenceUtils.codonToAminoacidShort.get(referenceSequence) + ")");
+		}
+		else{
+			consequenceTypes.add("NON_SYNONYMOUS_CODING (" + DNASequenceUtils.codonToAminoacidShort.get(referenceSequence) + "," + DNASequenceUtils.codonToAminoacidShort.get(alternative) + ")");
+			if ((!DNASequenceUtils.codonToAminoacidShort.get(referenceSequence).toLowerCase().equals("stop"))&& (DNASequenceUtils.codonToAminoacidShort.get(alternative).toLowerCase().equals("stop"))){
+				consequenceTypes.add("STOP_GAINED");
+			}
+			
+			if ((DNASequenceUtils.codonToAminoacidShort.get(referenceSequence).toLowerCase().equals("stop"))&& (!DNASequenceUtils.codonToAminoacidShort.get(alternative).toLowerCase().equals("stop"))){
+				consequenceTypes.add("STOP_LOST");
+			}
+			
+			
+		}
+//		System.out.println("Reference:" + referenceSequence );
+//		System.out.println("Alternative:" +alternative);
+//		
+//		System.out.println("Reference:" + DNASequenceUtils.codonToAminoacidShort.get(referenceSequence) );
+//		System.out.println("Alternative:" + DNASequenceUtils.codonToAminoacidShort.get(alternative));
+		return consequenceTypes;
+	}
+	
+	
+	private List<String> getConsequenceType(Transcript transcript, String chromosome, int position, String alternativeAllele){
+		 List<String> consequenceTypes = new ArrayList<String>();
+		
+		ExonHibernateDBAdaptor dbaExonAdaptor = new ExonHibernateDBAdaptor(this.getSessionFactory());
+		List<Exon> exons = dbaExonAdaptor.getByEnsemblTranscriptId(transcript.getStableId());
+		
+		List<Exon> exonsByPosition = this.getExonByPosition(exons, chromosome, position);
+		
+		
+		if (transcript.getBiotype().equals("nonsense_mediated_decay")){
+			consequenceTypes.add("NMD_TRANSCRIPT");
+			
+		}
+		
+		
+		if(exonsByPosition.size() == 0){
+			consequenceTypes.add("INTRONIC");
+			
+			for (Exon exon2 : exons) {
+				if (exon2.getStart() > position){
+						if (exon2.getStart() - position < 3){
+								consequenceTypes.add("SPLICE_ACCEPTOR_VARIANT");
+						}
+						if ((exon2.getStart() - position >= 3)&&(exon2.getStart() - position <= 8)){
+							consequenceTypes.add("SPLICE_REGION_VARIANT");
+						}
+				}
+				
+				if (exon2.getEnd() < position){
+					if ( position - exon2.getEnd() < 3){
+						consequenceTypes.add("SPLICE_DONOR_VARIANT");
+					}
+					
+					if (( position - exon2.getEnd() >= 3) && ( position - exon2.getEnd() <= 8)){
+						consequenceTypes.add("SPLICE_REGION_VARIANT");
+					}
+					
+				}
+			}
+		}
+		else{
+			if ((transcript.getCodingRegionStart() == 0)&&( transcript.getCdnaCodingEnd() ==0)){
+				consequenceTypes.add("WITHIN_NON_CODING_GENE");
+			}
+			else{
+				if (transcript.getCodingRegionStart() > position) {
+					consequenceTypes.add("5_PRIME_UTR");
+				}
+
+				if (transcript.getCodingRegionEnd() < position) {
+					consequenceTypes.add("3_PRIME_UTR");
+				}
+				
+				if ((transcript.getCodingRegionStart() <= position) && (transcript.getCodingRegionEnd() >= position)){
+					consequenceTypes.add("coding");
+					
+					if (alternativeAllele != null){
+						consequenceTypes.addAll(this.getConsequenceTypeByAlternativeAllele(transcript, exons,  position, alternativeAllele));
+					}
+				}
+			
+			}
+			
+		}
+		
+		return consequenceTypes;
+	}
+	
+
+
+	@Override
+	public HashMap<String, List<String>> getConsequenceType(String chromosome, int position, String alternativeAllele){
+		GenomicRegionFeatures maps = this.getByRegion(new Region(chromosome,position, position));
+		HashMap<String, List<String>> types = new HashMap<String, List<String>>();
+
+		DBAdaptorFactory dbAdaptorFact = new HibernateDBAdaptorFactory();
+		ExonHibernateDBAdaptor dbaExonAdaptor = new ExonHibernateDBAdaptor(this.getSessionFactory());
+		
+
+		if ((maps.getTranscripts().size() > 0)&&(maps.getSnp().size() == 0)) {
+			for (Transcript transcript : maps.getTranscripts()) {
+				types.put(transcript.getStableId(), this.getConsequenceType(transcript, chromosome, position, alternativeAllele.toUpperCase().trim()));
+			}
+		}
+		
+		if (maps.getSnp().size() > 0){
+			for (Snp snp : maps.getSnp()) {
+				types.put(snp.getName(), Arrays.asList(snp.getSoConsequenceType().split(",")));
+			}
+		}
+		
+		return types;
+	}
+
+
+	@Override
+	public HashMap<String, List<String>> getConsequenceType(String chromosome,int position) {
+		return this.getConsequenceType(chromosome, position, null);
+
+	}
 }

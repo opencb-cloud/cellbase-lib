@@ -3,6 +3,7 @@ package org.bioinfo.infrared.lib.impl.hibernate;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -61,19 +62,28 @@ public class GenomicRegionFeatureHibernateDBAdaptorTest {
 	}
 
 	
-	@Test
-	public void testGenomicRegionGetByRegion() {
-		GenomicRegionFeatures maps = this.genomicRegionFeatureDBAdaptor.getByRegion("1", 4985398, 4987398);
-		print("testGenomicRegionGetByRegion", maps);
-	}
+//	@Test
+//	public void testGenomicRegionGetByRegion() {
+//		GenomicRegionFeatures maps = this.genomicRegionFeatureDBAdaptor.getByRegion("1", 4985398, 4987398);
+//		print("testGenomicRegionGetByRegion", maps);
+//	}
+	
+	
+//	@Test
+//	public void testGenomicRegionGetByRegionSource() {
+//		GenomicRegionFeatures maps = this.genomicRegionFeatureDBAdaptor.getByRegion(new Region("2", 127436121, 127436121));
+//		print("testGenomicRegionGetByRegionSource", maps);
+//	}
 	
 	
 	@Test
-	public void testGenomicRegionGetByRegionSource() {
-		GenomicRegionFeatures maps = this.genomicRegionFeatureDBAdaptor.getByRegion(new Region("1", 4985398, 4987398), Arrays.asList("snp"));
-		print("testGenomicRegionGetByRegionSource", maps);
+	public void testConsequenceType() {
+		HashMap<String, List<String>> result =  this.genomicRegionFeatureDBAdaptor.getConsequenceType("1",1154001, "A");
+		for (String key : result.keySet()) {
+			System.out.println(key + " " + result.get(key));
+		}
+//		System.out.println(result);
 	}
-	
 	
 	
 	
