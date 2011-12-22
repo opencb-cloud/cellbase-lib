@@ -13,7 +13,9 @@ import org.bioinfo.infrared.core.cellbase.ExonToTranscript;
 import org.bioinfo.infrared.core.cellbase.FeatureMap;
 import org.bioinfo.infrared.core.cellbase.FeatureMapId;
 import org.bioinfo.infrared.core.cellbase.Gene;
+import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
 import org.bioinfo.infrared.core.cellbase.Snp;
+import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.common.DNASequenceUtils;
@@ -72,8 +74,10 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 //		System.out.println("Chunks: " + chunk_start + "   " + chunk_end);
 		
 		Query query = this.openSession()
-		.createQuery("select featureMap from FeatureMap as featureMap left join fetch featureMap.id " +
-				"where id.chunkId >= :start_chunk and id.chunkId <= :end_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome")
+		//.createQuery("select featureMap from FeatureMap as featureMap left join fetch featureMap.id  where id.chunkId >= :start_chunk and id.chunkId <= :end_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome")
+		
+		//TODO:IF PARA SI EL CHUNKID ENTONCES USAR =
+		.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId >= :start_chunk and id.chunkId <= :end_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome")
 		.setParameter("start_chunk", chunk_start)
 		.setParameter("end_chunk", chunk_end)
 		.setParameter("startparam", start)
@@ -81,6 +85,7 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 		.setParameter("chromosome", chromosome);
 		List<FeatureMap> list = (List<FeatureMap>)executeAndClose(query);
 		
+	
 		GenomicRegionFeatures genomicRegionFeatures = this.getGenomicRegionFeature(list, new Region(chromosome, start, end), sources);
 		return genomicRegionFeatures;
 	}
@@ -90,11 +95,15 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 	private GenomicRegionFeatures getGenomicRegionFeature(List<FeatureMap> featuresMap, Region region, List<String> sources) {
 		GenomicRegionFeatures genomicRegionFeatures = new GenomicRegionFeatures(region);
 		
+		
+		
 		/** obtengo todos los id's de los featuremap **/
 		List<String> genesIds = new ArrayList<String>();
 		List<String> transcriptsIds = new ArrayList<String>();
 		List<String> exonsIds = new ArrayList<String>();
 		List<String> snpsIds = new ArrayList<String>();
+		List<String> tfbsIds = new ArrayList<String>();
+		List<String> regulatoryIds = new ArrayList<String>();
 		
 		for (FeatureMap featureMap : featuresMap) {
 			if (featureMap.getId().getSource().equals("gene")){
@@ -112,8 +121,15 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 			if (featureMap.getId().getSource().equals("snp")){
 				snpsIds.add(featureMap.getFeatureId());
 			}
+			
+			if (featureMap.getId().getSource().equals("tfbs")){
+				tfbsIds.add(String.valueOf(featureMap.getId().getSourceId()));
+			}
+			
+			if (featureMap.getId().getSource().equals("regulatory_region")){
+				regulatoryIds.add(String.valueOf(featureMap.getId().getSourceId()));
+			}
 		}
-		
 		
 		/** Inicializo GenomicRegionFeatures, para las listas null si no estoy preguntando por esos sources y list(0) si realmente estoy preguntando por ellos**/
 		if (sources != null){
@@ -133,6 +149,18 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 					genomicRegionFeatures.getExons().addAll(new ExonHibernateDBAdaptor(this.getSessionFactory()).getAllByEnsemblIdList(exonsIds));
 				}
 				
+				if (source.equalsIgnoreCase("tfbs")){
+					genomicRegionFeatures.setTfbs(new ArrayList<Tfbs>());
+					
+					genomicRegionFeatures.getTfbs().addAll(new TfbsHibernateDBAdaptor(this.getSessionFactory()).getAllByInternalIdList(tfbsIds));
+				}
+				
+				if (source.equalsIgnoreCase("regulatory_region")){
+					genomicRegionFeatures.setRegulatoryRegion(new ArrayList<RegulatoryRegion>());
+					
+					genomicRegionFeatures.setRegulatoryRegion(new RegulatoryRegionHibernateDBAdaptor(this.getSessionFactory()).getAllByInternalIdList(tfbsIds));
+				}
+				
 				if (source.equalsIgnoreCase("snp")){
 					genomicRegionFeatures.setSnp(new ArrayList<Snp>());
 					
@@ -146,10 +174,15 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 			genomicRegionFeatures.setTranscripts(new ArrayList<Transcript>());
 			genomicRegionFeatures.setExons(new ArrayList<Exon>());
 			genomicRegionFeatures.setSnp(new ArrayList<Snp>());
+			genomicRegionFeatures.setTfbs(new ArrayList<Tfbs>());
+			genomicRegionFeatures.setRegulatoryRegion(new ArrayList<RegulatoryRegion>());
+			
 			
 			genomicRegionFeatures.getGenes().addAll(new GeneHibernateDBAdaptor(this.getSessionFactory()).getAllByEnsemblIdList(genesIds));
 			genomicRegionFeatures.getTranscripts().addAll(new TranscriptHibernateDBAdaptor(this.getSessionFactory()).getAllByEnsemblIdList(transcriptsIds));
 			genomicRegionFeatures.getExons().addAll(new ExonHibernateDBAdaptor(this.getSessionFactory()).getAllByEnsemblIdList(exonsIds));
+			genomicRegionFeatures.getTfbs().addAll(new TfbsHibernateDBAdaptor(this.getSessionFactory()).getAllByInternalIdList(tfbsIds));
+			genomicRegionFeatures.setRegulatoryRegion(new RegulatoryRegionHibernateDBAdaptor(this.getSessionFactory()).getAllByInternalIdList(regulatoryIds));
 			
 			List<List<Snp>> snpResult = new SnpHibernateDBAdapator(this.getSessionFactory()).getByDbSnpIdList(snpsIds);
 			genomicRegionFeatures.getSnp().addAll(this.cleanSnpByRegion(region, snpResult));
@@ -206,75 +239,136 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 
 	
 	
-	private int getCodonPosition(Transcript transcript, List<Exon> exons,  int position){
+	private int getCodonByPosition(Transcript transcript, List<Exon> exons,  int position){
 		int cdna_length = 0;
 //		System.out.println("-----------------------------------------");
-//		System.out.println("TRANSCRIPT: " + transcript.getStableId());
-		for (Exon exonIntranscript : exons) {
-			if (position > exonIntranscript.getEnd()){
-				/** Primer exon **/
-				if ((exonIntranscript.getStart() <= transcript.getCodingRegionStart()) && (exonIntranscript.getEnd() >= transcript.getCodingRegionStart())){
-					cdna_length = cdna_length + (exonIntranscript.getEnd() - transcript.getCodingRegionStart()) +1 ;
-//					System.out.println("\t  EXON: " + exonIntranscript.getStableId()+ " " + cdna_length);
-				}
-				
-				/** Los demas **/
-				if ((exonIntranscript.getStart() >  transcript.getCodingRegionStart())&&(exonIntranscript.getEnd() <= transcript.getCodingRegionEnd())){
-					cdna_length = cdna_length + (exonIntranscript.getEnd() - exonIntranscript.getStart()) + 1;
-//					System.out.println("\t +EXON: " + exonIntranscript.getStableId()+ " " + cdna_length);
-				}
-			}
-			else{
-				if ((exonIntranscript.getStart() <= transcript.getCodingRegionStart())&&(exonIntranscript.getEnd()>= transcript.getCodingRegionEnd())){
-					cdna_length = cdna_length + (position -  transcript.getCodingRegionStart()) + 1;
+		System.out.println("TRANSCRIPT: " + transcript.getStableId());
+//		for (Exon exonIntranscript : exons) {
+		if (transcript.getStrand().equals("-1")){
+			for (int i = exons.size() - 1; i >= 0; i--) {
+				Exon exonIntranscript = exons.get(i);
+//				System.out.println("EXON PROCESANDO: " + exonIntranscript.getStableId());
+				if (position < exonIntranscript.getStart()){
+					/** Primer exon **/
+					if ((exonIntranscript.getEnd() >= transcript.getCodingRegionEnd()) && (exonIntranscript.getStart() <= transcript.getCodingRegionEnd())){
+						cdna_length = cdna_length + (transcript.getCodingRegionEnd() - exonIntranscript.getStart()) +1 ;
+						System.out.println("\t  EXON: " + exonIntranscript.getStableId()+ " " + cdna_length);
+					}
+					
+					/** Los demas **/
+					if ((exonIntranscript.getEnd() < transcript.getCodingRegionEnd()) && (exonIntranscript.getStart() > transcript.getCodingRegionStart())){
+						cdna_length = cdna_length + (exonIntranscript.getEnd() - exonIntranscript.getStart()) + 1;
+						System.out.println("\t +EXON: " + exonIntranscript.getStableId()+ " " + cdna_length);
+					}
 				}
 				else{
-					cdna_length = cdna_length + (position - exonIntranscript.getStart()) + 1;
-//					System.out.println("\t *EXON: " + exonIntranscript.getStableId()+ " " + cdna_length);
-//					System.out.println(transcript.getStableId() + "   Phase: " + (cdna_length%3)); 
-				break;
+					
+					if ((exonIntranscript.getEnd() >= transcript.getCodingRegionEnd())&&(exonIntranscript.getStart()<= transcript.getCodingRegionStart())){
+						cdna_length = cdna_length + (transcript.getCodingRegionEnd() - position ) + 1;
+					}
+					else{
+						cdna_length = cdna_length + ( exonIntranscript.getEnd() - position) + 1;
+						System.out.println("\t *EXON: " + exonIntranscript.getStableId()+ " " + cdna_length);
+	//					System.out.println(transcript.getStableId() + "   Phase: " + (cdna_length%3)); 
+					break;
+					}
+					
+				}
+			}	
+		}
+		else{
+			
+			for (int i = 0; i < exons.size(); i++) {
+				Exon exonIntranscript = exons.get(i);
+				if (position > exonIntranscript.getEnd()){
+					/** Primer exon **/
+					if ((exonIntranscript.getStart() <= transcript.getCodingRegionStart()) && (exonIntranscript.getEnd() >= transcript.getCodingRegionStart())){
+						cdna_length = cdna_length + (exonIntranscript.getEnd() - transcript.getCodingRegionStart()) +1 ;
+						System.out.println("\t  EXON: " + exonIntranscript.getStableId()+ " " + cdna_length);
+					}
+					
+					/** Los demas **/
+					if ((exonIntranscript.getStart() >  transcript.getCodingRegionStart())&&(exonIntranscript.getEnd() <= transcript.getCodingRegionEnd())){
+						cdna_length = cdna_length + (exonIntranscript.getEnd() - exonIntranscript.getStart()) + 1;
+						System.out.println("\t +EXON: " + exonIntranscript.getStableId()+ " " + cdna_length);
+					}
+				}
+				else{
+					if ((exonIntranscript.getStart() <= transcript.getCodingRegionStart())&&(exonIntranscript.getEnd()>= transcript.getCodingRegionEnd())){
+						cdna_length = cdna_length + (position -  transcript.getCodingRegionStart()) + 1;
+					}
+					else{
+						cdna_length = cdna_length + (position - exonIntranscript.getStart()) + 1;
+						System.out.println("\t *EXON: " + exonIntranscript.getStableId()+ " " + cdna_length);
+	//					System.out.println(transcript.getStableId() + "   Phase: " + (cdna_length%3)); 
+					break;
+					}
 				}
 				
 			}
-		}	
+			
+			
+		}
+		System.out.println("CDNA codon modulo: " +  cdna_length % 3 );
 		return cdna_length % 3 ;
 		
 		
 	}
 	
 	private List<String> getConsequenceTypeByAlternativeAllele(Transcript transcript, List<Exon> exons, int position, String alternativeAllele) {
-		int codon_position = this.getCodonPosition(transcript, exons, position);
+		int codon_position = this.getCodonByPosition(transcript, exons, position);
 		 List<String> consequenceTypes = new ArrayList<String>();
 		
 		
 		GenomeSequenceDBAdaptor sequenceDbAdaptor = new GenomeSequenceDBAdaptor(this.getSessionFactory());
 		
 		GenomeSequenceFeature sequence = null;
-		if (codon_position == 1){
-			sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position, position + 2);
+		
+		if (transcript.getStrand().equals("-1")){
+			if (codon_position == 1){
+				sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position - 2, position);
+			}
+			
+			if (codon_position == 2){
+				sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position - 1, position + 1);
+			}
+			/** Caso del 3 **/
+			if (codon_position == 0){
+				sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position, position + 2);
+				codon_position = 3;
+			}
+			
+			sequence.setSequence(GenomeSequenceDBAdaptor.getRevComp(sequence.getSequence()));
+			alternativeAllele = GenomeSequenceDBAdaptor.getRevComp(alternativeAllele);
+		}
+		else{
+			if (codon_position == 1){
+				sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position, position + 2);
+			}
+			
+			if (codon_position == 2){
+				sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position - 1, position + 1);
+			}
+			/** Caso del 3 **/
+			if (codon_position == 0){
+				sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position - 2, position);
+				codon_position = 3;
+			}
+			
 		}
 		
-		if (codon_position == 2){
-			sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position - 1, position + 1);
-		}
-		/** Caso del 3 **/
-		if (codon_position == 0){
-			sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position - 2, position);
-			codon_position = 3;
-		}
 		
 		String referenceSequence = sequence.getSequence();
 	
-		char[] x = referenceSequence.toCharArray();
-		x[codon_position - 1] = alternativeAllele.toCharArray()[0]; 
+		char[] referenceSequenceCharArray = referenceSequence.toCharArray();
+		referenceSequenceCharArray[codon_position - 1] = alternativeAllele.toCharArray()[0]; 
+		
 		
 		String alternative = new String();
-		
-		for (int i = 0; i < x.length; i++) {
-			alternative = alternative + x[i];
+		for (int i = 0; i < referenceSequenceCharArray.length; i++) {
+			alternative = alternative + referenceSequenceCharArray[i];
 		}
 			
-//		
 		referenceSequence = referenceSequence.replaceAll("T", "U");
 		alternative = alternative.replaceAll("T", "U");
 		
@@ -293,8 +387,6 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 			if ((DNASequenceUtils.codonToAminoacidShort.get(referenceSequence).toLowerCase().equals("stop"))&& (!DNASequenceUtils.codonToAminoacidShort.get(alternative).toLowerCase().equals("stop"))){
 				consequenceTypes.add("STOP_LOST");
 			}
-			
-			
 		}
 //		System.out.println("Reference:" + referenceSequence );
 //		System.out.println("Alternative:" +alternative);
@@ -324,23 +416,46 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 			consequenceTypes.add("INTRONIC");
 			
 			for (Exon exon2 : exons) {
-				if (exon2.getStart() > position){
-						if (exon2.getStart() - position < 3){
+				if(transcript.getStrand().equals("-1")){
+					if (exon2.getStart() > position){
+							if (exon2.getStart() - position < 2){
+									consequenceTypes.add("SPLICE_DONOR_VARIANT");
+							}
+							if ((exon2.getStart() - position >= 2)&&(exon2.getStart() - position <= 7)){
+								consequenceTypes.add("SPLICE_REGION_VARIANT");
+							}
+					}
+					
+					if (exon2.getEnd() < position){
+						if ( position - exon2.getEnd() < 2){
+							consequenceTypes.add("SPLICE_ACCEPTOR_VARIANT");
+						}
+						
+						if (( position - exon2.getEnd() >= 2) && ( position - exon2.getEnd() <= 7)){
+							consequenceTypes.add("SPLICE_REGION_VARIANT");
+						}
+					}
+				}
+				else{
+					if (exon2.getStart() > position){
+						if (exon2.getStart() - position < 2){
 								consequenceTypes.add("SPLICE_ACCEPTOR_VARIANT");
 						}
-						if ((exon2.getStart() - position >= 3)&&(exon2.getStart() - position <= 8)){
+						if ((exon2.getStart() - position >= 2)&&(exon2.getStart() - position <= 7)){
 							consequenceTypes.add("SPLICE_REGION_VARIANT");
 						}
 				}
 				
 				if (exon2.getEnd() < position){
-					if ( position - exon2.getEnd() < 3){
+					if ( position - exon2.getEnd() < 2){
 						consequenceTypes.add("SPLICE_DONOR_VARIANT");
 					}
 					
-					if (( position - exon2.getEnd() >= 3) && ( position - exon2.getEnd() <= 8)){
+					if (( position - exon2.getEnd() >= 2) && ( position - exon2.getEnd() <= 7)){
 						consequenceTypes.add("SPLICE_REGION_VARIANT");
 					}
+					
+				}
 					
 				}
 			}
@@ -350,29 +465,49 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 				consequenceTypes.add("WITHIN_NON_CODING_GENE");
 			}
 			else{
-				if (transcript.getCodingRegionStart() > position) {
-					consequenceTypes.add("5_PRIME_UTR");
+				if (transcript.getStrand().equals("-1")){
+					if (transcript.getCodingRegionStart() > position) {
+						consequenceTypes.add("3_PRIME_UTR");
+					}
+	
+					if (transcript.getCodingRegionEnd() < position) {
+						consequenceTypes.add("5_PRIME_UTR");
+					}
 				}
-
-				if (transcript.getCodingRegionEnd() < position) {
-					consequenceTypes.add("3_PRIME_UTR");
+				else{
+					/** Strand + **/
+					if (transcript.getCodingRegionStart() > position) {
+						consequenceTypes.add("5_PRIME_UTR");
+					}
+	
+					if (transcript.getCodingRegionEnd() < position) {
+						consequenceTypes.add("3_PRIME_UTR");
+					}
 				}
 				
 				if ((transcript.getCodingRegionStart() <= position) && (transcript.getCodingRegionEnd() >= position)){
-					consequenceTypes.add("coding");
+					
+					
+					for (Exon exon : exonsByPosition) {
+						System.out.println("exon position: " + exon.getStableId() + "  " + exon.getEnd() + " " +position +"  " + ((exon.getEnd() - position <= 2)&&((exon.getEnd() - position >= 0)))) ;
+						if ((position - exon.getStart() <= 2)&&((position - exon.getStart() >= 0))){
+							consequenceTypes.add("SPLICE_REGION_VARIANT");
+						}
+						
+						if ((exon.getEnd() - position <= 2)&&((exon.getEnd() - position >= 0))){
+							consequenceTypes.add("SPLICE_REGION_VARIANT");
+						}
+					}
+					
 					
 					if (alternativeAllele != null){
 						consequenceTypes.addAll(this.getConsequenceTypeByAlternativeAllele(transcript, exons,  position, alternativeAllele));
 					}
 				}
-			
 			}
-			
 		}
-		
 		return consequenceTypes;
 	}
-	
 
 
 	@Override
@@ -383,8 +518,8 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 		DBAdaptorFactory dbAdaptorFact = new HibernateDBAdaptorFactory();
 		ExonHibernateDBAdaptor dbaExonAdaptor = new ExonHibernateDBAdaptor(this.getSessionFactory());
 		
-
-		if ((maps.getTranscripts().size() > 0)&&(maps.getSnp().size() == 0)) {
+		if ((maps.getTranscripts().size() > 0)) {
+//		if ((maps.getTranscripts().size() > 0)&&(maps.getSnp().size() == 0)) {
 			for (Transcript transcript : maps.getTranscripts()) {
 				types.put(transcript.getStableId(), this.getConsequenceType(transcript, chromosome, position, alternativeAllele.toUpperCase().trim()));
 			}
@@ -393,6 +528,31 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 		if (maps.getSnp().size() > 0){
 			for (Snp snp : maps.getSnp()) {
 				types.put(snp.getName(), Arrays.asList(snp.getSoConsequenceType().split(",")));
+			}
+		}
+		
+		if(maps.getTfbs().size() > 0){
+			for (Tfbs tfbs : maps.getTfbs()) {
+				types.put(tfbs.getTfName(), Arrays.asList("TRANSCRIPTION_FACTOR_BINDING_MOTIF"));
+			}
+		}
+		
+		if(maps.getRegulatoryRegion().size() > 0){
+			for (RegulatoryRegion regulatory : maps.getRegulatoryRegion()) {
+				types.put(regulatory.getName(), Arrays.asList("REGULATORY_REGION"));
+			}
+			
+			
+			for (RegulatoryRegion regulatory : maps.getHistones()){
+				types.put(regulatory.getName(), Arrays.asList("histone_binding_site"));
+			}
+			
+			for (RegulatoryRegion regulatory : maps.getOpenChromatin()){
+				types.put(regulatory.getName(), Arrays.asList("open_chromatin_region"));
+			}
+			
+			for (RegulatoryRegion regulatory : maps.getPolimerase()){
+				types.put(regulatory.getName(), Arrays.asList("TRANSCRIPTION_FACTOR_BINDING_MOTIF"));
 			}
 		}
 		

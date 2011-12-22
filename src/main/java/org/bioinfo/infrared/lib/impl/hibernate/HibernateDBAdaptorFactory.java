@@ -11,7 +11,9 @@ import org.bioinfo.infrared.lib.api.CytobandDBAdaptor;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
+import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
+import org.bioinfo.infrared.lib.api.TfbsDBAdaptor;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.api.XRefsDBAdaptor;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
@@ -258,6 +260,37 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
 		return (XRefsDBAdaptor) new XRefsHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+	}
+
+	@Override
+	public TfbsDBAdaptor getTfbsDBAdaptor(String species) {
+		return getTfbsDBAdaptor(species, null);
+	}
+
+	@Override
+	public TfbsDBAdaptor getTfbsDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)) {
+			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+		return (TfbsDBAdaptor) new TfbsHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+	}
+	
+	
+	@Override
+	public RegulatoryRegionDBAdaptor getRegulatoryRegionDBAdaptor(String species) {
+		return getRegulatoryRegionDBAdaptor(species, null);
+	}
+
+	@Override
+	public RegulatoryRegionDBAdaptor getRegulatoryRegionDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)) {
+			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+		return (RegulatoryRegionDBAdaptor) new RegulatoryRegionHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 
 

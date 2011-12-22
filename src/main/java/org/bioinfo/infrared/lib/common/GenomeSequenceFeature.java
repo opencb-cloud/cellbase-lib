@@ -31,4 +31,8 @@ public class GenomeSequenceFeature {
 	public String getSequence() {
 		return sequence;
 	}
+	
+	public void setSequence(String value) {
+		sequence = value;
+	}
 }

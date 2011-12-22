@@ -53,5 +53,8 @@ public interface ExonDBAdaptor extends FeatureDBAdaptor {
 	
 	public List<List<Exon>> getAllBySnpIdList(List<String> snpIdList);
 
+
+	List<String> getAllSequencesByIdList(List<String> ensemblIdList, int strand);
+
 	
 }

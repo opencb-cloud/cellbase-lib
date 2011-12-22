@@ -1,46 +1,21 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
-import org.bioinfo.commons.utils.ListUtils;
-import org.bioinfo.infrared.core.cellbase.ConsequenceType;
 import org.bioinfo.infrared.core.cellbase.Exon;
-import org.bioinfo.infrared.core.cellbase.FeatureMap;
-import org.bioinfo.infrared.core.cellbase.FeatureMapId;
 import org.bioinfo.infrared.core.cellbase.Gene;
+import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
 import org.bioinfo.infrared.core.cellbase.Snp;
-import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
+import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Transcript;
-import org.bioinfo.infrared.dao.utils.HibernateUtil;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
-import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.common.GenomicRegionFeatures;
 import org.bioinfo.infrared.lib.common.Region;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
-import org.bioinfo.infrared.lib.io.output.StringWriter;
-import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 public class GenomicRegionFeatureHibernateDBAdaptorTest {
 
@@ -75,17 +50,20 @@ public class GenomicRegionFeatureHibernateDBAdaptorTest {
 //		print("testGenomicRegionGetByRegionSource", maps);
 //	}
 	
-	
 	@Test
-	public void testConsequenceType() {
-		HashMap<String, List<String>> result =  this.genomicRegionFeatureDBAdaptor.getConsequenceType("1",1154001, "A");
-		for (String key : result.keySet()) {
-			System.out.println(key + " " + result.get(key));
-		}
-//		System.out.println(result);
+	public void testTFBSType() {
+		GenomicRegionFeatures maps = this.genomicRegionFeatureDBAdaptor.getByRegion(new Region("1", 19229439,19229439));
+		print("testGenomicRegionGetByRegionSource", maps);
 	}
 	
 	
+//	@Test
+//	public void testConsequenceType() {
+//		HashMap<String, List<String>> result =  this.genomicRegionFeatureDBAdaptor.getConsequenceType("1",19229436, "g");
+//		for (String key : result.keySet()) {
+//			System.out.println(key + " " + result.get(key));
+//		}
+//	}
 	
 	
 	private void print(String title, GenomicRegionFeatures maps){
@@ -114,6 +92,7 @@ public class GenomicRegionFeatureHibernateDBAdaptorTest {
 			System.out.println("\n\tTRANSCRIPT: NULL");
 		}
 		
+		
 		if (maps.getExons() != null){
 			System.out.println("\n\tEXON (" + maps.getExons().size() + ")");
 			System.out.println("\t--------------------------------------");
@@ -133,8 +112,36 @@ public class GenomicRegionFeatureHibernateDBAdaptorTest {
 			}
 		}
 		else{
-			System.out.println("\n\tSNP: NULL");
+			System.out.println("\n\tSNP : NULL");
 		}
+		
+		if (maps.getTfbs() != null){
+			System.out.println("\n\t TFBS (" + maps.getTfbs().size() + ")");
+			System.out.println("\t--------------------------------------");
+			for (Tfbs tfbs : maps.getTfbs()) {
+				System.out.println("\t\t" + tfbs.getTfbsId() + "\t" + tfbs.getTfName()+ "\t" + tfbs.getTargetGeneName() + "\t" + tfbs.getCellType());
+			}
+		}
+		else{
+			System.out.println("\n\tTFBS: NULL");
+		}
+		
+		if (maps.getRegulatoryRegion() != null){
+			System.out.println("\n\t REGULATORY (" + maps.getRegulatoryRegion().size() 
+					+ ")  Histones ("+  maps.getHistones().size()
+					+ ")  Open  Chromatin ("+  maps.getOpenChromatin().size() 
+					+ ")  Transcription Factor ("+  maps.getTranscriptionFactor().size() 
+					+ ") Polymerasa ("+  maps.getPolimerase().size() + ")");
+			
+			System.out.println("\t--------------------------------------");
+			for (RegulatoryRegion re : maps.getRegulatoryRegion()) {
+				System.out.println("\t\t" + re.getName() + "\t" + re.getType());
+			}
+		}
+		else{
+			System.out.println("\n\tREGULATORY: NULL");
+		}
+		
 		System.out.println("\n\nTest executed in: "+ executionTime +" ms");
 		
 	}

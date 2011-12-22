@@ -7,7 +7,9 @@ import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
+import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
+import org.bioinfo.infrared.lib.api.TfbsDBAdaptor;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.api.XRefsDBAdaptor;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
@@ -162,6 +164,43 @@ public class HBaseDBAdaptorFactory extends DBAdaptorFactory{
 
 	@Override
 	public XRefsDBAdaptor getXRefDBAdaptor(String species) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+	@Override
+	public TfbsDBAdaptor getTfbsDBAdaptor(String species) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+	@Override
+	public TfbsDBAdaptor getTfbsDBAdaptor(String species, String version) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+	@Override
+	public RegulatoryRegionDBAdaptor getRegulatoryRegionDBAdaptor(String species) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+	@Override
+	public RegulatoryRegionDBAdaptor getRegulatoryRegionDBAdaptor(
+			String species, String version) {
 		// TODO Auto-generated method stub
 		return null;
 	}

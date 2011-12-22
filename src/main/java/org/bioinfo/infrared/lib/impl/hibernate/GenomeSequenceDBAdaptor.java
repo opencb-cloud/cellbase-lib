@@ -40,23 +40,52 @@ public class GenomeSequenceDBAdaptor extends HibernateDBAdaptor {
 		for(GenomeSequence genomeSequence: genomeSequenceList) {
 			sb.append(genomeSequence.getSequence());
 		}
-		/*
-		System.out.println( chromosome+":"  + start +"-"+ end);
-		
-		System.out.println("test: " + getChunk(start));
-		System.out.println( getChunk(end));
-		
-		System.out.println( sb.toString().length());
-		System.out.println( getOffset(start));
-		System.out.println( getOffset(start) + (end-start));
-		*/
 		return new GenomeSequenceFeature(chromosome, start - 1, end - 1, sb.toString().substring(getOffset(start), getOffset(start) + (end-start) + 1));
+	}
+	
+	
+	public static String getComplementarySequence(String sequence){
+		sequence = sequence.replace("A", "1");
+		sequence = sequence.replace("T", "2");
+		sequence = sequence.replace("C", "3");
+		sequence = sequence.replace("G", "4");
+		sequence = sequence.replace("1", "T");
+		sequence = sequence.replace("2", "A");
+		sequence = sequence.replace("3", "G");
+		sequence = sequence.replace("4", "C");
+		return sequence;
+	}
+	
+	public static String getRevComp(String sequence){
+		String sequenceRef = new String();
+		sequenceRef = new StringBuffer(sequence).reverse().toString();
+		return GenomeSequenceDBAdaptor.getComplementarySequence(sequenceRef);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public GenomeSequenceFeature getByRegion(String chromosome, int start, int end, int strand) {
+		GenomeSequenceFeature genomeSequenceFeature = this.getByRegion(chromosome, start, end);
+		
+		if (strand == -1){
+			genomeSequenceFeature.setSequence(GenomeSequenceDBAdaptor.getRevComp(genomeSequenceFeature.getSequence()));
+		}
+		
+		return genomeSequenceFeature;
+	}
+	
+	public List<GenomeSequenceFeature> getByRegionList(List<Region> regions, int strand){
+		List<GenomeSequenceFeature> result = new ArrayList<GenomeSequenceFeature>(regions.size());
+		for(Region region: regions) {
+			result.add(getByRegion(region.getChromosome(), region.getStart(), region.getEnd(), strand));
+		}
+		return result;
 	}
 	
 	public List<GenomeSequenceFeature> getByRegionList(List<Region> regions){
 		List<GenomeSequenceFeature> result = new ArrayList<GenomeSequenceFeature>(regions.size());
 		for(Region region: regions) {
-			result.add(getByRegion(region.getChromosome(), region.getStart(), region.getEnd()));
+			result.add(getByRegion(region.getChromosome(), region.getStart(), region.getEnd(), 1));
 		}
 		return result;
 	}

@@ -7,6 +7,7 @@ import org.bioinfo.infrared.core.cellbase.Exon;
 import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.GenomeSequence;
 import org.bioinfo.infrared.core.cellbase.Snp;
+import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.core.cellbase.Xref;
 import org.bioinfo.infrared.serialization.InfraredSerializer;
@@ -67,6 +68,19 @@ public class StringWriter {
 		
 	}
 	
+	public static String serialize(Tfbs tfbs){
+		return new StringBuilder().append(tfbs.getTfName()).append("\t")
+									.append(tfbs.getTargetGeneName()).append("\t")
+									.append(tfbs.getChromosome()).append("\t")
+									.append(tfbs.getStart()).append("\t")
+									.append(tfbs.getEnd()).append("\t")
+									.append(tfbs.getCellType()).append("\t")
+									.append(tfbs.getSequence()).append("\t")
+									.append(tfbs.getScore()).append("\t")
+									.toString(); 
+	}
+	
+	
 	public static String serialize(String string){
 		return string;
 	}
@@ -106,6 +120,11 @@ public class StringWriter {
 			
 			if (object instanceof Xref){
 				sb.append(StringWriter.serialize((Xref)object)).append("\n");
+				continue;
+			}
+			
+			if (object instanceof Tfbs){
+				sb.append(StringWriter.serialize((Tfbs)object)).append("\n");
 				continue;
 			}
 			

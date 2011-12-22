@@ -7,7 +7,9 @@ import java.util.List;
 import org.bioinfo.infrared.core.cellbase.Exon;
 import org.bioinfo.infrared.core.cellbase.FeatureMap;
 import org.bioinfo.infrared.core.cellbase.Gene;
+import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
 import org.bioinfo.infrared.core.cellbase.Snp;
+import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 
 public class GenomicRegionFeatures {
@@ -18,6 +20,13 @@ public class GenomicRegionFeatures {
 	private List<Transcript> transcripts;
 	private List<Exon> exons;
 	private List<Snp> snp;
+	private List<Tfbs> tfbs;
+	private List<RegulatoryRegion> regulatoryRegion;
+	
+	private List<RegulatoryRegion> histones = new ArrayList<RegulatoryRegion>();
+	private List<RegulatoryRegion> openChromatin  = new ArrayList<RegulatoryRegion>();
+	private List<RegulatoryRegion> transcriptionFactor  = new ArrayList<RegulatoryRegion>();
+	private List<RegulatoryRegion> polimerase  = new ArrayList<RegulatoryRegion>();
 
 	private List<String> sources;
 	
@@ -29,44 +38,6 @@ public class GenomicRegionFeatures {
 		this.sources = sources;
 	}
 
-
-	public HashMap<String, String> getConsequenceType(){
-		HashMap<String, String> types = new HashMap<String, String>();
-		
-		
-		if (this.getTranscripts().size() > 0){
-			
-			
-			if (this.getExons().size() == 0){
-				for (Transcript transcript : this.getTranscripts()) {
-					types.put(transcript.getStableId(), "INTRONIC");
-				}
-			}
-			else{
-				
-				
-				
-				
-				
-				
-				
-				
-				
-			}
-		
-		
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		return types;
-	}
 	
 	public Region getRegion() {
 		return region;
@@ -115,6 +86,69 @@ public class GenomicRegionFeatures {
 
 	public void setSnp(List<Snp> snp) {
 		this.snp = snp;
+	}
+
+
+	public void setTfbs(List<Tfbs> tfbs) {
+		this.tfbs = tfbs;
+	}
+
+
+	public List<Tfbs> getTfbs() {
+		return tfbs;
+	}
+
+
+	public void setRegulatoryRegion(List<RegulatoryRegion> regulatoryRegions) {
+		this.regulatoryRegion = regulatoryRegions;
+		
+		
+		for (RegulatoryRegion regulatoryRegion : regulatoryRegions) {
+			System.out.println(regulatoryRegion.getType());
+			
+			if (regulatoryRegion.getType().equalsIgnoreCase("histone")){
+				this.histones.add(regulatoryRegion);
+			}
+			
+			if (regulatoryRegion.getType().equalsIgnoreCase("Open Chromatin")){
+				this.openChromatin.add(regulatoryRegion);
+			}
+			
+			if (regulatoryRegion.getType().equalsIgnoreCase("Polymerase")){
+				this.polimerase.add(regulatoryRegion);
+			}
+			
+			if (regulatoryRegion.getType().equalsIgnoreCase("Transcription Factor")){
+				this.transcriptionFactor.add(regulatoryRegion);
+			}
+			
+		}
+		
+	}
+
+
+	public List<RegulatoryRegion> getRegulatoryRegion() {
+		return regulatoryRegion;
+	}
+
+
+	public List<RegulatoryRegion> getHistones() {
+		return histones;
+	}
+
+
+	public List<RegulatoryRegion> getOpenChromatin() {
+		return openChromatin;
+	}
+
+
+	public List<RegulatoryRegion> getTranscriptionFactor() {
+		return transcriptionFactor;
+	}
+
+
+	public List<RegulatoryRegion> getPolimerase() {
+		return polimerase;
 	}
 
 

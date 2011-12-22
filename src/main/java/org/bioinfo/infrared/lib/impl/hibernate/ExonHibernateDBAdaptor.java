@@ -318,11 +318,16 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 
 	@Override
 	public List<String> getAllSequencesByIdList(List<String> ensemblIdList) {
+		return this.getAllSequencesByIdList(ensemblIdList, 1);
+	}
+	
+	@Override
+	public List<String> getAllSequencesByIdList(List<String> ensemblIdList, int strand) {
 		List<String> sequence = new ArrayList<String>(ensemblIdList.size());
 		List<Exon> Exons = getAllByEnsemblIdList(ensemblIdList);
 		GenomeSequenceDBAdaptor da = new GenomeSequenceDBAdaptor(this.getSessionFactory());
 		for(Exon exon: Exons) {
-			sequence.add(da.getByRegion(exon.getChromosome(),exon.getStart(),exon.getEnd()).getSequence());
+			sequence.add(da.getByRegion(exon.getChromosome(),exon.getStart(),exon.getEnd(), strand).getSequence());
 		}
 		return sequence;
 	}

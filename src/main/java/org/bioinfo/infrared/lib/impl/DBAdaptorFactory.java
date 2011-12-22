@@ -10,7 +10,9 @@ import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
+import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
+import org.bioinfo.infrared.lib.api.TfbsDBAdaptor;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.api.XRefsDBAdaptor;
 import org.bioinfo.infrared.lib.impl.hibernate.GenomeSequenceDBAdaptor;
@@ -90,6 +92,17 @@ public abstract class DBAdaptorFactory {
 	public abstract XRefsDBAdaptor getXRefDBAdaptor(String species);
 	
 	public abstract XRefsDBAdaptor getXRefDBAdaptor(String species, String version);
+	
+	
+	public abstract TfbsDBAdaptor getTfbsDBAdaptor(String species);
+	
+	public abstract TfbsDBAdaptor getTfbsDBAdaptor(String species, String version);
+
+
+	public abstract RegulatoryRegionDBAdaptor getRegulatoryRegionDBAdaptor(String species);
+	
+	public abstract RegulatoryRegionDBAdaptor getRegulatoryRegionDBAdaptor(String species, String version);
+
 
 	
 }
