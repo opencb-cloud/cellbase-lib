@@ -7,8 +7,10 @@ import java.util.List;
 import org.bioinfo.infrared.core.cellbase.FeatureMap;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
+import org.bioinfo.infrared.lib.common.GenomicVariant;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor implements GenomicRegionFeatureDBAdaptor {
@@ -49,58 +51,68 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 		return getByRegion(region.getChromosome(), region.getStart(), region.getEnd(), sources);
 	}
 	
-	@SuppressWarnings("unchecked")
-	private GenomicRegionFeatures getByRegion(String chromosome, int start, int end, List<String> sources) {
+	
+	private GenomicRegionFeatures getByRegion(String chromosome, int start, int end, List<String> sources, Session session) {
 		int chunk_start = start / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
 		int chunk_end = end / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
-		
 		
 		Query query;
 		
 		if (chunk_start == chunk_end){
-			query = this.openSession().createQuery("select featureMap from FeatureMap as featureMap where id.chunkId = :start_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome");			
+			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId = :start_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome");			
 		}
 		else{
-			query = this.openSession().createQuery("select featureMap from FeatureMap as featureMap where id.chunkId >= :start_chunk and id.chunkId <= :end_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome");
+			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId >= :start_chunk and id.chunkId <= :end_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome");
 			query.setParameter("end_chunk", chunk_end);
 		}
 		
-	
 		query.setParameter("start_chunk", chunk_start);
 		query.setParameter("startparam", start);
 		query.setParameter("endparam", end);
 		query.setParameter("chromosome", chromosome);
-		List<FeatureMap> list = (List<FeatureMap>)executeAndClose(query);
+		List<FeatureMap> list = (List<FeatureMap>)execute(query);
 		
 		//TODO: ojo corregir esto ¿DE DONDE SACO LA SPECIE **/
 		GenomicRegionFeatures genomicRegionFeatures = new GenomicRegionFeatures(new Region(chromosome, start, end), list, this.getSessionFactory() , "hsa"); 
-		
 		return genomicRegionFeatures;
 	}
 	
+	@SuppressWarnings("unchecked")
+	private GenomicRegionFeatures getByRegion(String chromosome, int start, int end, List<String> sources) {
+		Session session = this.openSession();
+		GenomicRegionFeatures result = this.getByRegion(chromosome, start, end, sources, session);
+		session.close();
+		return result;
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<GenomicRegionFeatures> getByVariants(List<GenomicVariant> variants, List<String> sources) {
+		List<GenomicRegionFeatures> result = new ArrayList<GenomicRegionFeatures>();
+		Session session = this.openSession();
+		for (GenomicVariant variant : variants) {
+			result.add(this.getByRegion(variant.getChromosome(), variant.getStart(), variant.getStart(), sources, session));
+		}
+		session.close();
+		return result;
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<GenomicRegionFeatures> getByVariants(List<GenomicVariant> variants) {
+		return this.getByVariants(variants, null);
+	}
 	
 	
 	@SuppressWarnings("unused")
 	private GenomicRegionFeatures getGenomicRegionFeature(List<FeatureMap> featuresMap, Region region, List<String> sources) {
-		GenomicRegionFeatures genomicRegionFeatures = new GenomicRegionFeatures(region);
-		return genomicRegionFeatures;
+		return null;
 	}
 	
 	
 
 	
 	
-	
-	
-	/** Consequence Type by Position **/
-	
-	@SuppressWarnings("unused")
-	private void addElement(String key, String value, HashMap<String, List<String>> collection ){
-		if(!collection.containsKey(key)){
-			collection.put(key, new ArrayList<String>());
-		}
-		collection.get(key).add(value);
-	}
 	
 
 	

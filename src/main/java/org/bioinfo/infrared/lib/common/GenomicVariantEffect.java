@@ -21,34 +21,36 @@ import org.bioinfo.infrared.lib.impl.hibernate.HibernateDBAdaptorFactory;
 
 public class GenomicVariantEffect {
 
-	private String species;
+	private int position;
 	private GenomicRegionFeatures features;
-	
-	private List<ConsequenceTypeResult> consequences; 
-	
+
 	private DBAdaptorFactory dbAdaptorFact;
-	
 	private GenomicRegionFeatureDBAdaptor genomicRegionFeatureDBAdaptor;
 	private ExonDBAdaptor exonAdaptor;
-
-	private int position;
+	private GenomeSequenceDBAdaptor sequenceDbAdaptor;
+	
+	/** For consequence types **/
+	private List<ConsequenceTypeResult> consequences; 
+	
 	
 	/** Acelerador de los transcripts **/
 	private TranscriptDBAdaptor transcriptAdaptor;
 	private List<Transcript> transcripts;
 	private HashMap<String, Transcript> transcriptHash = new HashMap<String, Transcript>();
+	private int counter;
 	
 	public GenomicVariantEffect(String species){
 		dbAdaptorFact = new HibernateDBAdaptorFactory();
 		genomicRegionFeatureDBAdaptor = dbAdaptorFact.getFeatureMapDBAdaptor(species);
 		transcriptAdaptor = dbAdaptorFact.getTranscriptDBAdaptor(species);
 		exonAdaptor = dbAdaptorFact.getExonDBAdaptor(species);
-		this.species = species;
+		this.sequenceDbAdaptor = dbAdaptorFact.getGenomeSequenceDBAdaptor(species);
+		
+		this.counter = 0;
 	}
 	
 	
 	public List<ConsequenceTypeResult> getConsequenceType(List<GenomicVariant> variants){
-		
 		
 		this.transcripts = transcriptAdaptor.getAll();
 		System.out.println("All transcripts " + this.transcripts.size());
@@ -57,59 +59,70 @@ public class GenomicVariantEffect {
 			this.transcriptHash.put(transcript.getStableId(), transcript);
 		}
 		
-//		this.setFeatures(genomicRegionFeatureDBAdaptor.getByRegion(new Region(variant.getChromosome(),variant.getStart(), variant.getStart())));
-		
 		List<ConsequenceTypeResult> consequences = new ArrayList<ConsequenceTypeResult>();
-		for (GenomicVariant variant : variants) {
-			consequences.addAll(this.getConsequenceType(variant.getChromosome(), variant.getStart(), variant.getAlternative()));
+		
+		int chunk = 100;
+		
+		int count = 0;
+		/** Con esto nos ahorramos el open and close session **/
+		for (int i = 0; i < variants.size(); i = i + chunk) {
+			
+			int end = i +chunk;
+			if (i+chunk > variants.size()){
+				end = variants.size();
+			}
+			List<GenomicVariant> variantsChunk = variants.subList(i, end);
+			Long t0 = System.currentTimeMillis();
+			List<GenomicRegionFeatures> genomicRegionMap = genomicRegionFeatureDBAdaptor.getByVariants(variantsChunk);
+			System.out.println("Recovering features map chunk("+ (end - i)  +"): "+(System.currentTimeMillis()-t0)+" ms " +   genomicRegionMap.size());
+			
+			for (int j = 0; j < genomicRegionMap.size(); j++) {
+				this.getConsequenceType(variantsChunk.get(j), genomicRegionMap.get(j));
+			}
+			count = i;
 		}
-		printConsequenceTypes();
+		
 		return consequences;
 	}
 	
-	public List<ConsequenceTypeResult> getConsequenceType(GenomicVariant variant){
-		this.setFeatures(genomicRegionFeatureDBAdaptor.getByRegion(new Region(variant.getChromosome(),variant.getStart(), variant.getStart())));
+	private List<ConsequenceTypeResult> getConsequenceType(GenomicVariant variant){
+		this.setFeatures(genomicRegionFeatureDBAdaptor.getByRegion(variant.getChromosome(), variant.getStart(), variant.getStart()));
+		return this.getConsequenceType(variant.getChromosome(), variant.getStart(), variant.getAlternative());
+	}
+	
+	
+	private List<ConsequenceTypeResult> getConsequenceType(GenomicVariant variant, GenomicRegionFeatures genomicRegionFeatures){
+		this.setFeatures(genomicRegionFeatures);
 		return this.getConsequenceType(variant.getChromosome(), variant.getStart(), variant.getAlternative());
 	}
 	
 	
 	
 	public List<ConsequenceTypeResult> getConsequenceType(String chromosome, int position, String alternativeAllele){
-		
-		
-		this.setFeatures(genomicRegionFeatureDBAdaptor.getByRegion(chromosome, position, position));
+		long t0 = System.currentTimeMillis();
+//		this.setFeatures(genomicRegionFeatureDBAdaptor.getByRegion(chromosome, position, position));
+//		System.out.println("Recovering features map: "+(System.currentTimeMillis()-t0)+" ms  in chromosome: "+chromosome+ "  position: "+position + " size: " + this.features.featuresMap.size());
 		
 		this.consequences = new ArrayList<ConsequenceTypeResult>();
 		this.position = position;
-		
-		
-		
-		
-		HashMap<String, List<String>> types = new HashMap<String, List<String>>();
-		
-		
-//		if (getFeatures().getTranscripts() != null){
-//			if ((getFeatures().getTranscripts().size() > 0)) {
-//				for (Transcript transcript : getFeatures().getTranscripts()) {
-//					types.put(transcript.getStableId(), this.getConsequenceType(transcript, chromosome, position, alternativeAllele.toUpperCase().trim()));
-//				}
-//			}
-//		}
-		
+
 		if (getFeatures().getTranscriptsIds() != null){
+//			System.out.println("\tBefore getTranscriptsIds(): ");
 			if ((getFeatures().getTranscriptsIds().size() > 0)) {
 				for (String stableId : getFeatures().getTranscriptsIds()) {
+					long t1 = System.currentTimeMillis();
 					Transcript transcript = this.transcriptHash.get(stableId);
-					
-					types.put(transcript.getStableId(), this.getConsequenceType(transcript, chromosome, position, alternativeAllele.toUpperCase().trim()));
+					this.getConsequenceType(transcript, chromosome, position, alternativeAllele.toUpperCase().trim());
+//					System.out.println("\tAfter getTranscriptsIds(): "+(System.currentTimeMillis()-t1)+" ms " + this.consequences.get(this.consequences.size()-1).consequenceType);
 				}
 			}
 		}
 		
-		if (getFeatures().getSnp() != null){
-			if (getFeatures().getSnp().size() > 0){
+		
+		if (getFeatures().getSnpsIds() != null){
+			if (getFeatures().getSnpsIds().size() > 0){
 				for (Snp snp : getFeatures().getSnp()) {
-					types.put(snp.getName(), Arrays.asList(snp.getSoConsequenceType().split(",")));
+//					types.put(snp.getName(), Arrays.asList(snp.getSoConsequenceType().split(",")));
 				}
 			}
 		}
@@ -117,9 +130,7 @@ public class GenomicVariantEffect {
 		if(getFeatures().getTfbs() != null){
 			if(getFeatures().getTfbs().size() > 0){
 				for (Tfbs tfbs : getFeatures().getTfbs()) {
-					types.put(tfbs.getTfName(), Arrays.asList("TRANSCRIPTION_FACTOR_BINDING_MOTIF"));
 					this.addConsequenceType(tfbs, "TF_binding_site_variant", "SO:0001782", "A sequence variant located within a transcription factor binding site.", "REGULATORY");
-					
 				}
 			}
 		}
@@ -127,39 +138,280 @@ public class GenomicVariantEffect {
 		if(getFeatures().getRegulatoryRegion() != null){
 			if(getFeatures().getRegulatoryRegion().size() > 0){
 				for (RegulatoryRegion regulatory : getFeatures().getRegulatoryRegion()) {
-//					types.put(regulatory.getName(), Arrays.asList("REGULATORY_REGION"));
 					this.addConsequenceType(regulatory, "regulatory_region_variant", "SO:0001566", "In regulatory region annotated by Ensembl", "REGULATORY" );
 				}
-				
-				
 				for (RegulatoryRegion regulatory : getFeatures().getHistones()){
-//					types.put(regulatory.getName(), Arrays.asList("histone_binding_site"));
 					this.addConsequenceType(regulatory, "regulatory_region_variant", "SO:0001566", "In regulatory region annotated by Ensembl", "REGULATORY" );
 				}
-				
 				for (RegulatoryRegion regulatory : getFeatures().getOpenChromatin()){
-//					types.put(regulatory.getName(), Arrays.asList("open_chromatin_region"));
 					this.addConsequenceType(regulatory, "OPEN CHROMATINE", "OPEN CHROMATINE OBO", "In regulatory region annotated by Ensembl", "REGULATORY" );
 				}
-				
 				for (RegulatoryRegion regulatory : getFeatures().getPolimerase()){
-//					types.put(regulatory.getName(), Arrays.asList("TRANSCRIPTION_FACTOR_BINDING_MOTIF"));
 					this.addConsequenceType(regulatory, "POLYMERASE", "POLYMERASE OBO", "In regulatory region annotated by Ensembl", "REGULATORY" );
 				}
 			}
 		}
 		
-//		printConsequenceTypes();
 		return this.consequences;
 	}
 	
-	private void printConsequenceTypes(){
-		for (ConsequenceTypeResult consequence : this.consequences) {
-			System.out.println(consequence.toString());
+	private void getConsequenceType(Transcript transcript, String chromosome, int position, String alternativeAllele){
+	
+		List<Exon> exons = exonAdaptor.getByEnsemblTranscriptId(transcript.getStableId());
+		List<Exon> exonsByPosition = this.getExonByPosition(exons, chromosome, position);
+		
+		if (transcript.getBiotype().equals("nonsense_mediated_decay")){
+			this.addConsequenceType(transcript, "NMD_TRANSCRIPT", "SO:0001621", "Located within a transcript predicted to undergo nonsense-mediated decay", "consequenceTypeType" );
+		}
+		
+		if(exonsByPosition.size() == 0){
+			this.addConsequenceType(transcript, "intron_variant", "SO:0001627", "In intron", "consequenceTypeType" );
+			
+			
+			for (Exon exon2 : exons) {
+				if(transcript.getStrand().equals("-1")){
+					if (exon2.getStart() > position){
+							if (exon2.getStart() - position < 2){
+								this.addConsequenceType(exon2, "splice_donor_variant", "SO:0001575", "In the first 2 or the last 2 basepairs of an intron", "consequenceTypeType" );
+							}
+							if ((exon2.getStart() - position >= 2)&&(exon2.getStart() - position <= 7)){
+								this.addConsequenceType(exon2, "splice_region_variant", "SO:0001630", "Splice site", "consequenceTypeType" );
+							}
+					}
+					
+					if (exon2.getEnd() < position){
+						if ( position - exon2.getEnd() < 2){
+							this.addConsequenceType(exon2, "splice_acceptor_variant", "SO:0001574", "In the first 2 or the last 2 basepairs of an intron", "consequenceTypeType" );
+						}
+						
+						if (( position - exon2.getEnd() >= 2) && ( position - exon2.getEnd() <= 7)){
+							this.addConsequenceType(exon2, "splice_region_variant", "SO:0001630", "Splice site", "consequenceTypeType" );
+						}
+					}
+				}
+				else{
+					if (exon2.getStart() > position){
+						if (exon2.getStart() - position < 2){
+								this.addConsequenceType(exon2, "splice_acceptor_variant", "SO:0001574", "In the first 2 or the last 2 basepairs of an intron", "consequenceTypeType" );
+						}
+						if ((exon2.getStart() - position >= 2)&&(exon2.getStart() - position <= 7)){
+							this.addConsequenceType(exon2, "splice_region_variant", "SO:0001630", "Splice site", "consequenceTypeType" );
+						}
+				}
+				
+				if (exon2.getEnd() < position){
+					if ( position - exon2.getEnd() < 2){
+						this.addConsequenceType(exon2, "splice_donor_variant", "SO:0001575", "In the first 2 or the last 2 basepairs of an intron", "consequenceTypeType" );
+					}
+					
+					if (( position - exon2.getEnd() >= 2) && ( position - exon2.getEnd() <= 7)){
+						this.addConsequenceType(exon2, "splice_region_variant", "SO:0001630", "1-3 bps into an exon or 3-8 bps into an intron", "consequenceTypeType" );
+					}
+				}
+				}
+			}
+		}
+		else{
+			if ((transcript.getCodingRegionStart() == 0)&&( transcript.getCdnaCodingEnd() ==0)){
+				this.addConsequenceType(transcript, "nc_transcript_variant", "SO:0001619", "Located within a gene that does not code for a protein", "consequenceTypeType" );
+			}
+			else{
+				if (transcript.getStrand().equals("-1")){
+					if (transcript.getCodingRegionStart() > position) {
+						this.addConsequenceType(transcript, "3_prime_UTR_variant", "SO:0001624", "In 3 prime untranslated region", "consequenceTypeType" );
+					}
+	
+					if (transcript.getCodingRegionEnd() < position) {
+						this.addConsequenceType(transcript, "5_prime_UTR_variant", "SO:0001623", "In 5 prime untranslated region", "consequenceTypeType" );
+					}
+				}
+				else{
+					/** Strand + **/
+					if (transcript.getCodingRegionStart() > position) {
+						this.addConsequenceType(transcript, "5_prime_UTR_variant", "SO:0001623", "In 5 prime untranslated region", "consequenceTypeType" );
+					}
+	
+					if (transcript.getCodingRegionEnd() < position) {
+						this.addConsequenceType(transcript, "3_prime_UTR_variant", "SO:0001624", "In 3 prime untranslated region", "consequenceTypeType" );
+					}
+				}
+				
+				if ((transcript.getCodingRegionStart() <= position) && (transcript.getCodingRegionEnd() >= position)){
+					for (Exon exon : exonsByPosition) {
+						if ((position - exon.getStart() <= 2)&&((position - exon.getStart() >= 0))){
+							this.addConsequenceType(exon, "splice_region_variant", "SO:0001630", "1-3 bps into an exon or 3-8 bps into an intron", "consequenceTypeType" );
+						}
+						
+						if ((exon.getEnd() - position <= 2)&&((exon.getEnd() - position >= 0))){
+							this.addConsequenceType(exon, "splice_region_variant", "SO:0001630", "1-3 bps into an exon or 3-8 bps into an intron", "consequenceTypeType" );
+						}
+					}
+					
+					if (alternativeAllele != null){
+						this.getConsequenceTypeByAlternativeAllele(transcript, exons,  position, alternativeAllele);
+					}
+				}
+			}
+		}
+	}
+
+	
+	private List<Exon> getExonByPosition(List<Exon> exons, String chromosome, int position){
+		List<Exon> result = new ArrayList<Exon>();
+		for (Exon exon : exons) {
+			if(exon.getChromosome().equals(chromosome)){
+				if ((exon.getStart()<= position)&&(exon.getEnd()>=position)){
+					result.add(exon);
+				}
+			}
+		}
+		return result;
+	}
+	
+	
+	private List<String> getConsequenceTypeByAlternativeAllele(Transcript transcript, List<Exon> exons, int position, String alternativeAllele) {
+		int codon_position = this.getCodonByPosition(transcript, exons, position);
+		 List<String> consequenceTypes = new ArrayList<String>();
+		
+		GenomeSequenceFeature sequence = null;
+		
+		if (transcript.getStrand().equals("-1")){
+			if (codon_position == 1){
+				sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position - 2, position);
+			}
+			
+			if (codon_position == 2){
+				sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position - 1, position + 1);
+			}
+			/** Caso del 3 **/
+			if (codon_position == 0){
+				sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position, position + 2);
+				codon_position = 3;
+			}
+			
+			sequence.setSequence(GenomeSequenceDBAdaptor.getRevComp(sequence.getSequence()));
+			alternativeAllele = GenomeSequenceDBAdaptor.getRevComp(alternativeAllele);
+		}
+		else{
+			if (codon_position == 1){
+				sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position, position + 2);
+			}
+			
+			if (codon_position == 2){
+				sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position - 1, position + 1);
+			}
+			/** Caso del 3 **/
+			if (codon_position == 0){
+				sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position - 2, position);
+				codon_position = 3;
+			}
+			
 		}
 		
 		
+		String referenceSequence = sequence.getSequence();
+	
+		char[] referenceSequenceCharArray = referenceSequence.toCharArray();
+		referenceSequenceCharArray[codon_position - 1] = alternativeAllele.toCharArray()[0]; 
+		
+		
+		String alternative = new String();
+		for (int i = 0; i < referenceSequenceCharArray.length; i++) {
+			alternative = alternative + referenceSequenceCharArray[i];
+		}
+			
+		referenceSequence = referenceSequence.replaceAll("T", "U");
+		alternative = alternative.replaceAll("T", "U");
+		
+		
+		this.addConsequenceType(transcript, "coding_sequence_variant", "SO:0001580", " In coding sequence with indeterminate effect", "consequenceTypeType" );
+		
+		
+		if (DNASequenceUtils.codonToAminoacidShort.get(referenceSequence).equals(DNASequenceUtils.codonToAminoacidShort.get(alternative))){
+			this.addConsequenceType(transcript, "synonymous_codon", "SO:0001588", "In coding sequence, not resulting in an amino acid change (silent mutation)", "consequenceTypeType" );
+		}
+		else{
+			this.addConsequenceType(transcript, "non_synonymous_codon", "SO:0001583", "In coding sequence and results in an amino acid change in the encoded peptide sequence", "consequenceTypeType", DNASequenceUtils.codonToAminoacidShort.get(referenceSequence)+"/"+ DNASequenceUtils.codonToAminoacidShort.get(alternative), referenceSequence.replace("U", "T")+"/"+alternative.replace("U", "T")  );
+
+			if ((!DNASequenceUtils.codonToAminoacidShort.get(referenceSequence).toLowerCase().equals("stop"))&& (DNASequenceUtils.codonToAminoacidShort.get(alternative).toLowerCase().equals("stop"))){
+				this.addConsequenceType(transcript, "stop_gained", "SO:0001587", "In coding sequence, resulting in the gain of a stop codon", "consequenceTypeType", DNASequenceUtils.codonToAminoacidShort.get(referenceSequence)+"/"+ DNASequenceUtils.codonToAminoacidShort.get(alternative), referenceSequence.replace("U", "T")+"/"+alternative.replace("U", "T")  );
+			}
+			
+			if ((DNASequenceUtils.codonToAminoacidShort.get(referenceSequence).toLowerCase().equals("stop"))&& (!DNASequenceUtils.codonToAminoacidShort.get(alternative).toLowerCase().equals("stop"))){
+				this.addConsequenceType(transcript, "stop_lost", "SO:0001578", "In coding sequence, resulting in the loss of a stop codon", "consequenceTypeType", DNASequenceUtils.codonToAminoacidShort.get(referenceSequence)+"/"+ DNASequenceUtils.codonToAminoacidShort.get(alternative), referenceSequence.replace("U", "T")+"/"+alternative.replace("U", "T")  );
+			}
+		}
+		return consequenceTypes;
 	}
+	
+	
+
+	private int getCodonByPosition(Transcript transcript, List<Exon> exons,  int position){
+		int cdna_length = 0;
+		if (transcript.getStrand().equals("-1")){
+			for (int i = exons.size() - 1; i >= 0; i--) {
+				Exon exonIntranscript = exons.get(i);
+				if (position < exonIntranscript.getStart()){
+					/** Primer exon **/
+					if ((exonIntranscript.getEnd() >= transcript.getCodingRegionEnd()) && (exonIntranscript.getStart() <= transcript.getCodingRegionEnd())){
+						cdna_length = cdna_length + (transcript.getCodingRegionEnd() - exonIntranscript.getStart()) +1 ;
+					}
+					
+					/** Los demas **/
+					if ((exonIntranscript.getEnd() < transcript.getCodingRegionEnd()) && (exonIntranscript.getStart() > transcript.getCodingRegionStart())){
+						cdna_length = cdna_length + (exonIntranscript.getEnd() - exonIntranscript.getStart()) + 1;
+					}
+				}
+				else{
+					
+					if ((exonIntranscript.getEnd() >= transcript.getCodingRegionEnd())&&(exonIntranscript.getStart()<= transcript.getCodingRegionStart())){
+						cdna_length = cdna_length + (transcript.getCodingRegionEnd() - position ) + 1;
+					}
+					else{
+						cdna_length = cdna_length + ( exonIntranscript.getEnd() - position) + 1;
+					break;
+					}
+				}
+			}	
+		}
+		else{
+			
+			for (int i = 0; i < exons.size(); i++) {
+				Exon exonIntranscript = exons.get(i);
+				if (position > exonIntranscript.getEnd()){
+					/** Primer exon **/
+					if ((exonIntranscript.getStart() <= transcript.getCodingRegionStart()) && (exonIntranscript.getEnd() >= transcript.getCodingRegionStart())){
+						cdna_length = cdna_length + (exonIntranscript.getEnd() - transcript.getCodingRegionStart()) +1 ;
+					}
+					
+					/** Los demas **/
+					if ((exonIntranscript.getStart() >  transcript.getCodingRegionStart())&&(exonIntranscript.getEnd() <= transcript.getCodingRegionEnd())){
+						cdna_length = cdna_length + (exonIntranscript.getEnd() - exonIntranscript.getStart()) + 1;
+					}
+				}
+				else{
+					if ((exonIntranscript.getStart() <= transcript.getCodingRegionStart())&&(exonIntranscript.getEnd()>= transcript.getCodingRegionEnd())){
+						cdna_length = cdna_length + (position -  transcript.getCodingRegionStart()) + 1;
+					}
+					else{
+						cdna_length = cdna_length + (position - exonIntranscript.getStart()) + 1;
+					break;
+					}
+				}
+			}
+		}
+		return cdna_length % 3 ;
+	}
+
+	
+	
+//	private void printConsequenceTypes(){
+//		for (ConsequenceTypeResult consequence : this.consequences) {
+//			System.out.println(consequence.toString());
+//		}
+//	}
+	
+	/** adding consequence types **/
 	private void addConsequenceType(Transcript transcript, String consequenceType, String consequenceTypeObo, String desc, String type, String aminoChange, String codonChange){
 		this.consequences.add(
 				new ConsequenceTypeResult(
@@ -275,309 +527,7 @@ public class GenomicVariantEffect {
 						".", "."));
 	}
 	
-	
-	private List<String> getConsequenceType(Transcript transcript, String chromosome, int position, String alternativeAllele){
-		List<String> consequenceTypes = new ArrayList<String>();
-	
-		List<Exon> exons = exonAdaptor.getByEnsemblTranscriptId(transcript.getStableId());
-		List<Exon> exonsByPosition = this.getExonByPosition(exons, chromosome, position);
-		
-		if (transcript.getBiotype().equals("nonsense_mediated_decay")){
-			consequenceTypes.add("NMD_TRANSCRIPT");
-			this.addConsequenceType(transcript, "NMD_TRANSCRIPT", "SO:0001621", "Located within a transcript predicted to undergo nonsense-mediated decay", "consequenceTypeType" );
-		}
-		
-		if(exonsByPosition.size() == 0){
-			consequenceTypes.add("INTRONIC");
-			this.addConsequenceType(transcript, "intron_variant", "SO:0001627", "In intron", "consequenceTypeType" );
-			
-			
-			for (Exon exon2 : exons) {
-				if(transcript.getStrand().equals("-1")){
-					if (exon2.getStart() > position){
-							if (exon2.getStart() - position < 2){
-//									consequenceTypes.add("SPLICE_DONOR_VARIANT");
-									this.addConsequenceType(exon2, "splice_donor_variant", "SO:0001575", "In the first 2 or the last 2 basepairs of an intron", "consequenceTypeType" );
-							}
-							if ((exon2.getStart() - position >= 2)&&(exon2.getStart() - position <= 7)){
-//								consequenceTypes.add("SPLICE_REGION_VARIANT");
-								this.addConsequenceType(exon2, "splice_region_variant", "SO:0001630", "Splice site", "consequenceTypeType" );
-							}
-					}
-					
-					if (exon2.getEnd() < position){
-						if ( position - exon2.getEnd() < 2){
-//							consequenceTypes.add("SPLICE_ACCEPTOR_VARIANT");
-							this.addConsequenceType(exon2, "splice_acceptor_variant", "SO:0001574", "In the first 2 or the last 2 basepairs of an intron", "consequenceTypeType" );
-						}
-						
-						if (( position - exon2.getEnd() >= 2) && ( position - exon2.getEnd() <= 7)){
-//							consequenceTypes.add("SPLICE_REGION_VARIANT");
-							this.addConsequenceType(exon2, "splice_region_variant", "SO:0001630", "Splice site", "consequenceTypeType" );
-							
-						}
-					}
-				}
-				else{
-					if (exon2.getStart() > position){
-						if (exon2.getStart() - position < 2){
-//								consequenceTypes.add("SPLICE_ACCEPTOR_VARIANT");
-								this.addConsequenceType(exon2, "splice_acceptor_variant", "SO:0001574", "In the first 2 or the last 2 basepairs of an intron", "consequenceTypeType" );
-						}
-						if ((exon2.getStart() - position >= 2)&&(exon2.getStart() - position <= 7)){
-//							consequenceTypes.add("SPLICE_REGION_VARIANT");
-							this.addConsequenceType(exon2, "splice_region_variant", "SO:0001630", "Splice site", "consequenceTypeType" );
-						}
-				}
-				
-				if (exon2.getEnd() < position){
-					if ( position - exon2.getEnd() < 2){
-//						consequenceTypes.add("SPLICE_DONOR_VARIANT");
-						this.addConsequenceType(exon2, "splice_donor_variant", "SO:0001575", "In the first 2 or the last 2 basepairs of an intron", "consequenceTypeType" );
-					}
-					
-					if (( position - exon2.getEnd() >= 2) && ( position - exon2.getEnd() <= 7)){
-//						consequenceTypes.add("SPLICE_REGION_VARIANT");
-						this.addConsequenceType(exon2, "splice_region_variant", "SO:0001630", "1-3 bps into an exon or 3-8 bps into an intron", "consequenceTypeType" );
-					}
-				}
-					
-				}
-			}
-		}
-		else{
-			if ((transcript.getCodingRegionStart() == 0)&&( transcript.getCdnaCodingEnd() ==0)){
-//				consequenceTypes.add("WITHIN_NON_CODING_GENE");
-				this.addConsequenceType(transcript, "nc_transcript_variant", "SO:0001619", "Located within a gene that does not code for a protein", "consequenceTypeType" );
-			}
-			else{
-				if (transcript.getStrand().equals("-1")){
-					if (transcript.getCodingRegionStart() > position) {
-//						consequenceTypes.add("3_PRIME_UTR");
-						this.addConsequenceType(transcript, "3_prime_UTR_variant", "SO:0001624", "In 3 prime untranslated region", "consequenceTypeType" );
-					}
-	
-					if (transcript.getCodingRegionEnd() < position) {
-//						consequenceTypes.add("5_PRIME_UTR");
-						this.addConsequenceType(transcript, "5_prime_UTR_variant", "SO:0001623", "In 5 prime untranslated region", "consequenceTypeType" );
-					}
-				}
-				else{
-					/** Strand + **/
-					if (transcript.getCodingRegionStart() > position) {
-//						consequenceTypes.add("5_PRIME_UTR");
-						this.addConsequenceType(transcript, "5_prime_UTR_variant", "SO:0001623", "In 5 prime untranslated region", "consequenceTypeType" );
-					}
-	
-					if (transcript.getCodingRegionEnd() < position) {
-//						consequenceTypes.add("3_PRIME_UTR");
-						this.addConsequenceType(transcript, "3_prime_UTR_variant", "SO:0001624", "In 3 prime untranslated region", "consequenceTypeType" );
-					}
-				}
-				
-				if ((transcript.getCodingRegionStart() <= position) && (transcript.getCodingRegionEnd() >= position)){
-					
-					
-					for (Exon exon : exonsByPosition) {
-						System.out.println("exon position: " + exon.getStableId() + "  " + exon.getEnd() + " " +position +"  " + ((exon.getEnd() - position <= 2)&&((exon.getEnd() - position >= 0)))) ;
-						if ((position - exon.getStart() <= 2)&&((position - exon.getStart() >= 0))){
-//							consequenceTypes.add("SPLICE_REGION_VARIANT");
-							this.addConsequenceType(exon, "splice_region_variant", "SO:0001630", "1-3 bps into an exon or 3-8 bps into an intron", "consequenceTypeType" );
-						}
-						
-						if ((exon.getEnd() - position <= 2)&&((exon.getEnd() - position >= 0))){
-//							consequenceTypes.add("SPLICE_REGION_VARIANT");
-							this.addConsequenceType(exon, "splice_region_variant", "SO:0001630", "1-3 bps into an exon or 3-8 bps into an intron", "consequenceTypeType" );
-						}
-					}
-					
-					
-					if (alternativeAllele != null){
-						consequenceTypes.addAll(this.getConsequenceTypeByAlternativeAllele(transcript, exons,  position, alternativeAllele));
-					}
-				}
-			}
-		}
-		return consequenceTypes;
-	}
-
-	
-	private List<Exon> getExonByPosition(List<Exon> exons, String chromosome, int position){
-		List<Exon> result = new ArrayList<Exon>();
-		for (Exon exon : exons) {
-			if(exon.getChromosome().equals(chromosome)){
-				if ((exon.getStart()<= position)&&(exon.getEnd()>=position)){
-					result.add(exon);
-				}
-			}
-		}
-		return result;
-	}
-	
-	
-	private List<String> getConsequenceTypeByAlternativeAllele(Transcript transcript, List<Exon> exons, int position, String alternativeAllele) {
-		int codon_position = this.getCodonByPosition(transcript, exons, position);
-		 List<String> consequenceTypes = new ArrayList<String>();
-		
-		
-		GenomeSequenceDBAdaptor sequenceDbAdaptor = dbAdaptorFact.getGenomeSequenceDBAdaptor(this.species);
-		
-		GenomeSequenceFeature sequence = null;
-		
-		if (transcript.getStrand().equals("-1")){
-			if (codon_position == 1){
-				sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position - 2, position);
-			}
-			
-			if (codon_position == 2){
-				sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position - 1, position + 1);
-			}
-			/** Caso del 3 **/
-			if (codon_position == 0){
-				sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position, position + 2);
-				codon_position = 3;
-			}
-			
-			sequence.setSequence(GenomeSequenceDBAdaptor.getRevComp(sequence.getSequence()));
-			alternativeAllele = GenomeSequenceDBAdaptor.getRevComp(alternativeAllele);
-		}
-		else{
-			if (codon_position == 1){
-				sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position, position + 2);
-			}
-			
-			if (codon_position == 2){
-				sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position - 1, position + 1);
-			}
-			/** Caso del 3 **/
-			if (codon_position == 0){
-				sequence = sequenceDbAdaptor.getByRegion(transcript.getChromosome(), position - 2, position);
-				codon_position = 3;
-			}
-			
-		}
-		
-		
-		String referenceSequence = sequence.getSequence();
-	
-		char[] referenceSequenceCharArray = referenceSequence.toCharArray();
-		referenceSequenceCharArray[codon_position - 1] = alternativeAllele.toCharArray()[0]; 
-		
-		
-		String alternative = new String();
-		for (int i = 0; i < referenceSequenceCharArray.length; i++) {
-			alternative = alternative + referenceSequenceCharArray[i];
-		}
-			
-		referenceSequence = referenceSequence.replaceAll("T", "U");
-		alternative = alternative.replaceAll("T", "U");
-		
-		
-//		consequenceTypes.add("coding_sequence_variant");
-		this.addConsequenceType(transcript, "coding_sequence_variant", "SO:0001580", " In coding sequence with indeterminate effect", "consequenceTypeType" );
-		
-		
-		if (DNASequenceUtils.codonToAminoacidShort.get(referenceSequence).equals(DNASequenceUtils.codonToAminoacidShort.get(alternative))){
-//			consequenceTypes.add("SYNONYMOUS_CODING (" + DNASequenceUtils.codonToAminoacidShort.get(referenceSequence) + ")");
-			this.addConsequenceType(transcript, "synonymous_codon", "SO:0001588", "In coding sequence, not resulting in an amino acid change (silent mutation)", "consequenceTypeType" );
-//			consequenceTypes.add("SYNONYMOUS_CODING (" + DNASequenceUtils.codonToAminoacidShort.get(referenceSequence) + ")");
-		}
-		else{
-			//consequenceTypes.add("NON_SYNONYMOUS_CODING (" + DNASequenceUtils.codonToAminoacidShort.get(referenceSequence) + "," + DNASequenceUtils.codonToAminoacidShort.get(alternative) + ")");
-			
-			this.addConsequenceType(transcript, "non_synonymous_codon", "SO:0001583", "In coding sequence and results in an amino acid change in the encoded peptide sequence", "consequenceTypeType", DNASequenceUtils.codonToAminoacidShort.get(referenceSequence)+"/"+ DNASequenceUtils.codonToAminoacidShort.get(alternative), referenceSequence.replace("U", "T")+"/"+alternative.replace("U", "T")  );
-
-			if ((!DNASequenceUtils.codonToAminoacidShort.get(referenceSequence).toLowerCase().equals("stop"))&& (DNASequenceUtils.codonToAminoacidShort.get(alternative).toLowerCase().equals("stop"))){
-//				consequenceTypes.add("STOP_GAINED");
-				this.addConsequenceType(transcript, "stop_gained", "SO:0001587", "In coding sequence, resulting in the gain of a stop codon", "consequenceTypeType", DNASequenceUtils.codonToAminoacidShort.get(referenceSequence)+"/"+ DNASequenceUtils.codonToAminoacidShort.get(alternative), referenceSequence.replace("U", "T")+"/"+alternative.replace("U", "T")  );
-			}
-			
-			if ((DNASequenceUtils.codonToAminoacidShort.get(referenceSequence).toLowerCase().equals("stop"))&& (!DNASequenceUtils.codonToAminoacidShort.get(alternative).toLowerCase().equals("stop"))){
-//				consequenceTypes.add("STOP_LOST");
-				this.addConsequenceType(transcript, "stop_lost", "SO:0001578", "In coding sequence, resulting in the loss of a stop codon", "consequenceTypeType", DNASequenceUtils.codonToAminoacidShort.get(referenceSequence)+"/"+ DNASequenceUtils.codonToAminoacidShort.get(alternative), referenceSequence.replace("U", "T")+"/"+alternative.replace("U", "T")  );
-			}
-		}
-		return consequenceTypes;
-	}
-	
-	
-
-	private int getCodonByPosition(Transcript transcript, List<Exon> exons,  int position){
-		int cdna_length = 0;
-//		System.out.println("-----------------------------------------");
-		System.out.println("TRANSCRIPT: " + transcript.getStableId());
-//		for (Exon exonIntranscript : exons) {
-		if (transcript.getStrand().equals("-1")){
-			for (int i = exons.size() - 1; i >= 0; i--) {
-				Exon exonIntranscript = exons.get(i);
-//				System.out.println("EXON PROCESANDO: " + exonIntranscript.getStableId());
-				if (position < exonIntranscript.getStart()){
-					/** Primer exon **/
-					if ((exonIntranscript.getEnd() >= transcript.getCodingRegionEnd()) && (exonIntranscript.getStart() <= transcript.getCodingRegionEnd())){
-						cdna_length = cdna_length + (transcript.getCodingRegionEnd() - exonIntranscript.getStart()) +1 ;
-//						System.out.println("\t  EXON: " + exonIntranscript.getStableId()+ " " + cdna_length);
-					}
-					
-					/** Los demas **/
-					if ((exonIntranscript.getEnd() < transcript.getCodingRegionEnd()) && (exonIntranscript.getStart() > transcript.getCodingRegionStart())){
-						cdna_length = cdna_length + (exonIntranscript.getEnd() - exonIntranscript.getStart()) + 1;
-//						System.out.println("\t +EXON: " + exonIntranscript.getStableId()+ " " + cdna_length);
-					}
-				}
-				else{
-					
-					if ((exonIntranscript.getEnd() >= transcript.getCodingRegionEnd())&&(exonIntranscript.getStart()<= transcript.getCodingRegionStart())){
-						cdna_length = cdna_length + (transcript.getCodingRegionEnd() - position ) + 1;
-					}
-					else{
-						cdna_length = cdna_length + ( exonIntranscript.getEnd() - position) + 1;
-//						System.out.println("\t *EXON: " + exonIntranscript.getStableId()+ " " + cdna_length);
-	//					System.out.println(transcript.getStableId() + "   Phase: " + (cdna_length%3)); 
-					break;
-					}
-					
-				}
-			}	
-		}
-		else{
-			
-			for (int i = 0; i < exons.size(); i++) {
-				Exon exonIntranscript = exons.get(i);
-				if (position > exonIntranscript.getEnd()){
-					/** Primer exon **/
-					if ((exonIntranscript.getStart() <= transcript.getCodingRegionStart()) && (exonIntranscript.getEnd() >= transcript.getCodingRegionStart())){
-						cdna_length = cdna_length + (exonIntranscript.getEnd() - transcript.getCodingRegionStart()) +1 ;
-//						System.out.println("\t  EXON: " + exonIntranscript.getStableId()+ " " + cdna_length);
-					}
-					
-					/** Los demas **/
-					if ((exonIntranscript.getStart() >  transcript.getCodingRegionStart())&&(exonIntranscript.getEnd() <= transcript.getCodingRegionEnd())){
-						cdna_length = cdna_length + (exonIntranscript.getEnd() - exonIntranscript.getStart()) + 1;
-//						System.out.println("\t +EXON: " + exonIntranscript.getStableId()+ " " + cdna_length);
-					}
-				}
-				else{
-					if ((exonIntranscript.getStart() <= transcript.getCodingRegionStart())&&(exonIntranscript.getEnd()>= transcript.getCodingRegionEnd())){
-						cdna_length = cdna_length + (position -  transcript.getCodingRegionStart()) + 1;
-					}
-					else{
-						cdna_length = cdna_length + (position - exonIntranscript.getStart()) + 1;
-						System.out.println("\t *EXON: " + exonIntranscript.getStableId()+ " " + cdna_length);
-	//					System.out.println(transcript.getStableId() + "   Phase: " + (cdna_length%3)); 
-					break;
-					}
-				}
-				
-			}
-			
-			
-		}
-//		System.out.println("CDNA codon modulo: " +  cdna_length % 3 );
-		return cdna_length % 3 ;
-		
-		
-	}
-
+	/** GETTERS AND SETTERS **/
 	private void setFeatures(GenomicRegionFeatures features) {
 		this.features = features;
 	}
@@ -586,6 +536,9 @@ public class GenomicVariantEffect {
 	public GenomicRegionFeatures getFeatures() {
 		return features;
 	}
+	
+	
+	
 	
 	
 	
@@ -610,7 +563,7 @@ public class GenomicVariantEffect {
 		private String transcriptId;
 		private String geneName;
 
-		private String consequenceType;
+		public String consequenceType;
 		private String consequenceTypeObo;
 		private String consequenceTypeDesc;
 		private String consequenceTypeType;

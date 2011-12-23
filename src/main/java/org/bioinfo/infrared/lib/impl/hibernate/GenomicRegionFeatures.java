@@ -40,11 +40,14 @@ public class GenomicRegionFeatures {
 	private SessionFactory sessionFactory;
 	private String species;
 
+	public List<FeatureMap> featuresMap;
+
 	public GenomicRegionFeatures(Region region){
 		this.region = region;
 	}
 	
 	public GenomicRegionFeatures(Region region, List<FeatureMap> featuresMap, SessionFactory sessionFactory, String species){
+		this.featuresMap = featuresMap;
 		this.region = region;
 		
 		this.sessionFactory = sessionFactory;
@@ -92,63 +95,29 @@ public class GenomicRegionFeatures {
 		
 	}
 	
-	
-	
-	/** Inicializo GenomicRegionFeatures, para las listas null si no estoy preguntando por esos sources y list(0) si realmente estoy preguntando por ellos**/
-	/*
-	if (sources != null){
-		for (String source : sources) {
-			if (source.equalsIgnoreCase("gene")){
-				genomicRegionFeatures.setGenes(new GeneHibernateDBAdaptor(this.getSessionFactory()).getAllByEnsemblIdList(genesIds));
-				continue;
-			}
-			
-			if (source.equalsIgnoreCase("transcript")){
-				genomicRegionFeatures.setTranscripts(new TranscriptHibernateDBAdaptor(this.getSessionFactory()).getAllByEnsemblIdList(transcriptsIds));
-				continue;
-			}
-			
-			if (source.equalsIgnoreCase("exon")){
-				genomicRegionFeatures.setExons(new ExonHibernateDBAdaptor(this.getSessionFactory()).getAllByEnsemblIdList(exonsIds));
-				continue;
-			}
-			
-			if (source.equalsIgnoreCase("tfbs")){
-				genomicRegionFeatures.setTfbs(new TfbsHibernateDBAdaptor(this.getSessionFactory()).getAllByInternalIdList(tfbsIds));
-				continue;
-			}
-			
-			if (source.equalsIgnoreCase("regulatory_region")){
-				genomicRegionFeatures.setRegulatoryRegion(new RegulatoryRegionHibernateDBAdaptor(this.getSessionFactory()).getAllByInternalIdList(tfbsIds));
-				continue;
-			}
-			
-			if (source.equalsIgnoreCase("snp")){
-				genomicRegionFeatures.setSnp(new ArrayList<Snp>());
-				
-				List<List<Snp>> snpResult = new SnpHibernateDBAdapator(this.getSessionFactory()).getByDbSnpIdList(snpsIds);
-				genomicRegionFeatures.setSnp(this.cleanSnpByRegion(region, snpResult));
-				continue;
+	private List<Snp> cleanSnpByRegion(Region region, List<List<Snp>> snpResult) {
+		// Es posible que para el mismo dbName nos devuelva varios snp's de regiones diferentes, filtro los que esten dentro de la region indicada
+		List<Snp> snps = new ArrayList<Snp>();
+		for (List<Snp> list : snpResult) {
+			if (list != null){
+				for (Snp snp : list) {
+					if (snp != null){
+						if (snp.getChromosome().equals(region.getChromosome())){
+							if (region.getStart() <=snp.getStart() && (region.getEnd() >= snp.getEnd())){
+								snps.add(snp);
+							}
+						}
+					}
+				}
 			}
 		}
+		return snps;
 	}
-	else{
-		genomicRegionFeatures.setGenes(new GeneHibernateDBAdaptor(this.getSessionFactory()).getAllByEnsemblIdList(genesIds));
-		genomicRegionFeatures.setTranscripts(new TranscriptHibernateDBAdaptor(this.getSessionFactory()).getAllByEnsemblIdList(transcriptsIds));
-		genomicRegionFeatures.setExons(new ExonHibernateDBAdaptor(this.getSessionFactory()).getAllByEnsemblIdList(exonsIds));
-		genomicRegionFeatures.setTfbs(new TfbsHibernateDBAdaptor(this.getSessionFactory()).getAllByInternalIdList(tfbsIds));
-		genomicRegionFeatures.setRegulatoryRegion(new RegulatoryRegionHibernateDBAdaptor(this.getSessionFactory()).getAllByInternalIdList(regulatoryIds));
-		
-		List<List<Snp>> snpResult = new SnpHibernateDBAdapator(this.getSessionFactory()).getByDbSnpIdList(snpsIds);
-		genomicRegionFeatures.setSnp(this.cleanSnpByRegion(region, snpResult));
-	}
-	*/
-	
+
 	public Region getRegion() {
 		return region;
 	}
-
-
+	
 	public List<Gene> getGenes() {
 		if (genes == null){
 			genes = new GeneHibernateDBAdaptor(this.sessionFactory).getAllByEnsemblIdList(genesIds);
@@ -180,26 +149,36 @@ public class GenomicRegionFeatures {
 		return snp;
 	}
 
-	@SuppressWarnings("unused")
-	private List<Snp> cleanSnpByRegion(Region region, List<List<Snp>> snpResult) {
-		// Es posible que para el mismo dbName nos devuelva varios snp's de regiones diferentes, filtro los que esten dentro de la region indicada
-		List<Snp> snps = new ArrayList<Snp>();
-		for (List<Snp> list : snpResult) {
-			if (list != null){
-				for (Snp snp : list) {
-					if (snp != null){
-						if (snp.getChromosome().equals(region.getChromosome())){
-							if (region.getStart() <=snp.getStart() && (region.getEnd() >= snp.getEnd())){
-								snps.add(snp);
-							}
-						}
-					}
-				}
+
+	
+	public void setRegulatoryRegion(List<RegulatoryRegion> regulatoryRegions) {
+		this.regulatoryRegion = regulatoryRegions;
+		
+		
+		for (RegulatoryRegion regulatoryRegion : regulatoryRegions) {
+			
+			if (regulatoryRegion.getType().equalsIgnoreCase("histone")){
+				this.histones.add(regulatoryRegion);
 			}
+			
+			if (regulatoryRegion.getType().equalsIgnoreCase("Open Chromatin")){
+				this.openChromatin.add(regulatoryRegion);
+			}
+			
+			if (regulatoryRegion.getType().equalsIgnoreCase("Polymerase")){
+				this.polimerase.add(regulatoryRegion);
+			}
+			
+			if (regulatoryRegion.getType().equalsIgnoreCase("Transcription Factor")){
+				this.transcriptionFactor.add(regulatoryRegion);
+			}
+			
 		}
-		return snps;
+		
 	}
 
+	
+	
 	public void setRegion(Region region) {
 		this.region = region;
 	}
@@ -234,34 +213,6 @@ public class GenomicRegionFeatures {
 		return tfbs;
 	}
 
-
-	public void setRegulatoryRegion(List<RegulatoryRegion> regulatoryRegions) {
-		this.regulatoryRegion = regulatoryRegions;
-		
-		
-		for (RegulatoryRegion regulatoryRegion : regulatoryRegions) {
-			
-			if (regulatoryRegion.getType().equalsIgnoreCase("histone")){
-				this.histones.add(regulatoryRegion);
-			}
-			
-			if (regulatoryRegion.getType().equalsIgnoreCase("Open Chromatin")){
-				this.openChromatin.add(regulatoryRegion);
-			}
-			
-			if (regulatoryRegion.getType().equalsIgnoreCase("Polymerase")){
-				this.polimerase.add(regulatoryRegion);
-			}
-			
-			if (regulatoryRegion.getType().equalsIgnoreCase("Transcription Factor")){
-				this.transcriptionFactor.add(regulatoryRegion);
-			}
-			
-		}
-		
-	}
-
-
 	public List<RegulatoryRegion> getRegulatoryRegion() {
 		return regulatoryRegion;
 	}
@@ -288,6 +239,18 @@ public class GenomicRegionFeatures {
 
 	public ArrayList<String> getTranscriptsIds() {
 		return transcriptsIds;
+	}
+
+	public ArrayList<String> getGenesIds() {
+		return genesIds;
+	}
+
+	public ArrayList<String> getExonsIds() {
+		return exonsIds;
+	}
+
+	public ArrayList<String> getSnpsIds() {
+		return snpsIds;
 	}
 
 

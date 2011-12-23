@@ -3,6 +3,7 @@ package org.bioinfo.infrared.lib.api;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bioinfo.infrared.lib.common.GenomicVariant;
 import org.bioinfo.infrared.lib.common.Region;
 import org.bioinfo.infrared.lib.impl.hibernate.GenomicRegionFeatures;
 
@@ -23,6 +24,10 @@ public interface GenomicRegionFeatureDBAdaptor {
 	public GenomicRegionFeatures getByRegion(Region region, List<String> sources);	// sources: gene, exon, snp, ...
 	
 	public List<GenomicRegionFeatures> getAllByRegionList(List<Region> regions, List<String> sources);
+
+	public List<GenomicRegionFeatures> getByVariants(List<GenomicVariant> variants, List<String> sources);
+
+	List<GenomicRegionFeatures> getByVariants(List<GenomicVariant> variants);
 
 //	public HashMap<String, List<String>> getConsequenceType(String chromosome, int position);
 //

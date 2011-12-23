@@ -34,8 +34,6 @@ public class GenomeSequenceDBAdaptor extends HibernateDBAdaptor {
 		
 		List<GenomeSequence> genomeSequenceList = (List<GenomeSequence>) executeAndClose(query);
 		
-		System.out.println(genomeSequenceList.size());
-		
 		StringBuilder sb = new StringBuilder();
 		for(GenomeSequence genomeSequence: genomeSequenceList) {
 			sb.append(genomeSequence.getSequence());
