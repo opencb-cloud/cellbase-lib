@@ -63,7 +63,6 @@ public class GenomeSequenceDBAdaptor extends HibernateDBAdaptor {
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	public GenomeSequenceFeature getByRegion(String chromosome, int start, int end, int strand) {
 		GenomeSequenceFeature genomeSequenceFeature = this.getByRegion(chromosome, start, end);
 		

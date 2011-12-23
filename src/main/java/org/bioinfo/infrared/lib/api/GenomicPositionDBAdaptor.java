@@ -2,8 +2,8 @@ package org.bioinfo.infrared.lib.api;
 
 import java.util.List;
 
-import org.bioinfo.infrared.lib.common.GenomicRegionFeatures;
 import org.bioinfo.infrared.lib.common.Position;
+import org.bioinfo.infrared.lib.impl.hibernate.GenomicRegionFeatures;
 
 public interface GenomicPositionDBAdaptor {
 

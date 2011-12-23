@@ -1,8 +1,14 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bioinfo.commons.io.utils.FileUtils;
+import org.bioinfo.commons.io.utils.IOUtils;
 import org.bioinfo.infrared.core.cellbase.Exon;
 import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
@@ -10,8 +16,10 @@ import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
-import org.bioinfo.infrared.lib.common.GenomicRegionFeatures;
+import org.bioinfo.infrared.lib.common.GenomicVariant;
+import org.bioinfo.infrared.lib.common.GenomicVariantEffect;
 import org.bioinfo.infrared.lib.common.Region;
+import org.bioinfo.infrared.lib.common.GenomicVariantEffect.ConsequenceTypeResult;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -27,13 +35,13 @@ public class GenomicRegionFeatureHibernateDBAdaptorTest {
 
 	@Before
 	public void beforeTestStart() {
-		genomicRegionFeatureDBAdaptor = dbAdaptorFact.getFeatureMapDBAdaptor("hsapiens");
 		startExecTime = System.currentTimeMillis();
 	}
 
 	@After
 	public void afterTestStart() {
-		dbAdaptorFact.close();
+		long executionTime = System.currentTimeMillis() - startExecTime;
+		System.out.println("Test executed in: "+ executionTime +" ms");
 	}
 
 	
@@ -50,11 +58,11 @@ public class GenomicRegionFeatureHibernateDBAdaptorTest {
 //		print("testGenomicRegionGetByRegionSource", maps);
 //	}
 	
-	@Test
-	public void testTFBSType() {
-		GenomicRegionFeatures maps = this.genomicRegionFeatureDBAdaptor.getByRegion(new Region("1", 19229439,19229439));
-		print("testGenomicRegionGetByRegionSource", maps);
-	}
+//	@Test
+//	public void testTFBSType() {
+//		GenomicRegionFeatures maps = this.genomicRegionFeatureDBAdaptor.getByRegion(new Region("1", 19229439,19229439));
+//		print("testGenomicRegionGetByRegionSource", maps);
+//	}
 	
 	
 //	@Test
@@ -65,6 +73,40 @@ public class GenomicRegionFeatureHibernateDBAdaptorTest {
 //		}
 //	}
 	
+	
+	@Test
+	public void testConsequenceType() {
+		int maximum = 200000000;
+		try {
+			FileUtils.touch(new File("/tmp/genomeVariantTest.txt"));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		
+		List<GenomicVariant> variants = new ArrayList<GenomicVariant>();
+		
+		for (int i = 0; i < 1000; i++) {
+			variants.add(new GenomicVariant("1", (int)(Math.random()*maximum) + i, "g"));
+		}
+		
+		System.out.println("Creadas " + variants.size() + " variantes");
+		
+		GenomicVariantEffect gv = new GenomicVariantEffect("hsa");
+		List<ConsequenceTypeResult> consequence = gv.getConsequenceType(variants);
+		
+		for (ConsequenceTypeResult consequenceTypeResult : consequence) {
+			try {
+				IOUtils.append(new File("/tmp/genomeVariantTest.txt"), consequenceTypeResult.toString());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+//		afterTestStart();
+		
+//		this.print("VARATO", gv.getFeatures());
+	}
 	
 	private void print(String title, GenomicRegionFeatures maps){
 		

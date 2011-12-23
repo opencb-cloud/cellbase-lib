@@ -50,7 +50,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			// if 'version' parameter has not been provided the default version is selected
 			if(version == null || version.trim().equals("")) {
 				version = applicationProperties.getProperty(species+".DEFAULT.VERSION").toUpperCase();
-				logger.debug("HibernateDBAdaptorFactory in createSessionFactory(): 'version' parameter is null or empty, it's been set to: '"+version+"'");
+//				logger.debug("HibernateDBAdaptorFactory in createSessionFactory(): 'version' parameter is null or empty, it's been set to: '"+version+"'");
 			}
 
 			// setting database configuration for the 'species.version'
@@ -61,7 +61,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 	}
 
 	private SessionFactory createSessionFactory(String speciesVersionPrefix) {
-		logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): creating Hibernate SessionFactory object for SPECIES.VERSION: '"+speciesVersionPrefix+"' ...");
+//		logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): creating Hibernate SessionFactory object for SPECIES.VERSION: '"+speciesVersionPrefix+"' ...");
 		long t1 = System.currentTimeMillis();
 
 		// initial load and setup from hibernate.cfg.xml

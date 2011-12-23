@@ -5,16 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.Cytoband;
-import org.bioinfo.infrared.core.cellbase.Cytoband;
 import org.bioinfo.infrared.lib.api.CytobandDBAdaptor;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.mapping.Array;
 
 public class CytobandHibernateDBAdaptor extends HibernateDBAdaptor implements CytobandDBAdaptor {
 

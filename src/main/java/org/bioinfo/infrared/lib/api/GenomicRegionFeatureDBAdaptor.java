@@ -3,8 +3,8 @@ package org.bioinfo.infrared.lib.api;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bioinfo.infrared.lib.common.GenomicRegionFeatures;
 import org.bioinfo.infrared.lib.common.Region;
+import org.bioinfo.infrared.lib.impl.hibernate.GenomicRegionFeatures;
 
 
 // Como no es una fetaure no deberia implementas FeatureDBAdaptor no?
@@ -24,9 +24,9 @@ public interface GenomicRegionFeatureDBAdaptor {
 	
 	public List<GenomicRegionFeatures> getAllByRegionList(List<Region> regions, List<String> sources);
 
-	public HashMap<String, List<String>> getConsequenceType(String chromosome, int position);
-
-	HashMap<String, List<String>> getConsequenceType(String chromosome,int position, String alternativeAllele);
+//	public HashMap<String, List<String>> getConsequenceType(String chromosome, int position);
+//
+//	HashMap<String, List<String>> getConsequenceType(String chromosome,int position, String alternativeAllele);
 	
 	
 //	public GenomicRegionFeatures getAllByRegion(Region region, List<String> featureTypes); // types: variation, regulatory, core, ...
