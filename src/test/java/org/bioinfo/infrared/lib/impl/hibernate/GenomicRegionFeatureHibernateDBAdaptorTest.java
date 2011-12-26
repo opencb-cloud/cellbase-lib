@@ -86,7 +86,7 @@ public class GenomicRegionFeatureHibernateDBAdaptorTest {
 		
 		List<GenomicVariant> variants = new ArrayList<GenomicVariant>();
 		
-		for (int i = 0; i < 200; i++) {
+		for (int i = 0; i < 1000; i++) {
 			variants.add(new GenomicVariant("1", (int)(Math.random()*maximum) + i, "g"));
 		}
 		
@@ -94,6 +94,7 @@ public class GenomicRegionFeatureHibernateDBAdaptorTest {
 		
 		GenomicVariantEffect gv = new GenomicVariantEffect("hsa");
 		List<ConsequenceTypeResult> consequence = gv.getConsequenceType(variants);
+		
 		
 		for (ConsequenceTypeResult consequenceTypeResult : consequence) {
 			try {

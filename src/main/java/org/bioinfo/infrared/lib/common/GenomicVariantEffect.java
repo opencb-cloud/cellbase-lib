@@ -58,12 +58,10 @@ public class GenomicVariantEffect {
 		for (Transcript transcript : this.transcripts) {
 			this.transcriptHash.put(transcript.getStableId(), transcript);
 		}
+		List<ConsequenceTypeResult> result = new ArrayList<ConsequenceTypeResult>();
 		
-		List<ConsequenceTypeResult> consequences = new ArrayList<ConsequenceTypeResult>();
+		int chunk = 50;
 		
-		int chunk = 100;
-		
-		int count = 0;
 		/** Con esto nos ahorramos el open and close session **/
 		for (int i = 0; i < variants.size(); i = i + chunk) {
 			
@@ -77,12 +75,11 @@ public class GenomicVariantEffect {
 			System.out.println("Recovering features map chunk("+ (end - i)  +"): "+(System.currentTimeMillis()-t0)+" ms " +   genomicRegionMap.size());
 			
 			for (int j = 0; j < genomicRegionMap.size(); j++) {
-				this.getConsequenceType(variantsChunk.get(j), genomicRegionMap.get(j));
+				result.addAll(this.getConsequenceType(variantsChunk.get(j), genomicRegionMap.get(j)));
 			}
-			count = i;
 		}
 		
-		return consequences;
+		return result;
 	}
 	
 	private List<ConsequenceTypeResult> getConsequenceType(GenomicVariant variant){

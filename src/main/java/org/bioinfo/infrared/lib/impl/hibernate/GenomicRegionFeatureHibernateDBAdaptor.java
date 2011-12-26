@@ -86,15 +86,36 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<GenomicRegionFeatures> getByVariants(List<GenomicVariant> variants, List<String> sources) {
-		List<GenomicRegionFeatures> result = new ArrayList<GenomicRegionFeatures>();
+		
 		Session session = this.openSession();
+		
+		List<Integer> chunks = new ArrayList<Integer>();
 		for (GenomicVariant variant : variants) {
-			result.add(this.getByRegion(variant.getChromosome(), variant.getStart(), variant.getStart(), sources, session));
+			chunks.add(variant.getStart() / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE);
+			
+			
 		}
+		
+		List<FeatureMap> result = this.getByChunkis(chunks, sources, session);
 		session.close();
-		return result;
+		
+		System.out.println("Features " + result.size());
+		List<GenomicRegionFeatures> resultList = new ArrayList<GenomicRegionFeatures>();
+		for (GenomicVariant variant : variants) {
+			List<FeatureMap> featurePerVariant = new ArrayList<FeatureMap>();
+			for (FeatureMap featureMap : result) {
+				if(featureMap.getChromosome().equals(variant.getChromosome())){
+					if(featureMap.getStart()<= variant.getStart() && featureMap.getEnd() >= variant.getStart()){
+						featurePerVariant.add(featureMap);
+					}
+				}
+			}
+			
+			//TODO: ojo corregir esto ¿DE DONDE SACO LA SPECIE **/
+			resultList.add(new GenomicRegionFeatures(new Region(variant.getChromosome(), variant.getStart(), variant.getStart()), featurePerVariant, this.getSessionFactory() , "hsa"));
+		}
+		return resultList;
 	}
 	
 	@Override
@@ -112,7 +133,15 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 	
 
 	
-	
+	private List<FeatureMap> getByChunkis(List<Integer> chunks, List<String> sources, Session session) {
+		Query query;
+		
+		query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId in :chunks");			
+		query.setParameterList("chunks", chunks);
+		return (List<FeatureMap>)execute(query);
+//		return new ArrayList<FeatureMap>();
+		
+	}
 	
 
 	
