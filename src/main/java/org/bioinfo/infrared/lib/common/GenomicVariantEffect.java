@@ -49,8 +49,40 @@ public class GenomicVariantEffect {
 		this.counter = 0;
 	}
 	
+public List<ConsequenceTypeResult> getConsequenceType(List<GenomicVariant> variants){
+		
+		this.transcripts = transcriptAdaptor.getAll();
+		System.out.println("All transcripts " + this.transcripts.size());
+		
+		for (Transcript transcript : this.transcripts) {
+			this.transcriptHash.put(transcript.getStableId(), transcript);
+		}
+		List<ConsequenceTypeResult> result = new ArrayList<ConsequenceTypeResult>();
+		
+		int chunk = 50;
+		
+		/** Con esto nos ahorramos el open and close session **/
+		for (int i = 0; i < variants.size(); i = i + chunk) {
+			
+			int end = i +chunk;
+			if (i+chunk > variants.size()){
+				end = variants.size();
+			}
+			List<GenomicVariant> variantsChunk = variants.subList(i, end);
+			Long t0 = System.currentTimeMillis();
+			List<GenomicRegionFeatures> genomicRegionMap = genomicRegionFeatureDBAdaptor.getByVariants(variantsChunk);
+			System.out.println("Recovering features map chunk("+ (end - i)  +"): "+(System.currentTimeMillis()-t0)+" ms " +   genomicRegionMap.size());
+			
+			for (int j = 0; j < genomicRegionMap.size(); j++) {
+				result.addAll(this.getConsequenceType(variantsChunk.get(j), genomicRegionMap.get(j)));
+			}
+		}
+		
+		return result;
+	}
 	
-	public List<ConsequenceTypeResult> getConsequenceType(List<GenomicVariant> variants){
+	
+	public List<ConsequenceTypeResult> getConsequenceTypeWithChunks(List<GenomicVariant> variants){
 		
 		this.transcripts = transcriptAdaptor.getAll();
 		System.out.println("All transcripts " + this.transcripts.size());
