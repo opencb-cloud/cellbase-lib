@@ -198,7 +198,7 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 	
 	
 	@Override
-	public List<List<Tfbs>> getAllByTfGeneName(List<String> ids) {
+	public List<List<Tfbs>> getAllByTfGeneNameList(List<String> ids) {
 		List<List<Tfbs>> results = new ArrayList<List<Tfbs>>();
 		for (String id : ids) {
 			results.add(this.getAllByTfGeneName(id));
@@ -224,7 +224,7 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 
 	
 	@Override
-	public List<List<Tfbs>> getAllByTargetGeneStableId(List<String> ids) {
+	public List<List<Tfbs>> getAllByTargetGeneStableIdList(List<String> ids) {
 		List<List<Tfbs>> results = new ArrayList<List<Tfbs>>();
 		for (String id : ids) {
 			results.add(this.getAllByTargetGeneStableId(id));
@@ -235,7 +235,7 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Object> getAnnotation() {
+	public List<Object> getAllAnnotation() {
 		String query = "select target_gene_name, tf_name from tfbs t group by target_gene_name,tf_name ";
 		SQLQuery querySQL = this.openSession().createSQLQuery(query);
 		return (List<Object>) executeAndClose(querySQL);
@@ -244,7 +244,7 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Object> getAnnotation(List<String> cellTypes) {
+	public List<Object> getAllAnnotationByCellTypeList(List<String> cellTypes) {
 		SQLQuery querySQL;
 		if (cellTypes != null){
 			String query = "select target_gene_name, tf_name from tfbs t where cell_type in :cellTypes group by target_gene_name,tf_name ";
@@ -262,16 +262,16 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Pwm> getPwnByTfName(String tfName) {
+	public List<Pwm> getPwmByTfName(String tfName) {
 		Criteria criteria = this.openSession().createCriteria(Pwm.class)
 		.add(Restrictions.eq("tfName", tfName));
 		return (List<Pwm>) executeAndClose(criteria);
 	}
 	
-	public List<List<Pwm>> getPwnByTfName(List<String> tfNames){
+	public List<List<Pwm>> getPwmByTfNameList(List<String> tfNames){
 		List<List<Pwm>> result = new ArrayList<List<Pwm>>();
 		for (String tfName : tfNames) {
-			result.add(this.getPwnByTfName(tfName));
+			result.add(this.getPwmByTfName(tfName));
 		}
 		return result;
 	}

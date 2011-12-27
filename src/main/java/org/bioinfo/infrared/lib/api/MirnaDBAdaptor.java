@@ -3,27 +3,28 @@ package org.bioinfo.infrared.lib.api;
 import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.MirnaDisease;
-import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.coreold.regulatory.MiRnaTarget;
 
 public interface MirnaDBAdaptor {
 
+
+	public List<MiRnaTarget> getAllMiRnaTargetsByMirbaseId(String id);
+
+	public List<List<MiRnaTarget>> getAllMiRnaTargetsByMirbaseIdList(List<String> ids);
 	
-	public List<MiRnaTarget> getAllByMirbaseId(String id);
-
-	public List<List<MiRnaTarget>> getAllByMirbaseId(List<String> ids);
 	
+	public List<MiRnaTarget> getAllMiRnaTargetsByGeneName(String geneName);
 	
-	public List<MiRnaTarget> getAllByGeneNameList(String geneName);
+	public List<List<MiRnaTarget>> getAllMiRnaTargetsByGeneNameList(List<String> geneNames);
+
 	
-	public List<List<MiRnaTarget>> getAllByGeneNameList(List<String> geneNames);
+	public List<MirnaDisease> getAllMiRnaDiseasesByMirbaseId(String mirbaseId);
 
-	public List<MirnaDisease> getAllDiseasesByMirnaId(String mirbaseId);
+	public List<List<MirnaDisease>> getAllMiRnaDiseasesByMirbaseIdList(List<String> mirbaseId);
 
+	
+	public List<Object> getAllAnnotation();
 
-	public List<List<MirnaDisease>> getAllDiseasesByMirnaIdList(List<String> mirbaseId);
+	public List<Object> getAllAnnotationBySourceList(List<String> sourceList);
 
-	public List<Object> getAnnotation();
-
-	public List<Object> getAnnotation(List<String> sources);
 }

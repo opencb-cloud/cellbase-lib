@@ -263,6 +263,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		return (XRefsDBAdaptor) new XRefsHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 
+	
 	@Override
 	public TfbsDBAdaptor getTfbsDBAdaptor(String species) {
 		return getTfbsDBAdaptor(species, null);
@@ -307,7 +308,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		System.out.println("sessionFactories " + sessionFactories.get(speciesVersionPrefix));
+//		System.out.println("sessionFactories " + sessionFactories.get(speciesVersionPrefix));
 		return (MirnaHibernateDBAdaptor) new MirnaHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 

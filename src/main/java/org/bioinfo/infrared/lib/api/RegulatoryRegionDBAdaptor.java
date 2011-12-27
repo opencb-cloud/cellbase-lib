@@ -22,15 +22,15 @@ public interface RegulatoryRegionDBAdaptor extends FeatureDBAdaptor {
 
 	public List<RegulatoryRegion> getAllByRegion(String chromosome, int start, List<String> type);
 
-	public List<RegulatoryRegion> getAllByRegion(String chromosome, int start, int end,List<String> type);
+	public List<RegulatoryRegion> getAllByRegion(String chromosome, int start, int end, List<String> type);
 
 	public List<RegulatoryRegion> getAllByRegion(Region region, String type);
 
-	public List<List<RegulatoryRegion>> getAllByRegionList(List<Region> regionList,List<String> type);
-
-	public List<RegulatoryRegion> getAllByInternalIdList(List<String> idList);
+	public List<List<RegulatoryRegion>> getAllByRegionList(List<Region> regionList, List<String> type);
 
 	public List<RegulatoryRegion> getAllByInternalId(String id);
+
+	public List<RegulatoryRegion> getAllByInternalIdList(List<String> idList);
 	
 
 }

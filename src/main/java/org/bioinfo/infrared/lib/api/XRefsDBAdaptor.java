@@ -22,7 +22,7 @@ public interface XRefsDBAdaptor {
 
 	public List<Xref> getById(String id);
 	
-	public List<List<Xref>> getAllByIdList(List<String> ids);
+	public List<List<Xref>> getAllByIdList(List<String> idList);
 	
 	public XRefs getById(String id, String type);
 	

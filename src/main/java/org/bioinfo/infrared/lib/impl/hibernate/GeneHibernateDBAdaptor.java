@@ -2,7 +2,6 @@ package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -376,7 +375,7 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	}
 	
 	@Override
-	public List<List<Gene>> getAllByTf(List<String> idList) {
+	public List<List<Gene>> getAllByTfList(List<String> idList) {
 		List<List<Gene>> result = new ArrayList<List<Gene>>();
 		for (String string : idList) {
 			result.add(this.getAllByTf(string));
@@ -395,11 +394,10 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		return (List<Gene>) executeAndClose(criteria);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<List<Gene>> getAllByMiRna(List<String> mirbaseIds) {
-		List<List<Gene>> result = new ArrayList<List<Gene>>();
-		for (String string : mirbaseIds) {
+	public List<List<Gene>> getAllByMiRnaList(List<String> mirbaseIds) {
+		List<List<Gene>> result = new ArrayList<List<Gene>>(mirbaseIds.size());
+		for(String string: mirbaseIds) {
 			result.add(this.getAllByMiRna(string));
 		}
 		return result;

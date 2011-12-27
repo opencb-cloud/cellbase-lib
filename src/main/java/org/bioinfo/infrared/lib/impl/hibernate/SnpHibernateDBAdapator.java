@@ -6,8 +6,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.bioinfo.infrared.core.cellbase.Exon;
-import org.bioinfo.infrared.core.cellbase.FeatureMap;
 import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
@@ -37,7 +35,6 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<Snp> getByDbSnpId(String id){
 		Session session = this.openSession();
 		List<Snp> snps = this.getByDbSnpId(id, session);

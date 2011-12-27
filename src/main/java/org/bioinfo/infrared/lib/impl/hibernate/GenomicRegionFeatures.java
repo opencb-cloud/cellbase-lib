@@ -29,12 +29,12 @@ public class GenomicRegionFeatures {
 	private List<RegulatoryRegion> transcriptionFactor  = new ArrayList<RegulatoryRegion>();
 	private List<RegulatoryRegion> polimerase  = new ArrayList<RegulatoryRegion>();
 
-	private ArrayList<String> genesIds;
-	private ArrayList<String> transcriptsIds;
-	private ArrayList<String> exonsIds;
-	private ArrayList<String> snpsIds;
-	private ArrayList<String> tfbsIds;
-	private ArrayList<String> regulatoryIds;
+	private List<String> genesIds;
+	private List<String> transcriptsIds;
+	private List<String> exonsIds;
+	private List<String> snpsIds;
+	private List<String> tfbsIds;
+	private List<String> regulatoryIds;
 
 	/** Para acceder posteriormente a los objetos bajo demanda **/
 	private SessionFactory sessionFactory;
@@ -237,19 +237,19 @@ public class GenomicRegionFeatures {
 		return polimerase;
 	}
 
-	public ArrayList<String> getTranscriptsIds() {
+	public List<String> getTranscriptsIds() {
 		return transcriptsIds;
 	}
 
-	public ArrayList<String> getGenesIds() {
+	public List<String> getGenesIds() {
 		return genesIds;
 	}
 
-	public ArrayList<String> getExonsIds() {
+	public List<String> getExonsIds() {
 		return exonsIds;
 	}
 
-	public ArrayList<String> getSnpsIds() {
+	public List<String> getSnpsIds() {
 		return snpsIds;
 	}
 

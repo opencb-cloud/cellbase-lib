@@ -32,7 +32,7 @@ public class CytobandHibernateDBAdaptor extends HibernateDBAdaptor implements Cy
 	}
 	
 	@Override
-	public List<String> getAllChromosomesName() {
+	public List<String> getAllChromosomeNames() {
 		Criteria criteria = this.openSession().createCriteria(Cytoband.class)
 		.setProjection(Projections.distinct(Projections.property("chromosome"))).addOrder(Order.asc("chromosome"));
 		return criteria.list();

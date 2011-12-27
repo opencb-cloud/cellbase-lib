@@ -1,6 +1,5 @@
 package org.bioinfo.infrared.lib.api;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.bioinfo.infrared.lib.common.GenomicVariant;

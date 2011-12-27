@@ -2,10 +2,8 @@ package org.bioinfo.infrared.lib.api;
 
 import java.util.List;
 
-import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.Pwm;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
-import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 
 public interface TfbsDBAdaptor extends FeatureDBAdaptor {
@@ -26,20 +24,22 @@ public interface TfbsDBAdaptor extends FeatureDBAdaptor {
 	
 
 
-	public List<Tfbs> getAllByTfGeneName(String id);
+	public List<Tfbs> getAllByTfGeneName(String geneName);
 
-	public List<List<Tfbs>> getAllByTfGeneName(List<String> ids);
+	public List<List<Tfbs>> getAllByTfGeneNameList(List<String> geneNameList);
 
-	public List<Tfbs> getAllByTargetGeneStableId(String id);
+	public List<Tfbs> getAllByTargetGeneStableId(String stableId);
 
-	public List<List<Tfbs>> getAllByTargetGeneStableId(List<String> ids);
+	public List<List<Tfbs>> getAllByTargetGeneStableIdList(List<String> ids);
 
-	public List<Object> getAnnotation();
 
-	public List<Object> getAnnotation(List<String> cellTypes);
-
-	public List<Pwm> getPwnByTfName(String tfName);
+	public List<Pwm> getPwmByTfName(String tfName);
 	
-	public List<List<Pwm>> getPwnByTfName(List<String> tfName);
+	public List<List<Pwm>> getPwmByTfNameList(List<String> tfNameList);
+
+	
+	public List<Object> getAllAnnotation();
+
+	public List<Object> getAllAnnotationByCellTypeList(List<String> cellTypes);
 
 }
