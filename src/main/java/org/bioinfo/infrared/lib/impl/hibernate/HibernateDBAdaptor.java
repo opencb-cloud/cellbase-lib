@@ -12,33 +12,36 @@ public class HibernateDBAdaptor extends DBAdaptor{
 
 	private SessionFactory sessionFactory;
 	private Session session;
-	
-//	public HibernateDBAdaptor() {
-//
-//	}
-	
+
+	//	public HibernateDBAdaptor() {
+	//
+	//	}
+
 	public HibernateDBAdaptor(SessionFactory sessionFactory) {
 		this.setSessionFactory(sessionFactory);
 	}
-	
+
 	protected Session openSession() {
-		if(session == null || !session.isOpen()) {
-			long t1 = System.currentTimeMillis();
+		if(session == null) {
+			logger.debug("HibernateDBAdaptor: Session is null");
 			session = sessionFactory.openSession();
-//			logger.debug("HibernateDBAdaptorFactory: Hibernate Session object for SessionFactory created in "+(System.currentTimeMillis()-t1)+" ms");
+		}else {
+			if(!session.isOpen()) {
+				logger.debug("HibernateDBAdaptor: Session is closed");
+				session = sessionFactory.openSession();
+			}else {
+				logger.debug("HibernateDBAdaptor: Session is already open");
+			}
 		}
-		else{
-			logger.debug("HibernateDBAdaptorFactory: Session was null or closed");
-			
-		}
+
 		return session;
 	}
-	
+
 	protected List<?> execute(Query query){
 		List<?> result = query.list();
 		return result;
 	}
-	
+
 
 	protected List<?> executeAndClose(Criteria criteria){
 		List<?> result = criteria.list();
@@ -51,7 +54,7 @@ public class HibernateDBAdaptor extends DBAdaptor{
 		closeSession();
 		return result;
 	}
-	
+
 	protected void closeSession() {
 		if(session != null && session.isOpen()) {
 			session.close();

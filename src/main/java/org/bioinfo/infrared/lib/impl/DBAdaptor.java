@@ -8,7 +8,7 @@ public abstract class DBAdaptor {
 	
 	public DBAdaptor() {
 		logger = new Logger();
-		logger.setLevel(Logger.DEBUG_LEVEL);
+		logger.setLevel(Logger.INFO_LEVEL);
 	}
 	
 	public Logger getLogger() {

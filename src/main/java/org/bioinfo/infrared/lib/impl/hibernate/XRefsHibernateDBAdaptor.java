@@ -2,7 +2,6 @@ package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -61,6 +60,7 @@ public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefs
 	
 	
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Xref> getById(String id) {
 		Criteria criteria = this.openSession().createCriteria(Xref.class)
@@ -95,6 +95,7 @@ public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefs
 	
 	
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Xref> getByDBName(String id, String dbname) {
 		Criteria criteria = this.openSession().createCriteria(Xref.class)
@@ -119,6 +120,7 @@ public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefs
 	}
 
 
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public List<Xref> getByDBNameList(String id, List<String> dbnames) {
 		List<Xref> result =  new ArrayList<Xref>();
@@ -140,9 +142,6 @@ public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefs
 			.list();
 		}
 		
-		this.closeSession();
-		
-	
 		
 		//TODO: ESTE CODIGO BORRA LOS DUPLICADOS, ES SOLO UNA SOLUCIÓN RAPIDA
 		List<Xref> result_clean = new ArrayList<Xref>();
@@ -157,7 +156,6 @@ public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefs
 	}
 
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<List<Xref>> getAllByDBNameList(List<String> ids, List<String> dbnames) {
 		List<List<Xref>> result = new ArrayList<List<Xref>>(ids.size());

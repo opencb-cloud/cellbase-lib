@@ -1,10 +1,15 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.Gene;
+import org.bioinfo.infrared.core.cellbase.Tfbs;
+import org.bioinfo.infrared.core.cellbase.Xref;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
@@ -348,15 +353,71 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	}
 
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Gene> getAllByTf(String idTf) {
+		TfbsHibernateDBAdaptor tfbsAdaptor = new TfbsHibernateDBAdaptor(this.getSessionFactory());
+		List<Tfbs> result = tfbsAdaptor.getAllByTfGeneName(idTf);
+		HashSet<String> keys = new HashSet<String>();
+		
+		for (Tfbs tfbs : result) {
+//			if (!keys.contains(tfbs.getGeneByTfGeneId().getStableId())){
+//				keys.add(tfbs.getGeneByTfGeneId().getStableId());
+//			}
+//			
+			if (!keys.contains(tfbs.getGeneByTargetGeneId().getStableId())){
+				keys.add(tfbs.getGeneByTargetGeneId().getStableId());
+			}
+		}
+		
+		Criteria criteria = this.openSession().createCriteria(Gene.class)
+		.add(Restrictions.in("stableId", keys.toArray()));
+		return (List<Gene>) executeAndClose(criteria);
+	}
+	
+	@Override
+	public List<List<Gene>> getAllByTf(List<String> idList) {
+		List<List<Gene>> result = new ArrayList<List<Gene>>();
+		for (String string : idList) {
+			result.add(this.getAllByTf(string));
+		}
+		return result;
+	}
 
-	//		Criteria criteria =  this.getSession().createCriteria(Gene.class);
-	//		Disjunction disjunction = Restrictions.disjunction();
-	//		for (Region region : regions) {
-	//			Conjunction disjunctionRegion = Restrictions.conjunction();
-	//			disjunctionRegion.add(Restrictions.eq("chromosome", region.getChromosome())).add( Restrictions.ge("start", region.getStart())).add(Restrictions.le("end", region.getEnd()));
-	//			disjunction.add(disjunctionRegion);
-	//		}
-	//		criteria.add(disjunction);
-	//		return  execute(criteria);
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Gene> getAllByMiRna(String mirbaseId) {
+		Criteria criteria = this.openSession().createCriteria(Gene.class)
+		.createCriteria("mirnaTargets")
+		.add(Restrictions.eq("mirbaseId", mirbaseId));
+		return (List<Gene>) executeAndClose(criteria);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<List<Gene>> getAllByMiRna(List<String> mirbaseIds) {
+		List<List<Gene>> result = new ArrayList<List<Gene>>();
+		for (String string : mirbaseIds) {
+			result.add(this.getAllByMiRna(string));
+		}
+		return result;
+	}
+
+
+	@Override
+	public List<Gene> getAllByXref(String xrefName) {
+		XRefsHibernateDBAdaptor xrefsAdaptor = new XRefsHibernateDBAdaptor(this.getSessionFactory());
+		List<Xref> xrefs = xrefsAdaptor.getByDBNameList(xrefName, Arrays.asList("ensembl_gene"));
+		
+		List<String> ensemblId = new ArrayList<String>();
+		for (Xref xref : xrefs) {
+			ensemblId.add(xref.getDisplayId());
+		}
+		
+		return this.getAllByEnsemblIdList(ensemblId);
+	}
+	
 
 }

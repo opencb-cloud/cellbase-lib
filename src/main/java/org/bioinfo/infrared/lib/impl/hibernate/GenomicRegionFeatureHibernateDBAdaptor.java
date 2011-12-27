@@ -52,28 +52,48 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 	}
 	
 	
-	private GenomicRegionFeatures getByRegion(String chromosome, int start, int end, List<String> sources, Session session) {
+	private List<FeatureMap> getFeatureMapsByRegion(String chromosome, int start, int end, List<String> sources, Session session) {
 		int chunk_start = start / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
 		int chunk_end = end / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
 		
 		Query query;
+//		
+//		if (chunk_start == chunk_end){
+//			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId = :start_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome");
+//		}
+//		else{
+//			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId >= :start_chunk and id.chunkId <= :end_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome");
+//			query.setParameter("end_chunk", chunk_end);
+//		}
+//		
+//	
+//
+//		query.setParameter("start_chunk", chunk_start);
+//		query.setParameter("startparam", start);
+//		query.setParameter("endparam", end);
+//		query.setParameter("chromosome", chromosome);
+//		return (List<FeatureMap>)execute(query);
 		
-		if (chunk_start == chunk_end){
-			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId = :start_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome");			
-		}
-		else{
-			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId >= :start_chunk and id.chunkId <= :end_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome");
-			query.setParameter("end_chunk", chunk_end);
-		}
 		
-		query.setParameter("start_chunk", chunk_start);
-		query.setParameter("startparam", start);
-		query.setParameter("endparam", end);
-		query.setParameter("chromosome", chromosome);
-		List<FeatureMap> list = (List<FeatureMap>)execute(query);
+		query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId = :chunk_start and chromosome=:CHROMOSOME");
+		query.setParameter("CHROMOSOME", chromosome);
+		query.setParameter("chunk_start", chunk_start);
+		return (List<FeatureMap>)execute(query);
+	}
+	
+	
+	private GenomicRegionFeatures getByRegion(String chromosome, int start, int end, List<String> sources, Session session) {
+		
+//		long t0 = System.currentTimeMillis();
+		List<FeatureMap> result = this.getFeatureMapsByRegion(chromosome, start, end, sources, session);
+//		System.out.println("\tDB Recovering features map: "+(System.currentTimeMillis()-t0)+" ms");
+		
+		
 		
 		//TODO: ojo corregir esto ¿DE DONDE SACO LA SPECIE **/
-		GenomicRegionFeatures genomicRegionFeatures = new GenomicRegionFeatures(new Region(chromosome, start, end), list, this.getSessionFactory() , "hsa"); 
+//		t0 = System.currentTimeMillis();
+		GenomicRegionFeatures genomicRegionFeatures = new GenomicRegionFeatures(new Region(chromosome, start, end), result, this.getSessionFactory() , "hsa"); 
+//		System.out.println("\tFILLING OBJECT: "+(System.currentTimeMillis()-t0)+" ms");
 		return genomicRegionFeatures;
 	}
 	

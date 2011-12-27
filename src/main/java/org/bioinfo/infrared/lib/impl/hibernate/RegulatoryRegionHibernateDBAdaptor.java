@@ -80,7 +80,7 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 			criteria.add(Restrictions.in("type", type));
 		}
 		
-		return criteria.list();
+		return (List<RegulatoryRegion>) executeAndClose(criteria);
 	}
 	
 	

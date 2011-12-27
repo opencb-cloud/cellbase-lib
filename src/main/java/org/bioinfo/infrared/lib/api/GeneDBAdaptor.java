@@ -28,6 +28,8 @@ public interface GeneDBAdaptor extends FeatureDBAdaptor {
 	public List<Gene> getAllByEnsemblTranscriptIdList(List<String> transcriptIdList);
 
 	
+	public List<Gene> getAllByXref(String xref);
+	
 	public List<Gene> getAllByBiotype(String biotype);
 	
 	public List<Gene> getAllByBiotypeList(List<String> biotypeList);
@@ -62,5 +64,16 @@ public interface GeneDBAdaptor extends FeatureDBAdaptor {
 	public List<Gene> getAllBySnpId(String snpId);
 	
 	public List<List<Gene>> getAllBySnpIdList(List<String> snpIdList);
+
+
+	public List<List<Gene>> getAllByTf(List<String> idList);
+
+	public List<Gene> getAllByTf(String id);
+
+
+	public List<Gene> getAllByMiRna(String mirbaseId);
+
+
+	public List<List<Gene>> getAllByMiRna(List<String> mirbaseIds);
 
 }

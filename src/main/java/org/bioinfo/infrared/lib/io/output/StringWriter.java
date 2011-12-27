@@ -6,6 +6,9 @@ import org.bioinfo.infrared.core.cellbase.Cytoband;
 import org.bioinfo.infrared.core.cellbase.Exon;
 import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.GenomeSequence;
+import org.bioinfo.infrared.core.cellbase.MirnaDisease;
+import org.bioinfo.infrared.core.cellbase.MirnaTarget;
+import org.bioinfo.infrared.core.cellbase.Pwm;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Transcript;
@@ -63,11 +66,31 @@ public class StringWriter {
 								  .append(transcript.getCodingRegionEnd()).append("\t")
 								  .append(transcript.getCdnaCodingStart()).append("\t")
 								  .append(transcript.getCdnaCodingEnd()).append("\t")
-								  .append(transcript.getDescription()).append("\t")
+								  .append(transcript.getDescription())
 								  .toString();
 		
 		
 	}
+	
+	public static String serialize(MirnaTarget object) {
+		return new StringBuilder().append(object.getMirbaseId()).append("\t")
+		.append(object.getGeneTargetName()).append("\t")
+		.append(object.getChromosome()).append("\t")
+		.append(object.getStart()).append("\t")
+		.append(object.getEnd()).append("\t")
+		.append(object.getStrand()).append("\t")
+		.append(object.getPubmedId()).append("\t")
+		.append(object.getSource())
+		.toString(); 
+	}
+	
+	private static Object serialize(MirnaDisease mirnaDisease) {
+		return new StringBuilder().append(mirnaDisease.getMirbaseId()).append("\t")
+		.append(mirnaDisease.getDiseaseName()).append("\t")
+		.append(mirnaDisease.getDescription())
+		.toString(); 
+	}
+
 	
 	public static String serialize(Tfbs tfbs){
 		return new StringBuilder().append(tfbs.getTfName()).append("\t")
@@ -77,7 +100,7 @@ public class StringWriter {
 									.append(tfbs.getEnd()).append("\t")
 									.append(tfbs.getCellType()).append("\t")
 									.append(tfbs.getSequence()).append("\t")
-									.append(tfbs.getScore()).append("\t")
+									.append(tfbs.getScore())
 									.toString(); 
 	}
 	
@@ -133,8 +156,24 @@ public class StringWriter {
 				continue;
 			}
 			
+			if (object instanceof MirnaTarget){
+				sb.append(StringWriter.serialize((MirnaTarget)object)).append("\n");
+				continue;
+			}
+			
+			
+			if (object instanceof MirnaDisease){
+				sb.append(StringWriter.serialize((MirnaDisease)object)).append("\n");
+				continue;
+			}
+			
+			if (object instanceof Pwm){
+				sb.append(StringWriter.serialize((Pwm)object)).append("\n");
+				continue;
+			}
+			
+			
 			if (object instanceof ConsequenceTypeResult){
-				
 				sb.append(StringWriter.serialize((ConsequenceTypeResult)object)).append("\n");
 				continue;
 			}
@@ -145,6 +184,18 @@ public class StringWriter {
 			}
 		}
 		return sb.toString();
+	}
+
+
+	public static String serialize(Pwm pwm){
+		return new StringBuilder().append(pwm.getTfName()).append("\t")
+		.append(pwm.getType()).append("\t")
+		.append(pwm.getFrequencies()).append("\t")
+		.append(pwm.getDescription()).append("\t")
+		.append(pwm.getSource()).append("\t")
+		.append(pwm.getLength()).append("\t")
+		.append(pwm.getAccession()).append("\t")
+		.toString();  
 	}
 
 }

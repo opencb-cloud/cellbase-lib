@@ -15,7 +15,10 @@ import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Transcript;
+import org.bioinfo.infrared.coreold.regulatory.MiRnaTarget;
+import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
+import org.bioinfo.infrared.lib.api.MirnaDBAdaptor;
 import org.bioinfo.infrared.lib.common.GenomicVariant;
 import org.bioinfo.infrared.lib.common.GenomicVariantEffect;
 import org.bioinfo.infrared.lib.common.Region;
@@ -44,6 +47,23 @@ public class GenomicRegionFeatureHibernateDBAdaptorTest {
 		System.out.println("Test executed in: "+ executionTime +" ms");
 	}
 
+
+//	@Test
+//	public void testGenomicRegionGetMirna() {
+//		MirnaDBAdaptor adaptor = dbAdaptorFact.getMirnaDBAdaptor("hsa");
+//		List<MiRnaTarget> result = adaptor.getAllByMirbaseId("asdsad");
+//		
+//		System.out.println(result);
+//	}
+	
+//	@Test
+//	public void testGenomicRegionGetMirna() {
+//		GeneDBAdaptor adaptor = dbAdaptorFact.getGeneDBAdaptor("hsa");
+//		List<Gene> result = adaptor.getAllByTf("USF1");
+//		
+//		System.out.println(result);
+//	}
+	
 	
 //	@Test
 //	public void testGenomicRegionGetByRegion() {
@@ -75,7 +95,7 @@ public class GenomicRegionFeatureHibernateDBAdaptorTest {
 	
 	
 	@Test
-	public void testConsequenceType() {
+	public void Variant() {
 		int maximum = 200000000;
 		try {
 			FileUtils.touch(new File("/tmp/genomeVariantTest.txt"));
@@ -86,27 +106,16 @@ public class GenomicRegionFeatureHibernateDBAdaptorTest {
 		
 		List<GenomicVariant> variants = new ArrayList<GenomicVariant>();
 		
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 10000; i++) {
 			variants.add(new GenomicVariant("1", (int)(Math.random()*maximum) + i, "g"));
 		}
 		
 		System.out.println("Creadas " + variants.size() + " variantes");
 		
 		GenomicVariantEffect gv = new GenomicVariantEffect("hsa");
-		List<ConsequenceTypeResult> consequence = gv.getConsequenceType(variants);
+		gv.writeConsequenceType(variants, new File("/tmp/genomeVariantTest.txt"));
 		
 		
-		for (ConsequenceTypeResult consequenceTypeResult : consequence) {
-			try {
-				IOUtils.append(new File("/tmp/genomeVariantTest.txt"), consequenceTypeResult.toString());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-//		afterTestStart();
-		
-//		this.print("VARATO", gv.getFeatures());
 	}
 	
 //	private void print(String title, GenomicRegionFeatures maps){

@@ -6,6 +6,7 @@ import org.bioinfo.infrared.lib.api.CytobandDBAdaptor;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
+import org.bioinfo.infrared.lib.api.MirnaDBAdaptor;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
@@ -201,6 +202,24 @@ public class HBaseDBAdaptorFactory extends DBAdaptorFactory{
 	@Override
 	public RegulatoryRegionDBAdaptor getRegulatoryRegionDBAdaptor(
 			String species, String version) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+	@Override
+	public MirnaDBAdaptor getMirnaDBAdaptor(String species) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+	@Override
+	public MirnaDBAdaptor getMirnaDBAdaptor(String species, String version) {
 		// TODO Auto-generated method stub
 		return null;
 	}

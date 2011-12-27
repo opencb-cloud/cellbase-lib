@@ -10,6 +10,7 @@ import org.bioinfo.commons.Config;
 import org.bioinfo.infrared.lib.api.CytobandDBAdaptor;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
+import org.bioinfo.infrared.lib.api.MirnaDBAdaptor;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
@@ -291,6 +292,23 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
 		return (RegulatoryRegionDBAdaptor) new RegulatoryRegionHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+	}
+
+	
+	@Override
+	public MirnaDBAdaptor getMirnaDBAdaptor(String species) {
+		return this.getMirnaDBAdaptor(species, null);
+	}
+
+	@Override
+	public MirnaDBAdaptor getMirnaDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)) {
+			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+		System.out.println("sessionFactories " + sessionFactories.get(speciesVersionPrefix));
+		return (MirnaHibernateDBAdaptor) new MirnaHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 
 
