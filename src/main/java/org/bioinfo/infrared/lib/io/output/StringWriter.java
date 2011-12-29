@@ -10,6 +10,9 @@ import org.bioinfo.infrared.core.cellbase.MirnaDisease;
 import org.bioinfo.infrared.core.cellbase.MirnaGene;
 import org.bioinfo.infrared.core.cellbase.MirnaMature;
 import org.bioinfo.infrared.core.cellbase.MirnaTarget;
+import org.bioinfo.infrared.core.cellbase.Protein;
+import org.bioinfo.infrared.core.cellbase.ProteinFeature;
+import org.bioinfo.infrared.core.cellbase.ProteinXref;
 import org.bioinfo.infrared.core.cellbase.Pwm;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
@@ -127,6 +130,18 @@ public class StringWriter {
 		.toString();  
 	}
 	
+	public static String serialize(Protein obj) {
+		return join("\t", obj.getPrimaryAccession(), obj.getName(), obj.getFullName(), obj.getGeneName(), obj.getOrganism());
+	}
+	
+	public static String serialize(ProteinFeature obj) {
+		return join("\t", obj.getType(), ""+obj.getStart(), ""+obj.getEnd(), obj.getOriginal(), obj.getVariation(), obj.getIdentifier(), obj.getDescription());
+	}
+	
+	public static String serialize(ProteinXref obj) {
+		return join("\t", obj.getName(), obj.getSource());
+	}
+	
 	public static String serialize(ConsequenceTypeResult consequenceTypeResult){
 		return consequenceTypeResult.toString();
 	}
@@ -200,6 +215,21 @@ public class StringWriter {
 			
 			if (object instanceof Pwm){
 				sb.append(StringWriter.serialize((Pwm)object)).append("\n");
+				continue;
+			}
+			
+			if (object instanceof Protein){
+				sb.append(StringWriter.serialize((Protein)object)).append("\n");
+				continue;
+			}
+			
+			if (object instanceof ProteinFeature){
+				sb.append(StringWriter.serialize((ProteinFeature)object)).append("\n");
+				continue;
+			}
+			
+			if (object instanceof ProteinXref){
+				sb.append(StringWriter.serialize((ProteinXref)object)).append("\n");
 				continue;
 			}
 			

@@ -27,15 +27,15 @@ public interface ProteinDBAdaptor extends FeatureDBAdaptor {
 	
 	public List<Protein> getAllByEnsemblGene(String ensemblGene);
 	
-	public List<Protein> getAllByEnsemblGeneList(List<String> ensemblGeneList);
+	public List<List<Protein>> getAllByEnsemblGeneList(List<String> ensemblGeneList);
 
 	public List<Protein> getAllByEnsemblTranscriptId(String transcriptId);
 	
-	public List<Protein> getAllByEnsemblTranscriptIdList(List<String> transcriptIdList);
+	public List<List<Protein>> getAllByEnsemblTranscriptIdList(List<String> transcriptIdList);
 	
 	public List<Protein> getAllByGeneName(String geneName);
 	
-	public List<Protein> getAllByGeneNameList(List<String> geneNameList);
+	public List<List<Protein>> getAllByGeneNameList(List<String> geneNameList);
 	
 	
 	public List<ProteinFeature> getAllProteinFeaturesByUniprotId(String name);
@@ -45,6 +45,10 @@ public interface ProteinDBAdaptor extends FeatureDBAdaptor {
 	public List<ProteinFeature> getAllProteinFeaturesByGeneName(String name);
 
 	public List<List<ProteinFeature>> getAllProteinFeaturesByGeneNameList(List<String> nameList);
+	
+	public List<ProteinFeature> getAllProteinFeaturesByProteinXref(String name);
+
+	public List<List<ProteinFeature>> getAllProteinFeaturesByProteinXrefList(List<String> nameList);
 	
 	
 	public List<ProteinXref> getAllProteinXrefsByProteinName(String name);

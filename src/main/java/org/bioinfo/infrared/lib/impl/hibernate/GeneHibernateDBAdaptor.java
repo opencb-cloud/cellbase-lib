@@ -383,26 +383,6 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		return result;
 	}
 
-	
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Gene> getAllByMiRna(String mirbaseId) {
-		Criteria criteria = this.openSession().createCriteria(Gene.class)
-		.createCriteria("mirnaTargets")
-		.add(Restrictions.eq("mirbaseId", mirbaseId));
-		return (List<Gene>) executeAndClose(criteria);
-	}
-	
-	@Override
-	public List<List<Gene>> getAllByMiRnaList(List<String> mirbaseIds) {
-		List<List<Gene>> result = new ArrayList<List<Gene>>(mirbaseIds.size());
-		for(String string: mirbaseIds) {
-			result.add(this.getAllByMiRna(string));
-		}
-		return result;
-	}
-
 
 	@Override
 	public List<Gene> getAllByXref(String xrefName) {
@@ -415,6 +395,52 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		}
 		
 		return this.getAllByEnsemblIdList(ensemblId);
+	}
+
+	
+	
+	
+	
+	// Renombrar a getAllTargetGenesByMiRnaList
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Gene> getAllByMiRnaMature(String miRnaMatureName) {
+		Criterion mirbaseAcc = Restrictions.eq("mirbaseAcc", miRnaMatureName.trim());
+		Criterion mirbaseId = Restrictions.eq("mirbaseId", miRnaMatureName.trim());
+		LogicalExpression logExpression = Restrictions.or(mirbaseAcc, mirbaseId);
+		Criteria criteria = this.openSession().createCriteria(Gene.class)
+				.createCriteria("mirnaToGenes")
+				.createCriteria("mirnaGene")
+				.createCriteria("mirnaGeneToMatures")
+				.createCriteria("mirnaMature").add(logExpression);
+		return (List<Gene>) executeAndClose(criteria);
+	}
+	
+	@Override
+	public List<List<Gene>> getAllByMiRnaMatureList(List<String> miRnaMatureNameList) {
+		List<List<Gene>> result = new ArrayList<List<Gene>>(miRnaMatureNameList.size());
+		for(String string: miRnaMatureNameList) {
+			result.add(this.getAllByMiRnaMature(string));
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Gene> getAllTargetsByMiRnaMature(String mirbaseId) {
+		Criteria criteria = this.openSession().createCriteria(Gene.class)
+				.createCriteria("mirnaTargets")
+				.add(Restrictions.eq("mirbaseId", mirbaseId));
+		return (List<Gene>) executeAndClose(criteria);
+	}
+
+	@Override
+	public List<List<Gene>> getAllTargetsByMiRnaMatureList(List<String> mirbaseIds) {
+		List<List<Gene>> result = new ArrayList<List<Gene>>(mirbaseIds.size());
+		for(String string: mirbaseIds) {
+			result.add(this.getAllTargetsByMiRnaMature(string));
+		}
+		return result;
 	}
 	
 
