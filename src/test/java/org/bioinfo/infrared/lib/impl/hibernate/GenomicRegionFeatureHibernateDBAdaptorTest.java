@@ -85,38 +85,47 @@ public class GenomicRegionFeatureHibernateDBAdaptorTest {
 //	}
 	
 	
-//	@Test
-//	public void testConsequenceType() {
+	@Test
+	public void testConsequenceType() {
 //		HashMap<String, List<String>> result =  this.genomicRegionFeatureDBAdaptor.getConsequenceType("1",19229436, "g");
 //		for (String key : result.keySet()) {
 //			System.out.println(key + " " + result.get(key));
 //		}
-//	}
-	
-	
-	@Test
-	public void Variant() {
-		int maximum = 200000000;
-		try {
-			FileUtils.touch(new File("/tmp/genomeVariantTest.txt"));
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		
-		
 		List<GenomicVariant> variants = new ArrayList<GenomicVariant>();
-		
-		for (int i = 0; i < 10000; i++) {
-			variants.add(new GenomicVariant("1", (int)(Math.random()*maximum) + i, "g"));
-		}
-		
-		System.out.println("Creadas " + variants.size() + " variantes");
+		variants.add(new GenomicVariant("1", 27852654, "T"));
 		
 		GenomicVariantEffect gv = new GenomicVariantEffect("hsa");
-		gv.writeConsequenceType(variants, new File("/tmp/genomeVariantTest.txt"));
-		
-		
+		try {
+			gv.getConsequenceType(variants);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
+	
+	
+//	@Test
+//	public void Variant() {
+//		int maximum = 200000000;
+//		try {
+//			FileUtils.touch(new File("/tmp/genomeVariantTest.txt"));
+//		} catch (IOException e1) {
+//			e1.printStackTrace();
+//		}
+//		
+//		
+//		List<GenomicVariant> variants = new ArrayList<GenomicVariant>();
+//		
+//		for (int i = 0; i < 10000; i++) {
+//			variants.add(new GenomicVariant("1", (int)(Math.random()*maximum) + i, "g"));
+//		}
+//		
+//		System.out.println("Creadas " + variants.size() + " variantes");
+//		
+//		GenomicVariantEffect gv = new GenomicVariantEffect("hsa");
+//		gv.writeConsequenceType(variants, new File("/tmp/genomeVariantTest.txt"));
+//		
+//		
+//	}
 	
 //	private void print(String title, GenomicRegionFeatures maps){
 //		

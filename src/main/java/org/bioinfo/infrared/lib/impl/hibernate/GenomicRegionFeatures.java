@@ -38,7 +38,6 @@ public class GenomicRegionFeatures {
 
 	/** Para acceder posteriormente a los objetos bajo demanda **/
 	private SessionFactory sessionFactory;
-	private String species;
 
 	public List<FeatureMap> featuresMap;
 
@@ -46,12 +45,11 @@ public class GenomicRegionFeatures {
 		this.region = region;
 	}
 	
-	public GenomicRegionFeatures(Region region, List<FeatureMap> featuresMap, SessionFactory sessionFactory, String species){
+	public GenomicRegionFeatures(Region region, List<FeatureMap> featuresMap, SessionFactory sessionFactory){
 		this.featuresMap = featuresMap;
 		this.region = region;
 		
 		this.sessionFactory = sessionFactory;
-		this.species = species;
 		
 		/** obtengo todos los id's de los featuremap **/
 		this.genesIds = new ArrayList<String>();
@@ -156,7 +154,6 @@ public class GenomicRegionFeatures {
 		
 		
 		for (RegulatoryRegion regulatoryRegion : regulatoryRegions) {
-			
 			if (regulatoryRegion.getType().equalsIgnoreCase("histone")){
 				this.histones.add(regulatoryRegion);
 			}
@@ -210,30 +207,48 @@ public class GenomicRegionFeatures {
 
 
 	public List<Tfbs> getTfbs() {
+		if (tfbs == null){
+			tfbs = new TfbsHibernateDBAdaptor(sessionFactory).getAllByInternalIdList(this.getTfbsIds());
+		}
 		return tfbs;
 	}
 
 	public List<RegulatoryRegion> getRegulatoryRegion() {
+		if (regulatoryRegion == null){
+			this.setRegulatoryRegion(new RegulatoryRegionHibernateDBAdaptor(sessionFactory).getAllByInternalIdList(this.getRegulatoryIds()));
+		}
 		return regulatoryRegion;
 	}
 
 
 	public List<RegulatoryRegion> getHistones() {
+		if (regulatoryRegion == null){
+			this.setRegulatoryRegion(new RegulatoryRegionHibernateDBAdaptor(sessionFactory).getAllByInternalIdList(this.getTfbsIds()));
+		}
 		return histones;
 	}
 
 
 	public List<RegulatoryRegion> getOpenChromatin() {
+		if (regulatoryRegion == null){
+			this.setRegulatoryRegion(new RegulatoryRegionHibernateDBAdaptor(sessionFactory).getAllByInternalIdList(this.getTfbsIds()));
+		}
 		return openChromatin;
 	}
 
 
 	public List<RegulatoryRegion> getTranscriptionFactor() {
+		if (regulatoryRegion == null){
+			this.setRegulatoryRegion(new RegulatoryRegionHibernateDBAdaptor(sessionFactory).getAllByInternalIdList(this.getTfbsIds()));
+		}
 		return transcriptionFactor;
 	}
 
 
 	public List<RegulatoryRegion> getPolimerase() {
+		if (regulatoryRegion == null){
+			this.setRegulatoryRegion(new RegulatoryRegionHibernateDBAdaptor(sessionFactory).getAllByInternalIdList(this.getTfbsIds()));
+		}
 		return polimerase;
 	}
 
@@ -251,6 +266,14 @@ public class GenomicRegionFeatures {
 
 	public ArrayList<String> getSnpsIds() {
 		return snpsIds;
+	}
+
+	public ArrayList<String> getTfbsIds() {
+		return tfbsIds;
+	}
+
+	public ArrayList<String> getRegulatoryIds() {
+		return regulatoryIds;
 	}
 
 
