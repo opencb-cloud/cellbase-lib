@@ -8,6 +8,21 @@ import org.bioinfo.infrared.lib.common.Region;
 
 public interface TfbsDBAdaptor extends FeatureDBAdaptor {
 
+	
+	public List<Tfbs> getAllByTfGeneName(String tfGeneName);
+
+	public List<List<Tfbs>> getAllByTfGeneNameList(List<String> tfGeneNameList);
+
+	public List<Tfbs> getAllByTargetGeneName(String targetGeneName);
+
+	public List<List<Tfbs>> getAllByTargetGeneNameList(List<String> targetGeneNameList);
+
+
+	public List<Pwm> getAllPwmByTfGeneName(String tfName);
+	
+	public List<List<Pwm>> getAllPwmByTfGeneNameList(List<String> tfNameList);
+
+	
 	public List<Tfbs> getAllByRegion(String chromosome);
 
 	public List<Tfbs> getAllByRegion(String chromosome, int start);
@@ -23,21 +38,6 @@ public interface TfbsDBAdaptor extends FeatureDBAdaptor {
 	public List<Tfbs> getAllByInternalId(String id);
 	
 
-
-	public List<Tfbs> getAllByTfGeneName(String geneName);
-
-	public List<List<Tfbs>> getAllByTfGeneNameList(List<String> geneNameList);
-
-	public List<Tfbs> getAllByTargetGeneStableId(String stableId);
-
-	public List<List<Tfbs>> getAllByTargetGeneStableIdList(List<String> ids);
-
-
-	public List<Pwm> getPwmByTfName(String tfName);
-	
-	public List<List<Pwm>> getPwmByTfNameList(List<String> tfNameList);
-
-	
 	public List<Object> getAllAnnotation();
 
 	public List<Object> getAllAnnotationByCellTypeList(List<String> cellTypes);
