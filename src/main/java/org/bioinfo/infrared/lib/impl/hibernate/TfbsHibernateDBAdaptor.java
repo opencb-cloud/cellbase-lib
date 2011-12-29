@@ -38,9 +38,9 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 		return null;
 	}
 
-	
-	
-	
+
+
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Tfbs> getAllByTfGeneName(String id) {
@@ -160,7 +160,7 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Tfbs> getAllByInternalId(String id) {
-		String Hquery = "from Tfbs tf left join fetch tf.pwm p where tf.tfbsId=:id group by tf.tfName, tf.cellType, tf.start, p.pwmId order by tf.start, tf.cellType asc";
+		String Hquery = "from Tfbs tf left join fetch tf.pwm p left join fetch tf.geneByTargetGeneId g where tf.tfbsId=:id group by tf.tfName, tf.cellType, tf.start, p.pwmId order by tf.start, tf.cellType asc";
 		Query query = this.openSession().createQuery(Hquery);
 		query.setParameter("id", Integer.valueOf(id));
 		return (List<Tfbs>) executeAndClose(query);
@@ -177,7 +177,7 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 	}
 
 
-	
+
 	@Override
 	public List<Region> getAllRegionsByIdList(List<String> idList) {
 		// TODO Auto-generated method stub
