@@ -3,6 +3,8 @@ package org.bioinfo.infrared.lib.api;
 import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.Protein;
+import org.bioinfo.infrared.core.cellbase.ProteinFeature;
+import org.bioinfo.infrared.core.cellbase.ProteinXref;
 
 public interface ProteinDBAdaptor extends FeatureDBAdaptor {
 
@@ -10,26 +12,51 @@ public interface ProteinDBAdaptor extends FeatureDBAdaptor {
 	@Override
 	public List<Protein> getAll();
 
-	
 	public List<String> getAllUniprotIds();
 
-	public Protein getByUniprotId(String uniprotId);
-
-	public List<Protein> getAllByUniprotIdList(List<String> uniprotIdList);
 	
-	public List<Protein> getAllByName(String name);
+	public List<Protein> getAllByUniprotId(String uniprotId);
 
-	public List<List<Protein>> getAllByNameList(List<String> nameList);
+	public List<List<Protein>> getAllByUniprotIdList(List<String> uniprotIdList);
+
 	
-	public List<String> getAllEnsemblIds();
+	public List<Protein> getAllByProteinName(String name);
 
-	public Protein getByEnsemblId(String ensemblId);
+	public List<List<Protein>> getAllByProteinNameList(List<String> nameList);
 	
-	public List<Protein> getAllByEnsemblIdList(List<String> ensemblIdList);
+	
+	public List<Protein> getAllByEnsemblGene(String ensemblGene);
+	
+	public List<Protein> getAllByEnsemblGeneList(List<String> ensemblGeneList);
 
-	public Protein getByEnsemblTranscriptId(String transcriptId);
+	public List<Protein> getAllByEnsemblTranscriptId(String transcriptId);
 	
 	public List<Protein> getAllByEnsemblTranscriptIdList(List<String> transcriptIdList);
 	
+	public List<Protein> getAllByGeneName(String geneName);
 	
+	public List<Protein> getAllByGeneNameList(List<String> geneNameList);
+	
+	
+	public List<ProteinFeature> getAllProteinFeaturesByUniprotId(String name);
+
+	public List<List<ProteinFeature>> getAllProteinFeaturesByUniprotIdList(List<String> nameList);
+	
+	public List<ProteinFeature> getAllProteinFeaturesByGeneName(String name);
+
+	public List<List<ProteinFeature>> getAllProteinFeaturesByGeneNameList(List<String> nameList);
+	
+	
+	public List<ProteinXref> getAllProteinXrefsByProteinName(String name);
+
+	public List<List<ProteinXref>> getAllProteinXrefsByProteinNameList(List<String> nameList);
+	
+	public List<ProteinXref> getAllProteinXrefsByProteinName(String name, String dbname);
+
+	public List<List<ProteinXref>> getAllProteinXrefsByProteinNameList(List<String> nameList, String dbname);
+	
+	public List<ProteinXref> getAllProteinXrefsByProteinName(String name, List<String> dbname);
+
+	public List<List<ProteinXref>> getAllProteinXrefsByProteinNameList(List<String> nameList, List<String> dbname);
+
 }
