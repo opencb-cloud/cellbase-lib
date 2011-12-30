@@ -9,6 +9,7 @@ import java.util.List;
 import org.bioinfo.commons.io.utils.IOUtils;
 import org.bioinfo.commons.log.Logger;
 import org.bioinfo.infrared.core.cellbase.Exon;
+import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
@@ -158,9 +159,10 @@ public class GenomicVariantEffect {
 		return this.getConsequenceType(variant.getChromosome(), variant.getStart(), variant.getAlternative());
 	}
 
-	public String getSNPNameByPosition(){
+	private String getSNPNameByPosition(){
 		String result = ".";
 		if (this.features.getSnp() != null){
+			result = new String();
 			if(this.features.getSnp().size() != 0){
 				for (Snp snp : this.features.getSnp()) {
 					result = result + " " + snp.getName();
@@ -170,9 +172,10 @@ public class GenomicVariantEffect {
 		return result;
 	}
 	
-	public String getSNPAncestralByPosition(){
+	private String getSNPAncestralByPosition(){
 		String result = ".";
 		if (this.features.getSnp() != null){
+			result = new String();
 			if(this.features.getSnp().size() != 0){
 				for (Snp snp : this.features.getSnp()) {
 					result = result + " " + snp.getAncestralAllele();
@@ -182,9 +185,10 @@ public class GenomicVariantEffect {
 		return result;
 	}
 	
-	public String getSNPAlleleByPosition(){
+	private String getSNPAlleleByPosition(){
 		String result = ".";
 		if (this.features.getSnp() != null){
+			result = new String();
 			if(this.features.getSnp().size() != 0){
 				for (Snp snp : this.features.getSnp()) {
 					result = result + " " + snp.getAlleleString();
@@ -194,6 +198,45 @@ public class GenomicVariantEffect {
 		return result;
 	}
 	
+	
+	private String getGeneStableIdByPosition(){
+		String result = ".";
+		if (this.features.getGenes() != null){
+			result = new String();
+			if(this.features.getGenes().size() != 0){
+				for (Gene gene : this.features.getGenes()) {
+					result = result + " " + gene.getStableId();
+				}
+			}
+		}
+		return result;
+	}
+	
+	private String getGeneExternalIdByPosition(){
+		String result = ".";
+		if (this.features.getGenes() != null){
+			result = new String();
+			if(this.features.getGenes().size() != 0){
+				for (Gene gene : this.features.getGenes()) {
+					result = result + " " + gene.getExternalName();
+				}
+			}
+		}
+		return result;
+	}
+	
+	private String getTranscriptStableIdByPosition(){
+		String result = ".";
+		if (this.features.getTranscripts() != null){
+			result = new String();
+			if(this.features.getTranscripts().size() != 0){
+				for (Transcript transcript : this.features.getTranscripts()) {
+					result = result + " " + transcript.getStableId();
+				}
+			}
+		}
+		return result;
+	}
 	
 	
 	public List<ConsequenceTypeResult> getConsequenceType(String chromosome, int position, String alternativeAllele){
@@ -589,15 +632,15 @@ public class GenomicVariantEffect {
 						snp.getName(), 
 						snp.getAncestralAllele(),
 						snp.getAlleleString(),
-						"geneId", 
-						"transcriptId", 
-						"geneName", 
+						getGeneStableIdByPosition(), 
+						getTranscriptStableIdByPosition(),
+						getGeneExternalIdByPosition(), 
 						snp.getDisplayConsequence(),
 						snp.getDisplaySoConsequence(), 
-						"description", 
-						"type", 
-						"codonChange",
-				"aminoChange"));
+						".", //"description", 
+						".",//"type", 
+						".",//"codonChange",
+						"."));//"aminoChange"));
 
 	}
 
@@ -630,7 +673,8 @@ public class GenomicVariantEffect {
 						consequenceTypeObo, 
 						desc, 
 						type, 
-						".", "."));
+						".", 
+						"."));
 	}
 
 	private void addConsequenceType(Tfbs tfbs, String consequenceType, String consequenceTypeObo, String desc, String type){
@@ -686,7 +730,8 @@ public class GenomicVariantEffect {
 						consequenceTypeObo, 
 						desc, 
 						type, 
-						".", "."));
+						".", 
+						"."));
 	}
 
 	/** GETTERS AND SETTERS **/

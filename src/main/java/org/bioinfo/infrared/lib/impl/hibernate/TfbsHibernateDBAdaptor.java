@@ -186,12 +186,20 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 		for (Xref xref : xrefs) {
 			ensemblIds.add(xref.getDisplayId());
 		}
-			
+		
+		if (ensemblIds.size() == 0){
+			/** No he conseguido nada desde xRef asi que intento buscarlo con el External name **/
+			String Hquery = "from Tfbs tf left join fetch tf.geneByTfGeneId p where tf.tfName = :key";
+		    Query query = this.openSession().createQuery(Hquery);
+		    query.setParameter("key", id);
+			return query.list();
+		}
+		
 		String Hquery = "from Tfbs tf left join fetch tf.geneByTfGeneId p where p.stableId in :keys";
 	    Query query = this.openSession().createQuery(Hquery);
 	    query.setParameterList("keys", ensemblIds);
-	    
 	     
+	    
 		return query.list();//(List<Tfbs>) executeAndClose(query); ////
 	}
 	

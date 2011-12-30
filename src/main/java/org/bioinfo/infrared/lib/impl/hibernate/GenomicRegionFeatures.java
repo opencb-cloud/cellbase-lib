@@ -268,11 +268,11 @@ public class GenomicRegionFeatures {
 		return snpsIds;
 	}
 
-	public ArrayList<String> getTfbsIds() {
+	public List<String> getTfbsIds() {
 		return tfbsIds;
 	}
 
-	public ArrayList<String> getRegulatoryIds() {
+	public List<String> getRegulatoryIds() {
 		return regulatoryIds;
 	}
 
