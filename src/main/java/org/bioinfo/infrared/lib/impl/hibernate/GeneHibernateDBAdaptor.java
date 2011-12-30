@@ -2,7 +2,6 @@ package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -376,31 +375,10 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	}
 	
 	@Override
-	public List<List<Gene>> getAllByTf(List<String> idList) {
+	public List<List<Gene>> getAllByTfList(List<String> idList) {
 		List<List<Gene>> result = new ArrayList<List<Gene>>();
 		for (String string : idList) {
 			result.add(this.getAllByTf(string));
-		}
-		return result;
-	}
-
-	
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Gene> getAllByMiRna(String mirbaseId) {
-		Criteria criteria = this.openSession().createCriteria(Gene.class)
-		.createCriteria("mirnaTargets")
-		.add(Restrictions.eq("mirbaseId", mirbaseId));
-		return (List<Gene>) executeAndClose(criteria);
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<List<Gene>> getAllByMiRna(List<String> mirbaseIds) {
-		List<List<Gene>> result = new ArrayList<List<Gene>>();
-		for (String string : mirbaseIds) {
-			result.add(this.getAllByMiRna(string));
 		}
 		return result;
 	}
@@ -417,6 +395,52 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		}
 		
 		return this.getAllByEnsemblIdList(ensemblId);
+	}
+
+	
+	
+	
+	
+	// Renombrar a getAllTargetGenesByMiRnaList
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Gene> getAllByMiRnaMature(String miRnaMatureName) {
+		Criterion mirbaseAcc = Restrictions.eq("mirbaseAcc", miRnaMatureName.trim());
+		Criterion mirbaseId = Restrictions.eq("mirbaseId", miRnaMatureName.trim());
+		LogicalExpression logExpression = Restrictions.or(mirbaseAcc, mirbaseId);
+		Criteria criteria = this.openSession().createCriteria(Gene.class)
+				.createCriteria("mirnaToGenes")
+				.createCriteria("mirnaGene")
+				.createCriteria("mirnaGeneToMatures")
+				.createCriteria("mirnaMature").add(logExpression);
+		return (List<Gene>) executeAndClose(criteria);
+	}
+	
+	@Override
+	public List<List<Gene>> getAllByMiRnaMatureList(List<String> miRnaMatureNameList) {
+		List<List<Gene>> result = new ArrayList<List<Gene>>(miRnaMatureNameList.size());
+		for(String string: miRnaMatureNameList) {
+			result.add(this.getAllByMiRnaMature(string));
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Gene> getAllTargetsByMiRnaMature(String mirbaseId) {
+		Criteria criteria = this.openSession().createCriteria(Gene.class)
+				.createCriteria("mirnaTargets")
+				.add(Restrictions.eq("mirbaseId", mirbaseId));
+		return (List<Gene>) executeAndClose(criteria);
+	}
+
+	@Override
+	public List<List<Gene>> getAllTargetsByMiRnaMatureList(List<String> mirbaseIds) {
+		List<List<Gene>> result = new ArrayList<List<Gene>>(mirbaseIds.size());
+		for(String string: mirbaseIds) {
+			result.add(this.getAllTargetsByMiRnaMature(string));
+		}
+		return result;
 	}
 	
 

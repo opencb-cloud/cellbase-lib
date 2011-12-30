@@ -7,14 +7,18 @@ import org.bioinfo.infrared.core.cellbase.Exon;
 import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.GenomeSequence;
 import org.bioinfo.infrared.core.cellbase.MirnaDisease;
+import org.bioinfo.infrared.core.cellbase.MirnaGene;
+import org.bioinfo.infrared.core.cellbase.MirnaMature;
 import org.bioinfo.infrared.core.cellbase.MirnaTarget;
+import org.bioinfo.infrared.core.cellbase.Protein;
+import org.bioinfo.infrared.core.cellbase.ProteinFeature;
+import org.bioinfo.infrared.core.cellbase.ProteinXref;
 import org.bioinfo.infrared.core.cellbase.Pwm;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.core.cellbase.Xref;
 import org.bioinfo.infrared.lib.common.GenomicVariantEffect.ConsequenceTypeResult;
-import org.bioinfo.infrared.serialization.InfraredSerializer;
 
 public class StringWriter {
 
@@ -72,6 +76,16 @@ public class StringWriter {
 		
 	}
 	
+	
+	public static String serialize(MirnaGene obj) {
+		return join("\t", obj.getMirbaseId(), obj.getMirbaseAcc(), obj.getStatus(), obj.getSequence(), obj.getSource());
+	}
+	
+	public static String serialize(MirnaMature obj) {
+		return join("\t", obj.getMirbaseId(), obj.getMirbaseAcc(), obj.getSequence());
+	}
+	
+	
 	public static String serialize(MirnaTarget object) {
 		return new StringBuilder().append(object.getMirbaseId()).append("\t")
 		.append(object.getGeneTargetName()).append("\t")
@@ -104,6 +118,29 @@ public class StringWriter {
 									.toString(); 
 	}
 	
+
+	public static String serialize(Pwm pwm){
+		return new StringBuilder().append(pwm.getTfName()).append("\t")
+		.append(pwm.getType()).append("\t")
+		.append(pwm.getFrequencies()).append("\t")
+		.append(pwm.getDescription()).append("\t")
+		.append(pwm.getSource()).append("\t")
+		.append(pwm.getLength()).append("\t")
+		.append(pwm.getAccession()).append("\t")
+		.toString();  
+	}
+	
+	public static String serialize(Protein obj) {
+		return join("\t", obj.getPrimaryAccession(), obj.getName(), obj.getFullName(), obj.getGeneName(), obj.getOrganism());
+	}
+	
+	public static String serialize(ProteinFeature obj) {
+		return join("\t", obj.getType(), ""+obj.getStart(), ""+obj.getEnd(), obj.getOriginal(), obj.getVariation(), obj.getIdentifier(), obj.getDescription());
+	}
+	
+	public static String serialize(ProteinXref obj) {
+		return join("\t", obj.getName(), obj.getSource());
+	}
 	
 	public static String serialize(ConsequenceTypeResult consequenceTypeResult){
 		return consequenceTypeResult.toString();
@@ -156,11 +193,20 @@ public class StringWriter {
 				continue;
 			}
 			
+			if (object instanceof MirnaGene){
+				sb.append(StringWriter.serialize((MirnaGene)object)).append("\n");
+				continue;
+			}
+			
+			if (object instanceof MirnaMature){
+				sb.append(StringWriter.serialize((MirnaMature)object)).append("\n");
+				continue;
+			}
+			
 			if (object instanceof MirnaTarget){
 				sb.append(StringWriter.serialize((MirnaTarget)object)).append("\n");
 				continue;
 			}
-			
 			
 			if (object instanceof MirnaDisease){
 				sb.append(StringWriter.serialize((MirnaDisease)object)).append("\n");
@@ -172,6 +218,20 @@ public class StringWriter {
 				continue;
 			}
 			
+			if (object instanceof Protein){
+				sb.append(StringWriter.serialize((Protein)object)).append("\n");
+				continue;
+			}
+			
+			if (object instanceof ProteinFeature){
+				sb.append(StringWriter.serialize((ProteinFeature)object)).append("\n");
+				continue;
+			}
+			
+			if (object instanceof ProteinXref){
+				sb.append(StringWriter.serialize((ProteinXref)object)).append("\n");
+				continue;
+			}
 			
 			if (object instanceof ConsequenceTypeResult){
 				sb.append(StringWriter.serialize((ConsequenceTypeResult)object)).append("\n");
@@ -187,15 +247,14 @@ public class StringWriter {
 	}
 
 
-	public static String serialize(Pwm pwm){
-		return new StringBuilder().append(pwm.getTfName()).append("\t")
-		.append(pwm.getType()).append("\t")
-		.append(pwm.getFrequencies()).append("\t")
-		.append(pwm.getDescription()).append("\t")
-		.append(pwm.getSource()).append("\t")
-		.append(pwm.getLength()).append("\t")
-		.append(pwm.getAccession()).append("\t")
-		.toString();  
+	
+	private static String join(String sep, String ... items) {
+		StringBuilder stringBuilder = new StringBuilder();
+		for(int i=0; i<items.length-1; i++) {
+			stringBuilder.append(items[i]).append(sep);
+		}
+		stringBuilder.append(items[items.length-1]);
+		return stringBuilder.toString();
 	}
-
+	
 }

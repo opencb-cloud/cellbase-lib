@@ -66,14 +66,17 @@ public interface GeneDBAdaptor extends FeatureDBAdaptor {
 	public List<List<Gene>> getAllBySnpIdList(List<String> snpIdList);
 
 
-	public List<List<Gene>> getAllByTf(List<String> idList);
-
 	public List<Gene> getAllByTf(String id);
 
+	public List<List<Gene>> getAllByTfList(List<String> idList);
 
-	public List<Gene> getAllByMiRna(String mirbaseId);
 
+	public List<Gene> getAllByMiRnaMature(String mirbaseId);
 
-	public List<List<Gene>> getAllByMiRna(List<String> mirbaseIds);
+	public List<List<Gene>> getAllByMiRnaMatureList(List<String> mirbaseIds);
+	
+	public List<Gene> getAllTargetsByMiRnaMature(String mirbaseId);
+
+	public List<List<Gene>> getAllTargetsByMiRnaMatureList(List<String> mirbaseIds);
 
 }

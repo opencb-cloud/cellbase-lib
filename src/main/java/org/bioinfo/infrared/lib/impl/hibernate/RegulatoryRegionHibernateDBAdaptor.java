@@ -4,21 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
-import org.bioinfo.infrared.core.cellbase.Tfbs;
-import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
-import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
-import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
@@ -84,6 +75,7 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<RegulatoryRegion> getAllByInternalId(String id) {
 		  String Hquery = "from RegulatoryRegion re where re.regulatoryRegionId=:id";

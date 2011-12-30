@@ -159,6 +159,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		return (ExonDBAdaptor) new ExonHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 
+	
 	@Override
 	public GenomicRegionFeatureHibernateDBAdaptor getFeatureMapDBAdaptor(String species) {
 		return getFeatureMapDBAdaptor(species, null);
@@ -176,18 +177,19 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 	
 	@Override
 	public ProteinDBAdaptor getProteinDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
+		return getProteinDBAdaptor(species, null);
 	}
 	
 	@Override
 	public ProteinDBAdaptor getProteinDBAdaptor(String species, String version) {
-		// TODO Auto-generated method stub
-		return null;
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species,version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)){
+			SessionFactory sessionFactory  = createSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+		return (ProteinDBAdaptor) new ProteinHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 
-
-	
 	
 	@Override
 	public SnpDBAdaptor getSnpDBAdaptor(String species) {
@@ -263,6 +265,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		return (XRefsDBAdaptor) new XRefsHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 
+	
 	@Override
 	public TfbsDBAdaptor getTfbsDBAdaptor(String species) {
 		return getTfbsDBAdaptor(species, null);
@@ -307,7 +310,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		System.out.println("sessionFactories " + sessionFactories.get(speciesVersionPrefix));
+//		System.out.println("sessionFactories " + sessionFactories.get(speciesVersionPrefix));
 		return (MirnaHibernateDBAdaptor) new MirnaHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
 	}
 
