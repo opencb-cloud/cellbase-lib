@@ -202,27 +202,11 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProteinFeature> getAllProteinFeaturesByProteinXref(String name) {
-		Criterion ensemblId = Restrictions.eq("primaryAccession", name.trim());
-		Criterion nameCriterio = Restrictions.eq("geneName", name.trim());
-		LogicalExpression log = Restrictions.or(ensemblId, nameCriterio);
-		Criteria criteria = this.openSession().createCriteria(Protein.class)
-				.add(log);
-		List<Protein> proteinList = (List<Protein>) executeAndClose(criteria);
-		
-		// adding IDs from protein_xref
-		criteria = this.openSession().createCriteria(Protein.class)
-			.createCriteria("proteinXrefs")
-			.add(Restrictions.eq("name", name));
-		proteinList.addAll((List<Protein>) executeAndClose(criteria));
-		
-		List<ProteinFeature> proteinFeatureList = new ArrayList<ProteinFeature>(); 
-		for(Protein prot: proteinList) {
-			criteria = this.openSession().createCriteria(ProteinFeature.class)
+		Criteria criteria = this.openSession().createCriteria(ProteinFeature.class)
 				.createCriteria("protein")
-				.add(Restrictions.eq("proteinId", prot.getProteinId()));
-			proteinFeatureList.addAll((List<ProteinFeature>) executeAndClose(criteria));
-		}
-		return proteinFeatureList;
+				.createCriteria("proteinXrefs")
+				.add(Restrictions.eq("name", name));
+		return (List<ProteinFeature>) executeAndClose(criteria);
 	}
 
 	@Override
