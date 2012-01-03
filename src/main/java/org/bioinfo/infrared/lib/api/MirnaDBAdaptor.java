@@ -6,6 +6,7 @@ import org.bioinfo.infrared.core.cellbase.MirnaDisease;
 import org.bioinfo.infrared.core.cellbase.MirnaGene;
 import org.bioinfo.infrared.core.cellbase.MirnaMature;
 import org.bioinfo.infrared.core.cellbase.MirnaTarget;
+import org.bioinfo.infrared.lib.common.Region;
 
 public interface MirnaDBAdaptor {
 
@@ -53,6 +54,14 @@ public interface MirnaDBAdaptor {
 	public List<MirnaTarget> getAllMiRnaTargetsByGeneName(String geneName);
 	
 	public List<List<MirnaTarget>> getAllMiRnaTargetsByGeneNameList(List<String> geneNames);
+	
+	public List<MirnaTarget> getAllMiRnaTargetsByPosition(String chromosome, int start);
+	
+	public List<MirnaTarget> getAllMiRnaTargetsByRegion(String chromosome, int start, int end);
+	
+	public List<MirnaTarget> getAllMiRnaTargetsByRegion(Region region);
+
+	public List<List<MirnaTarget>> getAllMiRnaTargetsByRegionList(List<Region> regionList);
 
 	
 	
@@ -69,5 +78,6 @@ public interface MirnaDBAdaptor {
 	public List<Object> getAllAnnotation();
 
 	public List<Object> getAllAnnotationBySourceList(List<String> sourceList);
+
 
 }

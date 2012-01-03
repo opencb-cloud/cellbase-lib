@@ -9,11 +9,15 @@ import org.bioinfo.infrared.core.cellbase.MirnaGene;
 import org.bioinfo.infrared.core.cellbase.MirnaMature;
 import org.bioinfo.infrared.core.cellbase.MirnaTarget;
 import org.bioinfo.infrared.lib.api.MirnaDBAdaptor;
+import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.LogicalExpression;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdaptor {
@@ -147,10 +151,6 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
-
-
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -286,6 +286,47 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 		}
 
 		return (List<Object>) executeAndClose(querySQL);
+	}
+
+	
+	
+	
+	@Override
+	public List<MirnaTarget> getAllMiRnaTargetsByPosition(String chromosome, int start) {
+		return this.getAllMiRnaTargetsByRegion(chromosome, start, start);
+	}
+	
+	@Override
+	public List<List<MirnaTarget>> getAllMiRnaTargetsByRegionList(List<Region> regionList) {
+		List<List<MirnaTarget>> result = new ArrayList<List<MirnaTarget>>();
+		for (Region region : regionList) {
+			result.add(this.getAllMiRnaTargetsByRegion(region));
+		}
+		return result;
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MirnaTarget> getAllMiRnaTargetsByRegion(String chromosome, int start, int end) {
+//		ProjectionList projList = Projections.projectionList();
+//		projList.add(Projections.property("mirbaseId"));
+//		projList.add(Projections.groupProperty("mirbaseId"));
+		 
+		Criteria criteria = this.openSession().createCriteria(MirnaTarget.class)
+		.add(Restrictions.ge("end", start))
+		.add(Restrictions.le("start", end))
+		.addOrder(Order.asc("chromosome"));
+		
+//		criteria.setProjection(projList);
+		
+		return (List<MirnaTarget>) executeAndClose(criteria);
+	}
+
+
+	@Override
+	public List<MirnaTarget> getAllMiRnaTargetsByRegion(Region region) {
+		return this.getAllMiRnaTargetsByRegion(region.getChromosome(), region.getStart(), region.getEnd());
 	}
 
 }
