@@ -76,6 +76,7 @@ public class GenomicVariantEffect {
 			for (int i = 0; i < variants.size(); i++) {
 				try {
 					IOUtils.append(file,  this.getConsequenceType(variants.get(i)).toString());
+					System.out.println("test " + this.getConsequenceType(variants.get(i)).toString());
 				} catch (IOException e) {
 					IOUtils.append(file,  "VARIANT TOOL ERROR: " + e.getMessage());
 					e.printStackTrace();
@@ -404,8 +405,6 @@ public class GenomicVariantEffect {
 		catch(Exception exp){
 			throw exp;
 		}
-
-
 	}
 
 
@@ -814,9 +813,6 @@ public class GenomicVariantEffect {
 		//System.out.println("TOTAL MAIN LOOP: "+(System.currentTimeMillis()-t00)+" ms");
 		return result;
 	}
-
-
-
 
 	public class ConsequenceTypeResult{
 		private String chromosome;
