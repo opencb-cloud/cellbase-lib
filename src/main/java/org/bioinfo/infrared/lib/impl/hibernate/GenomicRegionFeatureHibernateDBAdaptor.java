@@ -58,13 +58,13 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 		
 		Query query;
 //		
-//		if (chunk_start == chunk_end){
-//			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId = :start_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome");
-//		}
-//		else{
-//			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId >= :start_chunk and id.chunkId <= :end_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome");
-//			query.setParameter("end_chunk", chunk_end);
-//		}
+		if (chunk_start == chunk_end){
+			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId = :start_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome");
+		}
+		else{
+			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId >= :start_chunk and id.chunkId <= :end_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome");
+			query.setParameter("end_chunk", chunk_end);
+		}
 //		
 //	
 //
@@ -74,10 +74,12 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 //		query.setParameter("chromosome", chromosome);
 //		return (List<FeatureMap>)execute(query);
 		
-		
-		query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId = :chunk_start and chromosome=:CHROMOSOME");
+//		query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId = :start_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome");
+		query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId = :chunk_start and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:CHROMOSOME");
 		query.setParameter("CHROMOSOME", chromosome);
 		query.setParameter("chunk_start", chunk_start);
+		query.setParameter("startparam", start);
+		query.setParameter("endparam", end);
 		return (List<FeatureMap>)execute(query);
 	}
 	

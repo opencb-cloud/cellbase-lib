@@ -76,7 +76,7 @@ public class GenomicVariantEffect {
 			for (int i = 0; i < variants.size(); i++) {
 				try {
 					IOUtils.append(file,  this.getConsequenceType(variants.get(i)).toString());
-					System.out.println("test " + this.getConsequenceType(variants.get(i)).toString());
+					
 				} catch (IOException e) {
 					IOUtils.append(file,  "VARIANT TOOL ERROR: " + e.getMessage());
 					e.printStackTrace();
@@ -95,6 +95,7 @@ public class GenomicVariantEffect {
 			this.transcriptHash = this.fillAllTranscriptFromDB();
 			for (int i = 0; i < variants.size(); i++) {
 				br.append(this.getConsequenceType(variants.get(i)).toString());
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -291,7 +292,7 @@ public class GenomicVariantEffect {
 						this.addConsequenceType(regulatory, "regulatory_region_variant", "SO:0001566", "In regulatory region annotated by Ensembl", "REGULATORY" );
 					}
 					for (RegulatoryRegion regulatory : getFeatures().getOpenChromatin()){
-						this.addConsequenceType(regulatory, "OPEN CHROMATINE", "OPEN CHROMATINE OBO", "In regulatory region annotated by Ensembl", "REGULATORY" );
+						this.addConsequenceType(regulatory, "open_chromatine_region", " SO:0001747", "In regulatory region annotated by Ensembl", "REGULATORY" );
 					}
 					for (RegulatoryRegion regulatory : getFeatures().getPolimerase()){
 						this.addConsequenceType(regulatory, "POLYMERASE", "POLYMERASE OBO", "In regulatory region annotated by Ensembl", "REGULATORY" );
@@ -475,7 +476,6 @@ public class GenomicVariantEffect {
 			char[] referenceSequenceCharArray = referenceSequence.toCharArray();
 			referenceSequenceCharArray[codon_position - 1] = alternativeAllele.toCharArray()[0]; 
 
-
 			String alternative = new String();
 			for (int i = 0; i < referenceSequenceCharArray.length; i++) {
 				alternative = alternative + referenceSequenceCharArray[i];
@@ -492,6 +492,7 @@ public class GenomicVariantEffect {
 				this.addConsequenceType(transcript, "synonymous_codon", "SO:0001588", "In coding sequence, not resulting in an amino acid change (silent mutation)", "consequenceTypeType" );
 			}
 			else{
+				
 				this.addConsequenceType(transcript, "non_synonymous_codon", "SO:0001583", "In coding sequence and results in an amino acid change in the encoded peptide sequence", "consequenceTypeType", DNASequenceUtils.codonToAminoacidShort.get(referenceSequence)+"/"+ DNASequenceUtils.codonToAminoacidShort.get(alternative), referenceSequence.replace("U", "T")+"/"+alternative.replace("U", "T")  );
 
 				if ((!DNASequenceUtils.codonToAminoacidShort.get(referenceSequence).toLowerCase().equals("stop"))&& (DNASequenceUtils.codonToAminoacidShort.get(alternative).toLowerCase().equals("stop"))){
@@ -623,7 +624,7 @@ public class GenomicVariantEffect {
 						snp.getName(), 
 						".",
 						"SNP", 
-						"biotype", 
+						".", //"biotype", 
 						snp.getChromosome(), 
 						snp.getStart(),
 						snp.getEnd(), 
