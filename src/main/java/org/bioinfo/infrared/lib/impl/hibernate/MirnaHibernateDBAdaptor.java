@@ -194,6 +194,7 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<MirnaTarget> getAllMiRnaTargetsByGeneName(String geneName) {
+		
 		GeneHibernateDBAdaptor adaptor = new GeneHibernateDBAdaptor(this.getSessionFactory());
 		List<Gene> genes = adaptor.getAllByXref(geneName);
 
@@ -202,11 +203,16 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 			ensemblId.add(gene.getStableId());
 		}
 
-		Criteria criteria = this.openSession().createCriteria(MirnaTarget.class)
-				.createCriteria("gene")
-				.add(Restrictions.in("stableId", ensemblId));
-
-		return (List<MirnaTarget>) executeAndClose(criteria);
+	
+		 Criteria criteria = this.openSession().createCriteria(MirnaTarget.class).createCriteria("gene");
+		
+		if (ensemblId.size() > 0){
+			criteria.add(Restrictions.in("stableId", ensemblId));
+			return (List<MirnaTarget>) executeAndClose(criteria);
+		}
+		
+		return new ArrayList<MirnaTarget>();
+		
 	}
 
 	@Override

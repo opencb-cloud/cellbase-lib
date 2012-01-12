@@ -59,6 +59,8 @@ public class GenomicRegionFeatures {
 		this.tfbsIds = new ArrayList<String>();
 		this.regulatoryIds = new ArrayList<String>();
 		
+		System.out.println("Feature map: " + featuresMap.size());
+		
 		for (FeatureMap featureMap : featuresMap) {
 			if (featureMap.getId().getSource().equals("gene")){
 				genesIds.add(featureMap.getFeatureId());
@@ -84,6 +86,7 @@ public class GenomicRegionFeatures {
 				tfbsIds.add(String.valueOf(featureMap.getId().getSourceId()));
 				continue;
 			}
+			
 			
 			if (featureMap.getId().getSource().equals("regulatory_region")){
 				regulatoryIds.add(String.valueOf(featureMap.getId().getSourceId()));

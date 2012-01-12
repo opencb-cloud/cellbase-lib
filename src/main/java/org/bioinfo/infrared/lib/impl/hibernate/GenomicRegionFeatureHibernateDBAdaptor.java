@@ -57,25 +57,14 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 		int chunk_end = end / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
 		
 		Query query;
-//		
 		if (chunk_start == chunk_end){
-			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId = :start_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome");
+			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId = :chunk_start and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:CHROMOSOME");
 		}
 		else{
-			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId >= :start_chunk and id.chunkId <= :end_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome");
+			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId >= :chunk_start and id.chunkId <= :end_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:CHROMOSOME");
 			query.setParameter("end_chunk", chunk_end);
 		}
-//		
-//	
-//
-//		query.setParameter("start_chunk", chunk_start);
-//		query.setParameter("startparam", start);
-//		query.setParameter("endparam", end);
-//		query.setParameter("chromosome", chromosome);
-//		return (List<FeatureMap>)execute(query);
 		
-//		query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId = :start_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:chromosome");
-		query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId = :chunk_start and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome=:CHROMOSOME");
 		query.setParameter("CHROMOSOME", chromosome);
 		query.setParameter("chunk_start", chunk_start);
 		query.setParameter("startparam", start);
@@ -85,14 +74,9 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 	
 	
 	private GenomicRegionFeatures getByRegion(String chromosome, int start, int end, List<String> sources, Session session) {
-		
 //		long t0 = System.currentTimeMillis();
 		List<FeatureMap> result = this.getFeatureMapsByRegion(chromosome, start, end, sources, session);
 //		System.out.println("\tDB Recovering features map: "+(System.currentTimeMillis()-t0)+" ms");
-		
-		
-		
-		//TODO: ojo corregir esto ¿DE DONDE SACO LA SPECIE **/
 //		t0 = System.currentTimeMillis();
 		GenomicRegionFeatures genomicRegionFeatures = new GenomicRegionFeatures(new Region(chromosome, start, end), result, this.getSessionFactory()); 
 //		System.out.println("\tFILLING OBJECT: "+(System.currentTimeMillis()-t0)+" ms");

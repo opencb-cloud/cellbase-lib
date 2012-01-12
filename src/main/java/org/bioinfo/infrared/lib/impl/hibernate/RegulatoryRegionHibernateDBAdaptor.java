@@ -1,6 +1,7 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -60,18 +61,49 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<RegulatoryRegion> getAllByRegion(String chromosome, int start, int end, List<String> type) {
-		Criteria criteria = this.openSession().createCriteria(RegulatoryRegion.class)
-		.add(Restrictions.ge("end", start))
-		.add(Restrictions.le("start", end))
-		.add(Restrictions.eq("chromosome", chromosome))
-		.addOrder(Order.asc("chromosome"))
-		.addOrder(Order.asc("start"));
+//		Criteria criteria = this.openSession().createCriteria(RegulatoryRegion.class)
+//		.add(Restrictions.ge("end", start))
+//		.add(Restrictions.le("start", end))
+//		.add(Restrictions.eq("chromosome", chromosome))
+//		.addOrder(Order.asc("chromosome"))
+//		.addOrder(Order.asc("start"));
+//		
+//		if (type != null){
+//			criteria.add(Restrictions.in("type", type));
+//		}
+//		
+//		return (List<RegulatoryRegion>) executeAndClose(criteria);
 		
-		if (type != null){
-			criteria.add(Restrictions.in("type", type));
+		
+		/** Utilizar feature map !!! **/ 
+		GenomicRegionFeatureHibernateDBAdaptor adaptor = new GenomicRegionFeatureHibernateDBAdaptor(this.getSessionFactory());
+		GenomicRegionFeatures genomicRegionFeatures = adaptor.getByRegion(new Region(chromosome, start, end));
+		
+		System.out.println(genomicRegionFeatures.getRegulatoryIds().size());
+		List<RegulatoryRegion> result = new ArrayList<RegulatoryRegion>();
+		
+		if (type == null){
+			return genomicRegionFeatures.getRegulatoryRegion();
 		}
-		
-		return (List<RegulatoryRegion>) executeAndClose(criteria);
+		else{
+			for (String string : type) {
+				
+				if (string.equalsIgnoreCase("histone")){
+					result.addAll(genomicRegionFeatures.getHistones());
+				}
+				if (string.equalsIgnoreCase("Open Chromatin")){
+					result.addAll(genomicRegionFeatures.getOpenChromatin());
+				}
+				if (string.equalsIgnoreCase("Polymerase")){
+					result.addAll(genomicRegionFeatures.getPolimerase());
+				}
+				if (string.equalsIgnoreCase("Transcription Factor")){
+					result.addAll(genomicRegionFeatures.getTranscriptionFactor());
+				}
+				
+			}
+			return result;
+		}
 	}
 	
 	

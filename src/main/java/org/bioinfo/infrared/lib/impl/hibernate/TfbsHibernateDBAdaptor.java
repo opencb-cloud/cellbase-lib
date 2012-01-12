@@ -86,10 +86,16 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 			ensemblIds.add(xref.getDisplayId());
 		}
 
-		Criteria criteria = this.openSession().createCriteria(Tfbs.class)
-				.createCriteria("geneByTargetGeneId")
-				.add(Restrictions.in("stableId", ensemblIds));
-		return (List<Tfbs>) executeAndClose(criteria);
+		if (ensemblIds.size() > 0){
+			Criteria criteria = this.openSession().createCriteria(Tfbs.class)
+			.createCriteria("geneByTargetGeneId")
+			.add(Restrictions.in("stableId", ensemblIds));
+			return (List<Tfbs>) executeAndClose(criteria);
+		}
+		else{
+			return new ArrayList<Tfbs>();
+		}
+	
 	}
 
 	@Override
