@@ -2,7 +2,9 @@ package org.bioinfo.infrared.lib.api;
 
 import java.util.List;
 
+import org.bioinfo.infrared.core.cellbase.ConsequenceType;
 import org.bioinfo.infrared.core.cellbase.Snp;
+import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 
@@ -13,9 +15,9 @@ public interface SnpDBAdaptor extends FeatureDBAdaptor {
 	public List<Snp> getAll();
 
 	
-	public List<Snp> getByDbSnpId(String dbSnpId);
+	public List<Snp> getAllBySnpId(String snpId);
 
-	public List<List<Snp>> getByDbSnpIdList(List<String> dbSnpIdList);
+	public List<List<Snp>> getAllBySnpIdList(List<String> snpIdList);
 
 	public List<Snp> getAllByGeneId(String externalId);
 	
@@ -28,19 +30,31 @@ public interface SnpDBAdaptor extends FeatureDBAdaptor {
 	public List<Snp> getAllByEnsemblTranscriptId(String ensemblTranscriptId);
 	
 	public List<List<Snp>> getAllByEnsemblTranscriptIdList(List<String> ensemblTranscriptIds);
-	
-	public List<String> getAllConsequenceTypes();
 
-	public List<String> getAllIdsByConsequenceType(String consequenceType);
-	
-	public List<List<String>> getAllIdsByConsequenceTypeList(List<String> consequenceTypeList);
-	
 	public List<String> getAllIdsByRegion(String chromosome, int start, int end);
 
 	
-	public List<Snp> getAllByConsequenceType(String consequenceType);
+	public List<ConsequenceType> getAllConsequenceTypes();
 	
-	public List<Snp> getAllByConsequenceTypeList(List<String> consequenceTypeList);
+	public List<ConsequenceType> getAllConsequenceTypesBySnpId(String snpId);
+	
+	public List<SnpToTranscript> getAllSnpToTranscriptsBySnpId(String snpId);
+	
+	public List<SnpToTranscript> getAllSnpToTranscriptsByTranscriptId(String transcriptId);
+	
+	public List<List<ConsequenceType>> getAllConsequenceTypesBySnpIdList(List<String> snpId);
+
+	public List<String> getAllIdsBySOConsequenceType(String soConsequenceType);
+	
+	public List<List<String>> getAllIdsBySOConsequenceTypeList(List<String> soConsequenceTypeList);
+	
+	public List<Snp> getAllBySOConsequenceType(String soConsequenceType);
+	
+	public List<Snp> getAllBySOConsequenceTypeList(List<String> soConsequenceTypeList);
+	
+	public List<Snp> getAllByEnsemblConsequenceType(String ensemblConsequenceType);
+	
+	public List<Snp> getAllByEnsemblConsequenceTypeList(List<String> ensemblConsequenceTypeList);
 	
 	
 	public List<Snp> getAllByPosition(String chromosome, int position);

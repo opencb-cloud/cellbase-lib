@@ -43,6 +43,8 @@ public abstract class DBAdaptorFactory {
 
 	public abstract void setConfiguration(Properties properties);
 	
+	public abstract void open(String species, String version);
+	
 	public abstract void close();
 
 

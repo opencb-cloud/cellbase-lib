@@ -134,7 +134,16 @@ public class HBaseDBAdaptorFactory extends DBAdaptorFactory{
 	}
 
 
-	
+
+
+
+	@Override
+	public void open(String species, String version) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 
 	@Override
 	public void close() {

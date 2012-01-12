@@ -97,6 +97,15 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			}
 		}
 	}
+	
+	@Override
+	public void open(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)) {
+			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+	}
 
 	@Override
 	public void close() {
@@ -105,9 +114,9 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 //				adaptor.getSessionFactory().close();
 //			}
 //		}
-		for(SessionFactory adaptor: sessionFactories.values()) {
-			if(adaptor != null && !adaptor.isClosed()) {
-				adaptor.close();
+		for(SessionFactory sessionFactory: sessionFactories.values()) {
+			if(sessionFactory != null && !sessionFactory.isClosed()) {
+				sessionFactory.close();
 			}
 		}
 	}
@@ -203,6 +212,12 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
+//		else {
+//			if(sessionFactories.get(speciesVersionPrefix).isClosed()) {
+//				SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
+//				sessionFactories.put(speciesVersionPrefix, sessionFactory);
+//			}
+//		}
 		
 		return (SnpDBAdaptor) new SnpHibernateDBAdapator(sessionFactories.get(speciesVersionPrefix));
 	}

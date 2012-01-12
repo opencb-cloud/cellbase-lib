@@ -1,11 +1,9 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.FeatureMap;
-import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.common.GenomicVariant;
 import org.bioinfo.infrared.lib.common.Region;
@@ -14,6 +12,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor implements GenomicRegionFeatureDBAdaptor {
+	
 	private static int FEATURE_MAP_CHUNK_SIZE = 400;
 	
 	public GenomicRegionFeatureHibernateDBAdaptor(SessionFactory sessionFactory) {
