@@ -38,11 +38,11 @@ public interface SnpDBAdaptor extends FeatureDBAdaptor {
 	
 	public List<ConsequenceType> getAllConsequenceTypesBySnpId(String snpId);
 	
+	public List<List<ConsequenceType>> getAllConsequenceTypesBySnpIdList(List<String> snpId);
+
 	public List<SnpToTranscript> getAllSnpToTranscriptsBySnpId(String snpId);
 	
 	public List<SnpToTranscript> getAllSnpToTranscriptsByTranscriptId(String transcriptId);
-	
-	public List<List<ConsequenceType>> getAllConsequenceTypesBySnpIdList(List<String> snpId);
 
 	public List<String> getAllIdsBySOConsequenceType(String soConsequenceType);
 	
