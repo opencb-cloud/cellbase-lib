@@ -2,6 +2,7 @@ package org.bioinfo.infrared.lib.io.output;
 
 import java.util.List;
 
+import org.bioinfo.infrared.core.cellbase.ConsequenceType;
 import org.bioinfo.infrared.core.cellbase.Cytoband;
 import org.bioinfo.infrared.core.cellbase.Exon;
 import org.bioinfo.infrared.core.cellbase.Gene;
@@ -54,6 +55,10 @@ public class StringWriter {
 									.append(snp.getDisplaySoConsequence()).append("\t")
 									.append(snp.getSequence())
 									.toString(); 
+	}
+	
+	public static String serialize(ConsequenceType obj) {
+		return join("\t", obj.getSoAccession(), obj.getSoTerm(), obj.getFeatureSoTerm(), obj.getDisplayTerm(), ""+obj.getRank(), obj.getNcbiTerm(), obj.getLabel(), obj.getDescription());
 	}
 	
 	public static String serialize(Transcript transcript){
@@ -173,8 +178,14 @@ public class StringWriter {
 				sb.append(StringWriter.serialize((Transcript) object)).append("\n");
 				continue;
 			}
+			
 			if (object instanceof Snp){
 				sb.append(StringWriter.serialize((Snp) object)).append("\n");
+				continue;
+			}
+			
+			if (object instanceof ConsequenceType){
+				sb.append(StringWriter.serialize((ConsequenceType) object)).append("\n");
 				continue;
 			}
 			

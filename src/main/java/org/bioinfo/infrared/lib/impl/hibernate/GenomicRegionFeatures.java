@@ -145,7 +145,7 @@ public class GenomicRegionFeatures {
 
 	public List<Snp> getSnp() {
 		if (snp == null){
-			snp = cleanSnpByRegion(this.region, new SnpHibernateDBAdapator(this.sessionFactory).getByDbSnpIdList(snpsIds));
+			snp = cleanSnpByRegion(this.region, new SnpHibernateDBAdapator(this.sessionFactory).getAllBySnpIdList(snpsIds));
 		}
 		return snp;
 	}
