@@ -223,11 +223,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 	@Override
 	public List<Transcript> getAllByPosition(Position position) {
-		if(position == null) {
-			return null;
-		}else {
 			return getAllByPosition(position.getChromosome(), position.getPosition());	
-		}
 	}
 
 	@Override

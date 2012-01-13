@@ -199,18 +199,15 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 		return null;
 	}
 
-
 	@Override
 	public List<Snp> getAllByRegion(Region region) {
 		return this.getAllByRegion(region.getChromosome(), region.getStart(), region.getEnd());
 	}
 
-
 	@Override
 	public List<Snp> getAllByRegion(Region region, List<String> consequenceTypeList) {
 		return this.getAllByRegion(region.getChromosome(), region.getStart(), region.getEnd(), consequenceTypeList);
 	}
-
 
 	@Override
 	public List<List<Snp>> getAllByRegionList(List<Region> regionList) {
@@ -221,20 +218,15 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 		return results;
 	}
 
-
 	@Override
 	public List<List<Snp>> getAllByRegionList(List<Region> regionList, List<String> consequenceTypeList) {
-		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 	@Override
 	public List<String> getAllConsequenceTypes() {
-		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 	@Override
 	public List<Snp> getAllFilteredByConsequenceType(List<String> snpIds, String consequence) {

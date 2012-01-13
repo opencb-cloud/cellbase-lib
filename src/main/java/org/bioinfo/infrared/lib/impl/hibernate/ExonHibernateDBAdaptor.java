@@ -1,6 +1,7 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -136,9 +137,8 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 		session.close();
 		return exonsList;
 	}
-	/****/
 	
-	/****/
+	
 	@Override
 	public List<Exon> getByEnsemblGeneId(String geneId) {
 		Session session =  this.openSession();
@@ -146,17 +146,37 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 		session.close();
 		return exons;
 	}
+	
 	@SuppressWarnings("unchecked")
 	private List<Exon> getByEnsemblGeneId(String geneId, Session session) {
-		Criteria criteria =  session
-				.createCriteria(Exon.class)
-				.addOrder(Order.asc("chromosome"))
-				.addOrder(Order.asc("start"))
-				.setFetchMode("exon2transcripts", FetchMode.SELECT)
-				.createCriteria("exonToTranscripts").setFetchMode("transcript", FetchMode.SELECT)
-				.createCriteria("transcript").setFetchMode("gene", FetchMode.SELECT)
-				.createCriteria("gene").add( Restrictions.eq("stableId", geneId.trim()));
-		return (List<Exon>)criteria.list();
+//		Criteria criteria =  session
+//				.createCriteria(Exon.class)
+//				.addOrder(Order.asc("chromosome"))
+//				.addOrder(Order.asc("start"))
+//				.setFetchMode("exon2transcripts", FetchMode.SELECT)
+//				.createCriteria("exonToTranscripts").setFetchMode("transcript", FetchMode.SELECT)
+//				.createCriteria("transcript").setFetchMode("gene", FetchMode.SELECT)
+//				.createCriteria("gene").add( Restrictions.eq("stableId", geneId.trim()));
+//		return (List<Exon>)criteria.list();
+		
+		String query = "select exon from Exon as exon left join fetch exon.exonToTranscripts as ett left join fetch ett.transcript as t left join fetch t.gene as g where g.stableId = :stableId order by exon.start asc";
+		Query HQLQuery = session.createQuery(query);
+		HQLQuery.setParameter("stableId", geneId.trim());
+		
+		List<Exon> result = new ArrayList<Exon>();
+		/** No se muy bien como hacer esto con HQL asi que de momento lo hago via object **/
+		List<Exon> queryResult = (List<Exon>)HQLQuery.list();
+		HashSet<String> keys = new HashSet<String>();
+		
+		for (Exon exon : queryResult) {
+			if (!keys.contains(exon.getStableId())){
+				keys.add(exon.getStableId());
+				result.add(exon);
+			}
+		}
+		
+		return result;
+		
 	}
 	@Override
 	public List<List<Exon>> getByEnsemblGeneIdList(List<String> geneIds) {
@@ -168,10 +188,7 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 		session.close();
 		return exonsList;
 	}
-	/****/
-	
-	
-	/***/
+
 	@Override
 	public List<Exon> getAllByPosition(String chromosome, int position) {
 		Session session =  this.openSession();
