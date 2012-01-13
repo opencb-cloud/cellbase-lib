@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
 import org.bioinfo.infrared.lib.common.Region;
+import org.bioinfo.infrared.lib.impl.hibernate.GenomicRegionFeatures;
 
 public interface RegulatoryRegionDBAdaptor extends FeatureDBAdaptor {
 
@@ -31,6 +32,8 @@ public interface RegulatoryRegionDBAdaptor extends FeatureDBAdaptor {
 	public List<RegulatoryRegion> getAllByInternalId(String id);
 
 	public List<RegulatoryRegion> getAllByInternalIdList(List<String> idList);
+
+	public List<GenomicRegionFeatures> getAllFeatureMapByRegion(List<Region> region);
 	
 
 }

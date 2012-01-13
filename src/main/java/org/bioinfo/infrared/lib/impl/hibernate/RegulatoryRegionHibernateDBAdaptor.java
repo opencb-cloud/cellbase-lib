@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.bioinfo.infrared.core.cellbase.FeatureMap;
 import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
 import org.bioinfo.infrared.lib.common.Region;
@@ -61,31 +62,27 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<RegulatoryRegion> getAllByRegion(String chromosome, int start, int end, List<String> type) {
-//		Criteria criteria = this.openSession().createCriteria(RegulatoryRegion.class)
-//		.add(Restrictions.ge("end", start))
-//		.add(Restrictions.le("start", end))
-//		.add(Restrictions.eq("chromosome", chromosome))
-//		.addOrder(Order.asc("chromosome"))
-//		.addOrder(Order.asc("start"));
-//		
-//		if (type != null){
-//			criteria.add(Restrictions.in("type", type));
-//		}
-//		
-//		return (List<RegulatoryRegion>) executeAndClose(criteria);
-		
-		
+		long t0 = System.currentTimeMillis();
+
 		/** Utilizar feature map !!! **/ 
 		GenomicRegionFeatureHibernateDBAdaptor adaptor = new GenomicRegionFeatureHibernateDBAdaptor(this.getSessionFactory());
 		GenomicRegionFeatures genomicRegionFeatures = adaptor.getByRegion(new Region(chromosome, start, end), type);
 		
-		System.out.println(genomicRegionFeatures.getRegulatoryIds().size());
+		System.out.println("Regulatory obtained: " + genomicRegionFeatures.getRegulatoryIds().size() + "  " + (System.currentTimeMillis()-t0)+" ms");
+		System.out.println("type:  " + genomicRegionFeatures.getHistones().size());
 		List<RegulatoryRegion> result = new ArrayList<RegulatoryRegion>();
 		
 		if (type == null){
 			return genomicRegionFeatures.getRegulatoryRegion();
 		}
 		else{
+			t0 = System.currentTimeMillis();
+			if (type == null){
+				System.out.println("type: null ");
+			}
+			else{
+				System.out.println("type: " + type);
+			}
 			for (String string : type) {
 				
 				if (string.equalsIgnoreCase("histone")){
@@ -102,8 +99,26 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 				}
 				
 			}
+			System.out.println("Subtype obtained: " + result.size() + "  " + (System.currentTimeMillis()-t0)+" ms");
 			return result;
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<GenomicRegionFeatures> getAllFeatureMapByRegion(List<Region> regions){
+		 List<GenomicRegionFeatures> result = new ArrayList<GenomicRegionFeatures>();
+		 for (Region region : regions) {
+			 result.add(this.getAllFeatureMapByRegion(region.getChromosome(), region.getStart(), region.getEnd()));
+		 }
+		 return result;
+	}
+	
+	
+	public GenomicRegionFeatures getAllFeatureMapByRegion(String chromosome, int start, int end) {
+		GenomicRegionFeatureHibernateDBAdaptor adaptor = new GenomicRegionFeatureHibernateDBAdaptor(this.getSessionFactory());
+		GenomicRegionFeatures genomicRegionFeatures = adaptor.getByRegion(new Region(chromosome, start, end));
+		return genomicRegionFeatures;
 	}
 	
 	
@@ -141,7 +156,6 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 		for (Region region : regionList) {
 			result.add(this.getAllByRegion(region.getChromosome(), region.getStart(), region.getEnd(), type));
 		}
-		
 		return result;
 	}
 

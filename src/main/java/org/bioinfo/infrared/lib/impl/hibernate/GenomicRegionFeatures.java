@@ -59,7 +59,7 @@ public class GenomicRegionFeatures {
 		this.tfbsIds = new ArrayList<String>();
 		this.regulatoryIds = new ArrayList<String>();
 		
-		System.out.println("Feature map: " + featuresMap.size());
+//		logger.("Feature map: " + featuresMap.size());
 		
 		for (FeatureMap featureMap : featuresMap) {
 			if (featureMap.getId().getSource().equals("gene")){
@@ -226,7 +226,7 @@ public class GenomicRegionFeatures {
 
 	public List<RegulatoryRegion> getHistones() {
 		if (regulatoryRegion == null){
-			this.setRegulatoryRegion(new RegulatoryRegionHibernateDBAdaptor(sessionFactory).getAllByInternalIdList(this.getTfbsIds()));
+			this.setRegulatoryRegion(new RegulatoryRegionHibernateDBAdaptor(sessionFactory).getAllByInternalIdList(this.getRegulatoryIds()));
 		}
 		return histones;
 	}
@@ -234,25 +234,24 @@ public class GenomicRegionFeatures {
 
 	public List<RegulatoryRegion> getOpenChromatin() {
 		if (regulatoryRegion == null){
-			this.setRegulatoryRegion(new RegulatoryRegionHibernateDBAdaptor(sessionFactory).getAllByInternalIdList(this.getTfbsIds()));
+			this.setRegulatoryRegion(new RegulatoryRegionHibernateDBAdaptor(sessionFactory).getAllByInternalIdList(this.getRegulatoryIds()));
 		}
 		return openChromatin;
 	}
 
 
+	public List<RegulatoryRegion> getPolimerase() {
+		if (regulatoryRegion == null){
+			this.setRegulatoryRegion(new RegulatoryRegionHibernateDBAdaptor(sessionFactory).getAllByInternalIdList(this.getRegulatoryIds()));
+		}
+		return polimerase;
+	}
+	
 	public List<RegulatoryRegion> getTranscriptionFactor() {
 		if (regulatoryRegion == null){
 			this.setRegulatoryRegion(new RegulatoryRegionHibernateDBAdaptor(sessionFactory).getAllByInternalIdList(this.getTfbsIds()));
 		}
 		return transcriptionFactor;
-	}
-
-
-	public List<RegulatoryRegion> getPolimerase() {
-		if (regulatoryRegion == null){
-			this.setRegulatoryRegion(new RegulatoryRegionHibernateDBAdaptor(sessionFactory).getAllByInternalIdList(this.getTfbsIds()));
-		}
-		return polimerase;
 	}
 
 	public List<String> getTranscriptsIds() {

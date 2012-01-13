@@ -5,6 +5,7 @@ import java.util.List;
 import org.bioinfo.infrared.core.cellbase.ConsequenceType;
 import org.bioinfo.infrared.core.cellbase.Cytoband;
 import org.bioinfo.infrared.core.cellbase.Exon;
+import org.bioinfo.infrared.core.cellbase.FeatureMap;
 import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.GenomeSequence;
 import org.bioinfo.infrared.core.cellbase.MirnaDisease;
@@ -15,11 +16,13 @@ import org.bioinfo.infrared.core.cellbase.Protein;
 import org.bioinfo.infrared.core.cellbase.ProteinFeature;
 import org.bioinfo.infrared.core.cellbase.ProteinXref;
 import org.bioinfo.infrared.core.cellbase.Pwm;
+import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.core.cellbase.Xref;
 import org.bioinfo.infrared.lib.common.GenomicVariantEffect.ConsequenceTypeResult;
+import org.bioinfo.infrared.lib.impl.hibernate.GenomicRegionFeatures;
 
 public class StringWriter {
 
@@ -135,6 +138,23 @@ public class StringWriter {
 		.toString();  
 	}
 	
+	private static Object serialize(GenomicRegionFeatures object) {
+		StringBuilder sb = new StringBuilder();
+		for (FeatureMap featureMap : object.featuresMap) {
+			sb.append(featureMap.getFeatureId()).append("\t")
+			.append(featureMap.getChromosome()).append("\t")
+			.append(featureMap.getStart()).append("\t")
+			.append(featureMap.getEnd()).append("\t")
+			.append(featureMap.getType()).append("\t").append("\n");
+			
+		}
+		return sb.toString();
+	}
+	
+	private static Object serialize(RegulatoryRegion obj) {
+		return join("\t", obj.getName(), obj.getType(), obj.getChromosome(), String.valueOf(obj.getStart()), String.valueOf(obj.getEnd()), obj.getCellType(), obj.getSource());
+	}
+	
 	public static String serialize(Protein obj) {
 		return join("\t", obj.getPrimaryAccession(), obj.getName(), obj.getFullName(), obj.getGeneName(), obj.getOrganism());
 	}
@@ -146,6 +166,7 @@ public class StringWriter {
 	public static String serialize(ProteinXref obj) {
 		return join("\t", obj.getName(), obj.getSource());
 	}
+	
 	
 	public static String serialize(ConsequenceTypeResult consequenceTypeResult){
 		return consequenceTypeResult.toString();
@@ -204,6 +225,11 @@ public class StringWriter {
 				continue;
 			}
 			
+			if (object instanceof RegulatoryRegion){
+				sb.append(StringWriter.serialize((RegulatoryRegion)object)).append("\n");
+				continue;
+			}
+			
 			if (object instanceof MirnaGene){
 				sb.append(StringWriter.serialize((MirnaGene)object)).append("\n");
 				continue;
@@ -249,6 +275,11 @@ public class StringWriter {
 				continue;
 			}
 			
+			if (object instanceof GenomicRegionFeatures){
+				sb.append(StringWriter.serialize((GenomicRegionFeatures)object)).append("\n");
+				continue;
+			}
+			
 			if (object instanceof List){
 				sb.append(StringWriter.serialize((List)object));
 				continue;
@@ -259,6 +290,10 @@ public class StringWriter {
 
 
 	
+	
+
+	
+
 	private static String join(String sep, String ... items) {
 		StringBuilder stringBuilder = new StringBuilder();
 		for(int i=0; i<items.length-1; i++) {
