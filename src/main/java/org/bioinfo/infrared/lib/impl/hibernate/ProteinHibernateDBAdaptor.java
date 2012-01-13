@@ -1,23 +1,18 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.Protein;
 import org.bioinfo.infrared.core.cellbase.ProteinFeature;
+import org.bioinfo.infrared.core.cellbase.ProteinSequence;
 import org.bioinfo.infrared.core.cellbase.ProteinXref;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
-import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.LogicalExpression;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements ProteinDBAdaptor {
@@ -224,12 +219,17 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProteinXref> getAllProteinXrefsByProteinName(String name) {
-		Criterion ensemblId = Restrictions.eq("primaryAccession", name.trim());
-		Criterion nameCriterio = Restrictions.eq("geneName", name.trim());
-		LogicalExpression log = Restrictions.or(ensemblId, nameCriterio);
-		Criteria criteria = this.openSession().createCriteria(ProteinXref.class)
-			.createCriteria("protein").add(log);
-		return (List<ProteinXref>) executeAndClose(criteria);
+		System.out.println("NAME:"  + name);
+//		Query query = this.openSession().createQuery("select db.* from Xref x, Dbname db where x.display_id = :Id and x.dbname_id=db.dbname_id").setParameter("Id", id);
+		String query = "select px2.* from protein_xref px1, protein_xref px2 where px1.protein_id = px2.protein_id and px1.name = :NAME";
+//		SQLQuery hquery = (SQLQuery) this.openSession().createSQLQuery(query).addEntity(ProteinXref.class).setParameter("NAME", name);
+//		hquery.setParameter("NAME", name);
+		List<ProteinXref> xrefs = this.openSession().createSQLQuery(query).addEntity(ProteinXref.class).setParameter("NAME", name).list();
+//		List<ProteinXref> xrefs = (List<ProteinXref>) executeAndClose(hquery);
+		System.out.println("xrefs.size(): " + xrefs.size());
+		System.out.println("xrefs type: " + xrefs.getClass());
+//		return (List<ProteinXref>) executeAndClose(hquery);
+		return xrefs;
 	}
 
 	@Override
@@ -261,6 +261,19 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 
 	@Override
 	public List<List<ProteinXref>> getAllProteinXrefsByProteinNameList(List<String> nameList, List<String> dbname) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ProteinSequence> getAllProteinSequenceByProteinName(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<List<ProteinSequence>> getAllProteinSequenceByProteinNameList(
+			List<String> nameList) {
 		// TODO Auto-generated method stub
 		return null;
 	}
