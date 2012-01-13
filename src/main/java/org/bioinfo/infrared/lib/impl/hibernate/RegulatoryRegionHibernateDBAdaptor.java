@@ -77,7 +77,7 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 		
 		/** Utilizar feature map !!! **/ 
 		GenomicRegionFeatureHibernateDBAdaptor adaptor = new GenomicRegionFeatureHibernateDBAdaptor(this.getSessionFactory());
-		GenomicRegionFeatures genomicRegionFeatures = adaptor.getByRegion(new Region(chromosome, start, end));
+		GenomicRegionFeatures genomicRegionFeatures = adaptor.getByRegion(new Region(chromosome, start, end), type);
 		
 		System.out.println(genomicRegionFeatures.getRegulatoryIds().size());
 		List<RegulatoryRegion> result = new ArrayList<RegulatoryRegion>();
