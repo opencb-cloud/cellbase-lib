@@ -63,8 +63,8 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId >= :chunk_start and id.chunkId <= :end_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome= :CHROMOSOME");
 			query.setParameter("end_chunk", chunk_end);
 		}
-		System.out.println("Chromsoome: " + chromosome);
-		System.out.println("Query: " + query.getQueryString());
+//		System.out.println("Chromsoome: " + chromosome);
+//		System.out.println("Query: " + query.getQueryString());
 		query.setParameter("CHROMOSOME", chromosome);
 		query.setParameter("chunk_start", chunk_start);
 		query.setParameter("startparam", start);
