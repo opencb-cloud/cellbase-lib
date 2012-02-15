@@ -7,75 +7,77 @@ import java.util.List;
 public class GenomicVariant {
 
 	private String chromosome;
-	private int start;
+	private int position;
 	private String alternative;
 
-	public GenomicVariant(String chromosome, int start, String alternative) {
+	public GenomicVariant(String chromosome, int position, String alternative) {
 		this.chromosome = chromosome;
-		this.start = start;
-		this.setAlternative(alternative);
+		this.position = position;
+		this.alternative = alternative;
 	}
 
-	public static GenomicVariant parseVariant(String regionString) {
-		GenomicVariant region = null;
-		if(regionString != null && !regionString.equals("")) {
-			if(regionString.indexOf(':') != -1) {
-				String[] fields = regionString.split("[:-]", -1);
-				if(fields.length == 3) {
-					region = new GenomicVariant(fields[0], Integer.parseInt(fields[1]), fields[2]);
-				}
+	public static GenomicVariant parseVariant(String variantString) {
+		GenomicVariant genomicVariant = null;
+		if(variantString != null && !variantString.equals("")) {
+			//	if(regionString.indexOf(':') != -1) {
+			String[] fields = variantString.split("[:-]", -1);
+			if(fields.length == 3) {
+				genomicVariant = new GenomicVariant(fields[0], Integer.parseInt(fields[1]), fields[2]);
 			}else {
-				region = new GenomicVariant(regionString, 0, new String());
+				genomicVariant = null;
 			}
+			//	}else {
+			//		genomicVariant = new GenomicVariant(regionString, 0, "");
+			//	}
 		}
-		return region;
+		return genomicVariant;
 	}
 
-	public static List<GenomicVariant> parseVariants(String regionsString) {
-		List<GenomicVariant> regions = null;
-		if(regionsString != null && !regionsString.equals("")) {
-			String[] regionItems = regionsString.split(",");
-			regions = new ArrayList<GenomicVariant>(regionItems.length);
+	public static List<GenomicVariant> parseVariants(String variantsString) {
+		List<GenomicVariant> genomicVariants = null;
+		if(variantsString != null && !variantsString.equals("")) {
+			String[] regionItems = variantsString.split(",");
+			genomicVariants = new ArrayList<GenomicVariant>(regionItems.length);
 			String[] fields;
 			for(String regionString: regionItems) {
-				if(regionString.indexOf(':') != -1) {
+//				if(regionString.indexOf(':') != -1) {
 					fields = regionString.split("[:-]", -1);
 					if(fields.length == 3) {
-						regions.add(new GenomicVariant(fields[0], Integer.parseInt(fields[1]), fields[2]));
+						genomicVariants.add(new GenomicVariant(fields[0], Integer.parseInt(fields[1]), fields[2]));
 					}else {
-						regions.add(null);
+						genomicVariants.add(null);
 					}
-				}else {
-					regions.add(new GenomicVariant(regionString, 0, new String()));
-				}
+//				}else {
+//					genomicVariants.add(new GenomicVariant(regionString, 0, new String()));
+//				}
 			}	
 		}
-		return regions;
+		return genomicVariants;
 	}
 
 	/**
 	 * 
-	 * @param regions
+	 * @param variantList
 	 * @return A comma separated string with all the regions. If parameter is null then a null objects is returned, an empty string is returned if parameter size list is 0 
 	 */
-	public static String parseRegionList(List<GenomicVariant> regions) {
-		if(regions == null) {
+	public static String parseRegionList(List<GenomicVariant> variantList) {
+		if(variantList == null) {
 			return null;
 		}else {
 			StringBuilder sb = new StringBuilder();
-			for(int i=0; i<regions.size()-1; i++) {
-				if(regions.get(i) != null) {
-					sb.append(regions.get(i).toString()).append(",");					
+			for(int i=0; i<variantList.size()-1; i++) {
+				if(variantList.get(i) != null) {
+					sb.append(variantList.get(i).toString()).append(",");					
 				}else {
 					sb.append("null,");
 				}
 			}
-			if(regions.get(regions.size()-1) != null) {
-				sb.append(regions.get(regions.size()-1).toString());					
+			if(variantList.get(variantList.size()-1) != null) {
+				sb.append(variantList.get(variantList.size()-1).toString());					
 			}else {
 				sb.append("null");
 			}
-			
+
 			return sb.toString();
 		}
 	}
@@ -83,7 +85,7 @@ public class GenomicVariant {
 
 	@Override
 	public String toString() {
-		return chromosome+":"+start+":"+this.getAlternative(); 
+		return chromosome+":"+position+":"+this.getAlternative(); 
 	}
 
 
@@ -103,18 +105,19 @@ public class GenomicVariant {
 
 
 	/**
-	 * @return the start
+	 * @return the position
 	 */
-	public int getStart() {
-		return start;
+	public int getPosition() {
+		return position;
 	}
 
 	/**
-	 * @param start the start to set
+	 * @param position the position to set
 	 */
-	public void setStart(int start) {
-		this.start = start;
+	public void setPosition(int position) {
+		this.position = position;
 	}
+
 
 	public void setAlternative(String alternative) {
 		this.alternative = alternative;
@@ -123,7 +126,5 @@ public class GenomicVariant {
 	public String getAlternative() {
 		return alternative;
 	}
-
-
 
 }

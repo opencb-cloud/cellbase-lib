@@ -21,7 +21,7 @@ import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.core.cellbase.Xref;
-import org.bioinfo.infrared.lib.common.GenomicVariantEffect.ConsequenceTypeResult;
+import org.bioinfo.infrared.lib.common.GenomicVariantEffect.GenomicVariantConsequenceType;
 import org.bioinfo.infrared.lib.impl.hibernate.GenomicRegionFeatures;
 
 public class StringWriter {
@@ -168,8 +168,8 @@ public class StringWriter {
 	}
 	
 	
-	public static String serialize(ConsequenceTypeResult consequenceTypeResult){
-		return consequenceTypeResult.toString();
+	public static String serialize(GenomicVariantConsequenceType genomicVariantConsequenceType){
+		return genomicVariantConsequenceType.toString();
 	}
 	
 	public static String serialize(String string){
@@ -270,8 +270,8 @@ public class StringWriter {
 				continue;
 			}
 			
-			if (object instanceof ConsequenceTypeResult){
-				sb.append(StringWriter.serialize((ConsequenceTypeResult)object)).append("\n");
+			if (object instanceof GenomicVariantConsequenceType){
+				sb.append(StringWriter.serialize((GenomicVariantConsequenceType)object)).append("\n");
 				continue;
 			}
 			

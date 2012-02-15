@@ -22,7 +22,7 @@ import org.bioinfo.infrared.lib.api.MirnaDBAdaptor;
 import org.bioinfo.infrared.lib.common.GenomicVariant;
 import org.bioinfo.infrared.lib.common.GenomicVariantEffect;
 import org.bioinfo.infrared.lib.common.Region;
-import org.bioinfo.infrared.lib.common.GenomicVariantEffect.ConsequenceTypeResult;
+import org.bioinfo.infrared.lib.common.GenomicVariantEffect.GenomicVariantConsequenceType;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.junit.After;
 import org.junit.Before;

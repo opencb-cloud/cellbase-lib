@@ -119,7 +119,7 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 		
 		List<Integer> chunks = new ArrayList<Integer>();
 		for (GenomicVariant variant : variants) {
-			chunks.add(variant.getStart() / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE);
+			chunks.add(variant.getPosition() / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE);
 			
 			
 		}
@@ -133,13 +133,13 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 			List<FeatureMap> featurePerVariant = new ArrayList<FeatureMap>();
 			for (FeatureMap featureMap : result) {
 				if(featureMap.getChromosome().equals(variant.getChromosome())){
-					if(featureMap.getStart()<= variant.getStart() && featureMap.getEnd() >= variant.getStart()){
+					if(featureMap.getStart()<= variant.getPosition() && featureMap.getEnd() >= variant.getPosition()){
 						featurePerVariant.add(featureMap);
 					}
 				}
 			}
 			
-			resultList.add(new GenomicRegionFeatures(new Region(variant.getChromosome(), variant.getStart(), variant.getStart()), featurePerVariant, this.getSessionFactory()));
+			resultList.add(new GenomicRegionFeatures(new Region(variant.getChromosome(), variant.getPosition(), variant.getPosition()), featurePerVariant, this.getSessionFactory()));
 		}
 		return resultList;
 	}

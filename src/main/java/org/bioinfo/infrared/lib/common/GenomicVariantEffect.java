@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bioinfo.commons.io.utils.FileUtils;
 import org.bioinfo.commons.io.utils.IOUtils;
 import org.bioinfo.commons.log.Logger;
 import org.bioinfo.infrared.core.cellbase.Exon;
@@ -14,7 +15,6 @@ import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Transcript;
-import org.bioinfo.infrared.coreold.variation.SNP;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
@@ -35,8 +35,9 @@ public class GenomicVariantEffect {
 
 
 	/** For consequence types **/
-	private List<ConsequenceTypeResult> consequences; 
+	private List<GenomicVariantConsequenceType> consequences; 
 
+	//select start DIV 100000 as chunk_id, count(*) from snp where chromosome='1' and start > 11120 and end < 5555555 group by chunk_id ;
 
 	/** Acelerador de los transcripts **/
 	private TranscriptDBAdaptor transcriptAdaptor;
@@ -70,22 +71,28 @@ public class GenomicVariantEffect {
 
 	public void writeConsequenceType(List<GenomicVariant> variants, File file) throws IOException{
 		logger.debug("File path: " + file.getAbsolutePath());
+		FileUtils.checkFile(file);
 
-		if (file.canWrite()){
-			this.transcriptHash = this.fillAllTranscriptFromDB();
-			for (int i = 0; i < variants.size(); i++) {
-				try {
-					IOUtils.append(file,  this.getConsequenceType(variants.get(i)).toString());
-					
-				} catch (IOException e) {
-					IOUtils.append(file,  "VARIANT TOOL ERROR: " + e.getMessage());
-					e.printStackTrace();
-				}
-				catch(Exception exp){
-					IOUtils.append(file,  "VARIANT TOOL ERROR: " + exp.getMessage());
-				}
+		//		if(file.canWrite()){
+		this.transcriptHash = this.fillAllTranscriptFromDB();
+		StringBuilder consequenceTypeString = new StringBuilder();
+		for(int i = 0; i < variants.size(); i++) {
+			try {
+				//				IOUtils.append(file, this.getConsequenceType(variants.get(i)).toString());
+				consequenceTypeString.append(this.getConsequenceType(variants.get(i)).toString()+"\n");
+			}
+			//			catch (IOException e) {
+			//				IOUtils.append(file, "VARIANT TOOL ERROR: " + e.getMessage());
+			//				e.printStackTrace();
+			//			}
+			catch(Exception e){
+				//				IOUtils.append(file, "VARIANT TOOL ERROR: " + e.getMessage());
+				consequenceTypeString.append("VARIANT TOOL ERROR: " + e.getMessage());
+				e.printStackTrace();
 			}
 		}
+		IOUtils.write(file, consequenceTypeString.toString());
+		//		}
 	}
 
 
@@ -93,9 +100,8 @@ public class GenomicVariantEffect {
 		StringBuilder br = new StringBuilder();
 		try {
 			this.transcriptHash = this.fillAllTranscriptFromDB();
-			for (int i = 0; i < variants.size(); i++) {
+			for(int i = 0; i < variants.size(); i++) {
 				br.append(this.getConsequenceType(variants.get(i)).toString());
-				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -104,37 +110,37 @@ public class GenomicVariantEffect {
 	}
 
 
-	public List<ConsequenceTypeResult> getConsequenceType(List<GenomicVariant> variants,  List<Transcript> transcripts){
+	public List<GenomicVariantConsequenceType> getConsequenceType(List<GenomicVariant> variants,  List<Transcript> transcripts){
 		logger.info("VARIANT TOOL CALL id:" + this.internalID + " Features: "  + this.showFeatures + " Variation: "  + this.showVariation + " Regulatory: "  + this.showRegulatory+ " Disease: "  + this.showDiseases + " Number: "  + variants.size() );
-//		logger.info("\tFlags:");
-//		logger.info("\t\tFeatures: "  + this.showFeatures);
-//		logger.info("\t\tVariation: "  + this.showVariation);
-//		logger.info("\t\tRegulatory: "  + this.showRegulatory);
-//		logger.info("\t\tDisease: "  + this.showDiseases);
-//		logger.info("\tVariants:");
-//		logger.info("\t\tNumber: "  + variants.size());
-		
+		//		logger.info("\tFlags:");
+		//		logger.info("\t\tFeatures: "  + this.showFeatures);
+		//		logger.info("\t\tVariation: "  + this.showVariation);
+		//		logger.info("\t\tRegulatory: "  + this.showRegulatory);
+		//		logger.info("\t\tDisease: "  + this.showDiseases);
+		//		logger.info("\tVariants:");
+		//		logger.info("\t\tNumber: "  + variants.size());
+
 		long t0 = System.currentTimeMillis();
 		if (transcripts == null){
-//			logger.info("\tCache Transcripts: NONE");
+			//			logger.info("\tCache Transcripts: NONE");
 			this.transcriptHash = this.fillAllTranscriptFromDB();
 		}
 		else{
-//			logger.info("\tCache Transcripts: "  + transcripts.size());
+			//			logger.info("\tCache Transcripts: "  + transcripts.size());
 			this.transcriptHash = this.fillTranscriptHash(transcripts);
 		}
-		List<ConsequenceTypeResult> result = new ArrayList<ConsequenceTypeResult>();
+		List<GenomicVariantConsequenceType> result = new ArrayList<GenomicVariantConsequenceType>();
 		for (int i = 0; i < variants.size(); i++) {
 			result.addAll(this.getConsequenceType(variants.get(i)));
 		}
-		
+
 		logger.info("Finished " + variants.size() + " in " + (System.currentTimeMillis() - t0) + " ms");
 		return result;
 	}
 
-	public List<ConsequenceTypeResult> getConsequenceType(List<GenomicVariant> variants){
+	public List<GenomicVariantConsequenceType> getConsequenceType(List<GenomicVariant> variants){
 		this.transcriptHash = this.fillAllTranscriptFromDB();
-		List<ConsequenceTypeResult> result = new ArrayList<ConsequenceTypeResult>();
+		List<GenomicVariantConsequenceType> result = new ArrayList<GenomicVariantConsequenceType>();
 
 		for (int i = 0; i < variants.size(); i++) {
 			result.addAll(this.getConsequenceType(variants.get(i)));
@@ -157,8 +163,8 @@ public class GenomicVariantEffect {
 
 
 
-	private List<ConsequenceTypeResult> getConsequenceType(GenomicVariant variant){
-		return this.getConsequenceType(variant.getChromosome(), variant.getStart(), variant.getAlternative());
+	private List<GenomicVariantConsequenceType> getConsequenceType(GenomicVariant variant){
+		return this.getConsequenceType(variant.getChromosome(), variant.getPosition(), variant.getAlternative());
 	}
 
 	private String getSNPNameByPosition(){
@@ -173,7 +179,7 @@ public class GenomicVariantEffect {
 		}
 		return result;
 	}
-	
+
 	private String getSNPAncestralByPosition(){
 		String result = ".";
 		if (this.features.getSnp() != null){
@@ -186,7 +192,7 @@ public class GenomicVariantEffect {
 		}
 		return result;
 	}
-	
+
 	private String getSNPAlleleByPosition(){
 		String result = ".";
 		if (this.features.getSnp() != null){
@@ -199,8 +205,8 @@ public class GenomicVariantEffect {
 		}
 		return result;
 	}
-	
-	
+
+
 	private String getGeneStableIdByPosition(){
 		String result = ".";
 		if (this.features.getGenes() != null){
@@ -213,7 +219,7 @@ public class GenomicVariantEffect {
 		}
 		return result;
 	}
-	
+
 	private String getGeneExternalIdByPosition(){
 		String result = ".";
 		if (this.features.getGenes() != null){
@@ -226,7 +232,7 @@ public class GenomicVariantEffect {
 		}
 		return result;
 	}
-	
+
 	private String getTranscriptStableIdByPosition(){
 		String result = ".";
 		if (this.features.getTranscripts() != null){
@@ -239,11 +245,11 @@ public class GenomicVariantEffect {
 		}
 		return result;
 	}
-	
-	
-	public List<ConsequenceTypeResult> getConsequenceType(String chromosome, int position, String alternativeAllele){
+
+
+	public List<GenomicVariantConsequenceType> getConsequenceType(String chromosome, int position, String alternativeAllele){
 		this.features = genomicRegionFeatureDBAdaptor.getByRegion(chromosome, position, position);
-		this.consequences = new ArrayList<ConsequenceTypeResult>();
+		this.consequences = new ArrayList<GenomicVariantConsequenceType>();
 		this.position = position;
 
 		if (this.showFeatures){
@@ -267,7 +273,7 @@ public class GenomicVariantEffect {
 			if (getFeatures().getSnpsIds() != null){
 				if (getFeatures().getSnpsIds().size() > 0){
 					for (Snp snp : getFeatures().getSnp()) {
-						
+
 						this.addConsequenceType(snp);
 					}
 				}
@@ -315,8 +321,7 @@ public class GenomicVariantEffect {
 			if(exonsByPosition.size() == 0){
 				this.addConsequenceType(transcript, "intron_variant", "SO:0001627", "In intron", "consequenceTypeType" );
 
-
-				for (Exon exon2 : exons) {
+				for(Exon exon2 : exons) {
 					if(transcript.getStrand().equals("-1")){
 						if (exon2.getStart() > position){
 							if (exon2.getStart() - position < 2){
@@ -336,8 +341,7 @@ public class GenomicVariantEffect {
 								this.addConsequenceType(exon2, transcript,"splice_region_variant", "SO:0001630", "Splice site", "consequenceTypeType" );
 							}
 						}
-					}
-					else{
+					}else {
 						if (exon2.getStart() > position){
 							if (exon2.getStart() - position < 2){
 								this.addConsequenceType(exon2, transcript, "splice_acceptor_variant", "SO:0001574", "In the first 2 or the last 2 basepairs of an intron", "consequenceTypeType" );
@@ -492,7 +496,7 @@ public class GenomicVariantEffect {
 				this.addConsequenceType(transcript, "synonymous_codon", "SO:0001588", "In coding sequence, not resulting in an amino acid change (silent mutation)", "consequenceTypeType" );
 			}
 			else{
-				
+
 				this.addConsequenceType(transcript, "non_synonymous_codon", "SO:0001583", "In coding sequence and results in an amino acid change in the encoded peptide sequence", "consequenceTypeType", DNASequenceUtils.codonToAminoacidShort.get(referenceSequence)+"/"+ DNASequenceUtils.codonToAminoacidShort.get(alternative), referenceSequence.replace("U", "T")+"/"+alternative.replace("U", "T")  );
 
 				if ((!DNASequenceUtils.codonToAminoacidShort.get(referenceSequence).toLowerCase().equals("stop"))&& (DNASequenceUtils.codonToAminoacidShort.get(alternative).toLowerCase().equals("stop"))){
@@ -515,8 +519,8 @@ public class GenomicVariantEffect {
 	private int getCodonByPosition(Transcript transcript, List<Exon> exons,  int position){
 		int cdna_length = 0;
 		try{
-			if (transcript.getStrand().equals("-1")){
-				for (int i = exons.size() - 1; i >= 0; i--) {
+			if(transcript.getStrand().equals("-1")) {
+				for(int i = exons.size() - 1; i >= 0; i--) {
 					Exon exonIntranscript = exons.get(i);
 					if (position < exonIntranscript.getStart()){
 						/** Primer exon **/
@@ -528,22 +532,17 @@ public class GenomicVariantEffect {
 						if ((exonIntranscript.getEnd() < transcript.getCodingRegionEnd()) && (exonIntranscript.getStart() > transcript.getCodingRegionStart())){
 							cdna_length = cdna_length + (exonIntranscript.getEnd() - exonIntranscript.getStart()) + 1;
 						}
-					}
-					else{
-
-						if ((exonIntranscript.getEnd() >= transcript.getCodingRegionEnd())&&(exonIntranscript.getStart()<= transcript.getCodingRegionStart())){
+					}else {
+						if((exonIntranscript.getEnd() >= transcript.getCodingRegionEnd())&&(exonIntranscript.getStart()<= transcript.getCodingRegionStart())){
 							cdna_length = cdna_length + (transcript.getCodingRegionEnd() - position ) + 1;
 							break;
-						}
-						else{
+						}else {
 							cdna_length = cdna_length + ( exonIntranscript.getEnd() - position) + 1;
 							break;
 						}
 					}
 				}	
-			}
-			else{
-
+			}else {
 				for (int i = 0; i < exons.size(); i++) {
 					Exon exonIntranscript = exons.get(i);
 					if (position > exonIntranscript.getEnd()){
@@ -581,7 +580,7 @@ public class GenomicVariantEffect {
 
 
 	//	private void printConsequenceTypes(){
-	//		for (ConsequenceTypeResult consequence : this.consequences) {
+	//		for (GenomicVariantConsequenceType consequence : this.consequences) {
 	//			//System.out.println(consequence.toString());
 	//		}
 	//	}
@@ -589,7 +588,7 @@ public class GenomicVariantEffect {
 	/** adding consequence types **/
 	private void addConsequenceType(Transcript transcript, String consequenceType, String consequenceTypeObo, String desc, String type, String aminoChange, String codonChange){
 		this.consequences.add(
-				new ConsequenceTypeResult(
+				new GenomicVariantConsequenceType(
 						transcript.getChromosome(), 
 						this.position,  
 						this.position, 
@@ -617,7 +616,7 @@ public class GenomicVariantEffect {
 
 	private void addConsequenceType(Snp snp){
 		this.consequences.add(
-				new ConsequenceTypeResult(
+				new GenomicVariantConsequenceType(
 						snp.getChromosome(), 
 						this.position,  
 						this.position, 
@@ -651,7 +650,7 @@ public class GenomicVariantEffect {
 
 	private void addConsequenceType(RegulatoryRegion regulatory, String consequenceType, String consequenceTypeObo, String desc, String type){
 		this.consequences.add(
-				new ConsequenceTypeResult(
+				new GenomicVariantConsequenceType(
 						regulatory.getChromosome(), 
 						this.position,  
 						this.position, 
@@ -679,7 +678,7 @@ public class GenomicVariantEffect {
 
 	private void addConsequenceType(Tfbs tfbs, String consequenceType, String consequenceTypeObo, String desc, String type){
 		this.consequences.add(
-				new ConsequenceTypeResult(
+				new GenomicVariantConsequenceType(
 						tfbs.getChromosome(), 
 						this.position,  
 						this.position, 
@@ -702,13 +701,13 @@ public class GenomicVariantEffect {
 						desc, 
 						type, 
 						".",
-				"."));
+						"."));
 	}
 
 
 	private void addConsequenceType(Exon exon, Transcript transcript, String consequenceType, String consequenceTypeObo, String desc, String type){
 		this.consequences.add(
-				new ConsequenceTypeResult(
+				new GenomicVariantConsequenceType(
 						exon.getChromosome(), 
 						this.position,  
 						this.position, 
@@ -745,15 +744,15 @@ public class GenomicVariantEffect {
 	}
 
 
-	
+
 	@Deprecated
-	private List<ConsequenceTypeResult> getConsequenceType(GenomicVariant variant, GenomicRegionFeatures genomicRegionFeatures){
+	private List<GenomicVariantConsequenceType> getConsequenceType(GenomicVariant variant, GenomicRegionFeatures genomicRegionFeatures){
 		this.setFeatures(genomicRegionFeatures);
-		return this.getConsequenceType(variant.getChromosome(), variant.getStart(), variant.getAlternative());
+		return this.getConsequenceType(variant.getChromosome(), variant.getPosition(), variant.getAlternative());
 	}
-	
+
 	@Deprecated
-	public List<ConsequenceTypeResult> getConsequenceTypeByChunk(List<GenomicVariant> variants){
+	public List<GenomicVariantConsequenceType> getConsequenceTypeByChunk(List<GenomicVariant> variants){
 
 		this.transcripts = transcriptAdaptor.getAll();
 		//System.out.println("All transcripts " + this.transcripts.size());
@@ -762,7 +761,7 @@ public class GenomicVariantEffect {
 		for (Transcript transcript : this.transcripts) {
 			this.transcriptHash.put(transcript.getStableId(), transcript);
 		}
-		List<ConsequenceTypeResult> result = new ArrayList<ConsequenceTypeResult>();
+		List<GenomicVariantConsequenceType> result = new ArrayList<GenomicVariantConsequenceType>();
 
 		int chunk = 50;
 
@@ -784,14 +783,13 @@ public class GenomicVariantEffect {
 		return result;
 	}
 
-
 	@Deprecated
-	public List<ConsequenceTypeResult> getConsequenceTypeWithChunks(List<GenomicVariant> variants){
+	public List<GenomicVariantConsequenceType> getConsequenceTypeWithChunks(List<GenomicVariant> variants){
 
 		this.transcriptHash = this.fillAllTranscriptFromDB();
 
 		long t00 = System.currentTimeMillis();
-		List<ConsequenceTypeResult> result = new ArrayList<ConsequenceTypeResult>();
+		List<GenomicVariantConsequenceType> result = new ArrayList<GenomicVariantConsequenceType>();
 
 		int chunk = 50;
 
@@ -815,7 +813,8 @@ public class GenomicVariantEffect {
 		return result;
 	}
 
-	public class ConsequenceTypeResult{
+	
+	public class GenomicVariantConsequenceType {
 		private String chromosome;
 		private int start;
 		private int end;
@@ -846,34 +845,32 @@ public class GenomicVariantEffect {
 
 		public String toString(){
 			StringBuilder br = new StringBuilder();
-			return 	 
-			br.append(chromosome).append("\t")
-			.append(start).append("\t")
-			.append(end).append("\t")
-			.append(id).append("\t")
-			.append(name).append("\t")
-			.append(type).append("\t")
-			.append(biotype).append("\t")
-			.append(featureChromosome).append("\t")
-			.append(featureStart).append("\t")
-			.append(featureEnd).append("\t")
-			.append(featureStrand).append("\t")
-			.append(snpId).append("\t")
-			.append(ancestral).append("\t")
-			.append(alternative).append("\t")
-			.append(geneId).append("\t")
-			.append(transcriptId).append("\t")
-			.append(geneName).append("\t")
-			.append(consequenceType).append("\t")
-			.append(consequenceTypeObo).append("\t")
-			.append(consequenceTypeDesc).append("\t")
-			.append(consequenceTypeType).append("\t")
-			.append(aminoacidChange).append("\t")
-			.append(codonChange).append("\t").toString();
-
-
+			return br.append(chromosome).append("\t")
+					.append(start).append("\t")
+					.append(end).append("\t")
+					.append(id).append("\t")
+					.append(name).append("\t")
+					.append(type).append("\t")
+					.append(biotype).append("\t")
+					.append(featureChromosome).append("\t")
+					.append(featureStart).append("\t")
+					.append(featureEnd).append("\t")
+					.append(featureStrand).append("\t")
+					.append(snpId).append("\t")
+					.append(ancestral).append("\t")
+					.append(alternative).append("\t")
+					.append(geneId).append("\t")
+					.append(transcriptId).append("\t")
+					.append(geneName).append("\t")
+					.append(consequenceType).append("\t")
+					.append(consequenceTypeObo).append("\t")
+					.append(consequenceTypeDesc).append("\t")
+					.append(consequenceTypeType).append("\t")
+					.append(aminoacidChange).append("\t")
+					.append(codonChange).append("\t").toString();
 		}
-		public ConsequenceTypeResult(String chromosome, int start, int end,
+
+		public GenomicVariantConsequenceType(String chromosome, int start, int end,
 				String id, String name, String type, String biotype,
 				String featureChromosome, int featureStart,
 				int featureEnd, String featureStrand, String snpId,
@@ -908,8 +905,6 @@ public class GenomicVariantEffect {
 			this.codonChange = codonChange;
 		}
 	}
-
-
 
 
 	public boolean isShowFeatures() {
@@ -950,6 +945,5 @@ public class GenomicVariantEffect {
 	public void setShowDiseases(boolean showDiseases) {
 		this.showDiseases = showDiseases;
 	}
-
 
 }
