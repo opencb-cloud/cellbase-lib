@@ -10,7 +10,6 @@ import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -18,14 +17,17 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 
-public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDBAdaptor {
-
+class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDBAdaptor {
 
 	
 	public ExonHibernateDBAdaptor(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
-
+	
+	public ExonHibernateDBAdaptor(SessionFactory sessionFactory, String species, String version) {
+		super(sessionFactory, species, version);
+	}
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Exon> getAll() {
@@ -329,7 +331,7 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	@Override
 	public String getSequenceById(String ensemblId) {
 		Exon exon = this.getByEnsemblId(ensemblId);
-		GenomeSequenceDBAdaptor da = new GenomeSequenceDBAdaptor(this.getSessionFactory());
+		GenomeSequenceHibernateDBAdaptor da = new GenomeSequenceHibernateDBAdaptor(this.getSessionFactory());
 		return da.getByRegion(exon.getChromosome(),exon.getStart(),exon.getEnd()).getSequence();
 	}
 
@@ -342,7 +344,7 @@ public class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDB
 	public List<String> getAllSequencesByIdList(List<String> ensemblIdList, int strand) {
 		List<String> sequence = new ArrayList<String>(ensemblIdList.size());
 		List<Exon> Exons = getAllByEnsemblIdList(ensemblIdList);
-		GenomeSequenceDBAdaptor da = new GenomeSequenceDBAdaptor(this.getSessionFactory());
+		GenomeSequenceHibernateDBAdaptor da = new GenomeSequenceHibernateDBAdaptor(this.getSessionFactory());
 		for(Exon exon: Exons) {
 			sequence.add(da.getByRegion(exon.getChromosome(),exon.getStart(),exon.getEnd(), strand).getSequence());
 		}

@@ -12,13 +12,15 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor implements GenomicRegionFeatureDBAdaptor {
-	
+
 	private static int FEATURE_MAP_CHUNK_SIZE = 400;
-	
+
 	public GenomicRegionFeatureHibernateDBAdaptor(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
-	
+	public GenomicRegionFeatureHibernateDBAdaptor(SessionFactory sessionFactory, String species, String version) {
+		super(sessionFactory, species, version);
+	}
 
 	@Override
 	public List<GenomicRegionFeatures> getAllByRegionList(List<Region> regions) {
@@ -27,14 +29,14 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 
 	@Override
 	public List<GenomicRegionFeatures> getAllByRegionList(List<Region> regions, List<String> sources) {
-		 List<GenomicRegionFeatures> result = new ArrayList<GenomicRegionFeatures>();
-		 for (int i = 0; i < regions.size(); i++) {
-			 result.add(this.getByRegion(regions.get(i), sources));
-		 }
+		List<GenomicRegionFeatures> result = new ArrayList<GenomicRegionFeatures>();
+		for (int i = 0; i < regions.size(); i++) {
+			result.add(this.getByRegion(regions.get(i), sources));
+		}
 		return result;
 	}
 
-	
+
 	@Override
 	public GenomicRegionFeatures getByRegion(String chromosome, int start, int end) {
 		return getByRegion(chromosome, start, end, null);
@@ -49,12 +51,12 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 	public GenomicRegionFeatures getByRegion(Region region, List<String> sources) {
 		return getByRegion(region.getChromosome(), region.getStart(), region.getEnd(), sources);
 	}
-	
-	
+
+
 	private List<FeatureMap> getFeatureMapsByRegion(String chromosome, int start, int end, List<String> sources, Session session) {
 		int chunk_start = start / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
 		int chunk_end = end / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
-		
+
 		Query query;
 		if (chunk_start == chunk_end){
 			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId = :chunk_start and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome = :CHROMOSOME");
@@ -63,26 +65,26 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId >= :chunk_start and id.chunkId <= :end_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome= :CHROMOSOME");
 			query.setParameter("end_chunk", chunk_end);
 		}
-//		System.out.println("Chromsoome: " + chromosome);
-//		System.out.println("Query: " + query.getQueryString());
+		//		System.out.println("Chromsoome: " + chromosome);
+		//		System.out.println("Query: " + query.getQueryString());
 		query.setParameter("CHROMOSOME", chromosome);
 		query.setParameter("chunk_start", chunk_start);
 		query.setParameter("startparam", start);
 		query.setParameter("endparam", end);
 		return (List<FeatureMap>)execute(query);
 	}
-	
-	
+
+
 	private GenomicRegionFeatures getByRegion(String chromosome, int start, int end, List<String> sources, Session session) {
-//		long t0 = System.currentTimeMillis();
+		//		long t0 = System.currentTimeMillis();
 		List<FeatureMap> result = this.getFeatureMapsByRegion(chromosome, start, end, sources, session);
-//		System.out.println("\tDB Recovering features map: "+(System.currentTimeMillis()-t0)+" ms");
-//		t0 = System.currentTimeMillis();
+		//		System.out.println("\tDB Recovering features map: "+(System.currentTimeMillis()-t0)+" ms");
+		//		t0 = System.currentTimeMillis();
 		GenomicRegionFeatures genomicRegionFeatures = new GenomicRegionFeatures(new Region(chromosome, start, end), result, this.getSessionFactory()); 
-//		System.out.println("\tFILLING OBJECT: "+(System.currentTimeMillis()-t0)+" ms");
+		//		System.out.println("\tFILLING OBJECT: "+(System.currentTimeMillis()-t0)+" ms");
 		return genomicRegionFeatures;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private GenomicRegionFeatures getByRegion(String chromosome, int start, int end, List<String> sources) {
 		Session session = this.openSession();
@@ -90,17 +92,17 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 		session.close();
 		return result;
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	@SuppressWarnings("unused")
 	private GenomicRegionFeatures getGenomicRegionFeature(List<FeatureMap> featuresMap, Region region, List<String> sources) {
 		return null;
 	}
-	
-	
+
+
 
 	@Deprecated
 	private List<FeatureMap> getByChunkis(List<Integer> chunks, List<String> sources, Session session) {
@@ -108,25 +110,25 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 		query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId in :chunks");			
 		query.setParameterList("chunks", chunks);
 		return (List<FeatureMap>)execute(query);
-		
+
 	}
-	
+
 	@Deprecated
 	@Override
 	public List<GenomicRegionFeatures> getByVariants(List<GenomicVariant> variants, List<String> sources) {
-		
+
 		Session session = this.openSession();
-		
+
 		List<Integer> chunks = new ArrayList<Integer>();
 		for (GenomicVariant variant : variants) {
 			chunks.add(variant.getPosition() / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE);
-			
-			
+
+
 		}
-		
+
 		List<FeatureMap> result = this.getByChunkis(chunks, sources, session);
 		session.close();
-		
+
 		System.out.println("Features " + result.size());
 		List<GenomicRegionFeatures> resultList = new ArrayList<GenomicRegionFeatures>();
 		for (GenomicVariant variant : variants) {
@@ -138,26 +140,26 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 					}
 				}
 			}
-			
+
 			resultList.add(new GenomicRegionFeatures(new Region(variant.getChromosome(), variant.getPosition(), variant.getPosition()), featurePerVariant, this.getSessionFactory()));
 		}
 		return resultList;
 	}
-	
+
 	@Deprecated
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<GenomicRegionFeatures> getByVariants(List<GenomicVariant> variants) {
 		return this.getByVariants(variants, null);
 	}
-	
-	
-	
-	
-	
-	
 
 
-	
+
+
+
+
+
+
+
 
 }

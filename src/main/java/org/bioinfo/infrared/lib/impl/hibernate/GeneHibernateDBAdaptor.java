@@ -26,7 +26,10 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	public GeneHibernateDBAdaptor(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
-
+	
+	public GeneHibernateDBAdaptor(SessionFactory sessionFactory, String species, String version) {
+		super(sessionFactory, species, version);
+	}
 	
 	@Override
 	@SuppressWarnings("unchecked")

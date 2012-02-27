@@ -24,7 +24,10 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 	public TfbsHibernateDBAdaptor(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
-
+	
+	public TfbsHibernateDBAdaptor(SessionFactory sessionFactory, String species, String version) {
+		super(sessionFactory, species, version);
+	}
 
 	@Override
 	public List<? extends Object> getAll() {

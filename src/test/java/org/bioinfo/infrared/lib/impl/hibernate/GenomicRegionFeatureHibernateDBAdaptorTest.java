@@ -1,28 +1,11 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import org.bioinfo.commons.io.utils.FileUtils;
-import org.bioinfo.commons.io.utils.IOUtils;
-import org.bioinfo.infrared.core.cellbase.Exon;
-import org.bioinfo.infrared.core.cellbase.Gene;
-import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
-import org.bioinfo.infrared.core.cellbase.Snp;
-import org.bioinfo.infrared.core.cellbase.Tfbs;
-import org.bioinfo.infrared.core.cellbase.Transcript;
-import org.bioinfo.infrared.coreold.regulatory.MiRnaTarget;
-import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
-import org.bioinfo.infrared.lib.api.MirnaDBAdaptor;
 import org.bioinfo.infrared.lib.common.GenomicVariant;
 import org.bioinfo.infrared.lib.common.GenomicVariantEffect;
-import org.bioinfo.infrared.lib.common.Region;
-import org.bioinfo.infrared.lib.common.GenomicVariantEffect.GenomicVariantConsequenceType;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.junit.After;
 import org.junit.Before;

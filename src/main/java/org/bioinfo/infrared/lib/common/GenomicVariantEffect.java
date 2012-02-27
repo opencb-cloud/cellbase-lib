@@ -16,13 +16,14 @@ import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
+import org.bioinfo.infrared.lib.api.GenomeSequenceDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
-import org.bioinfo.infrared.lib.impl.hibernate.GenomeSequenceDBAdaptor;
 import org.bioinfo.infrared.lib.impl.hibernate.GenomicRegionFeatures;
 import org.bioinfo.infrared.lib.impl.hibernate.HibernateDBAdaptorFactory;
 
+@Deprecated
 public class GenomicVariantEffect {
 
 	private int position;
@@ -68,6 +69,19 @@ public class GenomicVariantEffect {
 
 	}
 
+	private HashMap<String, Transcript> fillTranscriptHash(List<Transcript> transcripts){
+		HashMap<String, Transcript> hash = new HashMap<String, Transcript>();
+		for (Transcript transcript : transcripts) {
+			hash.put(transcript.getStableId(), transcript);
+		}
+		return hash;
+	}
+
+	private HashMap<String, Transcript> fillAllTranscriptFromDB(){
+		this.transcripts = transcriptAdaptor.getAll();
+		return this.fillTranscriptHash(this.transcripts);
+	}
+
 
 	public void writeConsequenceType(List<GenomicVariant> variants, File file) throws IOException{
 		logger.debug("File path: " + file.getAbsolutePath());
@@ -75,11 +89,11 @@ public class GenomicVariantEffect {
 
 		//		if(file.canWrite()){
 		this.transcriptHash = this.fillAllTranscriptFromDB();
-		StringBuilder consequenceTypeString = new StringBuilder();
+		StringBuilder consequenceTypeStringBuilder = new StringBuilder();
 		for(int i = 0; i < variants.size(); i++) {
 			try {
 				//				IOUtils.append(file, this.getConsequenceType(variants.get(i)).toString());
-				consequenceTypeString.append(this.getConsequenceType(variants.get(i)).toString()+"\n");
+				consequenceTypeStringBuilder.append(this.getConsequenceType(variants.get(i)).toString()+"\n");
 			}
 			//			catch (IOException e) {
 			//				IOUtils.append(file, "VARIANT TOOL ERROR: " + e.getMessage());
@@ -87,11 +101,11 @@ public class GenomicVariantEffect {
 			//			}
 			catch(Exception e){
 				//				IOUtils.append(file, "VARIANT TOOL ERROR: " + e.getMessage());
-				consequenceTypeString.append("VARIANT TOOL ERROR: " + e.getMessage());
+				consequenceTypeStringBuilder.append("VARIANT TOOL ERROR: " + e.getMessage());
 				e.printStackTrace();
 			}
 		}
-		IOUtils.write(file, consequenceTypeString.toString());
+		IOUtils.write(file, consequenceTypeStringBuilder.toString());
 		//		}
 	}
 
@@ -110,7 +124,7 @@ public class GenomicVariantEffect {
 	}
 
 
-	public List<GenomicVariantConsequenceType> getConsequenceType(List<GenomicVariant> variants,  List<Transcript> transcripts){
+	public List<GenomicVariantConsequenceType> getConsequenceType(List<GenomicVariant> variants,  List<Transcript> transcripts) {
 		logger.info("VARIANT TOOL CALL id:" + this.internalID + " Features: "  + this.showFeatures + " Variation: "  + this.showVariation + " Regulatory: "  + this.showRegulatory+ " Disease: "  + this.showDiseases + " Number: "  + variants.size() );
 		//		logger.info("\tFlags:");
 		//		logger.info("\t\tFeatures: "  + this.showFeatures);
@@ -148,21 +162,9 @@ public class GenomicVariantEffect {
 		return result;
 	}
 
-	private HashMap<String, Transcript> fillTranscriptHash(List<Transcript> transcripts){
-		HashMap<String, Transcript> hash = new HashMap<String, Transcript>();
-		for (Transcript transcript : transcripts) {
-			hash.put(transcript.getStableId(), transcript);
-		}
-		return hash;
-	}
-
-	private HashMap<String, Transcript> fillAllTranscriptFromDB(){
-		this.transcripts = transcriptAdaptor.getAll();
-		return this.fillTranscriptHash(this.transcripts);
-	}
 
 
-
+	
 	private List<GenomicVariantConsequenceType> getConsequenceType(GenomicVariant variant){
 		return this.getConsequenceType(variant.getChromosome(), variant.getPosition(), variant.getAlternative());
 	}
@@ -173,7 +175,7 @@ public class GenomicVariantEffect {
 			result = new String();
 			if(this.features.getSnp().size() != 0){
 				for (Snp snp : this.features.getSnp()) {
-					result = result + " " + snp.getName();
+					result = result + " " + snp.getName(); // WTF!!!
 				}
 			}
 		}
@@ -399,7 +401,7 @@ public class GenomicVariantEffect {
 							}
 						}
 
-						if (alternativeAllele != null){
+						if (alternativeAllele != null && alternativeAllele.length() > 0){
 							this.getConsequenceTypeByAlternativeAllele(transcript, exons,  position, alternativeAllele);
 						}
 					}
@@ -451,8 +453,8 @@ public class GenomicVariantEffect {
 					codon_position = 3;
 				}
 
-				//				sequence.setSequence(GenomeSequenceDBAdaptor.getRevComp(sequence.getSequence()));
-				//				alternativeAllele = GenomeSequenceDBAdaptor.getRevComp(alternativeAllele);
+				//				sequence.setSequence(GenomeSequenceHibernateDBAdaptor.getRevComp(sequence.getSequence()));
+				//				alternativeAllele = GenomeSequenceHibernateDBAdaptor.getRevComp(alternativeAllele);
 			}
 			else{
 				if (codon_position == 1){
@@ -468,12 +470,12 @@ public class GenomicVariantEffect {
 					codon_position = 3;
 				}
 
-				//				sequence.setSequence(GenomeSequenceDBAdaptor.getRevComp(sequence.getSequence()));
-				//				alternativeAllele = GenomeSequenceDBAdaptor.getRevComp(alternativeAllele);
+				//				sequence.setSequence(GenomeSequenceHibernateDBAdaptor.getRevComp(sequence.getSequence()));
+				//				alternativeAllele = GenomeSequenceHibernateDBAdaptor.getRevComp(alternativeAllele);
 			}
 
-			sequence.setSequence(GenomeSequenceDBAdaptor.getRevComp(sequence.getSequence()));
-			alternativeAllele = GenomeSequenceDBAdaptor.getRevComp(alternativeAllele);
+			sequence.setSequence(sequenceDbAdaptor.getRevComp(sequence.getSequence()));
+			alternativeAllele = sequenceDbAdaptor.getRevComp(alternativeAllele);
 
 			String referenceSequence = sequence.getSequence();
 
@@ -814,99 +816,6 @@ public class GenomicVariantEffect {
 	}
 
 	
-	public class GenomicVariantConsequenceType {
-		private String chromosome;
-		private int start;
-		private int end;
-		private String id;
-		private String name;
-		private String type;
-		private String biotype;
-		private String featureChromosome;
-		private int featureStart;
-		private int featureEnd;
-		private String featureStrand;
-
-		private String snpId;
-		private String ancestral;
-		private String alternative;
-
-		private String geneId;
-		private String transcriptId;
-		private String geneName;
-
-		public String consequenceType;
-		private String consequenceTypeObo;
-		private String consequenceTypeDesc;
-		private String consequenceTypeType;
-
-		private String aminoacidChange;
-		private String codonChange;
-
-		public String toString(){
-			StringBuilder br = new StringBuilder();
-			return br.append(chromosome).append("\t")
-					.append(start).append("\t")
-					.append(end).append("\t")
-					.append(id).append("\t")
-					.append(name).append("\t")
-					.append(type).append("\t")
-					.append(biotype).append("\t")
-					.append(featureChromosome).append("\t")
-					.append(featureStart).append("\t")
-					.append(featureEnd).append("\t")
-					.append(featureStrand).append("\t")
-					.append(snpId).append("\t")
-					.append(ancestral).append("\t")
-					.append(alternative).append("\t")
-					.append(geneId).append("\t")
-					.append(transcriptId).append("\t")
-					.append(geneName).append("\t")
-					.append(consequenceType).append("\t")
-					.append(consequenceTypeObo).append("\t")
-					.append(consequenceTypeDesc).append("\t")
-					.append(consequenceTypeType).append("\t")
-					.append(aminoacidChange).append("\t")
-					.append(codonChange).append("\t").toString();
-		}
-
-		public GenomicVariantConsequenceType(String chromosome, int start, int end,
-				String id, String name, String type, String biotype,
-				String featureChromosome, int featureStart,
-				int featureEnd, String featureStrand, String snpId,
-				String ancestral, String alternative, String geneId,
-				String transcriptId, String geneName, String consequenceType,
-				String consequenceTypeObo, String consequenceTypeDesc,
-				String consequenceTypeType, String aminoacidChange,
-				String codonChange) {
-			super();
-			this.chromosome = chromosome;
-			this.start = start;
-			this.end = end;
-			this.id = id;
-			this.name = name;
-			this.type = type;
-			this.biotype = biotype;
-			this.featureChromosome = featureChromosome;
-			this.featureStart = featureStart;
-			this.featureEnd = featureEnd;
-			this.featureStrand = featureStrand;
-			this.snpId = snpId;
-			this.ancestral = ancestral;
-			this.alternative = alternative;
-			this.geneId = geneId;
-			this.transcriptId = transcriptId;
-			this.geneName = geneName;
-			this.consequenceType = consequenceType;
-			this.consequenceTypeObo = consequenceTypeObo;
-			this.consequenceTypeDesc = consequenceTypeDesc;
-			this.consequenceTypeType = consequenceTypeType;
-			this.aminoacidChange = aminoacidChange;
-			this.codonChange = codonChange;
-		}
-	}
-
-
 	public boolean isShowFeatures() {
 		return showFeatures;
 	}

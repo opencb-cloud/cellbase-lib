@@ -10,6 +10,9 @@ import org.hibernate.classic.Session;
 
 public class HibernateDBAdaptor extends DBAdaptor{
 
+	protected String species;
+	protected String version;
+	
 	private SessionFactory sessionFactory;
 	private Session session;
 
@@ -17,8 +20,15 @@ public class HibernateDBAdaptor extends DBAdaptor{
 	//
 	//	}
 
+	
 	public HibernateDBAdaptor(SessionFactory sessionFactory) {
-		this.setSessionFactory(sessionFactory);
+		this.sessionFactory = sessionFactory;
+	}
+	
+	public HibernateDBAdaptor(SessionFactory sessionFactory, String species, String version) {
+		this.sessionFactory = sessionFactory;
+		this.species = species;
+		this.version = version;
 	}
 
 	protected Session openSession() {
@@ -74,4 +84,33 @@ public class HibernateDBAdaptor extends DBAdaptor{
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
+
+	/**
+	 * @return the species
+	 */
+	public String getSpecies() {
+		return species;
+	}
+
+	/**
+	 * @param species the species to set
+	 */
+	public void setSpecies(String species) {
+		this.species = species;
+	}
+
+	/**
+	 * @return the version
+	 */
+	public String getVersion() {
+		return version;
+	}
+
+	/**
+	 * @param version the version to set
+	 */
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
 }

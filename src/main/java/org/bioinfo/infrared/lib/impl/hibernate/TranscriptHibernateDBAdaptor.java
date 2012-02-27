@@ -26,6 +26,10 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		super(sessionFactory);
 	}
 	
+	public TranscriptHibernateDBAdaptor(SessionFactory sessionFactory, String species, String version) {
+		super(sessionFactory, species, version);
+	}
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Transcript> getAll() {
@@ -366,7 +370,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	@Override
 	public String getSequenceById(String ensemblId) {
 		Transcript transcript = this.getByEnsemblId(ensemblId);
-		GenomeSequenceDBAdaptor da = new GenomeSequenceDBAdaptor(this.getSessionFactory());
+		GenomeSequenceHibernateDBAdaptor da = new GenomeSequenceHibernateDBAdaptor(this.getSessionFactory());
 		return da.getByRegion(transcript.getChromosome(),transcript.getStart(),transcript.getEnd()).getSequence();
 	}
 
@@ -375,7 +379,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	public List<String> getAllSequencesByIdList(List<String> ensemblIdList) {
 		List<String> sequence = new ArrayList<String>(ensemblIdList.size());
 		List<Transcript> transcripts = getAllByEnsemblIdList(ensemblIdList);
-		GenomeSequenceDBAdaptor da = new GenomeSequenceDBAdaptor(this.getSessionFactory());
+		GenomeSequenceHibernateDBAdaptor da = new GenomeSequenceHibernateDBAdaptor(this.getSessionFactory());
 		for(Transcript transcript: transcripts) {
 			sequence.add(da.getByRegion(transcript.getChromosome(),transcript.getStart(),transcript.getEnd()).getSequence());
 		}

@@ -7,8 +7,9 @@ import java.util.Properties;
 import org.bioinfo.commons.log.Logger;
 import org.bioinfo.infrared.lib.api.CytobandDBAdaptor;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
-import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
+import org.bioinfo.infrared.lib.api.GenomeSequenceDBAdaptor;
+import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.api.MirnaDBAdaptor;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
@@ -16,7 +17,7 @@ import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.api.TfbsDBAdaptor;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.api.XRefsDBAdaptor;
-import org.bioinfo.infrared.lib.impl.hibernate.GenomeSequenceDBAdaptor;
+import org.bioinfo.infrared.lib.impl.hibernate.GenomicVariantEffectDBAdaptor;
 
 public abstract class DBAdaptorFactory {
 
@@ -32,7 +33,8 @@ public abstract class DBAdaptorFactory {
 		speciesAlias.put("Rattus norvegicus", "RNORVEGICUS");speciesAlias.put("Rattus_norvegicus", "RNORVEGICUS");speciesAlias.put("rnorvegicus", "RNORVEGICUS");speciesAlias.put("rnor", "RNORVEGICUS");speciesAlias.put("rno", "RNORVEGICUS");
 		speciesAlias.put("Danio rerio", "DRERIO");speciesAlias.put("Danio_rerio", "DRERIO");speciesAlias.put("drerio", "DRERIO");speciesAlias.put("drer", "DRERIO");speciesAlias.put("dre", "DRERIO");
 		speciesAlias.put("Drosophila melanogaster", "DMELANOGASTER");speciesAlias.put("Drosophila_melanogaster", "DMELANOGASTER");speciesAlias.put("dmelanogaster", "DMELANOGASTER");speciesAlias.put("dmel", "DMELANOGASTER");speciesAlias.put("dme", "DMELANOGASTER");
-	
+		speciesAlias.put("Caenorhabditis elegans", "CELEGANS");speciesAlias.put("Caenorhabditis_elegans", "CELEGANS");speciesAlias.put("celegans", "CELEGANS");speciesAlias.put("cele", "CELEGANS");speciesAlias.put("cel", "CELEGANS");
+		speciesAlias.put("Saccharomyces cerevisiae", "SCEREVISIAE");speciesAlias.put("Saccharomyces_cerevisiae", "SCEREVISIAE");speciesAlias.put("scerevisiae", "SCEREVISIAE");speciesAlias.put("scer", "SCEREVISIAE");speciesAlias.put("sce", "SCEREVISIAE");
 	}
 	
 	public DBAdaptorFactory() {
@@ -66,6 +68,11 @@ public abstract class DBAdaptorFactory {
 	public abstract GenomicRegionFeatureDBAdaptor getFeatureMapDBAdaptor(String species);
 	
 	public abstract GenomicRegionFeatureDBAdaptor getFeatureMapDBAdaptor(String species, String version);
+	
+	
+	public abstract GenomicVariantEffectDBAdaptor getGenomicVariantEffectDBAdaptor(String species);
+	
+	public abstract GenomicVariantEffectDBAdaptor getGenomicVariantEffectDBAdaptor(String species, String version);
 	
 	
 	public abstract ProteinDBAdaptor getProteinDBAdaptor(String species);

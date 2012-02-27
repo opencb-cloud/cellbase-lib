@@ -20,7 +20,9 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 	public ProteinHibernateDBAdaptor(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
-
+	public ProteinHibernateDBAdaptor(SessionFactory sessionFactory, String species, String version) {
+		super(sessionFactory, species, version);
+	}
 	@Override
 	public List<String> getAllIds() {
 		// TODO Auto-generated method stub

@@ -29,12 +29,16 @@ public class GenomicRegionFeatures {
 	private List<RegulatoryRegion> transcriptionFactor  = new ArrayList<RegulatoryRegion>();
 	private List<RegulatoryRegion> polimerase  = new ArrayList<RegulatoryRegion>();
 
+	// features
 	private List<String> genesIds;
 	private List<String> transcriptsIds;
 	private List<String> exonsIds;
 	private List<String> snpsIds;
+	
+	// regulatory
 	private List<String> tfbsIds;
-	private List<String> regulatoryIds;
+	private List<String> mirnaTargetIds;
+	private List<String> regulatoryRegionIds;
 
 	/** Para acceder posteriormente a los objetos bajo demanda **/
 	private SessionFactory sessionFactory;
@@ -57,39 +61,48 @@ public class GenomicRegionFeatures {
 		this.exonsIds = new ArrayList<String>();
 		this.snpsIds = new ArrayList<String>();
 		this.tfbsIds = new ArrayList<String>();
-		this.regulatoryIds = new ArrayList<String>();
+		this.mirnaTargetIds = new ArrayList<String>();
+		this.regulatoryRegionIds = new ArrayList<String>();
 		
 //		logger.("Feature map: " + featuresMap.size());
 		
-		for (FeatureMap featureMap : featuresMap) {
-			if (featureMap.getId().getSource().equals("gene")){
-				genesIds.add(featureMap.getFeatureId());
+		for(FeatureMap featureMap : featuresMap) {
+			if (featureMap.getFeatureType().equals("gene")){
+				genesIds.add(featureMap.getFeatureName());
 				continue;
 			}
 			
-			if (featureMap.getId().getSource().equals("transcript")){
-				transcriptsIds.add(featureMap.getFeatureId());
+			if (featureMap.getFeatureType().equals("transcript")){
+				transcriptsIds.add(featureMap.getFeatureName());
 				continue;
 			}
 			
-			if (featureMap.getId().getSource().equals("exon")){
-				exonsIds.add(featureMap.getFeatureId());
+			if (featureMap.getFeatureType().equals("exon")){
+				exonsIds.add(featureMap.getFeatureName());
 				continue;
 			}
 			
-			if (featureMap.getId().getSource().equals("snp")){
-				snpsIds.add(featureMap.getFeatureId());
+			if (featureMap.getFeatureType().equals("snp")){
+				snpsIds.add(featureMap.getFeatureName());
 				continue;
 			}
 			
-			if (featureMap.getId().getSource().equals("tfbs")){
-				tfbsIds.add(String.valueOf(featureMap.getId().getSourceId()));
+			/**
+			 * If a feature name in FeatureMap maps to more than 1 location
+			 * then PK is store in order to get the correct one.
+			 */
+			if (featureMap.getFeatureType().equals("tfbs")){
+				tfbsIds.add(String.valueOf(featureMap.getFeatureId()));
 				continue;
 			}
 			
+			if (featureMap.getFeatureType().equals("mirna_target")){
+				mirnaTargetIds.add(String.valueOf(featureMap.getFeatureId()));
+				continue;
+			}
 			
-			if (featureMap.getId().getSource().equals("regulatory_region")){
-				regulatoryIds.add(String.valueOf(featureMap.getId().getSourceId()));
+			if (featureMap.getFeatureType().equals("regulatory_region")){
+				regulatoryRegionIds.add(String.valueOf(featureMap.getFeatureId()));
 				continue;
 			}
 		}
@@ -275,7 +288,7 @@ public class GenomicRegionFeatures {
 	}
 
 	public List<String> getRegulatoryIds() {
-		return regulatoryIds;
+		return regulatoryRegionIds;
 	}
 
 

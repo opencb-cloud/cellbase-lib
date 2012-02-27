@@ -22,6 +22,10 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 		super(sessionFactory);
 	}
 
+	public RegulatoryRegionHibernateDBAdaptor(SessionFactory sessionFactory, String species, String version) {
+		super(sessionFactory, species, version);
+	}
+	
 	@Override
 	public List<RegulatoryRegion> getAllByRegion(String chromosome) {
 		// TODO Auto-generated method stub

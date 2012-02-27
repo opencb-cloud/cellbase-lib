@@ -10,6 +10,7 @@ import org.bioinfo.commons.Config;
 import org.bioinfo.infrared.lib.api.CytobandDBAdaptor;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
+import org.bioinfo.infrared.lib.api.GenomeSequenceDBAdaptor;
 import org.bioinfo.infrared.lib.api.MirnaDBAdaptor;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
@@ -66,7 +67,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		long t1 = System.currentTimeMillis();
 
 		// initial load and setup from hibernate.cfg.xml
-		Configuration cfg = new Configuration().configure("cell_db_v1_hibernate.cfg.xml");
+		Configuration cfg = new Configuration().configure("cellbase-hibernate.cfg.xml");
 		if(speciesVersionPrefix != null && !speciesVersionPrefix.trim().equals("")) {
 			// read DB configuration for that SPECIES.VERSION, by default PRIMARY_DB is selected 
 			String dbPrefix = applicationProperties.getProperty(speciesVersionPrefix+".DB", "PRIMARY_DB");
@@ -134,7 +135,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (GeneDBAdaptor) new GeneHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+		return (GeneDBAdaptor) new GeneHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
 	}
 
 
@@ -150,7 +151,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			SessionFactory sessionFactory  = createSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (TranscriptDBAdaptor) new TranscriptHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+		return (TranscriptDBAdaptor) new TranscriptHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
 	}
 	
 	
@@ -165,7 +166,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			SessionFactory sessionFactory  = createSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (ExonDBAdaptor) new ExonHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+		return (ExonDBAdaptor) new ExonHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
 	}
 
 	
@@ -180,7 +181,22 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			SessionFactory sessionFactory  = createSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (GenomicRegionFeatureHibernateDBAdaptor) new GenomicRegionFeatureHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+		return (GenomicRegionFeatureHibernateDBAdaptor) new GenomicRegionFeatureHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+	}
+	
+	
+	@Override
+	public GenomicVariantEffectDBAdaptor getGenomicVariantEffectDBAdaptor(String species) {
+		return getGenomicVariantEffectDBAdaptor(species, null);
+	}
+	@Override
+	public GenomicVariantEffectDBAdaptor getGenomicVariantEffectDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species,version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)){
+			SessionFactory sessionFactory  = createSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+		return (GenomicVariantEffectDBAdaptor) new GenomicVariantEffectDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
 	}
 	
 	
@@ -196,7 +212,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			SessionFactory sessionFactory  = createSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (ProteinDBAdaptor) new ProteinHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+		return (ProteinDBAdaptor) new ProteinHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
 	}
 
 	
@@ -219,7 +235,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 //			}
 //		}
 		
-		return (SnpDBAdaptor) new SnpHibernateDBAdapator(sessionFactories.get(speciesVersionPrefix));
+		return (SnpDBAdaptor) new SnpHibernateDBAdapator(sessionFactories.get(speciesVersionPrefix), species, version);
 	}
 
 	
@@ -235,7 +251,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (GenomeSequenceDBAdaptor) new GenomeSequenceDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+		return (GenomeSequenceDBAdaptor) new GenomeSequenceHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
 	}
 
 	@Override
@@ -251,7 +267,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (CytobandDBAdaptor) new CytobandHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+		return (CytobandDBAdaptor) new CytobandHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
 		
 	}
 	
@@ -277,7 +293,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (XRefsDBAdaptor) new XRefsHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+		return (XRefsDBAdaptor) new XRefsHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
 	}
 
 	
@@ -293,7 +309,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (TfbsDBAdaptor) new TfbsHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+		return (TfbsDBAdaptor) new TfbsHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
 	}
 	
 	
@@ -309,7 +325,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			SessionFactory sessionFactory = createSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (RegulatoryRegionDBAdaptor) new RegulatoryRegionHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+		return (RegulatoryRegionDBAdaptor) new RegulatoryRegionHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
 	}
 
 	
@@ -326,7 +342,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
 //		System.out.println("sessionFactories " + sessionFactories.get(speciesVersionPrefix));
-		return (MirnaHibernateDBAdaptor) new MirnaHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix));
+		return (MirnaHibernateDBAdaptor) new MirnaHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
 	}
 
 

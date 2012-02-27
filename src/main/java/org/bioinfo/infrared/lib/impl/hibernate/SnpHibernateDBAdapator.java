@@ -20,7 +20,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
-public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor {
+class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor {
 
 	private int MAX_BATCH_QUERIES_LIST = 50;
 	private int FEATURE_MAP_CHUNK_SIZE = 400;
@@ -28,7 +28,11 @@ public class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBA
 	public SnpHibernateDBAdapator(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
-
+	
+	public SnpHibernateDBAdapator(SessionFactory sessionFactory, String species, String version) {
+		super(sessionFactory, species, version);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Snp> getAll(){

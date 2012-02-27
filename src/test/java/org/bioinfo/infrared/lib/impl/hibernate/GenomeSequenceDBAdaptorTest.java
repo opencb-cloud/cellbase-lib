@@ -10,12 +10,12 @@ public class GenomeSequenceDBAdaptorTest {
 
 	private DBAdaptorFactory dbAdaptorFact = new HibernateDBAdaptorFactory();
 
-	private GenomeSequenceDBAdaptor genomeSequenceDBAdaptor;
+	private GenomeSequenceHibernateDBAdaptor genomeSequenceHibernateDBAdaptor;
 
 	/*@Test
 	public void testGetByRegion() {
-		genomeSequenceDBAdaptor = dbAdaptorFact.getGenomeSequenceDBAdaptor("drerio");
-		System.out.println(genomeSequenceDBAdaptor.getByRegion("1", 1000001, 1000501));
+		genomeSequenceHibernateDBAdaptor = dbAdaptorFact.getGenomeSequenceDBAdaptor("drerio");
+		System.out.println(genomeSequenceHibernateDBAdaptor.getByRegion("1", 1000001, 1000501));
 		dbAdaptorFact.close();
 	}*/
 

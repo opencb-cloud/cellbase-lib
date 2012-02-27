@@ -3,13 +3,12 @@ package org.bioinfo.infrared.lib.common;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class GenomicVariant {
 
 	private String chromosome;
 	private int position;
 	private String alternative;
-
+	
 	public GenomicVariant(String chromosome, int position, String alternative) {
 		this.chromosome = chromosome;
 		this.position = position;

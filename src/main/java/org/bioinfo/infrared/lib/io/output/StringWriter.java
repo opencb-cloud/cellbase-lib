@@ -21,7 +21,7 @@ import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.core.cellbase.Xref;
-import org.bioinfo.infrared.lib.common.GenomicVariantEffect.GenomicVariantConsequenceType;
+import org.bioinfo.infrared.lib.common.GenomicVariantConsequenceType;
 import org.bioinfo.infrared.lib.impl.hibernate.GenomicRegionFeatures;
 
 public class StringWriter {
@@ -145,7 +145,7 @@ public class StringWriter {
 			.append(featureMap.getChromosome()).append("\t")
 			.append(featureMap.getStart()).append("\t")
 			.append(featureMap.getEnd()).append("\t")
-			.append(featureMap.getType()).append("\t").append("\n");
+			.append(featureMap.getFeatureType()).append("\t").append("\n");
 			
 		}
 		return sb.toString();

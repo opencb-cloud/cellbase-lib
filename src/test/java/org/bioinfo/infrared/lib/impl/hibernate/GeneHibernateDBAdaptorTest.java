@@ -19,7 +19,7 @@ public class GeneHibernateDBAdaptorTest {
 	private DBAdaptorFactory dbAdaptorFact = new HibernateDBAdaptorFactory();
 	private GeneDBAdaptor geneDBAdaptor;
 	private long startExecTime;
-	private String species = "drerio";
+	private String species = "mmusculus";
 	
 	@Before
 	public void beforeTestStart() {
@@ -41,18 +41,14 @@ public class GeneHibernateDBAdaptorTest {
 	}
 	*/
 	
-	/*
 	
-
-
-
-
 
 	@Test
 	public void testGeneHibernateDBAdaptorGetAll() {
 		List<Gene> genes = geneDBAdaptor.getAll();
 		printGeneList("testGeneHibernateDBAdaptorGetAll", genes, 5);
 	}
+	/*
 	@Test
 	public void testGeneHibernateDBAdaptorGetAll2() {
 		List<Gene> genes = geneDBAdaptor.getAll();

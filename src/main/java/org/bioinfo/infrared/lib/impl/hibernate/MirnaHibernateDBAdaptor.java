@@ -27,6 +27,9 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 		super(sessionFactory);
 	}
 
+	public MirnaHibernateDBAdaptor(SessionFactory sessionFactory, String species, String version) {
+		super(sessionFactory, species, version);
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

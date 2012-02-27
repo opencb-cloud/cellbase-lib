@@ -21,6 +21,9 @@ public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefs
 		super(sessionFactory);
 	}
 
+	public XRefsHibernateDBAdaptor(SessionFactory sessionFactory, String species, String version) {
+		super(sessionFactory, species, version);
+	}
 	
 	@Override
 	public List<Dbname> getAllDBNames() {

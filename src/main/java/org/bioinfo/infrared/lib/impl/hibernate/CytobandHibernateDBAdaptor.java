@@ -18,7 +18,11 @@ public class CytobandHibernateDBAdaptor extends HibernateDBAdaptor implements Cy
 	public CytobandHibernateDBAdaptor(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
-
+	
+	public CytobandHibernateDBAdaptor(SessionFactory sessionFactory, String species, String version) {
+		super(sessionFactory, species, version);
+	}
+	
 	@Override
 	public List<? extends Object> getAll() {
 		Criteria criteria = this.openSession().createCriteria(Cytoband.class);
