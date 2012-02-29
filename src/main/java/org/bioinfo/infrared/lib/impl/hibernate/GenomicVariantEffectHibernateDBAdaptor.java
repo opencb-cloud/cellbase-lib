@@ -10,6 +10,7 @@ import org.bioinfo.infrared.core.cellbase.ConsequenceType;
 import org.bioinfo.infrared.core.cellbase.FeatureMap;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.lib.api.GenomeSequenceDBAdaptor;
+import org.bioinfo.infrared.lib.api.GenomicVariantEffectDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.common.DNASequenceUtils;
 import org.bioinfo.infrared.lib.common.GenomeSequenceFeature;
@@ -20,7 +21,7 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
-public class GenomicVariantEffectDBAdaptor extends HibernateDBAdaptor {
+public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor implements GenomicVariantEffectDBAdaptor{
 
 	private static int FEATURE_MAP_CHUNK_SIZE = 400;
 
@@ -66,7 +67,7 @@ public class GenomicVariantEffectDBAdaptor extends HibernateDBAdaptor {
 		consequenceTypeMap.put("intergenic", new ConsequenceType(17, "SO:0001628", "intergenic_variant", "", "INTERGENIC", 100, "", "Intergenic", "More than 5 kb either upstream or downstream of a transcript"));
 	}
 
-	public GenomicVariantEffectDBAdaptor(SessionFactory sessionFactory) {
+	public GenomicVariantEffectHibernateDBAdaptor(SessionFactory sessionFactory) {
 		super(sessionFactory);
 		dbAdaptorFact = new HibernateDBAdaptorFactory();
 		sequenceDbAdaptor = dbAdaptorFact.getGenomeSequenceDBAdaptor(species, version);
@@ -75,13 +76,14 @@ public class GenomicVariantEffectDBAdaptor extends HibernateDBAdaptor {
 //		snpDbAdaptor = (SnpDBAdaptor) new SnpHibernateDBAdaptor(sessionFactory);
 	}
 	
-	public GenomicVariantEffectDBAdaptor(SessionFactory sessionFactory, String species, String version) {
+	public GenomicVariantEffectHibernateDBAdaptor(SessionFactory sessionFactory, String species, String version) {
 		super(sessionFactory, species, version);
 		dbAdaptorFact = new HibernateDBAdaptorFactory();
 		sequenceDbAdaptor = dbAdaptorFact.getGenomeSequenceDBAdaptor(species, version);
 		snpDbAdaptor = dbAdaptorFact.getSnpDBAdaptor(species, version);
 	}
 
+	@Override
 	public List<GenomicVariantConsequenceType> getAllConsequenceTypeByVariantList(List<GenomicVariant> variants) {
 		List<GenomicVariantConsequenceType> consequenceTypeList = new ArrayList<GenomicVariantConsequenceType>();
 
@@ -91,7 +93,7 @@ public class GenomicVariantEffectDBAdaptor extends HibernateDBAdaptor {
 		return consequenceTypeList;
 	}
 
-
+	@Override
 	public Map<GenomicVariant, List<GenomicVariantConsequenceType>> getConsequenceTypeMap(List<GenomicVariant> variants) {
 		Map<GenomicVariant, List<GenomicVariantConsequenceType>> consequences = new LinkedHashMap<GenomicVariant, List<GenomicVariantConsequenceType>>(variants.size());
 
@@ -101,7 +103,7 @@ public class GenomicVariantEffectDBAdaptor extends HibernateDBAdaptor {
 		return consequences;
 	}
 
-
+	@Override
 	public List<GenomicVariantConsequenceType> getAllConsequenceTypeByVariant(GenomicVariant variant) {
 
 		List<GenomicVariantConsequenceType> genomicVariantConsequenceType = null;

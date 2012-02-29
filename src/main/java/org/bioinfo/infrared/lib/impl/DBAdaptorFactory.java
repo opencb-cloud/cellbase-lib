@@ -5,11 +5,13 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.bioinfo.commons.log.Logger;
+import org.bioinfo.infrared.lib.api.BioPaxDBAdaptor;
 import org.bioinfo.infrared.lib.api.CytobandDBAdaptor;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomeSequenceDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
+import org.bioinfo.infrared.lib.api.GenomicVariantEffectDBAdaptor;
 import org.bioinfo.infrared.lib.api.MirnaDBAdaptor;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
@@ -17,7 +19,6 @@ import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.api.TfbsDBAdaptor;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.api.XRefsDBAdaptor;
-import org.bioinfo.infrared.lib.impl.hibernate.GenomicVariantEffectDBAdaptor;
 
 public abstract class DBAdaptorFactory {
 
@@ -119,6 +120,10 @@ public abstract class DBAdaptorFactory {
 	
 	public abstract MirnaDBAdaptor getMirnaDBAdaptor(String species, String version);
 
+
+	public abstract BioPaxDBAdaptor getBioPaxDBAdaptor(String species);
+	
+	public abstract BioPaxDBAdaptor getBioPaxDBAdaptor(String species, String version);
 
 	
 }

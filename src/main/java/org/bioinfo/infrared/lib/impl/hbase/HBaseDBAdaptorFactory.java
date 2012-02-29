@@ -2,6 +2,7 @@ package org.bioinfo.infrared.lib.impl.hbase;
 
 import java.util.Properties;
 
+import org.bioinfo.infrared.lib.api.BioPaxDBAdaptor;
 import org.bioinfo.infrared.lib.api.CytobandDBAdaptor;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
@@ -15,7 +16,7 @@ import org.bioinfo.infrared.lib.api.TfbsDBAdaptor;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.api.XRefsDBAdaptor;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
-import org.bioinfo.infrared.lib.impl.hibernate.GenomicVariantEffectDBAdaptor;
+import org.bioinfo.infrared.lib.impl.hibernate.GenomicVariantEffectHibernateDBAdaptor;
 
 
 public class HBaseDBAdaptorFactory extends DBAdaptorFactory{
@@ -238,7 +239,7 @@ public class HBaseDBAdaptorFactory extends DBAdaptorFactory{
 
 
 	@Override
-	public GenomicVariantEffectDBAdaptor getGenomicVariantEffectDBAdaptor(
+	public GenomicVariantEffectHibernateDBAdaptor getGenomicVariantEffectDBAdaptor(
 			String species) {
 		// TODO Auto-generated method stub
 		return null;
@@ -248,8 +249,26 @@ public class HBaseDBAdaptorFactory extends DBAdaptorFactory{
 
 
 	@Override
-	public GenomicVariantEffectDBAdaptor getGenomicVariantEffectDBAdaptor(
+	public GenomicVariantEffectHibernateDBAdaptor getGenomicVariantEffectDBAdaptor(
 			String species, String version) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+	@Override
+	public BioPaxDBAdaptor getBioPaxDBAdaptor(String species) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+	@Override
+	public BioPaxDBAdaptor getBioPaxDBAdaptor(String species, String version) {
 		// TODO Auto-generated method stub
 		return null;
 	}

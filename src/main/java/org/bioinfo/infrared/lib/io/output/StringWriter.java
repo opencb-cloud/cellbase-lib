@@ -2,6 +2,7 @@ package org.bioinfo.infrared.lib.io.output;
 
 import java.util.List;
 
+import org.bioinfo.infrared.core.biopax.v3.Pathway;
 import org.bioinfo.infrared.core.cellbase.ConsequenceType;
 import org.bioinfo.infrared.core.cellbase.Cytoband;
 import org.bioinfo.infrared.core.cellbase.Exon;
@@ -176,6 +177,58 @@ public class StringWriter {
 		return string;
 	}
 	
+	private static Object serialize(Pathway object) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("hola!!");
+//		if (pathways!=null) {
+//			if ("json".equalsIgnoreCase(outputFormat) || "jsonp".equalsIgnoreCase(outputFormat)) {
+//				if ("jsonp".equalsIgnoreCase(outputFormat)) {
+//					sb.append("var response = (");
+//				}
+//				if (onlyTopLevel) {
+//					sb.append("{\"pathways\": [");
+//					Pathway pw = null;
+//					for(int i=0; i<pathways.size() ; i++) {
+//						pw = pathways.get(i);
+//						if (i!=0) {
+//							sb.append(",");
+//						}
+//						sb.append(getJsonPathway(pw));
+//					}
+//					sb.append("]}");
+//				} else {
+//					sb.append("{\"pathways\": [");
+//					Pathway pw = null;
+//					for(int i=0; i<pathways.size() ; i++) {
+//						pw = pathways.get(i);
+//						if (i!=0) {
+//							sb.append(",");
+//						}
+//						sb.append("{\"id\": ").append(pw.getPkPathway()).append(", \"name\": \"").append(getFirstName(pw.getBioEntity())).append("\", \"description\": \"");
+//						if (pw.getBioEntity().getComment()!=null) {
+//							sb.append(pw.getBioEntity().getComment().replace("\"", "'").replace("\n", "").replace("\r", "").replace("\n", ""));
+//						}
+//						sb.append("\"}");
+//					}
+//					sb.append("]}");
+//				}
+//				if ("jsonp".equalsIgnoreCase(outputFormat)) {
+//					sb.append(");");
+//				}
+//			} else {
+//				sb.append("#id").append("\t").append("name").append("\t").append("description").append("\n");
+//
+//				for(Pathway pw: pathways) {
+//					sb.append(pw.getPkPathway()).append("\t").append(getFirstName(pw.getBioEntity())).append("\t").append(pw.getBioEntity().getComment()).append("\n");
+//				}
+//			}
+//		} else {
+//			sb.append("Could not find any pathway"); 			
+//		}
+		return sb.toString();
+	}
+	
+	
 	public static String serialize(List<?> list){
 		StringBuilder sb = new StringBuilder();
 		for (Object object : list) {
@@ -284,6 +337,13 @@ public class StringWriter {
 				sb.append(StringWriter.serialize((List)object));
 				continue;
 			}
+			
+			// BioPax objects
+			if (object instanceof Pathway){
+				sb.append(StringWriter.serialize((Pathway)object)).append("\n");
+				continue;
+			}
+			
 		}
 		return sb.toString();
 	}

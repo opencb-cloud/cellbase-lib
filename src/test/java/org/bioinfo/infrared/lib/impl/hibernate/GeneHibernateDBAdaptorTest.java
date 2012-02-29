@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class GeneHibernateDBAdaptorTest {
+	
 	private DBAdaptorFactory dbAdaptorFact = new HibernateDBAdaptorFactory();
 	private GeneDBAdaptor geneDBAdaptor;
 	private long startExecTime;
