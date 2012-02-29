@@ -10,6 +10,7 @@ import org.bioinfo.infrared.core.biopax.v3.PhysicalEntity;
 import org.bioinfo.infrared.core.biopax.v3.Protein;
 import org.bioinfo.infrared.lib.api.BioPaxDBAdaptor;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
+import org.bioinfo.infrared.lib.io.output.JsonWriter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,8 +58,11 @@ public class BioPaxHibernateDBAdaptorTest {
 	public void testGetPathwaysStringString() {
 		
 		BioPaxDBAdaptor dbAdaptor = dbAdaptorFact.getBioPaxDBAdaptor("hsa");
-		List<Pathway> pathways = dbAdaptor.getPathways("Reactome", "apoptosis", true);
-		System.out.println("Test3: "+pathways.size());
+		List<Pathway> pathways = dbAdaptor.getPathways("Reactome", "", true);
+		
+		System.out.println("Test3, size: "+pathways.size());
+		JsonWriter writer = new JsonWriter();
+		System.out.println("Test3: json " + writer.serialize(pathways));
 	}
 
 	@Test

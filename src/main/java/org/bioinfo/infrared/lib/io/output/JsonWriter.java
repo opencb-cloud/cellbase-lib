@@ -9,7 +9,6 @@ import org.bioinfo.infrared.core.biopax.v3.Pathway;
 import org.bioinfo.infrared.core.cellbase.ConsequenceType;
 import org.bioinfo.infrared.core.cellbase.Cytoband;
 import org.bioinfo.infrared.core.cellbase.Exon;
-import org.bioinfo.infrared.core.cellbase.FeatureMap;
 import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.GenomeSequence;
 import org.bioinfo.infrared.core.cellbase.MirnaDisease;
