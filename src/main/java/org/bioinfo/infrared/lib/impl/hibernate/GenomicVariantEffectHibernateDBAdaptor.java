@@ -182,8 +182,8 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 					genomicVariantConsequenceType.add(createGenomicVariantConsequenceType(variant, featureMap, "exon"));
 
 					int codonPosition = -1;
-					if (!isUTR){
-						genomicVariantConsequenceType.add(createGenomicVariantConsequenceType(variant, featureMap, "coding_sequence"));
+					if (!isUTR && featureMap.getBiotype().equalsIgnoreCase("protein_coding")) {
+						genomicVariantConsequenceType.add(createGenomicVariantConsequenceType(variant, featureMap, "coding_sequence"));							
 						if(!featureMap.getExonPhase().equals("") && !featureMap.getExonPhase().equals("-1")) {
 							codonPosition = (variant.getPosition()-featureMap.getStart()+1+Integer.parseInt(featureMap.getExonPhase()))%3;
 							//							if(codonPosition == 0) {
@@ -216,8 +216,8 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 				if(featureMap.getFeatureType().equalsIgnoreCase("regulatory_region")) {
 					genomicVariantConsequenceType.add(createGenomicVariantConsequenceType(variant, featureMap, "regulatory_region"));
 
-					if(featureMap.getFeatureName().equalsIgnoreCase("dbnase1") || featureMap.getFeatureName().equalsIgnoreCase("faire")) {
-						genomicVariantConsequenceType.add(createGenomicVariantConsequenceType(variant, featureMap, "dbnase1"));
+					if(featureMap.getFeatureName().equalsIgnoreCase("dnase1") || featureMap.getFeatureName().equalsIgnoreCase("faire")) {
+						genomicVariantConsequenceType.add(createGenomicVariantConsequenceType(variant, featureMap, "dnase1"));
 					}
 
 					if(featureMap.getFeatureName().equalsIgnoreCase("PolII") || featureMap.getFeatureName().equalsIgnoreCase("PolIII")) {

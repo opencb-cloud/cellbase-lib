@@ -740,7 +740,7 @@ class BioPaxHibernateDBAdaptor extends HibernateDBAdaptor implements BioPaxDBAda
 	public Pathway getPathway(String pathwayName, String dataSourceName) {
 		Pathway output = null;
 		try {
-			String sql = "select pw.* from Pathway pw, nameEntity nm, DataSource ds, entity_dataSource eds  where pw.entity = nm.entity and eds.datasource = ds.PK_DataSource and eds.entity = pw.entity and nm.nameEntity = '" + pathwayName + "' and ds.name = '" + dataSourceName + "'";
+			String sql = "select pw.* from Pathway pw, nameEntity nm, DataSource ds, entity_dataSource eds  where pw.entity = nm.entity and eds.datasource = ds.PK_DataSource and eds.entity = pw.entity and nm.nameEntity = '" + pathwayName + "' and ds.sourceName = '" + dataSourceName + "'";
 			Query query = this.openSession().createSQLQuery(sql).addEntity(Pathway.class);
 			output = (Pathway) query.uniqueResult();
 		} catch (Exception e) {
