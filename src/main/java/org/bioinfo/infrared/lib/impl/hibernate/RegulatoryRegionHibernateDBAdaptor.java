@@ -16,6 +16,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.omg.CORBA.portable.ApplicationException;
 
 class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements RegulatoryRegionDBAdaptor {
 
@@ -237,12 +238,13 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 	@Override
 	public List<ConservedRegion> getAllConservedRegionByRegion(Region region) {
 		
+		
 //		int start_chunk = CHUNK_SIZE
-//		
-//		SQLQuery querySQL;
-//		String query = "";
-//		querySQL = this.openSession().createSQLQuery(query);
-//		return (List<ConservedRegion>) executeAndClose(querySQL);
+		
+		SQLQuery querySQL;
+		String query = "";
+		querySQL = this.openSession().createSQLQuery(query);
+		return (List<ConservedRegion>) executeAndClose(querySQL);
 	}
 
 	@Override
