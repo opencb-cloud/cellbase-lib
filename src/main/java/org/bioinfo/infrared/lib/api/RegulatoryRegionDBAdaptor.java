@@ -38,5 +38,5 @@ public interface RegulatoryRegionDBAdaptor extends FeatureDBAdaptor {
 	
 	
 	public List<ConservedRegion> getAllConservedRegionByRegion(Region region);
-	public List<ConservedRegion> getAllConservedRegionByRegionList(List<Region> regionList);
+	public List<List<ConservedRegion>> getAllConservedRegionByRegionList(List<Region> regionList);
 }

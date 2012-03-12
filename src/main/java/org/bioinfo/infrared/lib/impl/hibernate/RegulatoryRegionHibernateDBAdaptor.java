@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.ConservedRegion;
 import org.bioinfo.infrared.core.cellbase.FeatureMap;
+import org.bioinfo.infrared.core.cellbase.Pwm;
 import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
 import org.bioinfo.infrared.lib.common.Region;
@@ -238,19 +239,24 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 	@Override
 	public List<ConservedRegion> getAllConservedRegionByRegion(Region region) {
 		
+//		int chunk_size = applicationProperties.getIntProperty("CHUNK_SIZE", 400);
+//		int start_chunk = region.getStart() / chunk_size;
+//		int end_chunk = region.getEnd() / chunk_size;
 		
-//		int start_chunk = CHUNK_SIZE
-		
-		SQLQuery querySQL;
-		String query = "";
-		querySQL = this.openSession().createSQLQuery(query);
-		return (List<ConservedRegion>) executeAndClose(querySQL);
+		Query query = this.openSession().createQuery("select cr from ConservedRegion cr where cr.chromosome= :CHROMOSOME and cr.start> :START and cr.end < :END")
+										.setParameter("CHROMOSOME", region.getChromosome())
+										.setParameter("START", region.getStart())
+										.setParameter("END", region.getEnd());
+		return (List<ConservedRegion>) executeAndClose(query);
 	}
 
 	@Override
-	public List<ConservedRegion> getAllConservedRegionByRegionList(List<Region> regionList) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<List<ConservedRegion>> getAllConservedRegionByRegionList(List<Region> regionList) {
+		List<List<ConservedRegion>> result = new ArrayList<List<ConservedRegion>>(regionList.size());
+		for (Region region : regionList) {
+			result.add(this.getAllConservedRegionByRegion(region));
+		}
+		return result;
 	}
 
 

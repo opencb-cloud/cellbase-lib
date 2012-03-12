@@ -1,11 +1,6 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
-import org.bioinfo.infrared.lib.common.GenomicVariant;
-import org.bioinfo.infrared.lib.common.GenomicVariantEffect;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -70,19 +65,19 @@ public class GenomicRegionFeatureHibernateDBAdaptorTest {
 	
 	@Test
 	public void testConsequenceType() {
-//		HashMap<String, List<String>> result =  this.genomicRegionFeatureDBAdaptor.getConsequenceType("1",19229436, "g");
-//		for (String key : result.keySet()) {
-//			System.out.println(key + " " + result.get(key));
+////		HashMap<String, List<String>> result =  this.genomicRegionFeatureDBAdaptor.getConsequenceType("1",19229436, "g");
+////		for (String key : result.keySet()) {
+////			System.out.println(key + " " + result.get(key));
+////		}
+//		List<GenomicVariant> variants = new ArrayList<GenomicVariant>();
+//		variants.add(new GenomicVariant("1", 27852654, "T"));
+//		
+//		GenomicVariantEffect gv = new GenomicVariantEffect("hsa");
+//		try {
+//			gv.getConsequenceType(variants);
+//		} catch (Exception e) {
+//			e.printStackTrace();
 //		}
-		List<GenomicVariant> variants = new ArrayList<GenomicVariant>();
-		variants.add(new GenomicVariant("1", 27852654, "T"));
-		
-		GenomicVariantEffect gv = new GenomicVariantEffect("hsa");
-		try {
-			gv.getConsequenceType(variants);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 	
 	
