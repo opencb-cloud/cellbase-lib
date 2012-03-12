@@ -7,23 +7,34 @@ public class GenomicVariant {
 
 	private String chromosome;
 	private int position;
+	private String reference;
 	private String alternative;
-	
+
 	public GenomicVariant(String chromosome, int position, String alternative) {
+		this(chromosome, position, null, alternative);
+	}
+
+	public GenomicVariant(String chromosome, int position, String reference, String alternative) {
 		this.chromosome = chromosome;
 		this.position = position;
+		this.reference = reference;
 		this.alternative = alternative;
 	}
+
 
 	public static GenomicVariant parseVariant(String variantString) {
 		GenomicVariant genomicVariant = null;
 		if(variantString != null && !variantString.equals("")) {
 			//	if(regionString.indexOf(':') != -1) {
-			String[] fields = variantString.split("[:-]", -1);
+			String[] fields = variantString.split(":", -1);
 			if(fields.length == 3) {
 				genomicVariant = new GenomicVariant(fields[0], Integer.parseInt(fields[1]), fields[2]);
 			}else {
-				genomicVariant = null;
+				if(fields.length == 4) {
+					genomicVariant = new GenomicVariant(fields[0], Integer.parseInt(fields[1]), fields[2], fields[3]);
+				}else {
+					genomicVariant = null;
+				}
 			}
 			//	}else {
 			//		genomicVariant = new GenomicVariant(regionString, 0, "");
@@ -35,20 +46,24 @@ public class GenomicVariant {
 	public static List<GenomicVariant> parseVariants(String variantsString) {
 		List<GenomicVariant> genomicVariants = null;
 		if(variantsString != null && !variantsString.equals("")) {
-			String[] regionItems = variantsString.split(",");
-			genomicVariants = new ArrayList<GenomicVariant>(regionItems.length);
+			String[] variantItems = variantsString.split(",");
+			genomicVariants = new ArrayList<GenomicVariant>(variantItems.length);
 			String[] fields;
-			for(String regionString: regionItems) {
-//				if(regionString.indexOf(':') != -1) {
-					fields = regionString.split("[:-]", -1);
-					if(fields.length == 3) {
-						genomicVariants.add(new GenomicVariant(fields[0], Integer.parseInt(fields[1]), fields[2]));
+			for(String variantString: variantItems) {
+				//	if(regionString.indexOf(':') != -1) {
+				fields = variantString.split(":", -1);
+				if(fields.length == 3) {
+					genomicVariants.add(new GenomicVariant(fields[0], Integer.parseInt(fields[1]), fields[2]));
+				}else {
+					if(fields.length == 4) {
+						genomicVariants.add(new GenomicVariant(fields[0], Integer.parseInt(fields[1]), fields[2], fields[3]));
 					}else {
-						genomicVariants.add(null);
+						genomicVariants.add(null);							
 					}
-//				}else {
-//					genomicVariants.add(new GenomicVariant(regionString, 0, new String()));
-//				}
+				}
+				//	}else {
+				//		genomicVariants.add(new GenomicVariant(regionString, 0, new String()));
+				//	}
 			}	
 		}
 		return genomicVariants;
@@ -84,7 +99,11 @@ public class GenomicVariant {
 
 	@Override
 	public String toString() {
-		return chromosome+":"+position+":"+this.getAlternative(); 
+		if(this.getReference() == null) {
+			return chromosome+":"+position+":"+this.getAlternative();
+		}else {
+			return chromosome+":"+position+":"+this.getReference()+":"+this.getAlternative();
+		}
 	}
 
 
@@ -117,7 +136,16 @@ public class GenomicVariant {
 		this.position = position;
 	}
 
+	
+	public String getReference() {
+		return reference;
+	}
 
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+	
+	
 	public void setAlternative(String alternative) {
 		this.alternative = alternative;
 	}

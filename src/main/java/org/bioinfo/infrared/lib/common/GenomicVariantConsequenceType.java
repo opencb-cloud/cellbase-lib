@@ -3,12 +3,13 @@ package org.bioinfo.infrared.lib.common;
 public class GenomicVariantConsequenceType {
 
 	private String chromosome;
-	private int start;
-	private int end;
-	private String id;
-	private String name;
-	private String type;
-	private String biotype;
+	private int position;
+	private String referenceAllele;
+	private String alternativeAllele;
+	private String featureId;
+	private String featureName;
+	private String featureType;
+	private String featureBiotype;
 	private String featureChromosome;
 	private int featureStart;
 	private int featureEnd;
@@ -27,27 +28,28 @@ public class GenomicVariantConsequenceType {
 	private String consequenceTypeDesc;
 	private String consequenceTypeType;
 
+	private int aaPosition;
 	private String aminoacidChange;
 	private String codonChange;
 
 
-	public GenomicVariantConsequenceType(String chromosome, int start, int end,
-			String id, String name, String type, String biotype,
+	public GenomicVariantConsequenceType(String chromosome, int position, String referenceAllele, String alternativeAllele,
+			String featureId, String featureName, String featureType, String featureBiotype,
 			String featureChromosome, int featureStart,
 			int featureEnd, String featureStrand, String snpId,
 			String ancestral, String alternative, String geneId,
 			String transcriptId, String geneName, String consequenceType,
 			String consequenceTypeObo, String consequenceTypeDesc,
-			String consequenceTypeType, String aminoacidChange,
-			String codonChange) {
+			String consequenceTypeType, int aaPosition, String aminoacidChange,	String codonChange) {
 		super();
 		this.chromosome = chromosome;
-		this.start = start;
-		this.end = end;
-		this.id = id;
-		this.name = name;
-		this.type = type;
-		this.biotype = biotype;
+		this.position = position;
+		this.referenceAllele = referenceAllele;
+		this.alternativeAllele = alternativeAllele;
+		this.featureId = featureId;
+		this.featureName = featureName;
+		this.featureType = featureType;
+		this.featureBiotype = featureBiotype;
 		this.featureChromosome = featureChromosome;
 		this.featureStart = featureStart;
 		this.featureEnd = featureEnd;
@@ -62,6 +64,7 @@ public class GenomicVariantConsequenceType {
 		this.consequenceTypeObo = consequenceTypeObo;
 		this.consequenceTypeDesc = consequenceTypeDesc;
 		this.consequenceTypeType = consequenceTypeType;
+		this.aaPosition = aaPosition;
 		this.aminoacidChange = aminoacidChange;
 		this.codonChange = codonChange;
 	}
@@ -70,12 +73,13 @@ public class GenomicVariantConsequenceType {
 	public String toString(){
 		StringBuilder br = new StringBuilder();
 		return br.append(chromosome).append("\t")
-				.append(start).append("\t")
-				.append(end).append("\t")
-				.append(id).append("\t")
-				.append(name).append("\t")
-				.append(type).append("\t")
-				.append(biotype).append("\t")
+				.append(position).append("\t")
+				.append(referenceAllele).append("\t")
+				.append(alternativeAllele).append("\t")
+				.append(featureId).append("\t")
+				.append(featureName).append("\t")
+				.append(featureType).append("\t")
+				.append(featureBiotype).append("\t")
 				.append(featureChromosome).append("\t")
 				.append(featureStart).append("\t")
 				.append(featureEnd).append("\t")
@@ -90,7 +94,8 @@ public class GenomicVariantConsequenceType {
 				.append(consequenceTypeObo).append("\t")
 				.append(consequenceTypeDesc).append("\t")
 				.append(consequenceTypeType).append("\t")
+				.append(aaPosition).append("\t")
 				.append(aminoacidChange).append("\t")
-				.append(codonChange).append("\t").toString();
+				.append(codonChange).toString();
 	}
 }

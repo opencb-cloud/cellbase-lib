@@ -19,7 +19,7 @@ import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.bioinfo.infrared.lib.impl.hibernate.GenomicVariantEffectHibernateDBAdaptor;
 
 
-public class HBaseDBAdaptorFactory extends DBAdaptorFactory{
+public class HBaseDBAdaptorFactory extends DBAdaptorFactory {
 
 	@Override
 	public void setConfiguration(Properties properties) {
