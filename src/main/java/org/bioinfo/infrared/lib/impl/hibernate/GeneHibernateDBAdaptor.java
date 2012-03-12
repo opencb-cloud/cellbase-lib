@@ -386,6 +386,22 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		return result;
 	}
 
+	@Override
+	public List<Gene> getAllByTfName(String tfName) {
+//		Query query = this.openSession().createQuery("select g from Gene g, Cytoband k where k.chromosome= :chromosome and k.cytoband = :cytoband and k.chromosome=g.chromosome and g.end>=k.start and g.start<=k.end").setParameter("chromosome", chromosome).setParameter("cytoband", cytoband);
+		Query query = this.openSession().createQuery("select g from Gene g, Tfbs t where t.geneByTfGeneId=g.geneId and t.tfName = :TFNAME group by g.geneId").setParameter("TFNAME", tfName);
+		return (List<Gene>)executeAndClose(query);
+	}
+
+	@Override
+	public List<List<Gene>> getAllByTfNameList(List<String> tfNameList) {
+		List<List<Gene>> result = new ArrayList<List<Gene>>();
+		for (String tfName : tfNameList) {
+			result.add(this.getAllByTfName(tfName));
+		}
+		return result;
+	}
+	
 
 	@Override
 	public List<Gene> getAllByXref(String xrefName) {
@@ -445,6 +461,8 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		}
 		return result;
 	}
+
+
 	
 
 }

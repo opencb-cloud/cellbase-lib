@@ -2,6 +2,7 @@ package org.bioinfo.infrared.lib.api;
 
 import java.util.List;
 
+import org.bioinfo.infrared.core.cellbase.ConservedRegion;
 import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
 import org.bioinfo.infrared.lib.common.Region;
 import org.bioinfo.infrared.lib.impl.hibernate.GenomicRegionFeatures;
@@ -35,5 +36,7 @@ public interface RegulatoryRegionDBAdaptor extends FeatureDBAdaptor {
 
 	public List<GenomicRegionFeatures> getAllFeatureMapByRegion(List<Region> region);
 	
-
+	
+	public List<ConservedRegion> getAllConservedRegionByRegion(Region region);
+	public List<ConservedRegion> getAllConservedRegionByRegionList(List<Region> regionList);
 }

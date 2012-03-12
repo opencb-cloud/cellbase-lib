@@ -225,6 +225,20 @@ public class TranscriptHibernateDBAdaptorTest {
 		List<String> strings = transcriptDBAdaptor.getAllSequencesByIdList(Arrays.asList("ENST00000370377","ENST00000482343"));
 		System.out.println(strings);
 	}
+	
+	
+	@Test
+	public void testGetAllByProteinNameList(){
+		List<List<Transcript>> strings = transcriptDBAdaptor.getAllByProteinNameList(Arrays.asList("Q9H6T3","BRCA2"));
+		System.out.println(strings);
+	}
+	
+	@Test
+	public void testGetAllByMirnaMatureList(){
+		List<List<Transcript>> strings = transcriptDBAdaptor.getAllByMirnaMatureList(Arrays.asList("hsa-miR-320c"));
+		System.out.println(strings);
+	}
+	
 
 	private void printGeneList(String title, List<?> genes, int numResults) {
 		System.out.println("************************************************************");

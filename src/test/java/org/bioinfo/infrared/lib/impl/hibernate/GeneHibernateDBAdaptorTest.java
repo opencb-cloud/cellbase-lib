@@ -3,9 +3,11 @@ package org.bioinfo.infrared.lib.impl.hibernate;
 import static org.junit.Assert.fail;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bioinfo.commons.utils.StringUtils;
 import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
@@ -20,7 +22,7 @@ public class GeneHibernateDBAdaptorTest {
 	private DBAdaptorFactory dbAdaptorFact = new HibernateDBAdaptorFactory();
 	private GeneDBAdaptor geneDBAdaptor;
 	private long startExecTime;
-	private String species = "mmusculus";
+	private String species = "hsa";
 	
 	@Before
 	public void beforeTestStart() {
@@ -42,7 +44,14 @@ public class GeneHibernateDBAdaptorTest {
 	}
 	*/
 	
-	
+	@Test
+	public void testGetAllByTfNameList() {
+		List<List<Gene>> genes = geneDBAdaptor.getAllByTfNameList(Arrays.asList("Ap2alpha","SP1"));
+		System.out.println(genes.size());
+		System.out.println(genes.get(0).size());
+		System.out.println(genes.get(1).size());
+//		System.out.println("testGetAllByTfNameList" + genes.get(0).get(0).getExternalName().toString());
+	}
 
 	@Test
 	public void testGeneHibernateDBAdaptorGetAll() {

@@ -5,12 +5,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.bioinfo.infrared.core.cellbase.ConservedRegion;
 import org.bioinfo.infrared.core.cellbase.FeatureMap;
 import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -225,6 +227,26 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 
 	@Override
 	public List<RegulatoryRegion> getAllByRegion(Region region, String type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ConservedRegion> getAllConservedRegionByRegion(Region region) {
+		
+//		int start_chunk = CHUNK_SIZE
+//		
+//		SQLQuery querySQL;
+//		String query = "";
+//		querySQL = this.openSession().createSQLQuery(query);
+//		return (List<ConservedRegion>) executeAndClose(querySQL);
+	}
+
+	@Override
+	public List<ConservedRegion> getAllConservedRegionByRegionList(List<Region> regionList) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -67,4 +67,14 @@ public interface TranscriptDBAdaptor extends FeatureDBAdaptor {
 	public List<Transcript> getAllByEnsemblExonId(String ensemblExonId);
 
 	public List<List<Transcript>> getAllByEnsemblExonId(List<String> ensemblExonId);
+	
+	
+	public List<Transcript> getAllByProteinName(String proteinName);
+	
+	public List<List<Transcript>> getAllByProteinNameList(List<String> proteinNameList);
+	
+	
+	public List<Transcript> getAllByMirnaMature(String mirnaID);
+	
+	public List<List<Transcript>> getAllByMirnaMatureList(List<String> mirnaIDList);
 }

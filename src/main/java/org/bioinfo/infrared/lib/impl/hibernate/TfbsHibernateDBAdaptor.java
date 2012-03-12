@@ -116,17 +116,30 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Pwm> getAllPwmByTfGeneName(String geneName) {
-		Criterion stableId = Restrictions.eq("stableId", geneName.trim());
-		Criterion externalName = Restrictions.eq("externalName", geneName.trim());
-		LogicalExpression logExpression = Restrictions.or(stableId, externalName);
 		Criteria criteria = this.openSession().createCriteria(Pwm.class)
-				.createCriteria("geneByTfGeneId")
-				.createCriteria("gene").add(logExpression);
-		return (List<Pwm>) executeAndClose(criteria);
+				.add(Restrictions.eq("tfName", geneName));
+		List<Pwm> pwmList = (List<Pwm>) executeAndClose(criteria);
+		
+		if(pwmList == null || pwmList.size() == 0) {
+			Query query = this.openSession().createQuery("select p from Gene g, Tfbs t, Pwm p where (g.stableId= :GENENAME or g.externalName= :GENENAME) and g.geneId=t.geneByTfGeneId and t.pwm=p.pwmId group by p.accession").setParameter("GENENAME", geneName);
+			
+//			Criterion stableId = Restrictions.eq("stableId", geneName.trim());
+//			Criterion externalName = Restrictions.eq("externalName", geneName.trim());
+//			LogicalExpression logExpression = Restrictions.or(stableId, externalName);
+//			criteria = this.openSession().createCriteria(Pwm.class)
+//					.createCriteria("tfbses")
+////					.createCriteria("tfbs")
+//					.createCriteria("geneByTfGeneId")
+//					.add(logExpression);
+			
+			pwmList = (List<Pwm>) executeAndClose(query);
+	
+		}				
+		return pwmList ;
 	}
 
 	public List<List<Pwm>> getAllPwmByTfGeneNameList(List<String> tfNames){
-		List<List<Pwm>> result = new ArrayList<List<Pwm>>();
+		List<List<Pwm>> result = new ArrayList<List<Pwm>>(tfNames.size());
 		for (String tfName : tfNames) {
 			result.add(this.getAllPwmByTfGeneName(tfName));
 		}
