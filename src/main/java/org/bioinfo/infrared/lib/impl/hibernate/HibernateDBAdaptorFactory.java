@@ -14,6 +14,7 @@ import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomeSequenceDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomicVariantEffectDBAdaptor;
 import org.bioinfo.infrared.lib.api.MirnaDBAdaptor;
+import org.bioinfo.infrared.lib.api.MutationDBAdaptor;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
@@ -388,6 +389,22 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		}
 //		System.out.println("sessionFactories " + sessionFactories.get(speciesVersionPrefix));
 		return (BioPaxDBAdaptor) new BioPaxHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+	}
+
+	@Override
+	public MutationDBAdaptor getMutationDBAdaptor(String species) {
+		return this.getMutationDBAdaptor(species, null);
+	}
+
+	@Override
+	public MutationDBAdaptor getMutationDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)) {
+			SessionFactory sessionFactory = createCellBaseSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+//		System.out.println("sessionFactories " + sessionFactories.get(speciesVersionPrefix));
+		return (MutationHibernateDBAdaptor) new MutationHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
 	}
 
 }

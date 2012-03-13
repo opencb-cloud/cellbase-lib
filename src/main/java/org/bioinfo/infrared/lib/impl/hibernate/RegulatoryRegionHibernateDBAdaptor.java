@@ -1,23 +1,15 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.ConservedRegion;
-import org.bioinfo.infrared.core.cellbase.FeatureMap;
-import org.bioinfo.infrared.core.cellbase.Pwm;
 import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
 import org.bioinfo.infrared.lib.common.Region;
-import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-import org.omg.CORBA.portable.ApplicationException;
 
 class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements RegulatoryRegionDBAdaptor {
 
@@ -239,14 +231,14 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 	@Override
 	public List<ConservedRegion> getAllConservedRegionByRegion(Region region) {
 		
-//		int chunk_size = applicationProperties.getIntProperty("CHUNK_SIZE", 400);
-//		int start_chunk = region.getStart() / chunk_size;
-//		int end_chunk = region.getEnd() / chunk_size;
+		int chunk_size = applicationProperties.getIntProperty("CHUNK_SIZE", 400);
+		int start_chunk = region.getStart() / chunk_size;
+		int end_chunk = region.getEnd() / chunk_size;
 		
-		Query query = this.openSession().createQuery("select cr from ConservedRegion cr where cr.chromosome= :CHROMOSOME and cr.start> :START and cr.end < :END")
+		Query query = this.openSession().createQuery("select distinct cr from ConservedRegion cr, FeatureMap fm where cr.conservedRegionId=fm.featureId and cr.chromosome= :CHROMOSOME and fm.chunkId >= :START and fm.chunkId <= :END")
 										.setParameter("CHROMOSOME", region.getChromosome())
-										.setParameter("START", region.getStart())
-										.setParameter("END", region.getEnd());
+										.setParameter("START", start_chunk)
+										.setParameter("END", end_chunk);
 		return (List<ConservedRegion>) executeAndClose(query);
 	}
 
