@@ -230,9 +230,9 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	public List<Gene> getAllByRegion(String chromosome, int start) {
 		Criteria criteria =  this.openSession().createCriteria(Gene.class);
 		criteria.add(Restrictions.eq("chromosome", chromosome))
-		.add(Restrictions.ge("end", start))
-		.addOrder(Order.asc("chromosome"))
-		.addOrder(Order.asc("start"));
+			.add(Restrictions.ge("end", start))
+			.addOrder(Order.asc("chromosome"))
+			.addOrder(Order.asc("start"));
 		return (List<Gene>)executeAndClose(criteria);
 	}
 
@@ -242,10 +242,10 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	public List<Gene> getAllByRegion(String chromosome, int start, int end) {
 		Criteria criteria =  this.openSession().createCriteria(Gene.class);
 		criteria.add(Restrictions.eq("chromosome", chromosome))
-		.add(Restrictions.ge("end", start))
-		.add(Restrictions.le("start", end))
-		.addOrder(Order.asc("chromosome"))
-		.addOrder(Order.asc("start"));
+			.add(Restrictions.ge("end", start))
+			.add(Restrictions.le("start", end))
+			.addOrder(Order.asc("chromosome"))
+			.addOrder(Order.asc("start"));
 		return (List<Gene>)executeAndClose(criteria);
 	}
 
@@ -255,11 +255,11 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	public List<Gene> getAllByRegion(String chromosome, int start, int end,	List<String> biotypes) {
 		Criteria criteria =  this.openSession().createCriteria(Gene.class);
 		criteria.add(Restrictions.eq("chromosome", chromosome))
-		.add(Restrictions.ge("end", start))
-		.add(Restrictions.le("start", end))
-		.add(Restrictions.in("biotype", biotypes))
-		.addOrder(Order.asc("chromosome"))
-		.addOrder(Order.asc("start"));
+			.add(Restrictions.ge("end", start))
+			.add(Restrictions.le("start", end))
+			.add(Restrictions.in("biotype", biotypes))
+			.addOrder(Order.asc("chromosome"))
+			.addOrder(Order.asc("start"));
 		return (List<Gene>)executeAndClose(criteria);
 	}
 

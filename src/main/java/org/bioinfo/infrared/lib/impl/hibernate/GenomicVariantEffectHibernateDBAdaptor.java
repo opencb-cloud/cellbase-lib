@@ -63,6 +63,7 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 		consequenceTypeMap.put("mirna", new ConsequenceType(0, "SO:0000276", "miRNA", "miRNA", "miRNA", 100, "", "miRNA", "Small, ~22-nt, RNA molecule that is the endogenous transcript of a miRNA gene"));
 		consequenceTypeMap.put("lincrna", new ConsequenceType(0, "SO:0001463", "lincRNA", "lincRNA", "lincRNA", 100, "", "lincRNA", "A multiexonic non-coding RNA transcribed by RNA polymerase II"));
 		consequenceTypeMap.put("pseudogene", new ConsequenceType(0, "SO:0000336", "pseudogene", "pseudogene", "PSEUDOGENE", 100, "", "Pseudogene", "A sequence that closely resembles a known functional gene, at another locus within a genome, that is non-functional as a consequence of (usually several) mutations that prevent either its transcription or translation (or both)"));
+		consequenceTypeMap.put("cpg_island", new ConsequenceType(0, "SO:0000307", "CpG_island", "CpG_island", "CpG_ISLAND", 100, "", "CpG_island", "Regions of a few hundred to a few thousand bases in vertebrate genomes that are relatively GC and CpG rich; they are typically unmethylated and often found near the 5' ends of genes"));
 		consequenceTypeMap.put("snp", new ConsequenceType(0, "SO:0000694", "SNP", "SNP", "SNP", 100, "", "SNP", "SNPs are single base pair positions in genomic DNA at which different sequence alternatives exist in normal individuals in some population(s), wherein the least frequent variant has an abundance of 1% or greater"));
 		consequenceTypeMap.put("intergenic", new ConsequenceType(17, "SO:0001628", "intergenic_variant", "", "INTERGENIC", 100, "", "Intergenic", "More than 5 kb either upstream or downstream of a transcript"));
 	}
@@ -267,6 +268,11 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 
 				if(featureMap.getFeatureType().equalsIgnoreCase("3_prime_utr")) {
 					genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "3_prime_utr"));
+					continue;
+				}
+				
+				if(featureMap.getFeatureType().equalsIgnoreCase("CpG_island")) {
+					genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "cpg_island"));
 					continue;
 				}
 
