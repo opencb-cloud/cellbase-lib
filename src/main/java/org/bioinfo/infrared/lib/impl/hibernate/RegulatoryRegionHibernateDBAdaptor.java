@@ -7,8 +7,10 @@ import java.util.Map;
 import org.bioinfo.infrared.core.cellbase.ConservedRegion;
 import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
+import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 
 class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements RegulatoryRegionDBAdaptor {
@@ -252,7 +254,21 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 	}
 
 
-	
+	@Override
+	public List<IntervalFeatureFrequency> getAllRegulatoryRegionIntervalFrequencies(Region region, int interval) {
+		SQLQuery sqlquery = this.openSession().createSQLQuery("select (rr.start - "+region.getStart()+") DIV "+interval+" as inter, count(*) from regulatory_region rr where rr.chromosome= '"+region.getChromosome()+"' and rr.start <= "+region.getEnd()+" and rr.end >= "+region.getStart()+" group by inter");
+		List<Object[]> objectList =  (List<Object[]>) executeAndClose(sqlquery);
+		List<IntervalFeatureFrequency> intervalFreqsList = getIntervalFeatureFrequencies(region , interval, objectList);
+		return intervalFreqsList;
+	}
+
+	@Override
+	public List<IntervalFeatureFrequency> getAllConservedRegionIntervalFrequencies(Region region, int interval) {
+		SQLQuery sqlquery = this.openSession().createSQLQuery("select (cr.start - "+region.getStart()+") DIV "+interval+" as inter, count(*) from conserved_region cr where cr.chromosome= '"+region.getChromosome()+"' and cr.start <= "+region.getEnd()+" and cr.end >= "+region.getStart()+" group by inter");
+		List<Object[]> objectList =  (List<Object[]>) executeAndClose(sqlquery);
+		List<IntervalFeatureFrequency> intervalFreqsList = getIntervalFeatureFrequencies(region , interval, objectList);
+		return intervalFreqsList;
+	}
 
 
 }

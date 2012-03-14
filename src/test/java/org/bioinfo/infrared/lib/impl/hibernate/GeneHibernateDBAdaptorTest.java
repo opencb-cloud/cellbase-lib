@@ -1,16 +1,13 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
-import static org.junit.Assert.fail;
-
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bioinfo.commons.utils.StringUtils;
 import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
-import org.bioinfo.infrared.lib.common.Position;
+import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
+import org.bioinfo.infrared.lib.common.Region;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.bioinfo.infrared.lib.io.output.StringWriter;
 import org.junit.After;
@@ -184,6 +181,13 @@ public class GeneHibernateDBAdaptorTest {
 		printGeneList("testGetAllByCytoband", genes, 5);
 	}
 */
+	
+	@Test
+	public void testGeneHibernateDBAdaptorGetHistogram() {
+		Region region = new Region("3", 1000, 20000000);
+		List<IntervalFeatureFrequency> a = geneDBAdaptor.getAllIntervalFrequencies(region, 100000);
+//		printGeneList("testGeneHibernateDBAdaptorGetAll", genes, 5);
+	}
 
 	private void printGeneList(String title, List<?> genes, int numResults) {
 		System.out.println("************************************************************");

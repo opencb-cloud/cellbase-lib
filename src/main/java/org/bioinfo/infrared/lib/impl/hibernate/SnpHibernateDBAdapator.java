@@ -11,11 +11,13 @@ import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
+import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -399,6 +401,14 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public List<IntervalFeatureFrequency> getAllIntervalFrequencies(Region region, int interval) {
+		SQLQuery sqlquery = this.openSession().createSQLQuery("select (cr.start - "+region.getStart()+") DIV "+interval+" as inter, count(*) from snp cr where cr.chromosome= '"+region.getChromosome()+"' and cr.start <= "+region.getEnd()+" and cr.end >= "+region.getStart()+" group by inter");
+		List<Object[]> objectList =  (List<Object[]>) executeAndClose(sqlquery);
+		List<IntervalFeatureFrequency> intervalFreqsList = getIntervalFeatureFrequencies(region , interval, objectList);
+		return intervalFreqsList;
+	}
+	
 
 	@Deprecated
 	private List<List<Snp>> Reorder(List<String> idList){

@@ -3,6 +3,7 @@ package org.bioinfo.infrared.lib.api;
 import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.Gene;
+import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 
@@ -83,5 +84,8 @@ public interface GeneDBAdaptor extends FeatureDBAdaptor {
 	public List<Gene> getAllTargetsByMiRnaMature(String mirbaseId);
 
 	public List<List<Gene>> getAllTargetsByMiRnaMatureList(List<String> mirbaseIds);
+
+
+	public List<IntervalFeatureFrequency> getAllIntervalFrequencies(Region region, int interval);
 
 }

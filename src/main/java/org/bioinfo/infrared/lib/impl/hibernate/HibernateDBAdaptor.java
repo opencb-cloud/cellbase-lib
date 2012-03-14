@@ -1,7 +1,11 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
+import org.bioinfo.infrared.lib.common.Region;
 import org.bioinfo.infrared.lib.impl.DBAdaptor;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -70,7 +74,44 @@ public class HibernateDBAdaptor extends DBAdaptor{
 			session.close();
 		}
 	}
-
+	
+	/**
+	 * For histograms
+	 */
+	
+	protected List<IntervalFeatureFrequency> getIntervalFeatureFrequencies(Region region , int interval, List<Object[]> objectList) {
+		
+		int numIntervals = (region.getEnd()-region.getStart())/interval +1;
+		List<IntervalFeatureFrequency> intervalFeatureFrequenciesList = new ArrayList<IntervalFeatureFrequency>(numIntervals);
+		
+		BigInteger max = new BigInteger("-1");
+		for(int i=0; i<objectList.size(); i++) {
+			if(((BigInteger)objectList.get(i)[1]).compareTo(max) > 0) {
+				max = (BigInteger)objectList.get(i)[1];
+			}
+		}
+		
+		int start = region.getStart();
+		int end = start + interval;
+		for(int i=0, j=0; i < numIntervals; i++) {
+			if(((BigInteger)objectList.get(j)[0]).intValue() == i) {
+				intervalFeatureFrequenciesList.add(new IntervalFeatureFrequency(start, end, ((BigInteger)objectList.get(j)[0]).intValue()
+						,((BigInteger)objectList.get(j)[1]).intValue() 
+						,((BigInteger)objectList.get(j)[1]).floatValue() / max.floatValue()));
+				j++;
+			}else {
+				intervalFeatureFrequenciesList.add(new IntervalFeatureFrequency(start, end, i, 0, 0.0f));
+			}
+			
+//			System.out.println(intervalFeatureFrequenciesList.get(i).getStart()+":"+intervalFeatureFrequenciesList.get(i).getEnd()+":"+intervalFeatureFrequenciesList.get(i).getInterval()+":"+ intervalFeatureFrequenciesList.get(i).getAbsolute()+":"+intervalFeatureFrequenciesList.get(i).getValue());
+			
+			start += interval;
+			end += interval;
+		}
+		
+		return intervalFeatureFrequenciesList;
+	}
+	
 	/**
 	 * @return the sessionFactory
 	 */
@@ -114,3 +155,4 @@ public class HibernateDBAdaptor extends DBAdaptor{
 	}
 
 }
+

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.ConservedRegion;
 import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
+import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Region;
 import org.bioinfo.infrared.lib.impl.hibernate.GenomicRegionFeatures;
 
@@ -38,5 +39,11 @@ public interface RegulatoryRegionDBAdaptor extends FeatureDBAdaptor {
 	
 	
 	public List<ConservedRegion> getAllConservedRegionByRegion(Region region);
+	
 	public List<List<ConservedRegion>> getAllConservedRegionByRegionList(List<Region> regionList);
+	
+	
+	public List<IntervalFeatureFrequency> getAllRegulatoryRegionIntervalFrequencies(Region region, int interval);
+	
+	public List<IntervalFeatureFrequency> getAllConservedRegionIntervalFrequencies(Region region, int interval);
 }

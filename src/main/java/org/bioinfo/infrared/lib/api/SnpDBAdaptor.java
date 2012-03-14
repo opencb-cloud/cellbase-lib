@@ -5,8 +5,10 @@ import java.util.List;
 import org.bioinfo.infrared.core.cellbase.ConsequenceType;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
+import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
+import org.hibernate.SQLQuery;
 
 public interface SnpDBAdaptor extends FeatureDBAdaptor {
 
@@ -88,5 +90,8 @@ public interface SnpDBAdaptor extends FeatureDBAdaptor {
 	public List<Snp> getAllFilteredByConsequenceType(List<String> snpIds, List<String> consequenceTypes);
 
 	public void writeAllFilteredByConsequenceType(String consequence, String outfile);
+	
+	
+	public List<IntervalFeatureFrequency> getAllIntervalFrequencies(Region region, int interval);
 	
 }

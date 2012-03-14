@@ -10,10 +10,12 @@ import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Xref;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
+import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.LogicalExpression;
@@ -463,6 +465,46 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	}
 
 
+	public List<IntervalFeatureFrequency> getAllIntervalFrequencies(Region region, int interval) {
+		SQLQuery sqlquery = this.openSession().createSQLQuery("select (g.start - "+region.getStart()+") DIV "+interval+" as inter, count(*) from gene g where g.chromosome= '"+region.getChromosome()+"' and g.start <= "+region.getEnd()+" and g.end >= "+region.getStart()+" group by inter");
+		List<Object[]> objectList =  (List<Object[]>) executeAndClose(sqlquery);
+		List<IntervalFeatureFrequency> intervalFreqsList = getIntervalFeatureFrequencies(region , interval, objectList);
+		return intervalFreqsList;
+	}
 	
+//	public class IntervalCounter {
+//		private int interval;
+//		private long count;
+//		
+//		public IntervalCounter() {
+//		}
+//		
+//		public IntervalCounter(int interval, long count) {
+//			this.interval = interval;
+//			this.count = count;
+//		}
+//
+//		public IntervalCounter(Integer interval, Long count) {
+//			this.interval = interval;
+//			this.count = count;
+//		}
+//		
+//		public int getInterval() {
+//			return interval;
+//		}
+//
+//		public void setInterval(int interval) {
+//			this.interval = interval;
+//		}
+//
+//		
+//		public long getCount() {
+//			return count;
+//		}
+//
+//		public void setCount(long count) {
+//			this.count = count;
+//		}
+//	}
 
 }
