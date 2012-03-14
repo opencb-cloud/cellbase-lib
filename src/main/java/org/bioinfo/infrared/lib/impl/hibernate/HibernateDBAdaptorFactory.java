@@ -389,10 +389,10 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			SessionFactory sessionFactory = createBioPaxSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-//		System.out.println("sessionFactories " + sessionFactories.get(speciesVersionPrefix));
 		return (BioPaxDBAdaptor) new BioPaxHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
 	}
 
+	
 	@Override
 	public MutationDBAdaptor getMutationDBAdaptor(String species) {
 		return this.getMutationDBAdaptor(species, null);
@@ -405,9 +405,9 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			SessionFactory sessionFactory = createCellBaseSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-//		System.out.println("sessionFactories " + sessionFactories.get(speciesVersionPrefix));
 		return (MutationHibernateDBAdaptor) new MutationHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
 	}
+	
 	
 	@Override
 	public CpGIslandDBAdaptor getCpGIslandDBAdaptor(String species) {
@@ -421,15 +421,14 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			SessionFactory sessionFactory = createCellBaseSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-//		System.out.println("sessionFactories " + sessionFactories.get(speciesVersionPrefix));
 		return (CpGIslandHibernateDBAdaptor) new CpGIslandHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
 	}
 
+	
 	@Override
 	public StructuralVariationDBAdaptor getStructuralVariationDBAdaptor(String species) {
 		return this.getStructuralVariationDBAdaptor(species, null);
 	}
-
 	
 	@Override
 	public StructuralVariationDBAdaptor getStructuralVariationDBAdaptor(String species, String version) {
@@ -438,7 +437,6 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 			SessionFactory sessionFactory = createCellBaseSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-//		System.out.println("sessionFactories " + sessionFactories.get(speciesVersionPrefix));
 		return (StructuralVariationDBAdaptor) new StructuralVariationHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
 	}
 
