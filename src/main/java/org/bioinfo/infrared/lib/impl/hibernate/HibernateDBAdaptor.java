@@ -94,7 +94,7 @@ public class HibernateDBAdaptor extends DBAdaptor{
 		int start = region.getStart();
 		int end = start + interval;
 		for(int i=0, j=0; i < numIntervals; i++) {
-			if(((BigInteger)objectList.get(j)[0]).intValue() == i) {
+			if(j < objectList.size() && ((BigInteger)objectList.get(j)[0]).intValue() == i) {
 				intervalFeatureFrequenciesList.add(new IntervalFeatureFrequency(start, end, ((BigInteger)objectList.get(j)[0]).intValue()
 						,((BigInteger)objectList.get(j)[1]).intValue() 
 						,((BigInteger)objectList.get(j)[1]).floatValue() / max.floatValue()));
