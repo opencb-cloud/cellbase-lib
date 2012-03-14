@@ -404,6 +404,36 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		}
 		return result;
 	}
+
+	@Override
+	public List<Transcript> getAllByProteinName(String proteinName) {
+		Query query = this.openSession().createQuery("select t from Transcript t, Protein p, ProteinXref px where (p.primaryAccession = :proteinName or p.name = :proteinName or p.geneName = :proteinName) and p.proteinId=px.protein and px.source='Ensembl' and px.name=t.stableId").setParameter("proteinName", proteinName);
+		return (List<Transcript>)executeAndClose(query);
+	}
+	
+	@Override
+	public List<List<Transcript>> getAllByProteinNameList(List<String> proteinNameList) {
+		List<List<Transcript>> result = new ArrayList<List<Transcript>>();
+		for (String proteinName : proteinNameList) {
+			result.add(this.getAllByProteinName(proteinName));
+		}
+		return result;
+	}
+
+	@Override
+	public List<Transcript> getAllByMirnaMature(String mirnaID) {
+		Query query = this.openSession().createQuery("select t from Transcript t, MirnaMature mm, MirnaGeneToMature g2m, MirnaGene mg, MirnaToGene m2g where mm.mirbaseId = :MIRNAID and mm.mirnaMatureId=g2m.mirnaMature and g2m.mirnaGene=mg.mirnaGeneId and mg.mirnaGeneId=m2g.mirnaGene and m2g.transcript=t.transcriptId").setParameter("MIRNAID", mirnaID);
+		return (List<Transcript>)executeAndClose(query);
+	}
+
+	@Override
+	public List<List<Transcript>> getAllByMirnaMatureList(List<String> mirnaIDList) {
+		List<List<Transcript>> result = new ArrayList<List<Transcript>>();
+		for (String mirnaID : mirnaIDList) {
+			result.add(this.getAllByMirnaMature(mirnaID));
+		}
+		return result;
+	}
 	
 	
 }

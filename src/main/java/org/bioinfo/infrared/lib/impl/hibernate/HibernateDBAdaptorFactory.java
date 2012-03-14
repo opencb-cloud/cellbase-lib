@@ -8,15 +8,18 @@ import java.util.ResourceBundle;
 
 import org.bioinfo.commons.Config;
 import org.bioinfo.infrared.lib.api.BioPaxDBAdaptor;
+import org.bioinfo.infrared.lib.api.CpGIslandDBAdaptor;
 import org.bioinfo.infrared.lib.api.CytobandDBAdaptor;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomeSequenceDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomicVariantEffectDBAdaptor;
 import org.bioinfo.infrared.lib.api.MirnaDBAdaptor;
+import org.bioinfo.infrared.lib.api.MutationDBAdaptor;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
+import org.bioinfo.infrared.lib.api.StructuralVariationDBAdaptor;
 import org.bioinfo.infrared.lib.api.TfbsDBAdaptor;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.api.XRefsDBAdaptor;
@@ -388,6 +391,55 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		}
 //		System.out.println("sessionFactories " + sessionFactories.get(speciesVersionPrefix));
 		return (BioPaxDBAdaptor) new BioPaxHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+	}
+
+	@Override
+	public MutationDBAdaptor getMutationDBAdaptor(String species) {
+		return this.getMutationDBAdaptor(species, null);
+	}
+
+	@Override
+	public MutationDBAdaptor getMutationDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)) {
+			SessionFactory sessionFactory = createCellBaseSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+//		System.out.println("sessionFactories " + sessionFactories.get(speciesVersionPrefix));
+		return (MutationHibernateDBAdaptor) new MutationHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+	}
+	
+	@Override
+	public CpGIslandDBAdaptor getCpGIslandDBAdaptor(String species) {
+		return this.getCpGIslandDBAdaptor(species, null);
+	}
+
+	@Override
+	public CpGIslandDBAdaptor getCpGIslandDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)) {
+			SessionFactory sessionFactory = createCellBaseSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+//		System.out.println("sessionFactories " + sessionFactories.get(speciesVersionPrefix));
+		return (CpGIslandHibernateDBAdaptor) new CpGIslandHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+	}
+
+	@Override
+	public StructuralVariationDBAdaptor getStructuralVariationDBAdaptor(String species) {
+		return this.getStructuralVariationDBAdaptor(species, null);
+	}
+
+	
+	@Override
+	public StructuralVariationDBAdaptor getStructuralVariationDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+		if(!sessionFactories.containsKey(speciesVersionPrefix)) {
+			SessionFactory sessionFactory = createCellBaseSessionFactory(speciesVersionPrefix);
+			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+		}
+//		System.out.println("sessionFactories " + sessionFactories.get(speciesVersionPrefix));
+		return (StructuralVariationDBAdaptor) new StructuralVariationHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
 	}
 
 }

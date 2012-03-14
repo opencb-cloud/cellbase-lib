@@ -3,15 +3,18 @@ package org.bioinfo.infrared.lib.impl.hbase;
 import java.util.Properties;
 
 import org.bioinfo.infrared.lib.api.BioPaxDBAdaptor;
+import org.bioinfo.infrared.lib.api.CpGIslandDBAdaptor;
 import org.bioinfo.infrared.lib.api.CytobandDBAdaptor;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomeSequenceDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.api.MirnaDBAdaptor;
+import org.bioinfo.infrared.lib.api.MutationDBAdaptor;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
+import org.bioinfo.infrared.lib.api.StructuralVariationDBAdaptor;
 import org.bioinfo.infrared.lib.api.TfbsDBAdaptor;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.api.XRefsDBAdaptor;
@@ -27,8 +30,6 @@ public class HBaseDBAdaptorFactory extends DBAdaptorFactory {
 		
 	}
 
-	
-	
 	
 	@Override
 	public GeneDBAdaptor getGeneDBAdaptor(String species) {
@@ -269,6 +270,55 @@ public class HBaseDBAdaptorFactory extends DBAdaptorFactory {
 
 	@Override
 	public BioPaxDBAdaptor getBioPaxDBAdaptor(String species, String version) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+	@Override
+	public MutationDBAdaptor getMutationDBAdaptor(String species) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+	@Override
+	public MutationDBAdaptor getMutationDBAdaptor(String species, String version) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public CpGIslandDBAdaptor getCpGIslandDBAdaptor(String species) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public CpGIslandDBAdaptor getCpGIslandDBAdaptor(String species,
+			String version) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public StructuralVariationDBAdaptor getStructuralVariationDBAdaptor(
+			String species) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public StructuralVariationDBAdaptor getStructuralVariationDBAdaptor(
+			String species, String version) {
 		// TODO Auto-generated method stub
 		return null;
 	}

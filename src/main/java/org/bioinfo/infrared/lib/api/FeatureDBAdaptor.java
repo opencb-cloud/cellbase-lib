@@ -34,5 +34,4 @@ public interface FeatureDBAdaptor {
 
 	public List<String> getAllSequencesByIdList(List<String> idList);
 
-
 }
