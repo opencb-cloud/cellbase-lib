@@ -37,5 +37,4 @@ public class MutationHibernateDBAdaptor extends HibernateDBAdaptor implements Mu
 		}
 		return result;
 	}
-
 }

@@ -154,8 +154,8 @@ public class RegulatoryRegionHibernateDBAdaptorTest {
 
 	@Test
 	public void testGetAllConservedRegionByRegionList() {
-		Region reg1 = new Region("5",1000,700000);
-		Region reg2 = new Region("X",500,1800000);
+		Region reg1 = new Region("5",100,2000);
+		Region reg2 = new Region("X",500,8000);
 		List<List<ConservedRegion>> list = getRegulatoryRegionDBAdaptor().getAllConservedRegionByRegionList(Arrays.asList(reg1,reg2));
 		System.out.println(list.get(0).size());
 		System.out.println(list.get(1).size());

@@ -235,7 +235,7 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 		int start_chunk = region.getStart() / chunk_size;
 		int end_chunk = region.getEnd() / chunk_size;
 		
-		Query query = this.openSession().createQuery("select distinct cr from ConservedRegion cr, FeatureMap fm where cr.conservedRegionId=fm.featureId and cr.chromosome= :CHROMOSOME and fm.chunkId >= :START and fm.chunkId <= :END")
+		Query query = this.openSession().createQuery("select distinct cr from ConservedRegion cr, FeatureMap fm where cr.conservedRegionId=fm.featureId and fm.chromosome= :CHROMOSOME and fm.chunkId >= :START and fm.chunkId <= :END")
 										.setParameter("CHROMOSOME", region.getChromosome())
 										.setParameter("START", start_chunk)
 										.setParameter("END", end_chunk);
