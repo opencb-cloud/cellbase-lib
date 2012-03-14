@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.common.GenomicVariant;
-import org.bioinfo.infrared.lib.common.GenomicVariantEffect;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.junit.After;
 import org.junit.Before;
