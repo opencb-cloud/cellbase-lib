@@ -37,5 +37,7 @@ public class CpGIslandHibernateDBAdaptor extends HibernateDBAdaptor implements C
 		}
 		return result;
 	}
+	
+	
 
 }
