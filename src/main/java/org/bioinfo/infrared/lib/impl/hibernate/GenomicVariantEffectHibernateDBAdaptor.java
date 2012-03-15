@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.bioinfo.infrared.core.cellbase.ConsequenceType;
 import org.bioinfo.infrared.core.cellbase.FeatureMap;
@@ -84,18 +85,28 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 		snpDbAdaptor = dbAdaptorFact.getSnpDBAdaptor(species, version);
 	}
 
+	
+	
 	@Override
 	public List<GenomicVariantConsequenceType> getAllConsequenceTypeByVariantList(List<GenomicVariant> variants) {
+		return getAllConsequenceTypeByVariantList(variants, null);
+	}
+	
+	@Override
+	public List<GenomicVariantConsequenceType> getAllConsequenceTypeByVariantList(List<GenomicVariant> variants, Set<String> excludeSet) {
 		List<GenomicVariantConsequenceType> consequenceTypeList = new ArrayList<GenomicVariantConsequenceType>();
 
 		for(GenomicVariant variant: variants) {
-			consequenceTypeList.addAll(getAllConsequenceTypeByVariant(variant));
+			consequenceTypeList.addAll(getAllConsequenceTypeByVariant(variant, excludeSet));
 		}
 		return consequenceTypeList;
 	}
-
+	
+	
+	
 	@Override
 	public Map<GenomicVariant, List<GenomicVariantConsequenceType>> getConsequenceTypeMap(List<GenomicVariant> variants) {
+		// TODO
 		Map<GenomicVariant, List<GenomicVariantConsequenceType>> consequences = new LinkedHashMap<GenomicVariant, List<GenomicVariantConsequenceType>>(variants.size());
 
 		for (GenomicVariant variant: variants) {
@@ -105,7 +116,20 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 	}
 
 	@Override
+	public Map<GenomicVariant, List<GenomicVariantConsequenceType>> getConsequenceTypeMap(List<GenomicVariant> variants, Set<String> excludeSet) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
+	@Override
 	public List<GenomicVariantConsequenceType> getAllConsequenceTypeByVariant(GenomicVariant variant) {
+		return getAllConsequenceTypeByVariant(variant, null);
+	}
+	
+	@Override
+	public List<GenomicVariantConsequenceType> getAllConsequenceTypeByVariant(GenomicVariant variant, Set<String> excludeSet) {
 
 		List<GenomicVariantConsequenceType> genomicVariantConsequenceTypeList = null;
 		List<Snp> snps;
@@ -120,7 +144,7 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 			.add(Restrictions.eq("chromosome", variant.getChromosome()))
 			.add(Restrictions.le("start", variant.getPosition()))
 			.add(Restrictions.ge("end", variant.getPosition()));
-			featureMapList = (List<FeatureMap>)executeAndClose(criteria);
+			featureMapList = (List<FeatureMap>) executeAndClose(criteria);
 		}
 
 		if(featureMapList != null) {
@@ -133,6 +157,9 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 			}
 
 			for(FeatureMap featureMap: featureMapList) {
+				if(excludeSet != null && excludeSet.contains(consequenceTypeMap.get(featureMap.getFeatureType()).getSoTerm())) {
+					continue;
+				}
 				//				System.out.println("getAllConsequenceTypeByVariant: "+featureMap.toString());
 
 				//				if(featureMap.getFeatureType().equalsIgnoreCase("gene")) {
