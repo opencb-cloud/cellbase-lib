@@ -253,7 +253,14 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 		return result;
 	}
 
-
+	@Override
+	public List<IntervalFeatureFrequency> getAllRegulatoryRegionIntervalFrequencies(Region region, int interval, String type) {
+		SQLQuery sqlquery = this.openSession().createSQLQuery("select (rr.start - "+region.getStart()+") DIV "+interval+" as inter, count(*) from regulatory_region rr where rr.chromosome= '"+region.getChromosome()+"' and rr.start <= "+region.getEnd()+" and rr.end >= "+region.getStart()+" and rr.type = '"+type+"' group by inter");
+		List<Object[]> objectList =  (List<Object[]>) executeAndClose(sqlquery);
+		List<IntervalFeatureFrequency> intervalFreqsList = getIntervalFeatureFrequencies(region , interval, objectList);
+		return intervalFreqsList;
+	}
+	
 	@Override
 	public List<IntervalFeatureFrequency> getAllRegulatoryRegionIntervalFrequencies(Region region, int interval) {
 		SQLQuery sqlquery = this.openSession().createSQLQuery("select (rr.start - "+region.getStart()+") DIV "+interval+" as inter, count(*) from regulatory_region rr where rr.chromosome= '"+region.getChromosome()+"' and rr.start <= "+region.getEnd()+" and rr.end >= "+region.getStart()+" group by inter");

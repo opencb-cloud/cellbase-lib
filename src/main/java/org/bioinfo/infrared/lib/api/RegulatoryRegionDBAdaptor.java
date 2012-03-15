@@ -43,7 +43,10 @@ public interface RegulatoryRegionDBAdaptor extends FeatureDBAdaptor {
 	public List<List<ConservedRegion>> getAllConservedRegionByRegionList(List<Region> regionList);
 	
 	
+	public List<IntervalFeatureFrequency> getAllRegulatoryRegionIntervalFrequencies(Region region, int interval, String type);
+
 	public List<IntervalFeatureFrequency> getAllRegulatoryRegionIntervalFrequencies(Region region, int interval);
 	
 	public List<IntervalFeatureFrequency> getAllConservedRegionIntervalFrequencies(Region region, int interval);
+
 }
