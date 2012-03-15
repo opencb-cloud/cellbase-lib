@@ -106,12 +106,89 @@ public class SnpHibernateDBAdaptorTest {
 	
 	
 	@Test
-	public void getAllByRegion() {
-		List<Snp> snps = snpDBAdaptor.getAllByRegion(new Region("1", 150000000, 150001000));
-		this.printSNPList("getAllByRegion", snps, 6);
+	public void getSequenceById() {
+		String sequence = snpDBAdaptor.getSequenceById("rs4");
+		System.out.println(sequence);
 	}
 	
+	@Test
+	public void getAllByRegion() {
+//		List<Snp> snps = snpDBAdaptor.getAllByRegion(new Region("1", 150000000, 150001000));
+		List<String> consequenceTypeList = new ArrayList<String>();
+		consequenceTypeList.add("2KB_upstream_variant");
+		consequenceTypeList.add("splice_region_variant");
+		List<Snp> snps = snpDBAdaptor.getAllByRegion(new Region("1", 10327, 12807), consequenceTypeList);
+		this.printSNPList("getAllByRegion", snps, 50);
+	}
 	
+	@Test
+	public void getAllIdsByRegion() {
+		List<String> snpsIds = snpDBAdaptor.getAllIdsByRegion("1", 150000000, 150001000);
+		this.printSNPList("getAllByRegion", snpsIds, 50);
+	}
+	
+	@Test
+	public void getRegionById() {
+		Region region = snpDBAdaptor.getRegionById("rs4");
+		System.out.println(region);
+	}
+	
+	@Test
+	public void getAllRegionsByIdList() {
+		List<String> idList = new ArrayList<String>();
+		idList.add("rs11510119");
+		idList.add("rs2462499");
+		List<Region> regions = snpDBAdaptor.getAllRegionsByIdList(idList);
+		System.out.println(regions);
+	}
+	
+	@Test
+	public void getAllSequencesByIdList() {
+		List<String> idList = new ArrayList<String>();
+		idList.add("rs11510119");
+		idList.add("rs2462499");
+		List<String> seqs = snpDBAdaptor.getAllSequencesByIdList(idList);
+		System.out.println(seqs);
+	}
+	
+	@Test
+	public void getAllFilteredByConsequenceType() {
+		List<String> idList = new ArrayList<String>();
+		idList.add("rs11510119");
+		idList.add("rs2462499");
+		List<Snp> snp = snpDBAdaptor.getAllFilteredByConsequenceType(idList,"intron_variant");
+		System.out.println(snp.size());
+		for (int i = 0; i < snp.size(); i++) {
+			System.out.println(snp.get(i).getName());
+		}
+	}
+	
+	@Test
+	public void getAllFilteredByConsequenceTypes() {
+		List<String> idList = new ArrayList<String>();
+		idList.add("rs11510119");
+		idList.add("rs2462499");
+		List<String> consequenceList = new ArrayList<String>();
+		consequenceList.add("intron_variant");
+		consequenceList.add("asdfasd");
+		List<Snp> snp = snpDBAdaptor.getAllFilteredByConsequenceType(idList,consequenceList);
+		System.out.println(snp.size());
+		for (int i = 0; i < snp.size(); i++) {
+			System.out.println(snp.get(i).getName());
+		}
+	}
+	
+	@Test
+	public void getAllIdsBySOConsequenceTypeList() {
+		List<List<String>> snp = snpDBAdaptor.getAllIdsBySOConsequenceTypeList(Arrays.asList("intron_variant"));
+		System.out.println("Number of features 'intron_variant'"+ snp.get(0).size());
+	}
+	
+	@Test
+	public void getAllIds() {
+		List<String> ids = snpDBAdaptor.getAllIds();
+		System.out.println(ids.size());
+	}
 	
 	private void printSNPListList(String title, List<List<Snp>> snpsList, int numResults) {
 		List<Snp> completeList = new ArrayList<Snp>();

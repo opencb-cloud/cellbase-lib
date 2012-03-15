@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.ConsequenceType;
+import org.bioinfo.infrared.core.cellbase.ConservedRegion;
+import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
+import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
@@ -20,6 +23,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor {
@@ -177,22 +181,48 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 		return null;
 	}
 	
+	//XXX
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getAllIdsBySOConsequenceType(String consequenceType) {
-		// TODO Auto-generated method stub
-		return null;
+		Query query = this.openSession().createQuery("select s.name from Snp s where s.displaySoConsequence= :CONSQ_TYPE").setParameter("CONSQ_TYPE", consequenceType).setMaxResults(500000);
+		return (List<String>) executeAndClose(query);
 	}
 
+	//XXX
 	@Override
 	public List<List<String>> getAllIdsBySOConsequenceTypeList(List<String> consequenceTypeList) {
-		// TODO Auto-generated method stub
-		return null;
+		List<List<String>> results = new ArrayList<List<String>>(consequenceTypeList.size());
+		for (String consequenceType : consequenceTypeList) {
+			List<String> idsList = this.getAllIdsBySOConsequenceType(consequenceType);
+			results.add(idsList);
+		}
+		return results;
 	}
 
+	//XXX
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getAllIdsByRegion(String chromosome, int start, int end) {
-		// TODO Auto-generated method stub
-		return null;
+//		List<Snp> snpList = getAllByRegion(chromosome, start, end);
+//		
+//		List<String> results = new ArrayList<String>();
+//		for (Snp snp : snpList) {
+//			results.add(snp.getName());
+//		}
+//		return results;
+		
+				
+		int chunk_size = applicationProperties.getIntProperty("CHUNK_SIZE", 400);
+		int start_chunk = start / chunk_size;
+		int end_chunk = end / chunk_size;
+		Query query = this.openSession().createQuery("select distinct fm.featureName from FeatureMap fm where fm.featureType='snp' and fm.chromosome= :CHROMOSOME and fm.chunkId >= :START and fm.chunkId <= :END")
+										.setParameter("CHROMOSOME", chromosome)
+										.setParameter("START", start_chunk)
+										.setParameter("END", end_chunk);
+		
+		return (List<String>) executeAndClose(query);
+		
 	}
 
 
@@ -202,7 +232,7 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 	@Override
 	public List<Snp> getAllBySOConsequenceType(String consequenceType) {
 		Criteria criteria = this.openSession().createCriteria(Snp.class)
-				.add(Restrictions.eq("displaySoConsequence", consequenceType.trim()));
+				.add(Restrictions.eq("displaySoConsequence", consequenceType.trim())).setMaxResults(200000);
 		return (List<Snp>)executeAndClose(criteria);
 	}
 	
@@ -280,10 +310,19 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 		return genomicRegionFeatures.getSnp();
 	}
 
+	//XXX
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Snp> getAllByRegion(String chromosome, int start, int end, List<String> consequenceTypeList) {
-		// TODO Auto-generated method stub
-		return null;
+		Criteria criteria =  this.openSession().createCriteria(Snp.class);
+		criteria.add(Restrictions.eq("chromosome", chromosome))
+				.add(Restrictions.ge("end", start))
+				.add(Restrictions.le("start", end))
+				.add(Restrictions.in("displaySoConsequence", consequenceTypeList))
+				.addOrder(Order.asc("chromosome"))
+				.addOrder(Order.asc("start"));
+		
+		return (List<Snp>) executeAndClose(criteria);
 	}
 
 	@Override
@@ -318,17 +357,26 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 
 
 
-
+	//XXX
 	@Override
 	public List<Snp> getAllFilteredByConsequenceType(List<String> snpIds, String consequence) {
-		// TODO Auto-generated method stub
-		return null;
+		Criteria criteria =  this.openSession().createCriteria(Snp.class);
+		criteria.add(Restrictions.in("name", snpIds))
+				.add(Restrictions.eq("displaySoConsequence", consequence))
+				.addOrder(Order.asc("name"));
+		
+		return (List<Snp>) executeAndClose(criteria);
 	}
 
+	//XXX
 	@Override
 	public List<Snp> getAllFilteredByConsequenceType(List<String> snpIds, List<String> consequenceTypes) {
-		// TODO Auto-generated method stub
-		return null;
+		Criteria criteria =  this.openSession().createCriteria(Snp.class);
+		criteria.add(Restrictions.in("name", snpIds))
+				.add(Restrictions.in("displaySoConsequence", consequenceTypes))
+				.addOrder(Order.asc("name"));
+		
+		return (List<Snp>) executeAndClose(criteria);
 	}
 
 	@Override
@@ -339,25 +387,31 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 
 	
 	
-
+	//XXX
 	@Override
 	public List<String> getAllIds() {
-		// TODO Auto-generated method stub
-		return null;
+		Query query = this.openSession().createQuery("select distinct featureName from FeatureMap where featureType='snp'").setMaxResults(500000);
+		return (List<String>) executeAndClose(query);
 	}
 
-
+	//XXX
 	@Override
 	public List<Region> getAllRegionsByIdList(List<String> idList) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Region> results = new ArrayList<Region>();
+		for (String id : idList) {
+			results.add(this.getRegionById(id));
+		}
+		return results;
 	}
 
-
+	//XXX
 	@Override
 	public List<String> getAllSequencesByIdList(List<String> idList) {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> results = new ArrayList<String>();
+		for (String id : idList) {
+			results.add(this.getSequenceById(id));
+		}
+		return results;
 	}
 
 
@@ -388,18 +442,19 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 		return null;
 	}
 
-
+	//XXX
 	@Override
 	public Region getRegionById(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Snp> snp =  this.getAllBySnpId(id);
+		return new Region(snp.get(0).getChromosome(), snp.get(0).getStart(), snp.get(0).getEnd());
 	}
 
-
+	//XXX
 	@Override
 	public String getSequenceById(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		Query query = this.openSession().createQuery("select sequence from Snp snp where snp.name= :SNPID")
+										.setParameter("SNPID", id);
+		return executeAndClose(query).toString();
 	}
 	
 	public List<IntervalFeatureFrequency> getAllIntervalFrequencies(Region region, int interval) {
