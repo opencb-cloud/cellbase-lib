@@ -4,7 +4,6 @@ import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 
 public class GenomicRegionFeatureHibernateDBAdaptorTest {
 
@@ -63,8 +62,8 @@ public class GenomicRegionFeatureHibernateDBAdaptorTest {
 //	}
 	
 	
-	@Test
-	public void testConsequenceType() {
+//	@Test
+//	public void testConsequenceType() {
 ////		HashMap<String, List<String>> result =  this.genomicRegionFeatureDBAdaptor.getConsequenceType("1",19229436, "g");
 ////		for (String key : result.keySet()) {
 ////			System.out.println(key + " " + result.get(key));
@@ -78,7 +77,7 @@ public class GenomicRegionFeatureHibernateDBAdaptorTest {
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //		}
-	}
+//	}
 	
 	
 //	@Test
