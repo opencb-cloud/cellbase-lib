@@ -2,6 +2,7 @@ package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -155,11 +156,16 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 					break;
 				}
 			}
+			
+			if(excludeSet == null) {
+				excludeSet = new HashSet<String>();
+			}
 
 			for(FeatureMap featureMap: featureMapList) {
-				if(excludeSet != null && excludeSet.contains(consequenceTypeMap.get(featureMap.getFeatureType()).getSoTerm())) {
-					continue;
-				}
+//				if(excludeSet != null && excludeSet.contains(consequenceTypeMap.get(featureMap.getFeatureType()).getSoTerm())) {
+//				if(excludeSet != null && excludeSet.contains(consequenceTypeMap.get(featureMap.getFeatureType()).getSoTerm())) {
+//					continue;
+//				}
 				//				System.out.println("getAllConsequenceTypeByVariant: "+featureMap.toString());
 
 				//				if(featureMap.getFeatureType().equalsIgnoreCase("gene")) {
@@ -168,45 +174,45 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 				//				}
 
 				if(featureMap.getFeatureType().equalsIgnoreCase("transcript")) {
-					if (featureMap.getBiotype().equalsIgnoreCase("mirna")){
+					if (featureMap.getBiotype().equalsIgnoreCase("mirna") && !excludeSet.contains(consequenceTypeMap.get("mirna").getSoTerm())){
 						genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "mirna"));
 					}
-					if (featureMap.getBiotype().equalsIgnoreCase("nonsense_mediated_decay")){
+					if (featureMap.getBiotype().equalsIgnoreCase("nonsense_mediated_decay") && !excludeSet.contains(consequenceTypeMap.get("nmd_transcript").getSoTerm())){
 						genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "nmd_transcript"));
 					}
-					if (featureMap.getBiotype().equalsIgnoreCase("lincrna")){
+					if (featureMap.getBiotype().equalsIgnoreCase("lincrna") && !excludeSet.contains(consequenceTypeMap.get("lincrna").getSoTerm())){
 						genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "lincrna"));
 					}
-					if (featureMap.getBiotype().equalsIgnoreCase("pseudogene")){
+					if (featureMap.getBiotype().equalsIgnoreCase("pseudogene") && !excludeSet.contains(consequenceTypeMap.get("pseudogene").getSoTerm())){
 						genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "pseudogene"));
 					}
-					if (featureMap.getBiotype().equalsIgnoreCase("non_coding")){
+					if (featureMap.getBiotype().equalsIgnoreCase("non_coding") && !excludeSet.contains(consequenceTypeMap.get("nc_transcript").getSoTerm())){
 						genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "nc_transcript"));
 					}
 					continue;
 				}
 
-				if(featureMap.getFeatureType().equalsIgnoreCase("intron")) {
+				if(featureMap.getFeatureType().equalsIgnoreCase("intron") && !excludeSet.contains(consequenceTypeMap.get("intron").getSoTerm())) {
 					genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "intron"));
 					continue;
 				}
 
-				if(featureMap.getFeatureType(). equalsIgnoreCase("splice_site")) {
+				if(featureMap.getFeatureType(). equalsIgnoreCase("splice_site") && !excludeSet.contains(consequenceTypeMap.get("splice_site").getSoTerm())) {
 					genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "splice_site"));
 					continue;
 				}
 
-				if(featureMap.getFeatureType(). equalsIgnoreCase("splice_donor")) {
+				if(featureMap.getFeatureType(). equalsIgnoreCase("splice_donor") && !excludeSet.contains(consequenceTypeMap.get("splice_donor").getSoTerm())) {
 					genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "splice_donor"));
 					continue;
 				}
 
-				if(featureMap.getFeatureType(). equalsIgnoreCase("splice_acceptor")) {
+				if(featureMap.getFeatureType(). equalsIgnoreCase("splice_acceptor") && !excludeSet.contains(consequenceTypeMap.get("splice_acceptor").getSoTerm())) {
 					genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "splice_acceptor"));
 					continue;
 				}
 
-				if(featureMap.getFeatureType().equalsIgnoreCase("exon")) {
+				if(featureMap.getFeatureType().equalsIgnoreCase("exon") && !excludeSet.contains(consequenceTypeMap.get("exon").getSoTerm())) {
 					genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "exon"));
 
 //					int codonPosition = -1;
@@ -254,7 +260,7 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 					continue;
 				}
 
-				if(featureMap.getFeatureType().equalsIgnoreCase("regulatory_region")) {
+				if(featureMap.getFeatureType().equalsIgnoreCase("regulatory_region") && !excludeSet.contains(consequenceTypeMap.get("regulatory_region").getSoTerm())) {
 					genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "regulatory_region"));
 
 					if(featureMap.getFeatureName().equalsIgnoreCase("dnase1") || featureMap.getFeatureName().equalsIgnoreCase("faire")) {
@@ -268,42 +274,42 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 					continue;
 				}
 
-				if(featureMap.getFeatureType().equalsIgnoreCase("tfbs")) {
+				if(featureMap.getFeatureType().equalsIgnoreCase("tfbs") && !excludeSet.contains(consequenceTypeMap.get("tfbs").getSoTerm())) {
 					genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "tfbs"));
 					continue;
 				}
 
-				if(featureMap.getFeatureType().equalsIgnoreCase("mirna_target")) {
+				if(featureMap.getFeatureType().equalsIgnoreCase("mirna_target") && !excludeSet.contains(consequenceTypeMap.get("mirna_target").getSoTerm())) {
 					genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "mirna_target"));
 					continue;
 				}
 
-				if(featureMap.getFeatureType().equalsIgnoreCase("upstream")) {
+				if(featureMap.getFeatureType().equalsIgnoreCase("upstream") && !excludeSet.contains(consequenceTypeMap.get("upstream").getSoTerm())) {
 					genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "upstream"));
 					continue;
 				}
 
-				if(featureMap.getFeatureType().equalsIgnoreCase("downstream")) {
+				if(featureMap.getFeatureType().equalsIgnoreCase("downstream") && !excludeSet.contains(consequenceTypeMap.get("downstream").getSoTerm())) {
 					genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "downstream"));
 					continue;
 				}
 
-				if(featureMap.getFeatureType().equalsIgnoreCase("5_prime_utr")) {
+				if(featureMap.getFeatureType().equalsIgnoreCase("5_prime_utr") && !excludeSet.contains(consequenceTypeMap.get("5_prime_utr").getSoTerm())) {
 					genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "5_prime_utr"));
 					continue;
 				}
 
-				if(featureMap.getFeatureType().equalsIgnoreCase("3_prime_utr")) {
+				if(featureMap.getFeatureType().equalsIgnoreCase("3_prime_utr") && !excludeSet.contains(consequenceTypeMap.get("3_prime_utr").getSoTerm())) {
 					genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "3_prime_utr"));
 					continue;
 				}
 				
-				if(featureMap.getFeatureType().equalsIgnoreCase("CpG_island")) {
+				if(featureMap.getFeatureType().equalsIgnoreCase("CpG_island") && !excludeSet.contains(consequenceTypeMap.get("cpg_island").getSoTerm())) {
 					genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "cpg_island"));
 					continue;
 				}
 
-				if(featureMap.getFeatureType().equalsIgnoreCase("snp")) {
+				if(featureMap.getFeatureType().equalsIgnoreCase("snp") && !excludeSet.contains(consequenceTypeMap.get("snp").getSoTerm())) {
 					// special method
 					snps = snpDbAdaptor.getAllBySnpId(featureMap.getFeatureName());
 					if(snps != null && snps.size() > 0) {
