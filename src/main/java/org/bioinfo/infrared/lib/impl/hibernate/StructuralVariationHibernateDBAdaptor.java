@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.StructuralVariation;
 import org.bioinfo.infrared.lib.api.StructuralVariationDBAdaptor;
+import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 
 public class StructuralVariationHibernateDBAdaptor extends HibernateDBAdaptor implements StructuralVariationDBAdaptor{
@@ -36,6 +38,14 @@ public class StructuralVariationHibernateDBAdaptor extends HibernateDBAdaptor im
 			result.add(this.getAllByRegion(region));
 		}
 		return result;
+	}
+	
+	@Override
+	public List<IntervalFeatureFrequency> getAllIntervalFrequencies(Region region, int interval) {
+		SQLQuery sqlquery = this.openSession().createSQLQuery("select (g.start - "+region.getStart()+") DIV "+interval+" as inter, count(*) from structural_variation g where g.chromosome= '"+region.getChromosome()+"' and g.start <= "+region.getEnd()+" and g.end >= "+region.getStart()+" group by inter");
+		List<Object[]> objectList =  (List<Object[]>) executeAndClose(sqlquery);
+		List<IntervalFeatureFrequency> intervalFreqsList = getIntervalFeatureFrequencies(region , interval, objectList);
+		return intervalFreqsList;
 	}
 
 }

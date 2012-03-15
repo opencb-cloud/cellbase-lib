@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.CpGIsland;
 import org.bioinfo.infrared.lib.api.CpGIslandDBAdaptor;
+import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Region;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.junit.Test;
@@ -31,4 +32,11 @@ public class CpGIslandHibernateDBAdaptorTest {
 		System.out.println(list.get(1).size());		
 	}
 
+	
+	@Test
+	public void testGetAllIntervalFrequencies() {
+		Region region = new Region("3", 1000, 20000000);
+		List<IntervalFeatureFrequency> a = getCpGIslandDBAdaptor().getAllIntervalFrequencies(region, 100000);
+//		printGeneList("testGeneHibernateDBAdaptorGetAll", genes, 5);
+	}
 }

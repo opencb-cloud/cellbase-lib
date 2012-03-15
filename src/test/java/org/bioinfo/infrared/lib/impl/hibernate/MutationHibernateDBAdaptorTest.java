@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.MutationPhenotypeAnnotation;
 import org.bioinfo.infrared.lib.api.MutationDBAdaptor;
+import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Region;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
 import org.junit.Test;
@@ -38,4 +39,11 @@ public class MutationHibernateDBAdaptorTest {
 		
 	}
 
+	
+	@Test
+	public void testGetAllIntervalFrequencies() {
+		Region region = new Region("3", 1000, 20000000);
+		List<IntervalFeatureFrequency> a = getMutationDBAdaptor().getAllIntervalFrequencies(region, 100000);
+//		printGeneList("testGeneHibernateDBAdaptorGetAll", genes, 5);
+	}
 }

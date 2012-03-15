@@ -4,6 +4,7 @@ import java.util.List;
 
 
 import org.bioinfo.infrared.core.cellbase.MutationPhenotypeAnnotation;
+import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Region;
 
 public interface MutationDBAdaptor {
@@ -11,5 +12,8 @@ public interface MutationDBAdaptor {
 	public List<MutationPhenotypeAnnotation> getAllByRegion(Region region);
 	
 	public List<List<MutationPhenotypeAnnotation>> getAllByRegionList(List<Region> regionList);
+
+	
+	public List<IntervalFeatureFrequency> getAllIntervalFrequencies(Region region, int interval);
 	
 }

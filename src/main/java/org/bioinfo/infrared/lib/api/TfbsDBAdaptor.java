@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.Pwm;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
+import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Region;
 
 public interface TfbsDBAdaptor extends FeatureDBAdaptor {
@@ -42,4 +43,6 @@ public interface TfbsDBAdaptor extends FeatureDBAdaptor {
 
 	public List<Object> getAllAnnotationByCellTypeList(List<String> cellTypes);
 
+	
+	public List<IntervalFeatureFrequency> getAllTfIntervalFrequencies(Region region, int interval);
 }

@@ -3,6 +3,7 @@ package org.bioinfo.infrared.lib.api;
 import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.CpGIsland;
+import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Region;
 
 public interface CpGIslandDBAdaptor {
@@ -11,4 +12,6 @@ public interface CpGIslandDBAdaptor {
 	
 	public List<List<CpGIsland>> getAllByRegionList(List<Region> regionList);
 	
+	
+	public List<IntervalFeatureFrequency> getAllIntervalFrequencies(Region region, int interval);
 }

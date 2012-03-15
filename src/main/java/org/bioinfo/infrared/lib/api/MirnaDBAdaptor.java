@@ -6,6 +6,7 @@ import org.bioinfo.infrared.core.cellbase.MirnaDisease;
 import org.bioinfo.infrared.core.cellbase.MirnaGene;
 import org.bioinfo.infrared.core.cellbase.MirnaMature;
 import org.bioinfo.infrared.core.cellbase.MirnaTarget;
+import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Region;
 
 public interface MirnaDBAdaptor {
@@ -63,6 +64,8 @@ public interface MirnaDBAdaptor {
 
 	public List<List<MirnaTarget>> getAllMiRnaTargetsByRegionList(List<Region> regionList);
 
+	public List<IntervalFeatureFrequency> getAllMirnaTargetsIntervalFrequencies(Region region, int interval);
+	
 	
 	
 	public List<MirnaDisease> getAllMiRnaDiseasesByMiRnaGene(String mirbaseId);

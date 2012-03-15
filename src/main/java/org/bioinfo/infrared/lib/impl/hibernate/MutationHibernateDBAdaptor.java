@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.MutationPhenotypeAnnotation;
 import org.bioinfo.infrared.lib.api.MutationDBAdaptor;
+import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 
 public class MutationHibernateDBAdaptor extends HibernateDBAdaptor implements MutationDBAdaptor{
@@ -37,4 +39,13 @@ public class MutationHibernateDBAdaptor extends HibernateDBAdaptor implements Mu
 		}
 		return result;
 	}
+	
+	@Override
+	public List<IntervalFeatureFrequency> getAllIntervalFrequencies(Region region, int interval) {
+		SQLQuery sqlquery = this.openSession().createSQLQuery("select (g.start - "+region.getStart()+") DIV "+interval+" as inter, count(*) from  mutation_phenotype_annotation g where g.chromosome= '"+region.getChromosome()+"' and g.start <= "+region.getEnd()+" and g.end >= "+region.getStart()+" group by inter");
+		List<Object[]> objectList =  (List<Object[]>) executeAndClose(sqlquery);
+		List<IntervalFeatureFrequency> intervalFreqsList = getIntervalFeatureFrequencies(region , interval, objectList);
+		return intervalFreqsList;
+	}
+	
 }
