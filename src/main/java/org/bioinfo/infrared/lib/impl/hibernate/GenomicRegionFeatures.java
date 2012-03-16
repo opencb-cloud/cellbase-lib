@@ -13,6 +13,7 @@ import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.SessionFactory;
 
+@Deprecated
 public class GenomicRegionFeatures {
 
 	private Region region;

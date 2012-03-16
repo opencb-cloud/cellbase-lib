@@ -69,7 +69,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 
 	private SessionFactory createCellBaseSessionFactory(String speciesVersionPrefix) {
 //		logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): creating Hibernate SessionFactory object for SPECIES.VERSION: '"+speciesVersionPrefix+"' ...");
-		long t1 = System.currentTimeMillis();
+//		long t1 = System.currentTimeMillis();
 
 		// initial load and setup from hibernate.cfg.xml
 		Configuration cfg = new Configuration().configure("cellbase-hibernate.cfg.xml");
@@ -93,7 +93,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 
 	private SessionFactory createBioPaxSessionFactory(String speciesVersionPrefix) {
 //		logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): creating Hibernate SessionFactory object for SPECIES.VERSION: '"+speciesVersionPrefix+"' ...");
-		long t1 = System.currentTimeMillis();
+//		long t1 = System.currentTimeMillis();
 
 		// initial load and setup from hibernate.cfg.xml
 		Configuration cfg = new Configuration().configure("biopax-hibernate.cfg.xml");

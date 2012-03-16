@@ -388,6 +388,7 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Gene> getAllByTfName(String tfName) {
 //		Query query = this.openSession().createQuery("select g from Gene g, Cytoband k where k.chromosome= :chromosome and k.cytoband = :cytoband and k.chromosome=g.chromosome and g.end>=k.start and g.start<=k.end").setParameter("chromosome", chromosome).setParameter("cytoband", cytoband);
@@ -465,6 +466,7 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	}
 
 
+	@SuppressWarnings("unchecked")
 	public List<IntervalFeatureFrequency> getAllIntervalFrequencies(Region region, int interval) {
 		SQLQuery sqlquery = this.openSession().createSQLQuery("select (g.start - "+region.getStart()+") DIV "+interval+" as inter, count(*) from gene g where g.chromosome= '"+region.getChromosome()+"' and g.start <= "+region.getEnd()+" and g.end >= "+region.getStart()+" group by inter");
 		List<Object[]> objectList =  (List<Object[]>) executeAndClose(sqlquery);

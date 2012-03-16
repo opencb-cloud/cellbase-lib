@@ -129,6 +129,7 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 		return getAllConsequenceTypeByVariant(variant, null);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<GenomicVariantConsequenceType> getAllConsequenceTypeByVariant(GenomicVariant variant, Set<String> excludeSet) {
 

@@ -23,6 +23,7 @@ public class CytobandHibernateDBAdaptor extends HibernateDBAdaptor implements Cy
 		super(sessionFactory, species, version);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<? extends Object> getAll() {
 		Criteria criteria = this.openSession().createCriteria(Cytoband.class);
@@ -35,6 +36,7 @@ public class CytobandHibernateDBAdaptor extends HibernateDBAdaptor implements Cy
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getAllChromosomeNames() {
 		Criteria criteria = this.openSession().createCriteria(Cytoband.class)
@@ -99,7 +101,6 @@ public class CytobandHibernateDBAdaptor extends HibernateDBAdaptor implements Cy
 		return (List<Cytoband>) this.executeAndClose(criteria);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<List<Cytoband>> getAllByChromosomeList(List<String> chromosomes) {
 		List<List<Cytoband>> cytobands = new ArrayList<List<Cytoband>>(); 

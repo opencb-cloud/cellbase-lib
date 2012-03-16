@@ -123,7 +123,7 @@ public class SnpHibernateDBAdaptorTest {
 	
 	@Test
 	public void getAllIdsByRegion() {
-		List<String> snpsIds = snpDBAdaptor.getAllIdsByRegion("1", 150000000, 150001000);
+		List<String> snpsIds = snpDBAdaptor.getAllIdsByRegion("1", 140000000, 150001000);
 		this.printSNPList("getAllByRegion", snpsIds, 50);
 	}
 	

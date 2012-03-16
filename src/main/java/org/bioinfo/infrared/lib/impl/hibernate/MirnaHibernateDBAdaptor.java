@@ -17,8 +17,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdaptor {
@@ -340,6 +338,7 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<IntervalFeatureFrequency> getAllMirnaTargetsIntervalFrequencies(Region region, int interval) {
 		SQLQuery sqlquery = this.openSession().createSQLQuery("select (g.start - "+region.getStart()+") DIV "+interval+" as inter, count(*) from mirna_target g where g.chromosome= '"+region.getChromosome()+"' and g.start <= "+region.getEnd()+" and g.end >= "+region.getStart()+" group by inter");

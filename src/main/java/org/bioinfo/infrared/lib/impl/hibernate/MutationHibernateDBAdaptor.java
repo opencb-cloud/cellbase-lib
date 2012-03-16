@@ -40,6 +40,7 @@ public class MutationHibernateDBAdaptor extends HibernateDBAdaptor implements Mu
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<IntervalFeatureFrequency> getAllIntervalFrequencies(Region region, int interval) {
 		SQLQuery sqlquery = this.openSession().createSQLQuery("select (g.start - "+region.getStart()+") DIV "+interval+" as inter, count(*) from  mutation_phenotype_annotation g where g.chromosome= '"+region.getChromosome()+"' and g.start <= "+region.getEnd()+" and g.end >= "+region.getStart()+" group by inter");

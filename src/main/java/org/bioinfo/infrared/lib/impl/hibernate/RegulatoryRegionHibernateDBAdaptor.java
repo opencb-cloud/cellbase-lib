@@ -6,12 +6,18 @@ import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.ConservedRegion;
 import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
+import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
 import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Region;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.LogicalExpression;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
 class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements RegulatoryRegionDBAdaptor {
 
@@ -24,54 +30,79 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 		super(sessionFactory, species, version);
 	}
 	
+	
+	
 	@Override
 	public List<RegulatoryRegion> getAllByRegion(String chromosome) {
-		// TODO Auto-generated method stub
-		return null;
+		return getAllByRegion(new Region(chromosome, 0, Integer.MAX_VALUE));
 	}
 
 	@Override
 	public List<RegulatoryRegion> getAllByRegion(String chromosome, int start) {
-		// TODO Auto-generated method stub
-		return null;
+		return getAllByRegion(new Region(chromosome, start, Integer.MAX_VALUE));
 	}
 
 	@Override
 	public List<RegulatoryRegion> getAllByRegion(String chromosome, int start, int end) {
-		// TODO Auto-generated method stub
-		return null;
+		return getAllByRegion(new Region(chromosome, start, end));
 	}
 
 	@Override
 	public List<RegulatoryRegion> getAllByRegion(Region region) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
+	public List<RegulatoryRegion> getAllByRegion(Region region, String type) {
+		List<RegulatoryRegion> regulatoryRegionsList = new ArrayList<RegulatoryRegion>();
+		Criteria criteria =  this.openSession().createCriteria(RegulatoryRegion.class);
+		criteria.add(Restrictions.eq("chromosome", region.getChromosome()))
+			.add(Restrictions.le("start", region.getEnd()))
+			.add(Restrictions.ge("end", region.getStart()))
+			.add(Restrictions.eq("type", type));
+		
+		return (List<RegulatoryRegion>) executeAndClose(criteria);
+	}
+	
+	@Override
+	public List<List<RegulatoryRegion>> getAllByRegionList(List<Region> regionList) {
+		return this.getAllByRegionList(regionList, null);
+	}
+
+	
+	
+	
 	@Override
 	public List<RegulatoryRegion> getAllByRegion(String chromosome, List<String> type) {
-		// TODO Auto-generated method stub
-		return null;
+		return getAllByRegion(chromosome, 0, Integer.MAX_VALUE, type);
 	}
 
 	@Override
-	public List<RegulatoryRegion> getAllByRegion(String chromosome, int start,
-			List<String> type) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<RegulatoryRegion> getAllByRegion(String chromosome, int start, List<String> type) {
+		return getAllByRegion(chromosome, start, Integer.MAX_VALUE, type);
 	}
 
+	
+	@Override
+	public List<RegulatoryRegion> getAllByRegion(String chromosome, int start, int end, List<String> typeList) {
+		List<RegulatoryRegion> regulatoryRegionsList = new ArrayList<RegulatoryRegion>();
+		for(String type: typeList) {
+			regulatoryRegionsList.addAll(getAllByRegion(new Region(chromosome, start, end), type));
+		}
+		return regulatoryRegionsList;
+	}
+	
 	@SuppressWarnings("unchecked")
-	@Override
-	public List<RegulatoryRegion> getAllByRegion(String chromosome, int start, int end, List<String> type) {
+	public List<RegulatoryRegion> getAllByRegion2(String chromosome, int start, int end, List<String> type) {
 		long t0 = System.currentTimeMillis();
 
 		/** Utilizar feature map !!! **/ 
 		GenomicRegionFeatureHibernateDBAdaptor adaptor = new GenomicRegionFeatureHibernateDBAdaptor(this.getSessionFactory());
 		GenomicRegionFeatures genomicRegionFeatures = adaptor.getByRegion(new Region(chromosome, start, end), type);
 		
-		System.out.println("Regulatory obtained: " + genomicRegionFeatures.getRegulatoryIds().size() + "  " + (System.currentTimeMillis()-t0)+" ms");
-		System.out.println("type:  " + genomicRegionFeatures.getHistones().size());
+		logger.debug("Regulatory obtained: " + genomicRegionFeatures.getRegulatoryIds().size() + "  " + (System.currentTimeMillis()-t0)+" ms");
+		logger.debug("type:  " + genomicRegionFeatures.getHistones().size());
+	
 		List<RegulatoryRegion> result = new ArrayList<RegulatoryRegion>();
 		
 		if (type == null){
@@ -101,12 +132,21 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 				}
 				
 			}
-			System.out.println("Subtype obtained: " + result.size() + "  " + (System.currentTimeMillis()-t0)+" ms");
+			logger.debug("Subtype obtained: " + result.size() + "  " + (System.currentTimeMillis()-t0)+" ms");
 			return result;
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
+	@Override
+	public List<List<RegulatoryRegion>> getAllByRegionList(List<Region> regionList,List<String> type) {
+		List<List<RegulatoryRegion>> result = new ArrayList<List<RegulatoryRegion>>();
+		for(Region region : regionList) {
+			result.add(this.getAllByRegion(region.getChromosome(), region.getStart(), region.getEnd(), type));
+		}
+		return result;
+	}
+	
+	
 	@Override
 	public List<GenomicRegionFeatures> getAllFeatureMapByRegion(List<Region> regions){
 		 List<GenomicRegionFeatures> result = new ArrayList<GenomicRegionFeatures>();
@@ -146,20 +186,6 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 	}
 	
 	
-
-	@Override
-	public List<List<RegulatoryRegion>> getAllByRegionList(List<Region> regionList) {
-		return this.getAllByRegionList(regionList, null);
-	}
-
-	@Override
-	public List<List<RegulatoryRegion>> getAllByRegionList(List<Region> regionList,List<String> type) {
-		List<List<RegulatoryRegion>> result = new ArrayList<List<RegulatoryRegion>>();
-		for (Region region : regionList) {
-			result.add(this.getAllByRegion(region.getChromosome(), region.getStart(), region.getEnd(), type));
-		}
-		return result;
-	}
 
 	@Override
 	public List<? extends Object> getAll() {
@@ -217,12 +243,6 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 
 	@Override
 	public String getSequenceById(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<RegulatoryRegion> getAllByRegion(Region region, String type) {
 		// TODO Auto-generated method stub
 		return null;
 	}

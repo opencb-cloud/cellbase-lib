@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.ConservedRegion;
+import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
 import org.bioinfo.infrared.lib.common.Region;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
@@ -160,6 +161,21 @@ public class RegulatoryRegionHibernateDBAdaptorTest {
 		System.out.println(list.get(0).size());
 		System.out.println(list.get(1).size());
 	
+	}
+
+	
+	@Test
+	public void testGetAllRegulatoryRegionList2() {
+		List<RegulatoryRegion> list = getRegulatoryRegionDBAdaptor().getAllByRegion2("5",1000, 200000, Arrays.asList("Histone", "Open Chromatin"));
+		for(RegulatoryRegion rr: list) {
+			System.out.println(rr.getRegulatoryRegionId());			
+		}
+	}
+	
+	@Test
+	public void testGetAllRegulatoryRegionList() {
+		List<RegulatoryRegion> list = getRegulatoryRegionDBAdaptor().getAllByRegion("5",1000, 200000, Arrays.asList("Histone", "Open Chromatin"));
+		System.out.println(list.size());
 	}
 
 }

@@ -53,6 +53,7 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 	}
 
 
+	@SuppressWarnings("unchecked")
 	private List<FeatureMap> getFeatureMapsByRegion(String chromosome, int start, int end, List<String> sources, Session session) {
 		int chunk_start = start / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
 		int chunk_end = end / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
@@ -85,7 +86,6 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 		return genomicRegionFeatures;
 	}
 
-	@SuppressWarnings("unchecked")
 	private GenomicRegionFeatures getByRegion(String chromosome, int start, int end, List<String> sources) {
 		Session session = this.openSession();
 		GenomicRegionFeatures result = this.getByRegion(chromosome, start, end, sources, session);
@@ -104,6 +104,7 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 
 
 
+	@SuppressWarnings("unchecked")
 	@Deprecated
 	private List<FeatureMap> getByChunkis(List<Integer> chunks, List<String> sources, Session session) {
 		Query query;

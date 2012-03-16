@@ -7,11 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.ConsequenceType;
-import org.bioinfo.infrared.core.cellbase.ConservedRegion;
-import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
-import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
@@ -29,7 +26,7 @@ import org.hibernate.criterion.Restrictions;
 class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor {
 
 	private int MAX_BATCH_QUERIES_LIST = 50;
-	private int FEATURE_MAP_CHUNK_SIZE = 400;
+//	private int FEATURE_MAP_CHUNK_SIZE = 400;
 
 	public SnpHibernateDBAdapator(SessionFactory sessionFactory) {
 		super(sessionFactory);
@@ -204,22 +201,21 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getAllIdsByRegion(String chromosome, int start, int end) {
-//		List<Snp> snpList = getAllByRegion(chromosome, start, end);
-//		
-//		List<String> results = new ArrayList<String>();
-//		for (Snp snp : snpList) {
-//			results.add(snp.getName());
-//		}
-//		return results;
-		
 				
-		int chunk_size = applicationProperties.getIntProperty("CHUNK_SIZE", 400);
-		int start_chunk = start / chunk_size;
-		int end_chunk = end / chunk_size;
-		Query query = this.openSession().createQuery("select distinct fm.featureName from FeatureMap fm where fm.featureType='snp' and fm.chromosome= :CHROMOSOME and fm.chunkId >= :START and fm.chunkId <= :END")
-										.setParameter("CHROMOSOME", chromosome)
-										.setParameter("START", start_chunk)
-										.setParameter("END", end_chunk);
+//		int chunk_size = applicationProperties.getIntProperty("CHUNK_SIZE", 400);
+//		int start_chunk = start / chunk_size;
+//		int end_chunk = end / chunk_size;
+//		Query query = this.openSession().createQuery("select distinct fm.featureName from FeatureMap fm where fm.featureType='snp' and fm.chromosome= :CHROMOSOME and fm.chunkId >= :START and fm.chunkId <= :END")
+//										.setParameter("CHROMOSOME", chromosome)
+//										.setParameter("START", start_chunk)
+//										.setParameter("END", end_chunk);
+		/*
+		 * Accessing to snp table gives an 6x of speed up when compared to FeatureMap
+		 */
+		Query query = this.openSession().createQuery("select distinct(s.name) from Snp s where s.chromosome= :CHROMOSOME and s.start >= :START and s.end <= :END")
+				.setParameter("CHROMOSOME", chromosome)
+				.setParameter("START", start)
+				.setParameter("END", end);
 		
 		return (List<String>) executeAndClose(query);
 		
@@ -358,6 +354,7 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 
 
 	//XXX
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Snp> getAllFilteredByConsequenceType(List<String> snpIds, String consequence) {
 		Criteria criteria =  this.openSession().createCriteria(Snp.class);
@@ -369,6 +366,7 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 	}
 
 	//XXX
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Snp> getAllFilteredByConsequenceType(List<String> snpIds, List<String> consequenceTypes) {
 		Criteria criteria =  this.openSession().createCriteria(Snp.class);
@@ -388,9 +386,10 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 	
 	
 	//XXX
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getAllIds() {
-		Query query = this.openSession().createQuery("select distinct featureName from FeatureMap where featureType='snp'").setMaxResults(500000);
+		Query query = this.openSession().createQuery("select s.name from Snp s").setMaxResults(500000);
 		return (List<String>) executeAndClose(query);
 	}
 
@@ -457,6 +456,7 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 		return executeAndClose(query).toString();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<IntervalFeatureFrequency> getAllIntervalFrequencies(Region region, int interval) {
 		SQLQuery sqlquery = this.openSession().createSQLQuery("select (cr.start - "+region.getStart()+") DIV "+interval+" as inter, count(*) from snp cr where cr.chromosome= '"+region.getChromosome()+"' and cr.start <= "+region.getEnd()+" and cr.end >= "+region.getStart()+" group by inter");
 		List<Object[]> objectList =  (List<Object[]>) executeAndClose(sqlquery);

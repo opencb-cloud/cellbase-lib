@@ -387,6 +387,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Transcript> getAllByEnsemblExonId(String ensemblExonId) {
 		Criteria criteria =  this.openSession().createCriteria(Transcript.class)
@@ -405,6 +406,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Transcript> getAllByProteinName(String proteinName) {
 		Query query = this.openSession().createQuery("select t from Transcript t, Protein p, ProteinXref px where (p.primaryAccession = :proteinName or p.name = :proteinName or p.geneName = :proteinName) and p.proteinId=px.protein and px.source='Ensembl' and px.name=t.stableId").setParameter("proteinName", proteinName);
@@ -420,6 +422,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Transcript> getAllByMirnaMature(String mirnaID) {
 		Query query = this.openSession().createQuery("select t from Transcript t, MirnaMature mm, MirnaGeneToMature g2m, MirnaGene mg, MirnaToGene m2g where mm.mirbaseId = :MIRNAID and mm.mirnaMatureId=g2m.mirnaMature and g2m.mirnaGene=mg.mirnaGeneId and mg.mirnaGeneId=m2g.mirnaGene and m2g.transcript=t.transcriptId").setParameter("MIRNAID", mirnaID);
