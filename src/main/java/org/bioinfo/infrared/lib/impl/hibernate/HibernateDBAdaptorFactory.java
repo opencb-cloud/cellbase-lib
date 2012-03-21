@@ -295,13 +295,12 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 	public CytobandDBAdaptor getCytobandDBAdaptor(String species, String version){
 		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
 		if(!sessionFactories.containsKey(speciesVersionPrefix)) {
+			System.out.println(speciesVersionPrefix);
 			SessionFactory sessionFactory = createCellBaseSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
 		return (CytobandDBAdaptor) new CytobandHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
-		
 	}
-	
 	
 
 	@Override
