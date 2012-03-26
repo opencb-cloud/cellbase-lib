@@ -70,7 +70,7 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 	private SessionFactory createCellBaseSessionFactory(String speciesVersionPrefix) {
 //		logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): creating Hibernate SessionFactory object for SPECIES.VERSION: '"+speciesVersionPrefix+"' ...");
 //		long t1 = System.currentTimeMillis();
-
+System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(speciesVersionPrefix+".DATABASE"));
 		// initial load and setup from hibernate.cfg.xml
 		Configuration cfg = new Configuration().configure("cellbase-hibernate.cfg.xml");
 		if(speciesVersionPrefix != null && !speciesVersionPrefix.trim().equals("")) {

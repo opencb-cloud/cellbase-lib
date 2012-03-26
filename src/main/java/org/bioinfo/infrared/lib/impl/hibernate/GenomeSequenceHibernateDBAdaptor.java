@@ -35,9 +35,9 @@ class GenomeSequenceHibernateDBAdaptor extends HibernateDBAdaptor implements Gen
 	@SuppressWarnings("unchecked")
 	public GenomeSequenceFeature getByRegion(String chromosome, int start, int end) {
 		Query query = this.openSession().createQuery("from GenomeSequence where chromosome = :chromosome and chunk >= :start and chunk <= :end")
-		.setParameter("chromosome", chromosome.trim())
-		.setParameter("start", String.valueOf(getChunk(start)))
-		.setParameter("end", String.valueOf(getChunk(end)));
+					.setParameter("chromosome", chromosome.trim())
+					.setParameter("start", String.valueOf(getChunk(start)))
+					.setParameter("end", String.valueOf(getChunk(end)));
 		
 		List<GenomeSequence> genomeSequenceList = (List<GenomeSequence>) executeAndClose(query);
 		

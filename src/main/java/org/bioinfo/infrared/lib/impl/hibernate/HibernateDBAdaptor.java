@@ -2,7 +2,9 @@ package org.bioinfo.infrared.lib.impl.hibernate;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Region;
@@ -24,6 +26,7 @@ public class HibernateDBAdaptor extends DBAdaptor{
 	//
 	//	}
 
+	protected static Map<String, Integer> cachedQuerySizes = new HashMap<String, Integer>();
 	
 	public HibernateDBAdaptor(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -78,7 +81,50 @@ public class HibernateDBAdaptor extends DBAdaptor{
 	/**
 	 * For histograms
 	 */
+	protected List<IntervalFeatureFrequency> getIntervalFeatureFrequencies(Region region , int interval, List<Object[]> objectList, int numFeatures) {
+		
+		int numIntervals = (region.getEnd()-region.getStart())/interval +1;
+		List<IntervalFeatureFrequency> intervalFeatureFrequenciesList = new ArrayList<IntervalFeatureFrequency>(numIntervals);
+		
+		BigInteger max = new BigInteger("-1");
+		for(int i=0; i<objectList.size(); i++) {
+			if(((BigInteger)objectList.get(i)[1]).compareTo(max) > 0) {
+				max = (BigInteger)objectList.get(i)[1];
+			}
+		}
+		float maxNormValue = 1;
+		
+		if(numFeatures != 0) {
+			maxNormValue = max.floatValue() / numFeatures;			
+		}
+		
+		int start = region.getStart();
+		int end = start + interval;
+		for(int i=0, j=0; i < numIntervals; i++) {
+			if(j < objectList.size() && ((BigInteger)objectList.get(j)[0]).intValue() == i) {
+				if(numFeatures != 0) {
+					intervalFeatureFrequenciesList.add(new IntervalFeatureFrequency(start, end, ((BigInteger)objectList.get(j)[0]).intValue()
+							,((BigInteger)objectList.get(j)[1]).intValue() 
+							,((BigInteger)objectList.get(j)[1]).floatValue() / numFeatures / maxNormValue));
+				}else {	// no features for this chromosome
+					intervalFeatureFrequenciesList.add(new IntervalFeatureFrequency(start, end, ((BigInteger)objectList.get(j)[0]).intValue()
+							,((BigInteger)objectList.get(j)[1]).intValue() 
+							,0));
+				}
+				j++;
+			}else {
+				intervalFeatureFrequenciesList.add(new IntervalFeatureFrequency(start, end, i, 0, 0.0f));
+			}
+			System.out.println(intervalFeatureFrequenciesList.get(i).getStart()+":"+intervalFeatureFrequenciesList.get(i).getEnd()+":"+intervalFeatureFrequenciesList.get(i).getInterval()+":"+ intervalFeatureFrequenciesList.get(i).getAbsolute()+":"+intervalFeatureFrequenciesList.get(i).getValue());
+			
+			start += interval;
+			end += interval;
+		}
+		
+		return intervalFeatureFrequenciesList;
+	}
 	
+
 	protected List<IntervalFeatureFrequency> getIntervalFeatureFrequencies(Region region , int interval, List<Object[]> objectList) {
 		
 		int numIntervals = (region.getEnd()-region.getStart())/interval +1;

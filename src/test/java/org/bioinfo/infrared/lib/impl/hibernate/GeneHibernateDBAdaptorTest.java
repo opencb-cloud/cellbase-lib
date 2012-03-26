@@ -19,7 +19,7 @@ public class GeneHibernateDBAdaptorTest {
 	private DBAdaptorFactory dbAdaptorFact = new HibernateDBAdaptorFactory();
 	private GeneDBAdaptor geneDBAdaptor;
 	private long startExecTime;
-	private String species = "hsa";
+	private String species = "mmu";
 	
 	@Before
 	public void beforeTestStart() {
@@ -29,7 +29,7 @@ public class GeneHibernateDBAdaptorTest {
 
 	@After
 	public void afterTestStart() {
-		dbAdaptorFact.close();
+//		dbAdaptorFact.close();
 	}
 	/*
 	@Test
