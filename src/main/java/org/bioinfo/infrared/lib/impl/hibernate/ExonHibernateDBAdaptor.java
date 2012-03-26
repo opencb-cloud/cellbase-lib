@@ -346,7 +346,9 @@ class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDBAdaptor
 		List<Exon> Exons = getAllByEnsemblIdList(ensemblIdList);
 		GenomeSequenceHibernateDBAdaptor da = new GenomeSequenceHibernateDBAdaptor(this.getSessionFactory());
 		for(Exon exon: Exons) {
-			sequence.add(da.getByRegion(exon.getChromosome(),exon.getStart(),exon.getEnd(), strand).getSequence());
+			if(exon != null) {
+				sequence.add(da.getByRegion(exon.getChromosome(), exon.getStart(), exon.getEnd(), strand).getSequence());				
+			}
 		}
 		return sequence;
 	}
