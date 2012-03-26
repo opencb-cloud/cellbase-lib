@@ -21,7 +21,7 @@ import org.hibernate.criterion.Restrictions;
 
 class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdaptor {
 
-	
+
 	public MirnaHibernateDBAdaptor(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
@@ -196,25 +196,24 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<MirnaTarget> getAllMiRnaTargetsByGeneName(String geneName) {
-		
+
 		GeneHibernateDBAdaptor adaptor = new GeneHibernateDBAdaptor(this.getSessionFactory());
 		List<Gene> genes = adaptor.getAllByXref(geneName);
 
 		List<String> ensemblId = new ArrayList<String>();
 		for (Gene gene : genes) {
-			ensemblId.add(gene.getStableId());
+			if(gene != null) {
+				ensemblId.add(gene.getStableId());				
+			}
 		}
 
-	
-		 Criteria criteria = this.openSession().createCriteria(MirnaTarget.class).createCriteria("gene");
-		
+		Criteria criteria = this.openSession().createCriteria(MirnaTarget.class).createCriteria("gene");
 		if (ensemblId.size() > 0){
 			criteria.add(Restrictions.in("stableId", ensemblId));
 			return (List<MirnaTarget>) executeAndClose(criteria);
 		}
-		
+
 		return new ArrayList<MirnaTarget>();
-		
 	}
 
 	@Override
@@ -273,7 +272,7 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 
 
 
-	
+
 	@Override
 	public List<Object> getAllAnnotation() {
 		return this.getAllAnnotationBySourceList(null);
@@ -296,14 +295,14 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 		return (List<Object>) executeAndClose(querySQL);
 	}
 
-	
-	
-	
+
+
+
 	@Override
 	public List<MirnaTarget> getAllMiRnaTargetsByPosition(String chromosome, int start) {
 		return this.getAllMiRnaTargetsByRegion(chromosome, start, start);
 	}
-	
+
 	@Override
 	public List<List<MirnaTarget>> getAllMiRnaTargetsByRegionList(List<Region> regionList) {
 		List<List<MirnaTarget>> result = new ArrayList<List<MirnaTarget>>();
@@ -312,22 +311,22 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 		}
 		return result;
 	}
-	
+
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<MirnaTarget> getAllMiRnaTargetsByRegion(String chromosome, int start, int end) {
-//		ProjectionList projList = Projections.projectionList();
-//		projList.add(Projections.property("mirbaseId"));
-//		projList.add(Projections.groupProperty("mirbaseId"));
-		 
+		//		ProjectionList projList = Projections.projectionList();
+		//		projList.add(Projections.property("mirbaseId"));
+		//		projList.add(Projections.groupProperty("mirbaseId"));
+
 		Criteria criteria = this.openSession().createCriteria(MirnaTarget.class)
-		.add(Restrictions.ge("end", start))
-		.add(Restrictions.le("start", end))
-		.addOrder(Order.asc("chromosome"));
-		
-//		criteria.setProjection(projList);
-		
+				.add(Restrictions.ge("end", start))
+				.add(Restrictions.le("start", end))
+				.addOrder(Order.asc("chromosome"));
+
+		//		criteria.setProjection(projList);
+
 		return (List<MirnaTarget>) executeAndClose(criteria);
 	}
 
@@ -337,7 +336,7 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 		return this.getAllMiRnaTargetsByRegion(region.getChromosome(), region.getStart(), region.getEnd());
 	}
 
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IntervalFeatureFrequency> getAllMirnaTargetsIntervalFrequencies(Region region, int interval) {
@@ -346,5 +345,5 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 		List<IntervalFeatureFrequency> intervalFreqsList = getIntervalFeatureFrequencies(region , interval, objectList);
 		return intervalFreqsList;
 	}
-	
+
 }
