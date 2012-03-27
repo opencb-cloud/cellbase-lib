@@ -26,7 +26,7 @@ public class HibernateDBAdaptor extends DBAdaptor{
 	//
 	//	}
 
-	protected static Map<String, Integer> cachedQuerySizes = new HashMap<String, Integer>();
+	protected static Map<String, Number> cachedQuerySizes = new HashMap<String, Number>();
 	
 	public HibernateDBAdaptor(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -81,21 +81,21 @@ public class HibernateDBAdaptor extends DBAdaptor{
 	/**
 	 * For histograms
 	 */
-	protected List<IntervalFeatureFrequency> getIntervalFeatureFrequencies(Region region , int interval, List<Object[]> objectList, int numFeatures) {
+	protected List<IntervalFeatureFrequency> getIntervalFeatureFrequencies(Region region , int interval, List<Object[]> objectList, int numFeatures, double maxSnpsInterval) {
 		
 		int numIntervals = (region.getEnd()-region.getStart())/interval +1;
 		List<IntervalFeatureFrequency> intervalFeatureFrequenciesList = new ArrayList<IntervalFeatureFrequency>(numIntervals);
 		
-		BigInteger max = new BigInteger("-1");
-		for(int i=0; i<objectList.size(); i++) {
-			if(((BigInteger)objectList.get(i)[1]).compareTo(max) > 0) {
-				max = (BigInteger)objectList.get(i)[1];
-			}
-		}
+//		BigInteger max = new BigInteger("-1");
+//		for(int i=0; i<objectList.size(); i++) {
+//			if(((BigInteger)objectList.get(i)[1]).compareTo(max) > 0) {
+//				max = (BigInteger)objectList.get(i)[1];
+//			}
+//		}
 		float maxNormValue = 1;
 		
 		if(numFeatures != 0) {
-			maxNormValue = max.floatValue() / numFeatures;			
+			maxNormValue = (float)maxSnpsInterval / numFeatures;			
 		}
 		
 		int start = region.getStart();
@@ -105,7 +105,7 @@ public class HibernateDBAdaptor extends DBAdaptor{
 				if(numFeatures != 0) {
 					intervalFeatureFrequenciesList.add(new IntervalFeatureFrequency(start, end, ((BigInteger)objectList.get(j)[0]).intValue()
 							,((BigInteger)objectList.get(j)[1]).intValue() 
-							,((BigInteger)objectList.get(j)[1]).floatValue() / numFeatures / maxNormValue));
+							, (float)Math.log10(((BigInteger)objectList.get(j)[1]).doubleValue()) / numFeatures / maxNormValue));
 				}else {	// no features for this chromosome
 					intervalFeatureFrequenciesList.add(new IntervalFeatureFrequency(start, end, ((BigInteger)objectList.get(j)[0]).intValue()
 							,((BigInteger)objectList.get(j)[1]).intValue() 
@@ -115,7 +115,7 @@ public class HibernateDBAdaptor extends DBAdaptor{
 			}else {
 				intervalFeatureFrequenciesList.add(new IntervalFeatureFrequency(start, end, i, 0, 0.0f));
 			}
-			System.out.println(intervalFeatureFrequenciesList.get(i).getStart()+":"+intervalFeatureFrequenciesList.get(i).getEnd()+":"+intervalFeatureFrequenciesList.get(i).getInterval()+":"+ intervalFeatureFrequenciesList.get(i).getAbsolute()+":"+intervalFeatureFrequenciesList.get(i).getValue());
+//			System.out.println(intervalFeatureFrequenciesList.get(i).getStart()+":"+intervalFeatureFrequenciesList.get(i).getEnd()+":"+intervalFeatureFrequenciesList.get(i).getInterval()+":"+ intervalFeatureFrequenciesList.get(i).getAbsolute()+":"+intervalFeatureFrequenciesList.get(i).getValue());
 			
 			start += interval;
 			end += interval;

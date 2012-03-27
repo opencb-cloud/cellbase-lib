@@ -465,16 +465,28 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 
 
 		int numSnps = -1;
-//		long t1 = System.currentTimeMillis();
-		if(!cachedQuerySizes.containsKey(species.toUpperCase()+".NUM.SNP."+region.getChromosome().toUpperCase())) {
+		long t1 = System.currentTimeMillis();
+		if(!cachedQuerySizes.containsKey(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase())) {
 			sqlquery = this.openSession().createSQLQuery("select count(*) from snp where chromosome= '"+region.getChromosome()+"' ");
 			List<BigInteger> integerList =  (List<BigInteger>) executeAndClose(sqlquery);
-			cachedQuerySizes.put(species.toUpperCase()+".NUM.SNP."+region.getChromosome().toUpperCase(), integerList.get(0).intValue());
+			cachedQuerySizes.put(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase(), integerList.get(0).intValue());
 		}
-		numSnps = cachedQuerySizes.get(species.toUpperCase()+".NUM.SNP."+region.getChromosome().toUpperCase());
+		numSnps = (Integer) cachedQuerySizes.get(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase());
 //		System.out.println("num snps: "+numSnps+", time: "+(System.currentTimeMillis()-t1));
 
-		List<IntervalFeatureFrequency> intervalFreqsList = getIntervalFeatureFrequencies(region , interval, objectList, numSnps);
+		t1 = System.currentTimeMillis();
+		double maxSnpsInterval = -1;
+		if(!cachedQuerySizes.containsKey(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase()+".INTERVAL."+interval)) {
+			sqlquery = this.openSession().createSQLQuery("select (cr.start - 1) DIV "+interval+" as inter, LOG(count(*)) as t from snp cr where cr.chromosome= '"+region.getChromosome()+"' and cr.start <= "+Integer.MAX_VALUE+" and cr.end >= 1 group by inter order by t DESC limit 1 ");
+			List<Object[]> integerList =  (List<Object[]>) executeAndClose(sqlquery);
+			System.out.println(">>"+integerList.get(0)[1]);
+			maxSnpsInterval = ((Double)integerList.get(0)[1]).doubleValue();
+			cachedQuerySizes.put(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase()+".INTERVAL."+interval, maxSnpsInterval);
+		}
+		maxSnpsInterval  =(Double) cachedQuerySizes.get(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase()+".INTERVAL."+interval);
+		System.out.println("max num snps per interval: "+maxSnpsInterval+", time: "+(System.currentTimeMillis()-t1));
+		
+		List<IntervalFeatureFrequency> intervalFreqsList = getIntervalFeatureFrequencies(region , interval, objectList, numSnps, maxSnpsInterval);
 		return intervalFreqsList;
 	}
 
