@@ -105,7 +105,7 @@ public class HibernateDBAdaptor extends DBAdaptor{
 				if(numFeatures != 0) {
 					intervalFeatureFrequenciesList.add(new IntervalFeatureFrequency(start, end, ((BigInteger)objectList.get(j)[0]).intValue()
 							,((BigInteger)objectList.get(j)[1]).intValue() 
-							, (float)Math.log10(((BigInteger)objectList.get(j)[1]).doubleValue()) / numFeatures / maxNormValue));
+							, (float)Math.log(((BigInteger)objectList.get(j)[1]).doubleValue()) / numFeatures / maxNormValue));
 				}else {	// no features for this chromosome
 					intervalFeatureFrequenciesList.add(new IntervalFeatureFrequency(start, end, ((BigInteger)objectList.get(j)[0]).intValue()
 							,((BigInteger)objectList.get(j)[1]).intValue() 
