@@ -35,7 +35,7 @@ public class ExonHibernateDBAdaptorTest {
 
 	@After
 	public void afterTestStart() {
-		dbAdaptorFact.close();
+//		dbAdaptorFact.close();
 	}
 
 

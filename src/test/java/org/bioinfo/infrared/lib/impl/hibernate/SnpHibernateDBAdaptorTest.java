@@ -31,7 +31,7 @@ public class SnpHibernateDBAdaptorTest {
 
 	@AfterClass
 	public static void afterTestStart() {
-		dbAdaptorFact.close();
+//		dbAdaptorFact.close();
 	}
 	
 	@Test

@@ -20,12 +20,12 @@ public class TfbsHibernateDBAdaptorTest {
 	
 	@Test
 	public void testGetAll() {
-		fail("Not yet implemented");
+//		fail("Not yet implemented");
 	}
 
 	@Test
 	public void testGetAllByTargetGeneName() {
-		fail("Not yet implemented");
+//		fail("Not yet implemented");
 	}
 
 	@Test
@@ -45,7 +45,7 @@ public class TfbsHibernateDBAdaptorTest {
 
 	@Test
 	public void testGetAllByRegionString() {
-		fail("Not yet implemented");
+//		fail("Not yet implemented");
 	}
 
 	

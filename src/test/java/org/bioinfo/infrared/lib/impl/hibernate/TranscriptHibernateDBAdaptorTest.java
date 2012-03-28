@@ -31,7 +31,7 @@ public class TranscriptHibernateDBAdaptorTest {
 
 	@After
 	public void afterTestStart() {
-		dbAdaptorFact.close();
+//		dbAdaptorFact.close();
 	}
 
 
