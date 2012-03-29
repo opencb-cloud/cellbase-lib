@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.GenomeSequence;
+import org.bioinfo.infrared.core.cellbase.GenomeSequenceId;
 import org.bioinfo.infrared.lib.api.GenomeSequenceDBAdaptor;
-import org.bioinfo.infrared.lib.common.GenomeSequenceFeature;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -33,7 +33,7 @@ class GenomeSequenceHibernateDBAdaptor extends HibernateDBAdaptor implements Gen
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public GenomeSequenceFeature getByRegion(String chromosome, int start, int end) {
+	public GenomeSequence getByRegion(String chromosome, int start, int end) {
 		Query query = this.openSession().createQuery("from GenomeSequence where chromosome = :chromosome and chunk >= :start and chunk <= :end")
 					.setParameter("chromosome", chromosome.trim())
 					.setParameter("start", String.valueOf(getChunk(start)))
@@ -45,7 +45,7 @@ class GenomeSequenceHibernateDBAdaptor extends HibernateDBAdaptor implements Gen
 		for(GenomeSequence genomeSequence: genomeSequenceList) {
 			sb.append(genomeSequence.getSequence());
 		}
-		return new GenomeSequenceFeature(chromosome, start - 1, end - 1, sb.toString().substring(getOffset(start), getOffset(start) + (end-start) + 1));
+		return new GenomeSequence(new GenomeSequenceId(chromosome, getChunk(start)), start - 1, end - 1, sb.toString().substring(getOffset(start), getOffset(start) + (end-start) + 1));
 	}
 	
 	
@@ -69,19 +69,19 @@ class GenomeSequenceHibernateDBAdaptor extends HibernateDBAdaptor implements Gen
 	}
 	
 	@Override
-	public GenomeSequenceFeature getByRegion(String chromosome, int start, int end, int strand) {
-		GenomeSequenceFeature genomeSequenceFeature = this.getByRegion(chromosome, start, end);
+	public GenomeSequence getByRegion(String chromosome, int start, int end, int strand) {
+		GenomeSequence genomeSequence = this.getByRegion(chromosome, start, end);
 		
 		if (strand == -1){
-			genomeSequenceFeature.setSequence(getRevComp(genomeSequenceFeature.getSequence()));
+			genomeSequence.setSequence(getRevComp(genomeSequence.getSequence()));
 		}
 		
-		return genomeSequenceFeature;
+		return genomeSequence;
 	}
 	
 	@Override
-	public List<GenomeSequenceFeature> getByRegionList(List<Region> regions, int strand){
-		List<GenomeSequenceFeature> result = new ArrayList<GenomeSequenceFeature>(regions.size());
+	public List<GenomeSequence> getByRegionList(List<Region> regions, int strand){
+		List<GenomeSequence> result = new ArrayList<GenomeSequence>(regions.size());
 		for(Region region: regions) {
 			result.add(getByRegion(region.getChromosome(), region.getStart(), region.getEnd(), strand));
 		}
@@ -89,8 +89,8 @@ class GenomeSequenceHibernateDBAdaptor extends HibernateDBAdaptor implements Gen
 	}
 	
 	@Override
-	public List<GenomeSequenceFeature> getByRegionList(List<Region> regions){
-		List<GenomeSequenceFeature> result = new ArrayList<GenomeSequenceFeature>(regions.size());
+	public List<GenomeSequence> getByRegionList(List<Region> regions){
+		List<GenomeSequence> result = new ArrayList<GenomeSequence>(regions.size());
 		for(Region region: regions) {
 			result.add(getByRegion(region.getChromosome(), region.getStart(), region.getEnd(), 1));
 		}

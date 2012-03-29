@@ -10,12 +10,12 @@ import java.util.Set;
 
 import org.bioinfo.infrared.core.cellbase.ConsequenceType;
 import org.bioinfo.infrared.core.cellbase.FeatureMap;
+import org.bioinfo.infrared.core.cellbase.GenomeSequence;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.lib.api.GenomeSequenceDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomicVariantEffectDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.common.DNASequenceUtils;
-import org.bioinfo.infrared.lib.common.GenomeSequenceFeature;
 import org.bioinfo.infrared.lib.common.GenomicVariant;
 import org.bioinfo.infrared.lib.common.GenomicVariantConsequenceType;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
@@ -420,7 +420,8 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 		String alternativeAllele = variant.getAlternative();
 
 		int codonPosition = -1;
-		GenomeSequenceFeature sequence = null;
+//		GenomeSequenceFeature sequence = null;
+		GenomeSequence sequence = null;
 		
 		if (featureMap.getStrand().equals("-1")) {
 			codonPosition = (featureMap.getEnd()-variant.getPosition()+1+Integer.parseInt(featureMap.getExonPhase()))%3;

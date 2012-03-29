@@ -51,7 +51,7 @@ public class StringWriter {
 
 
 	public static String serialize(GenomeSequence genomeSequence){
-		return new StringBuilder().append(genomeSequence.getId().getChromosome()).append("\t").append(genomeSequence.getId().getChunk()).append("\t").append(genomeSequence.getStart()).append("\t").append(genomeSequence.getEnd()).append(genomeSequence.getSequence()).toString();
+		return new StringBuilder().append(genomeSequence.getId().getChromosome()).append("\t").append(genomeSequence.getStart()).append("\t").append(genomeSequence.getEnd()).append("\t").append(genomeSequence.getSequence()).toString();
 	}
 
 	public static String serialize(Snp snp){

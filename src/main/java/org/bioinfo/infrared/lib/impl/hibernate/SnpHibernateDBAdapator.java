@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.ConsequenceType;
+import org.bioinfo.infrared.core.cellbase.Metainfo;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
@@ -473,27 +474,56 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 
 		int numSnps = -1;
 		long t1 = System.currentTimeMillis();
-		if(!cachedQuerySizes.containsKey(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase())) {
+		
+		String value = getDatabaseQueryCache(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase());
+		if(value == null || value.equals("")) {
 			sqlquery = this.openSession().createSQLQuery("select count(*) from snp where chromosome= '"+region.getChromosome()+"' ");
 			List<BigInteger> integerList =  (List<BigInteger>) executeAndClose(sqlquery);
-			cachedQuerySizes.put(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase(), integerList.get(0).intValue());
+			putDatabaseQueryCache(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase(), ""+integerList.get(0).intValue());
+			value = ""+integerList.get(0).intValue();
 		}
-		numSnps = (Integer) cachedQuerySizes.get(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase());
-		System.out.println("num snps: "+numSnps+", time: "+(System.currentTimeMillis()-t1));
+		numSnps = Integer.parseInt(value);
+		System.out.println("num snps db cached: "+numSnps+", species: "+species+", time: "+(System.currentTimeMillis()-t1));
 
 		t1 = System.currentTimeMillis();
-		double maxSnpsInterval = -1;
-		if(!cachedQuerySizes.containsKey(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase()+".INTERVAL."+interval)) {
+		double maxSnpsInterval = 1;
+		value = getDatabaseQueryCache(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase()+".INTERVAL."+interval);
+		if(value == null || value.equals("")) {
 			sqlquery = this.openSession().createSQLQuery("select (cr.start - 1) DIV "+interval+" as inter, LOG(count(*)) as t from snp cr where cr.chromosome= '"+region.getChromosome()+"' and cr.start <= "+Integer.MAX_VALUE+" and cr.end >= 1 group by inter order by t DESC limit 1 ");
 			List<Object[]> integerList =  (List<Object[]>) executeAndClose(sqlquery);
-			System.out.println(">>Cached: "+integerList.get(0)[1]+", interval: "+interval);
-			maxSnpsInterval = ((Double)integerList.get(0)[1]).doubleValue();
-			cachedQuerySizes.put(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase()+".INTERVAL."+interval, maxSnpsInterval);
+			if(integerList != null && integerList.size() > 0) {
+				System.out.println(">>Cached: "+integerList.get(0)[1]+", interval: "+interval);
+				maxSnpsInterval = ((Double)integerList.get(0)[1]).doubleValue();				
+			}
+			putDatabaseQueryCache(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase()+".INTERVAL."+interval, ""+maxSnpsInterval);
+			value = ""+maxSnpsInterval;
 		}
-		maxSnpsInterval  =(Double) cachedQuerySizes.get(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase()+".INTERVAL."+interval);
-		System.out.println("max num snps per interval: "+maxSnpsInterval+", time: "+(System.currentTimeMillis()-t1));
+		maxSnpsInterval = Double.parseDouble(value);
+		System.out.println("max num snps db cached per interval: "+maxSnpsInterval+", species: "+species+", time: "+(System.currentTimeMillis()-t1));
 		
-		List<IntervalFeatureFrequency> intervalFreqsList = getIntervalFeatureFrequencies(region , interval, objectList);//, numSnps, maxSnpsInterval);
+//		if(!cachedQuerySizes.containsKey(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase())) {
+//			sqlquery = this.openSession().createSQLQuery("select count(*) from snp where chromosome= '"+region.getChromosome()+"' ");
+//			List<BigInteger> integerList =  (List<BigInteger>) executeAndClose(sqlquery);
+//			cachedQuerySizes.put(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase(), integerList.get(0).intValue());
+//		}
+//		numSnps = (Integer) cachedQuerySizes.get(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase());
+//		System.out.println("num snps: "+numSnps+", time: "+(System.currentTimeMillis()-t1));
+
+//		t1 = System.currentTimeMillis();
+//		double maxSnpsInterval = 1;
+//		if(!cachedQuerySizes.containsKey(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase()+".INTERVAL."+interval)) {
+//			sqlquery = this.openSession().createSQLQuery("select (cr.start - 1) DIV "+interval+" as inter, LOG(count(*)) as t from snp cr where cr.chromosome= '"+region.getChromosome()+"' and cr.start <= "+Integer.MAX_VALUE+" and cr.end >= 1 group by inter order by t DESC limit 1 ");
+//			List<Object[]> integerList =  (List<Object[]>) executeAndClose(sqlquery);
+//			if(integerList != null && integerList.size() > 0) {
+//				System.out.println(">>Cached: "+integerList.get(0)[1]+", interval: "+interval);
+//				maxSnpsInterval = ((Double)integerList.get(0)[1]).doubleValue();				
+//			}
+//			cachedQuerySizes.put(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase()+".INTERVAL."+interval, maxSnpsInterval);
+//		}
+//		maxSnpsInterval  =(Double) cachedQuerySizes.get(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase()+".INTERVAL."+interval);
+//		System.out.println("max num snps per interval: "+maxSnpsInterval+", time: "+(System.currentTimeMillis()-t1));
+		
+		List<IntervalFeatureFrequency> intervalFreqsList = getIntervalFeatureFrequencies(region , interval, objectList, numSnps, maxSnpsInterval);//, numSnps, maxSnpsInterval);
 		return intervalFreqsList;
 	}
 

@@ -6,13 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bioinfo.infrared.core.cellbase.Metainfo;
 import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Region;
 import org.bioinfo.infrared.lib.impl.DBAdaptor;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
+import org.hibernate.criterion.Restrictions;
 
 public class HibernateDBAdaptor extends DBAdaptor{
 
@@ -76,6 +79,29 @@ public class HibernateDBAdaptor extends DBAdaptor{
 		if(session != null && session.isOpen()) {
 			session.close();
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected String getDatabaseQueryCache(String key) {
+		Criteria criteria = this.openSession().createCriteria(Metainfo.class)
+				.add(Restrictions.eq("property", key));
+		List<Metainfo> metaInfoList = (List<Metainfo>) executeAndClose(criteria);
+		if(metaInfoList != null && metaInfoList.size() > 0) {
+			return metaInfoList.get(0).getValue();
+		}else {
+			return null;
+		}
+	}
+	
+	protected void putDatabaseQueryCache(String key, String value) {
+//		Query query = this.openSession().createQuery("insert into Metainfo (property, value) values ('"+key+"', '"+value+"')");
+//		query.executeUpdate();
+		
+		Session session = this.openSession();
+		session.beginTransaction();
+		session.save( new Metainfo( key, value ) );
+		session.getTransaction().commit();
+		session.close();
 	}
 	
 	/**
