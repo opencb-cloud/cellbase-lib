@@ -10,6 +10,8 @@ import java.util.Map;
 import org.bioinfo.infrared.core.cellbase.ConsequenceType;
 import org.bioinfo.infrared.core.cellbase.Metainfo;
 import org.bioinfo.infrared.core.cellbase.Snp;
+import org.bioinfo.infrared.core.cellbase.SnpPhenotypeAnnotation;
+import org.bioinfo.infrared.core.cellbase.SnpPopulationFrequency;
 import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
@@ -602,4 +604,83 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<SnpPhenotypeAnnotation> getAllSnpPhenotypeAnnotation(String name) {
+		Criteria criteria = this.openSession().createCriteria(SnpPhenotypeAnnotation.class)
+				.createCriteria("snp")
+				.add(Restrictions.eq("name", name));
+		return (List<SnpPhenotypeAnnotation>) executeAndClose(criteria);
+	}
+
+	@Override
+	public List<List<SnpPhenotypeAnnotation>> getAllSnpPhenotypeAnnotationList(List<String> nameList) {
+		List<List<SnpPhenotypeAnnotation>> result = new ArrayList<List<SnpPhenotypeAnnotation>>(nameList.size());
+		for(String name: nameList) {
+			result.add(this.getAllSnpPhenotypeAnnotation(name));
+		}
+		return result;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<SnpPopulationFrequency> getAllSnpPopulationFrequency(String name) {
+		Criteria criteria = this.openSession().createCriteria(SnpPopulationFrequency.class)
+				.createCriteria("snp")
+				.add(Restrictions.eq("name", name));
+		return (List<SnpPopulationFrequency>) executeAndClose(criteria);
+	}
+
+	@Override
+	public List<List<SnpPopulationFrequency>> getAllSnpPopulationFrequencyList(List<String> nameList) {
+		List<List<SnpPopulationFrequency>> result = new ArrayList<List<SnpPopulationFrequency>>(nameList.size());
+		for(String name: nameList) {
+			result.add(this.getAllSnpPopulationFrequency(name));
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<SnpToTranscript> getAllSnpToTranscript(String name) {
+		Criteria criteria = this.openSession().createCriteria(SnpToTranscript.class)
+				.setFetchMode("transcript", FetchMode.JOIN)
+				.setFetchMode("consequenceType", FetchMode.JOIN)
+				.createCriteria("snp")
+				.add(Restrictions.eq("name", name));
+		return (List<SnpToTranscript>) executeAndClose(criteria);
+	}
+
+	@Override
+	public List<List<SnpToTranscript>> getAllSnpToTranscriptList(List<String> nameList) {
+			List<List<SnpToTranscript>> result = new ArrayList<List<SnpToTranscript>>(nameList.size());
+			for(String name: nameList) {
+				result.add(this.getAllSnpToTranscript(name));
+			}
+			return result;
+	}
+
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ConsequenceType> getAllConsequenceType(String name) {
+		Criteria criteria = this.openSession().createCriteria(ConsequenceType.class)
+				.createCriteria("snpToTranscripts")
+				.createCriteria("snp")
+				.add(Restrictions.eq("name", name));
+		return (List<ConsequenceType>) executeAndClose(criteria);
+	}
+
+	@Override
+	public List<List<ConsequenceType>> getAllConsequenceTypeList(List<String> nameList) {
+			List<List<ConsequenceType>> result = new ArrayList<List<ConsequenceType>>(nameList.size());
+			for(String name: nameList) {
+				result.add(this.getAllConsequenceType(name));
+			}
+			return result;
+	}
+	
 }

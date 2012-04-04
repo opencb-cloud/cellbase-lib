@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.ConsequenceType;
 import org.bioinfo.infrared.core.cellbase.Snp;
+import org.bioinfo.infrared.core.cellbase.SnpPhenotypeAnnotation;
+import org.bioinfo.infrared.core.cellbase.SnpPopulationFrequency;
 import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
 import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Position;
@@ -91,6 +93,18 @@ public interface SnpDBAdaptor extends FeatureDBAdaptor {
 
 	public void writeAllFilteredByConsequenceType(String consequence, String outfile);
 	
+	
+	public List<SnpPhenotypeAnnotation> getAllSnpPhenotypeAnnotation(String name);
+	public List<List<SnpPhenotypeAnnotation>> getAllSnpPhenotypeAnnotationList(List<String> nameList);
+	
+	public List<SnpPopulationFrequency> getAllSnpPopulationFrequency(String name);
+	public List<List<SnpPopulationFrequency>> getAllSnpPopulationFrequencyList(List<String> nameList);
+	
+	public List<SnpToTranscript> getAllSnpToTranscript(String name);
+	public List<List<SnpToTranscript>> getAllSnpToTranscriptList(List<String> nameList);
+	
+	public List<ConsequenceType> getAllConsequenceType(String name);
+	public List<List<ConsequenceType>> getAllConsequenceTypeList(List<String> nameList);
 	
 	public List<IntervalFeatureFrequency> getAllIntervalFrequencies(Region region, int interval);
 	

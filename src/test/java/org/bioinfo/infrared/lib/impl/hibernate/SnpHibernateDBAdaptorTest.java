@@ -7,6 +7,9 @@ import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.ConsequenceType;
 import org.bioinfo.infrared.core.cellbase.Snp;
+import org.bioinfo.infrared.core.cellbase.SnpPhenotypeAnnotation;
+import org.bioinfo.infrared.core.cellbase.SnpPopulationFrequency;
+import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.common.Region;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
@@ -189,6 +192,37 @@ public class SnpHibernateDBAdaptorTest {
 		List<String> ids = snpDBAdaptor.getAllIds();
 		System.out.println(ids.size());
 	}
+	
+	
+	@Test
+	public void getSnpPhenotypeAnnotation() {
+		List<List<SnpPhenotypeAnnotation>> snpPhenotypeList = snpDBAdaptor.getAllSnpPhenotypeAnnotationList(Arrays.asList("rs3934834","rs307355"));
+		System.out.println(snpPhenotypeList.get(0).size());
+		System.out.println(snpPhenotypeList.get(1).size());
+	}
+	
+	@Test
+	public void getSnpPupulationFrequency() {
+		List<List<SnpPopulationFrequency>> snpPopulationList = snpDBAdaptor.getAllSnpPopulationFrequencyList(Arrays.asList("rs3934834","rs307355"));
+		System.out.println(snpPopulationList.get(0).size());
+		System.out.println(snpPopulationList.get(1).size());
+	}
+	
+	@Test
+	public void getSnpToTranscript() {
+		List<List<SnpToTranscript>> snpToTranscriptList = snpDBAdaptor.getAllSnpToTranscriptList(Arrays.asList("rs3934834","rs307355"));
+		System.out.println(snpToTranscriptList.get(0).size());
+		System.out.println(snpToTranscriptList.get(1).size());
+	}
+	
+	
+	@Test
+	public void getAllConsequenceType() {
+		List<List<ConsequenceType>> snpToTranscriptList = snpDBAdaptor.getAllConsequenceTypeList(Arrays.asList("rs3934834","rs307355"));
+		System.out.println(snpToTranscriptList.get(0).size());
+		System.out.println(snpToTranscriptList.get(1).size());
+	}
+	
 	
 	private void printSNPListList(String title, List<List<Snp>> snpsList, int numResults) {
 		List<Snp> completeList = new ArrayList<Snp>();
