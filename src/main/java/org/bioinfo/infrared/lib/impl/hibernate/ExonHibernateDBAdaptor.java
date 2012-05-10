@@ -323,7 +323,9 @@ class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDBAdaptor
 		List<Region> regions = new ArrayList<Region>(ensemblIdList.size());
 		List<Exon> Exons = getAllByEnsemblIdList(ensemblIdList);
 		for(Exon exon: Exons) {
-			regions.add(new Region(exon.getChromosome(),exon.getStart(),exon.getEnd()));
+			if(null != exon){
+				regions.add(new Region(exon.getChromosome(),exon.getStart(),exon.getEnd()));
+			}
 		}
 		return regions;
 	}
