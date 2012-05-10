@@ -323,9 +323,7 @@ class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDBAdaptor
 		List<Region> regions = new ArrayList<Region>(ensemblIdList.size());
 		List<Exon> Exons = getAllByEnsemblIdList(ensemblIdList);
 		for(Exon exon: Exons) {
-			if(null != exon){
-				regions.add(new Region(exon.getChromosome(),exon.getStart(),exon.getEnd()));
-			}
+			regions.add(new Region(exon.getChromosome(),exon.getStart(),exon.getEnd()));
 		}
 		return regions;
 	}
@@ -348,9 +346,7 @@ class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDBAdaptor
 		List<Exon> Exons = getAllByEnsemblIdList(ensemblIdList);
 		GenomeSequenceHibernateDBAdaptor da = new GenomeSequenceHibernateDBAdaptor(this.getSessionFactory());
 		for(Exon exon: Exons) {
-			if(exon != null) {
-				sequence.add(da.getByRegion(exon.getChromosome(), exon.getStart(), exon.getEnd(), strand).getSequence());				
-			}
+			sequence.add(da.getByRegion(exon.getChromosome(), exon.getStart(), exon.getEnd(), strand).getSequence());				
 		}
 		return sequence;
 	}

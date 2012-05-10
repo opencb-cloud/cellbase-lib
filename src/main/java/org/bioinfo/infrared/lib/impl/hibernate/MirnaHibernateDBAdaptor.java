@@ -202,9 +202,7 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 
 		List<String> ensemblId = new ArrayList<String>();
 		for (Gene gene : genes) {
-			if(gene != null) {
-				ensemblId.add(gene.getStableId());				
-			}
+			ensemblId.add(gene.getStableId());				
 		}
 
 		Criteria criteria = this.openSession().createCriteria(MirnaTarget.class).createCriteria("gene");

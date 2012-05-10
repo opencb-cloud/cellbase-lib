@@ -365,9 +365,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		List<Region> regions = new ArrayList<Region>(ensemblIdList.size());
 		List<Transcript> transcripts = getAllByEnsemblIdList(ensemblIdList);
 		for(Transcript transcript: transcripts) {
-			if (null != transcript){
-				regions.add(new Region(transcript.getChromosome(),transcript.getStart(),transcript.getEnd()));
-			}
+			regions.add(new Region(transcript.getChromosome(),transcript.getStart(),transcript.getEnd()));
 		}
 		return regions;
 	}
@@ -387,9 +385,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		List<Transcript> transcripts = getAllByEnsemblIdList(ensemblIdList);
 		GenomeSequenceHibernateDBAdaptor da = new GenomeSequenceHibernateDBAdaptor(this.getSessionFactory());
 		for(Transcript transcript: transcripts) {
-			if (null != transcript){
-				sequence.add(da.getByRegion(transcript.getChromosome(),transcript.getStart(),transcript.getEnd()).getSequence());
-			}
+			sequence.add(da.getByRegion(transcript.getChromosome(),transcript.getStart(),transcript.getEnd()).getSequence());
 		}
 		return sequence;
 	}
