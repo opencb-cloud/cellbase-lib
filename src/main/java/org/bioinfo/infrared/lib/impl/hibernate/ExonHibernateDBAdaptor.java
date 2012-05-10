@@ -97,7 +97,7 @@ class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDBAdaptor
 		Session session = this.openSession();
 		List<Exon> exons = new ArrayList<Exon>(ensemblIds.size());
 		for(String ensemblId: ensemblIds) {
-			exons.add(this.getByEnsemblId(ensemblId,session));
+			exons.add(getByEnsemblId(ensemblId, session));
 		}
 		session.close();
 		return exons;
@@ -108,7 +108,7 @@ class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDBAdaptor
 	@Override
 	public List<Exon> getByEnsemblTranscriptId(String transcriptId) {
 		Session session =  this.openSession();
-		List<Exon> exons = this.getByEnsemblTranscriptId(transcriptId,session);
+		List<Exon> exons = getByEnsemblTranscriptId(transcriptId,session);
 		session.close();
 		return exons;
 	}
@@ -346,7 +346,11 @@ class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDBAdaptor
 		List<Exon> Exons = getAllByEnsemblIdList(ensemblIdList);
 		GenomeSequenceHibernateDBAdaptor da = new GenomeSequenceHibernateDBAdaptor(this.getSessionFactory());
 		for(Exon exon: Exons) {
-			sequence.add(da.getByRegion(exon.getChromosome(), exon.getStart(), exon.getEnd(), strand).getSequence());				
+			if(exon != null) {
+				sequence.add(da.getByRegion(exon.getChromosome(), exon.getStart(), exon.getEnd(), strand).getSequence());								
+			}else {
+				sequence.add(null);
+			}
 		}
 		return sequence;
 	}

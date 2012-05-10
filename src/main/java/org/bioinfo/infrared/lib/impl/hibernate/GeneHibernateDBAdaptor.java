@@ -380,7 +380,7 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		}
 		
 		Criteria criteria = this.openSession().createCriteria(Gene.class)
-		.add(Restrictions.in("stableId", keys.toArray())); // keys can't be empty due to hibernate bug
+					.add(Restrictions.in("stableId", keys.toArray())); // keys can't be empty due to hibernate bug
 		return (List<Gene>) executeAndClose(criteria);
 	}
 	

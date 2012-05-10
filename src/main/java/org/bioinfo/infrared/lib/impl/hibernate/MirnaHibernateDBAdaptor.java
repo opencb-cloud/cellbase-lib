@@ -188,7 +188,7 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 	public List<List<MirnaTarget>> getAllMiRnaTargetsByMiRnaGeneList(List<String> miRnaGeneNameList) {
 		List<List<MirnaTarget>> mirnaTargetsList = new ArrayList<List<MirnaTarget>>();
 		for(String miRnaGeneName: miRnaGeneNameList) {
-			mirnaTargetsList.add(this.getAllMiRnaTargetsByMiRnaGene(miRnaGeneName));
+			mirnaTargetsList.add(getAllMiRnaTargetsByMiRnaGene(miRnaGeneName));
 		}
 		return mirnaTargetsList;
 	}
@@ -202,7 +202,9 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 
 		List<String> ensemblId = new ArrayList<String>();
 		for (Gene gene : genes) {
-			ensemblId.add(gene.getStableId());				
+			if(gene != null) {
+				ensemblId.add(gene.getStableId());								
+			}
 		}
 
 		Criteria criteria = this.openSession().createCriteria(MirnaTarget.class).createCriteria("gene");

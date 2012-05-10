@@ -227,18 +227,21 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 	@Override
 	public List<Transcript> getAllByPosition(Position position) {
-		if(null == position){
-			return null;	
-		}else{
+		if(position != null){
 			return getAllByPosition(position.getChromosome(), position.getPosition());	
+		}else{
+			return null;	
 		}
 	}
 
 	@Override
 	public List<List<Transcript>> getAllByPositionList(List<Position> positions) {
-		List<List<Transcript>> transcripts = new ArrayList<List<Transcript>>(positions.size());
-		for(Position position: positions) {
-			transcripts.add(getAllByPosition(position));
+		List<List<Transcript>> transcripts = null;
+		if(positions != null) {
+			transcripts = new ArrayList<List<Transcript>>(positions.size());
+			for(Position position: positions) {
+				transcripts.add(getAllByPosition(position));
+			}			
 		}
 		return transcripts;
 	}
