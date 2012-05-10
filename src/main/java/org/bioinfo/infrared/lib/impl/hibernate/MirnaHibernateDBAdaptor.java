@@ -323,6 +323,7 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 		Criteria criteria = this.openSession().createCriteria(MirnaTarget.class)
 				.add(Restrictions.ge("end", start))
 				.add(Restrictions.le("start", end))
+				.add(Restrictions.eq("chromosome", chromosome))
 				.addOrder(Order.asc("chromosome"));
 
 		//		criteria.setProjection(projList);

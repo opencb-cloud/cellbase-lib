@@ -86,8 +86,10 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 	@Override
 	public List<RegulatoryRegion> getAllByRegion(String chromosome, int start, int end, List<String> typeList) {
 		List<RegulatoryRegion> regulatoryRegionsList = new ArrayList<RegulatoryRegion>();
-		for(String type: typeList) {
-			regulatoryRegionsList.addAll(getAllByRegion(new Region(chromosome, start, end), type));
+		if(typeList != null){
+			for(String type: typeList) {
+				regulatoryRegionsList.addAll(getAllByRegion(new Region(chromosome, start, end), type));
+			}
 		}
 		return regulatoryRegionsList;
 	}
