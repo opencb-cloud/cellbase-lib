@@ -58,7 +58,7 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		@SuppressWarnings("unchecked")
 		List<Gene> genes =  (List<Gene>)query.list();
 		
-		System.out.println(genes.toString());
+//		System.out.println(genes.toString());
 //		System.out.println(gene.getTranscripts());
 		return null;
 	}
