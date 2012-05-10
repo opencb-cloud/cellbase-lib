@@ -276,7 +276,11 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 
 	@Override
 	public List<Snp> getAllByPosition(Position position) {
-		return this.getAllByRegion(position.getChromosome(), position.getPosition(), position.getPosition());
+		if(null == position){
+			return null;	
+		}else{
+			return this.getAllByRegion(position.getChromosome(), position.getPosition(), position.getPosition());
+		}
 	}
 
 	@Override
