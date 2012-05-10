@@ -362,6 +362,11 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	public List<Gene> getAllByTf(String idTf) {
 		TfbsHibernateDBAdaptor tfbsAdaptor = new TfbsHibernateDBAdaptor(this.getSessionFactory());
 		List<Tfbs> result = tfbsAdaptor.getAllByTfGeneName(idTf);
+		
+		// Return empty gene list because result list is empty
+		if(result.isEmpty()){
+			return new ArrayList<Gene>();
+		}
 		HashSet<String> keys = new HashSet<String>();
 		
 		for (Tfbs tfbs : result) {
@@ -369,13 +374,13 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 //				keys.add(tfbs.getGeneByTfGeneId().getStableId());
 //			}
 //			
-			if (!keys.contains(tfbs.getGeneByTargetGeneId().getStableId())){
+			if (null != tfbs && !keys.contains(tfbs.getGeneByTargetGeneId().getStableId())){
 				keys.add(tfbs.getGeneByTargetGeneId().getStableId());
 			}
 		}
 		
 		Criteria criteria = this.openSession().createCriteria(Gene.class)
-		.add(Restrictions.in("stableId", keys.toArray()));
+		.add(Restrictions.in("stableId", keys.toArray())); // keys can't be empty due to hibernate bug
 		return (List<Gene>) executeAndClose(criteria);
 	}
 	

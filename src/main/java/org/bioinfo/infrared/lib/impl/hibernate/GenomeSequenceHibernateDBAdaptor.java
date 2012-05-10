@@ -40,12 +40,19 @@ class GenomeSequenceHibernateDBAdaptor extends HibernateDBAdaptor implements Gen
 					.setParameter("end", String.valueOf(getChunk(end)));
 		
 		List<GenomeSequence> genomeSequenceList = (List<GenomeSequence>) executeAndClose(query);
-		
 		StringBuilder sb = new StringBuilder();
 		for(GenomeSequence genomeSequence: genomeSequenceList) {
 			sb.append(genomeSequence.getSequence());
 		}
-		return new GenomeSequence(new GenomeSequenceId(chromosome, getChunk(start)), start - 1, end - 1, sb.toString().substring(getOffset(start), getOffset(start) + (end-start) + 1));
+		
+		int startStr = getOffset(start);
+		int endStr = getOffset(start) + (end-start) + 1;
+		String subStr = "";
+		if(sb.toString().length() > 0 && sb.toString().length() > endStr){
+			subStr = sb.toString().substring(startStr, endStr);
+		}
+		
+		return new GenomeSequence(new GenomeSequenceId(chromosome, getChunk(start)), start - 1, end - 1, subStr);
 	}
 	
 	
