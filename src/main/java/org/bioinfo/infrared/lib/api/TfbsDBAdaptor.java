@@ -11,13 +11,9 @@ import org.bioinfo.infrared.lib.common.Region;
 public interface TfbsDBAdaptor extends FeatureDBAdaptor {
 
 	
-	public List<Tfbs> getAllByTfGeneName(String tfGeneName);
+	public List<Tfbs> getAllByTfGeneName(String tfGeneName, String celltype, int start, int end);
 
-	public List<List<Tfbs>> getAllByTfGeneNameList(List<String> tfGeneNameList);
-	
-	public List<Tfbs> getAllByTfGeneNameByCelltype(String tfGeneName, String Celltype);
-
-	public List<List<Tfbs>> getAllByTfGeneNameListByCelltype(List<String> tfGeneNameList, String celltype);
+	public List<List<Tfbs>> getAllByTfGeneNameList(List<String> tfGeneNameList, String celltype, int start, int end);
 
 	public List<Tfbs> getAllByTargetGeneName(String targetGeneName);
 

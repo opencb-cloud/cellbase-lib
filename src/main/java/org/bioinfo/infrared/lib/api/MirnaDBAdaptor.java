@@ -44,13 +44,13 @@ public interface MirnaDBAdaptor {
 
 	
 	
-	public List<MirnaTarget> getAllMiRnaTargetsByMiRnaMature(String id);
+	public List<MirnaTarget> getAllMiRnaTargetsByMiRnaMature(String id, List<String> source);
 
-	public List<List<MirnaTarget>> getAllMiRnaTargetsByMiRnaMatureList(List<String> ids);
+	public List<List<MirnaTarget>> getAllMiRnaTargetsByMiRnaMatureList(List<String> ids, List<String> source);
 	
-	public List<MirnaTarget> getAllMiRnaTargetsByMiRnaGene(String geneName);
+	public List<MirnaTarget> getAllMiRnaTargetsByMiRnaGene(String geneName, List<String> source);
 	
-	public List<List<MirnaTarget>> getAllMiRnaTargetsByMiRnaGeneList(List<String> geneNames);
+	public List<List<MirnaTarget>> getAllMiRnaTargetsByMiRnaGeneList(List<String> geneNames, List<String> sources);
 	
 	public List<MirnaTarget> getAllMiRnaTargetsByGeneName(String geneName);
 	

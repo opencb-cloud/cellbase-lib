@@ -16,8 +16,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Restrictions;
 
 class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor {
@@ -58,80 +56,60 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 		return null;
 	}
 
+
 	/** GET TFBSs **/
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Tfbs> getAllByTfGeneName(String id) {
+	public List<Tfbs> getAllByTfGeneName(String id, String cellType, int start, int end) {
 		XRefsHibernateDBAdaptor xrefsAdaptor = new XRefsHibernateDBAdaptor(this.getSessionFactory());
-
+		// Search for the id in XREF
 		List<Xref> xrefs = xrefsAdaptor.getByDBNameList(id, Arrays.asList("ensembl_gene"));
 		List<String> ensemblIds = new ArrayList<String>();
 		for (Xref xref : xrefs) {
 			ensemblIds.add(xref.getDisplayId());
 		}
-
 		Query query = null;
+		
 		String Hquery = "from Tfbs tf left join fetch tf.geneByTfGeneId p where p.stableId in :keys";
-		//  
+		// If we DON'T have found anything in XREF we search for the TF Ensembl name at the TFBS table
 		if (ensemblIds.size() == 0){
-			// No he conseguido nada desde xRef asi que intento buscarlo con el External name
-			Hquery = "from Tfbs tf left join fetch tf.geneByTfGeneId p where tf.tfName = :key";
+			Hquery = "from Tfbs tf left join fetch tf.geneByTfGeneId p where tf.tfName = :keys";
+		}
+
+		if (cellType != null) {
+			Hquery += " and tf.cellType = :ct";
+		}
+		
+		if (start != Integer.MIN_VALUE && end != Integer.MIN_VALUE) {
+			Hquery += " and tf.relativeStart >= :start and tf.relativeEnd <= :end";
 		}
 		
 		query = this.openSession().createQuery(Hquery);
 		query.setParameterList("keys", ensemblIds);
+
+		if (cellType != null) {
+			query.setParameter("ct", cellType);				
+		}
+		
+		if (start != Integer.MIN_VALUE && end != Integer.MIN_VALUE) {
+			query.setParameter("start", start);
+			query.setParameter("end", end);
+		}
 		
 		return (List<Tfbs>) executeAndClose(query);
 	}
 
 	@Override
-	public List<List<Tfbs>> getAllByTfGeneNameList(List<String> ids) {
-		List<List<Tfbs>> results = new ArrayList<List<Tfbs>>();
-		for (String id : ids) {
-			results.add(this.getAllByTfGeneName(id));
-		}
-		return results;
-	}
-	
-	/** GET TFBSs by CellType **/
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Tfbs> getAllByTfGeneNameByCelltype(String tfGeneName, String cellType) {
-		XRefsHibernateDBAdaptor xrefsAdaptor = new XRefsHibernateDBAdaptor(this.getSessionFactory());
-
-		List<Xref> xrefs = xrefsAdaptor.getByDBNameList(tfGeneName, Arrays.asList("ensembl_gene"));
-		List<String> ensemblIds = new ArrayList<String>();
-		for (Xref xref : xrefs) {
-			ensemblIds.add(xref.getDisplayId());
-		}
-
-		Query query = null;
-		String Hquery = "from Tfbs tf left join fetch tf.geneByTfGeneId p where p.stableId in :keys and tf.cellType = :ct";
-		//  
-		if (ensemblIds.size() == 0){
-			// No he conseguido nada desde xRef asi que intento buscarlo con el External name
-			Hquery = "from Tfbs tf left join fetch tf.geneByTfGeneId p where tf.tfName = :key and tf.cellType = :ct";
-		}
-		
-		query = this.openSession().createQuery(Hquery);
-		query.setParameterList("keys", ensemblIds);
-		query.setParameter("ct", cellType);			
-		
-		return (List<Tfbs>) executeAndClose(query);
-	}
-
-	@Override
-	public List<List<Tfbs>> getAllByTfGeneNameListByCelltype(List<String> tfGeneNameList, String celltype) {
+	public List<List<Tfbs>> getAllByTfGeneNameList(List<String> ids, String cellType, int start, int end) {
 		List<List<Tfbs>> results = null;
-		if(tfGeneNameList != null) {
-			results = new ArrayList<List<Tfbs>>(tfGeneNameList.size());
-			for (String tf : tfGeneNameList) {
-				results.add(this.getAllByTfGeneNameByCelltype(tf, celltype));
+		if(ids != null) {
+			results = new ArrayList<List<Tfbs>>(ids.size());
+			for (String tf : ids) {
+				results.add(this.getAllByTfGeneName(tf, cellType, start, end));
 			}
 		}
 		return results;
 	}
-	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -345,7 +323,6 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 		List<IntervalFeatureFrequency> intervalFreqsList = getIntervalFeatureFrequencies(region , interval, objectList);
 		return intervalFreqsList;
 	}
-
 
 	
 }

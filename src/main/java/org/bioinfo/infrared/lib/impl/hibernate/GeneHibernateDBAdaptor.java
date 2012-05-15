@@ -361,7 +361,7 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@Override
 	public List<Gene> getAllByTf(String idTf) {
 		TfbsHibernateDBAdaptor tfbsAdaptor = new TfbsHibernateDBAdaptor(this.getSessionFactory());
-		List<Tfbs> result = tfbsAdaptor.getAllByTfGeneName(idTf);
+		List<Tfbs> result = tfbsAdaptor.getAllByTfGeneName(idTf, null, Integer.MIN_VALUE, Integer.MIN_VALUE);
 		HashSet<String> keys = new HashSet<String>();
 		
 		for (Tfbs tfbs : result) {

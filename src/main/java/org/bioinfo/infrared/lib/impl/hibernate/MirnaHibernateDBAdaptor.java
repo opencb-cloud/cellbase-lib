@@ -12,6 +12,7 @@ import org.bioinfo.infrared.lib.api.MirnaDBAdaptor;
 import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
@@ -156,39 +157,64 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<MirnaTarget> getAllMiRnaTargetsByMiRnaMature(String miRnaMature) {
+	public List<MirnaTarget> getAllMiRnaTargetsByMiRnaMature(String miRnaMature, List<String> source) {
 		Criteria criteria = this.openSession().createCriteria(MirnaTarget.class)
 				.add(Restrictions.eq("mirbaseId", miRnaMature));
+		
+		if (source != null && !source.get(0).equals("")){
+			criteria.add(Restrictions.in("source", source));
+		}
 		return (List<MirnaTarget>) executeAndClose(criteria);
 	}
 
 	@Override
-	public List<List<MirnaTarget>> getAllMiRnaTargetsByMiRnaMatureList(List<String> miRnaMatureList) {
+	public List<List<MirnaTarget>> getAllMiRnaTargetsByMiRnaMatureList(List<String> miRnaMatureList, List<String> source) {
 		List<List<MirnaTarget>> mirnaTargetsList = new ArrayList<List<MirnaTarget>>();
 		for(String id: miRnaMatureList) {
-			mirnaTargetsList.add(this.getAllMiRnaTargetsByMiRnaMature(id));
+			mirnaTargetsList.add(this.getAllMiRnaTargetsByMiRnaMature(id, source));
 		}
 		return mirnaTargetsList;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<MirnaTarget> getAllMiRnaTargetsByMiRnaGene(String miRnaGeneName) {
-		Criterion mirbaseAcc = Restrictions.eq("mirbaseAcc", miRnaGeneName.trim());
-		Criterion mirbaseId = Restrictions.eq("mirbaseId", miRnaGeneName.trim());
-		LogicalExpression logExpression = Restrictions.or(mirbaseAcc, mirbaseId);
-		Criteria criteria = this.openSession().createCriteria(MirnaTarget.class)
-				.createCriteria("mirnaMature")
-				.createCriteria("mirnaGeneToMatures")
-				.createCriteria("mirnaGene").add(logExpression);
-		return (List<MirnaTarget>) executeAndClose(criteria);
+	public List<MirnaTarget> getAllMiRnaTargetsByMiRnaGene(String miRnaGeneName, List<String> sources) {
+//		System.out.println("sources:"+ sources);
+//		Criterion mirbaseAcc = Restrictions.eq("mirbaseAcc", miRnaGeneName.trim());
+//		Criterion mirbaseId = Restrictions.eq("mirbaseId", miRnaGeneName.trim());
+//		LogicalExpression logExpression = Restrictions.or(mirbaseAcc, mirbaseId);
+//		Criteria criteria = this.openSession().createCriteria(MirnaTarget.class)
+//				.createCriteria("mirnaMature")
+//				.createCriteria("mirnaGeneToMatures")
+//				.createCriteria("mirnaGene");
+//				
+//		if (sources != null && !sources.get(0).equals("")){
+//			criteria.add(Restrictions.in("source", sources));
+//		}
+//		criteria.add(logExpression);
+//		return (List<MirnaTarget>) executeAndClose(criteria);
+		
+//		SQLQuery querySQL;
+//		Query query = this.openSession().createQuery("select g from Gene g, Cytoband k where k.chromosome= :chromosome and k.cytoband = :cytoband and k.chromosome=g.chromosome and g.end>=k.start and g.start<=k.end").setParameter("chromosome", chromosome).setParameter("cytoband", cytoband);
+		String query = "select mt from MirnaTarget mt, MirnaMature mm, MirnaGeneToMature g2m, MirnaGene mg where mt.mirnaMature=mm.mirnaMatureId and mm.mirnaMatureId=g2m.mirnaMature and g2m.mirnaGene=mg.mirnaGeneId and (mg.mirbaseAcc= :ID or mg.mirbaseId= :ID)";
+		Query hql = null;
+		
+		if(sources != null && !sources.get(0).equals("")) {
+			query += " and mt.source in :source";
+			hql = this.openSession().createQuery(query)
+					.setParameterList("source", sources);
+		}else {
+			hql = this.openSession().createQuery(query);
+		}
+		hql.setParameter("ID", miRnaGeneName);
+		return (List<MirnaTarget>) executeAndClose(hql);
 	}
 
 	@Override
-	public List<List<MirnaTarget>> getAllMiRnaTargetsByMiRnaGeneList(List<String> miRnaGeneNameList) {
+	public List<List<MirnaTarget>> getAllMiRnaTargetsByMiRnaGeneList(List<String> miRnaGeneNameList, List<String> sources) {
 		List<List<MirnaTarget>> mirnaTargetsList = new ArrayList<List<MirnaTarget>>();
 		for(String miRnaGeneName: miRnaGeneNameList) {
-			mirnaTargetsList.add(this.getAllMiRnaTargetsByMiRnaGene(miRnaGeneName));
+			mirnaTargetsList.add(this.getAllMiRnaTargetsByMiRnaGene(miRnaGeneName, sources));
 		}
 		return mirnaTargetsList;
 	}

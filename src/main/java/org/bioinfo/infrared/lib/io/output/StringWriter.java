@@ -99,6 +99,7 @@ public class StringWriter {
 
 
 	public static String serialize(MirnaTarget object) {
+		System.out.println("holaaaaaaaaaaaaaa");
 		return new StringBuilder().append(object.getMirbaseId()).append("\t")
 				.append(object.getGeneTargetName()).append("\t")
 				.append(object.getChromosome()).append("\t")
@@ -295,6 +296,7 @@ public class StringWriter {
 			}
 
 			if (object instanceof List){
+				System.out.println("en StringWriter: List");
 				sb.append(StringWriter.serialize((List)object));
 				continue;
 			}
