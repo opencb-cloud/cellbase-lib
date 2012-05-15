@@ -11,7 +11,7 @@ public interface GeneDBAdaptor extends FeatureDBAdaptor {
 
 	
 	@Override
-	public List<Gene> getAll();
+	public List<Gene> getAll(List<String> biotype, Boolean id);
 	
 	
 	public List<String> getAllEnsemblIds();

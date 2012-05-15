@@ -35,7 +35,7 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Gene> getAll() {
+	public List<Gene> getAll(List<String> biotype, Boolean id) {
 //		Criteria criteria = this.getSession().createCriteria(Gene.class);
 //		return (List<Gene>) execute(criteria);
 		Query query = this.openSession().createQuery("select g from Gene g").setCacheable(true);
