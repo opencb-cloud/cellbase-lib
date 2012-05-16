@@ -34,12 +34,28 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	}
 	
 	@Override
+	public List<? extends Object> getAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Gene> getAll(List<String> biotype, Boolean id) {
-//		Criteria criteria = this.getSession().createCriteria(Gene.class);
-//		return (List<Gene>) execute(criteria);
-		Query query = this.openSession().createQuery("select g from Gene g").setCacheable(true);
-		return (List<Gene>) executeAndClose(query);
+		
+		String query = "select g from Gene g";
+		if (biotype != null && !biotype.get(0).equals("") && !id){
+			query += " where g.biotype in :biotype";
+		}else if(id && (biotype == null || biotype.get(0).equals(""))){
+			query = "select g.stableId from Gene g";
+			
+		}else if(id && biotype != null && !biotype.get(0).equals("")){
+			query = "select g.stableId from Gene g where g.biotype in :biotype";
+		}
+		Query hql = this.openSession().createQuery(query)
+				.setParameterList("biotype", biotype)
+				.setCacheable(true);
+		return (List<Gene>) executeAndClose(hql);
 	}
 
 	@Override
