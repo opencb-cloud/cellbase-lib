@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.bioinfo.infrared.core.cellbase.Protein;
 import org.bioinfo.infrared.core.cellbase.Pwm;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Xref;
@@ -15,8 +16,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Restrictions;
 
 class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor {
@@ -30,6 +29,7 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 		super(sessionFactory, species, version);
 	}
 
+	/** ALL IDs **/
 	@Override
 	public List<? extends Object> getAll() {
 		// TODO Auto-generated method stub
@@ -42,40 +42,71 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 		return null;
 	}
 
+	/** TF INFO **/
+	@Override
+	public List<Protein> getTfInfoByTfGeneName(String tfGeneName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<List<Protein>> getTfInfoByTfGeneNameList(
+			List<String> tfGeneNameList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
-
+	/** GET TFBSs **/
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Tfbs> getAllByTfGeneName(String id) {
+	public List<Tfbs> getAllByTfGeneName(String id, String cellType, int start, int end) {
 		XRefsHibernateDBAdaptor xrefsAdaptor = new XRefsHibernateDBAdaptor(this.getSessionFactory());
-
+		// Search for the id in XREF
 		List<Xref> xrefs = xrefsAdaptor.getByDBNameList(id, Arrays.asList("ensembl_gene"));
 		List<String> ensemblIds = new ArrayList<String>();
 		for (Xref xref : xrefs) {
 			ensemblIds.add(xref.getDisplayId());
 		}
-
-		if (ensemblIds.size() == 0){
-			/** No he conseguido nada desde xRef asi que intento buscarlo con el External name **/
-			String Hquery = "from Tfbs tf left join fetch tf.geneByTfGeneId p where tf.tfName = :key";
-		    Query query = this.openSession().createQuery(Hquery);
-		    query.setParameter("key", id);
-			return query.list();
-		}
+		Query query = null;
 		
 		String Hquery = "from Tfbs tf left join fetch tf.geneByTfGeneId p where p.stableId in :keys";
-		Query query = this.openSession().createQuery(Hquery);
+		// If we DON'T have found anything in XREF we search for the TF Ensembl name at the TFBS table
+		if (ensemblIds.size() == 0){
+			Hquery = "from Tfbs tf left join fetch tf.geneByTfGeneId p where tf.tfName = :keys";
+		}
+
+		if (cellType != null) {
+			Hquery += " and tf.cellType = :ct";
+		}
+		
+		if (start != Integer.MIN_VALUE && end != Integer.MIN_VALUE) {
+			Hquery += " and tf.relativeStart >= :start and tf.relativeEnd <= :end";
+		}
+		
+		query = this.openSession().createQuery(Hquery);
 		query.setParameterList("keys", ensemblIds);
 
-		return query.list();//(List<Tfbs>) executeAndClose(query); ////
+		if (cellType != null) {
+			query.setParameter("ct", cellType);				
+		}
+		
+		if (start != Integer.MIN_VALUE && end != Integer.MIN_VALUE) {
+			query.setParameter("start", start);
+			query.setParameter("end", end);
+		}
+		
+		return (List<Tfbs>) executeAndClose(query);
 	}
 
 	@Override
-	public List<List<Tfbs>> getAllByTfGeneNameList(List<String> ids) {
-		List<List<Tfbs>> results = new ArrayList<List<Tfbs>>();
-		for (String id : ids) {
-			results.add(this.getAllByTfGeneName(id));
+	public List<List<Tfbs>> getAllByTfGeneNameList(List<String> ids, String cellType, int start, int end) {
+		List<List<Tfbs>> results = null;
+		if(ids != null) {
+			results = new ArrayList<List<Tfbs>>(ids.size());
+			for (String tf : ids) {
+				results.add(this.getAllByTfGeneName(tf, cellType, start, end));
+			}
 		}
 		return results;
 	}
@@ -293,5 +324,5 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 		return intervalFreqsList;
 	}
 
-
+	
 }

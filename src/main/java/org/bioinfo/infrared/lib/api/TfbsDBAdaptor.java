@@ -2,6 +2,7 @@ package org.bioinfo.infrared.lib.api;
 
 import java.util.List;
 
+import org.bioinfo.infrared.core.cellbase.Protein;
 import org.bioinfo.infrared.core.cellbase.Pwm;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
@@ -10,13 +11,18 @@ import org.bioinfo.infrared.lib.common.Region;
 public interface TfbsDBAdaptor extends FeatureDBAdaptor {
 
 	
-	public List<Tfbs> getAllByTfGeneName(String tfGeneName);
+	public List<Tfbs> getAllByTfGeneName(String tfGeneName, String celltype, int start, int end);
 
-	public List<List<Tfbs>> getAllByTfGeneNameList(List<String> tfGeneNameList);
+	public List<List<Tfbs>> getAllByTfGeneNameList(List<String> tfGeneNameList, String celltype, int start, int end);
 
 	public List<Tfbs> getAllByTargetGeneName(String targetGeneName);
 
 	public List<List<Tfbs>> getAllByTargetGeneNameList(List<String> targetGeneNameList);
+	
+	
+	public List<Protein> getTfInfoByTfGeneName(String tfGeneName);
+	
+	public List<List<Protein>> getTfInfoByTfGeneNameList(List<String> tfGeneNameList);
 
 
 	public List<Pwm> getAllPwmByTfGeneName(String tfName);

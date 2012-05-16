@@ -34,12 +34,28 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	}
 	
 	@Override
+	public List<? extends Object> getAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
 	@SuppressWarnings("unchecked")
-	public List<Gene> getAll() {
-//		Criteria criteria = this.getSession().createCriteria(Gene.class);
-//		return (List<Gene>) execute(criteria);
-		Query query = this.openSession().createQuery("select g from Gene g").setCacheable(true);
-		return (List<Gene>) executeAndClose(query);
+	public List<Gene> getAll(List<String> biotype, Boolean id) {
+		
+		String query = "select g from Gene g";
+		if (biotype != null && !biotype.get(0).equals("") && !id){
+			query += " where g.biotype in :biotype";
+		}else if(id && (biotype == null || biotype.get(0).equals(""))){
+			query = "select g.stableId from Gene g";
+			
+		}else if(id && biotype != null && !biotype.get(0).equals("")){
+			query = "select g.stableId from Gene g where g.biotype in :biotype";
+		}
+		Query hql = this.openSession().createQuery(query)
+				.setParameterList("biotype", biotype)
+				.setCacheable(true);
+		return (List<Gene>) executeAndClose(hql);
 	}
 
 	@Override
@@ -361,12 +377,7 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@Override
 	public List<Gene> getAllByTf(String idTf) {
 		TfbsHibernateDBAdaptor tfbsAdaptor = new TfbsHibernateDBAdaptor(this.getSessionFactory());
-		List<Tfbs> result = tfbsAdaptor.getAllByTfGeneName(idTf);
-		
-		// Return empty gene list because result list is empty
-		if(result.isEmpty()){
-			return new ArrayList<Gene>();
-		}
+		List<Tfbs> result = tfbsAdaptor.getAllByTfGeneName(idTf, null, Integer.MIN_VALUE, Integer.MIN_VALUE);
 		HashSet<String> keys = new HashSet<String>();
 		
 		for (Tfbs tfbs : result) {

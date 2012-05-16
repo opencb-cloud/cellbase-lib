@@ -10,10 +10,10 @@ import org.bioinfo.infrared.lib.common.Region;
 public interface GeneDBAdaptor extends FeatureDBAdaptor {
 
 	
-	@Override
-	public List<Gene> getAll();
+//	@Override
 	
-	
+	public List<Gene> getAll(List<String> biotype, Boolean id);
+		
 	public List<String> getAllEnsemblIds();
 
 	public Gene getByEnsemblId(String ensemblId);
