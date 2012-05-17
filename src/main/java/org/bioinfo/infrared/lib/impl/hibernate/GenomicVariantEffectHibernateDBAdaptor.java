@@ -420,7 +420,6 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 	private String[] getSequenceByCodon(GenomicVariant variant, FeatureMap featureMap) {
 		String[] codons = new String[2];
 		String alternativeAllele = variant.getAlternative();
-
 		int codonPosition = -1;
 		//		GenomeSequenceFeature sequence = null;
 		GenomeSequence sequence = null;
@@ -467,6 +466,7 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 		String referenceSequence = sequence.getSequence();
 
 		char[] referenceSequenceCharArray = referenceSequence.toCharArray();
+
 		referenceSequenceCharArray[codonPosition - 1] = alternativeAllele.toCharArray()[0]; 
 
 		String alternative = new String();

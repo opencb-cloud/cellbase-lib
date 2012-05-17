@@ -45,16 +45,15 @@ class GenomeSequenceHibernateDBAdaptor extends HibernateDBAdaptor implements Gen
 			sb.append(genomeSequence.getSequence());
 		}
 		
-//	return new GenomeSequence(new GenomeSequenceId(chromosome, getChunk(start)), start - 1, end - 1, 
-//		sb.toString().substring(getOffset(start), getOffset(start) + (end-start) + 1));
+//	return new GenomeSequence(new GenomeSequenceId(chromosome, getChunk(start)), start, end, sb.toString().substring(getOffset(start), getOffset(start) + (end-start) + 1));
 		int startStr = getOffset(start);
 		int endStr = getOffset(start) + (end-start) + 1;
 		String subStr = "";
-		if(sb.toString().length() > 0 && sb.toString().length() > endStr){
+		if(sb.toString().length() > 0 && sb.toString().length() >= endStr){
 			subStr = sb.toString().substring(startStr, endStr);
 		}
 		
-		return new GenomeSequence(new GenomeSequenceId(chromosome, getChunk(start)), start - 1, end - 1, subStr);
+		return new GenomeSequence(new GenomeSequenceId(chromosome, getChunk(start)), start, end, subStr);
 	}
 	
 	
