@@ -122,7 +122,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	@Override
 	public List<Transcript> getAllByName(String name) {
 		Session session = this.openSession();
-		List<Transcript> transcripts = this.getAllByName(name, session);
+		List<Transcript> transcripts = getAllByName(name, session);
 		session.close();
 		return transcripts;
 	}
@@ -131,27 +131,27 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	private List<Transcript> getAllByName(String name, Session session) {
 		
 		/**WARNING Xref no estan rellenos para todas las especies **/
-		/*Query query = session.createQuery("select t from Xref as x1, Xref as x2, TranscriptToXref as tx1, TranscriptToXref as tx2, Dbname as db, Transcript as t where" +
+		Query query = session.createQuery("select distinct(t) from Xref as x1, Xref as x2, TranscriptToXref as tx1, TranscriptToXref as tx2, Dbname as db, Transcript as t where" +
 			 " x1.displayId= :name and" +
 			 " x1.xrefId=tx1.xref and" +
 			 " tx1.transcript=tx2.transcript and" +
 			 " tx2.xref=x2.xrefId and" +
 			 " x2.dbname=db.dbnameId and" +
 			 " db.name='ensembl_transcript' and" +
-			 " x2.displayId=t.stableId").setParameter("name",name.trim());
-		return (List<Transcript>)query.list();*/
+			 " x2.displayId=t.stableId").setParameter("name", name.trim());
+		return (List<Transcript>)query.list();
 		
 
-		Criterion stable = Restrictions.eq("stableId", name);
-	    Criterion nameCrit = Restrictions.eq("externalName", name);
-		LogicalExpression orExp = Restrictions.or(stable,nameCrit);
-		
-		Criteria criteria = this.openSession().createCriteria(Transcript.class)
-		.addOrder(Order.asc("chromosome"))
-		.addOrder(Order.asc("start"))
-		.createCriteria("gene").add(orExp);
-		 
-		 return (List<Transcript>)criteria.list();
+//		Criterion stable = Restrictions.eq("stableId", name);
+//	    Criterion nameCrit = Restrictions.eq("externalName", name);
+//		LogicalExpression orExp = Restrictions.or(stable,nameCrit);
+//		
+//		Criteria criteria = this.openSession().createCriteria(Transcript.class)
+//		.addOrder(Order.asc("chromosome"))
+//		.addOrder(Order.asc("start"))
+//		.createCriteria("gene").add(orExp);
+//		 
+//		 return (List<Transcript>)criteria.list();
 	}
 
 	@Override
@@ -159,7 +159,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		Session session = this.openSession();
 		List<List<Transcript>> transcripts =  new ArrayList<List<Transcript>>(names.size());
 		for(String name: names){
-			transcripts.add(this.getAllByName(name,session));
+			transcripts.add(this.getAllByName(name, session));
 		}
 		session.close();
 		return transcripts;

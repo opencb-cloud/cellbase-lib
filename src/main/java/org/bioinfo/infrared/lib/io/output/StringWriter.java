@@ -51,7 +51,19 @@ public class StringWriter {
 
 
 	public static String serialize(GenomeSequence genomeSequence){
-		return new StringBuilder().append(genomeSequence.getId().getChromosome()).append("\t").append(genomeSequence.getStart()).append("\t").append(genomeSequence.getEnd()).append("\t").append(genomeSequence.getSequence()).toString();
+//		return new StringBuilder().append(genomeSequence.getId().getChromosome()).append("\t").append(genomeSequence.getStart()).append("\t").append(genomeSequence.getEnd()).append("\t").append(genomeSequence.getSequence()).toString();
+		StringBuilder sb = new StringBuilder().append(">").append(genomeSequence.getId().getChromosome()).append("_").append(genomeSequence.getStart()).append("_").append(genomeSequence.getEnd()).append("\n");
+		int length = genomeSequence.getSequence().length();
+		int cont=0;
+		while(cont <= length) {
+			if(cont+60 > length) {
+				sb.append(genomeSequence.getSequence().substring(cont, length));				
+			}else {
+				sb.append(genomeSequence.getSequence().substring(cont, cont+60)).append("\n");
+			}
+			cont += 60;
+		}
+		return sb.toString();
 	}
 
 	public static String serialize(Snp snp){

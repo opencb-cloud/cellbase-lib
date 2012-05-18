@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
+import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.core.cellbase.Xref;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
@@ -16,6 +17,7 @@ import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.LogicalExpression;
@@ -123,33 +125,52 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	
 	@Override
 	public List<Gene> getAllByEnsemblIdList(List<String> ensemblIds) {
-		List<Gene> result = new ArrayList<Gene>();
+		List<Gene> result = new ArrayList<Gene>(ensemblIds.size());
 		for (String id : ensemblIds) {
 			result.add(this.getByEnsemblId(id));
 		}
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<Gene> getAllByName(String name) {
-		Criteria criteria = this.openSession().createCriteria(Gene.class);
-		Criterion ensemblId = Restrictions.eq("stableId", name.trim());
-		Criterion nameCriterio = Restrictions.eq("externalName", name.trim());
-		LogicalExpression log = Restrictions.or(ensemblId, nameCriterio);
-		criteria.addOrder(Order.asc("chromosome"));
-		criteria.addOrder(Order.asc("start"));
-		criteria.add(log);
-		return (List<Gene>)executeAndClose(criteria);
+		Session session = this.openSession();
+		List<Gene> genes = getAllByName(name, session);
+		session.close();
+		return genes;
+		
+//		Criterion ensemblId = Restrictions.eq("stableId", name.trim());
+//		Criterion nameCriterio = Restrictions.eq("externalName", name.trim());
+//		LogicalExpression log = Restrictions.or(ensemblId, nameCriterio);
+//		Criteria criteria = this.openSession().createCriteria(Gene.class);
+//		criteria.addOrder(Order.asc("chromosome"));
+//		criteria.addOrder(Order.asc("start"));
+//		criteria.add(log);
+//		return (List<Gene>)executeAndClose(criteria);
 	}
 	
+	@SuppressWarnings("unchecked")
+	private List<Gene> getAllByName(String name, Session session) {
+		/**WARNING Xref no estan rellenos para todas las especies **/
+		Query query = session.createQuery("select distinct(g) from Xref as x1, Xref as x2, TranscriptToXref as tx1, TranscriptToXref as tx2, Dbname as db, Gene as g where" +
+			 " x1.displayId= :name and" +
+			 " x1.xrefId=tx1.xref and" +
+			 " tx1.transcript=tx2.transcript and" +
+			 " tx2.xref=x2.xrefId and" +
+			 " x2.dbname=db.dbnameId and" +
+			 " db.name='ensembl_gene' and" +
+			 " x2.displayId=g.stableId").setParameter("name", name.trim()); //and t.gene=g.geneId" , Transcript as t
+		return (List<Gene>)query.list();
+	}
 
 	@Override
 	public List<List<Gene>> getAllByNameList(List<String> names) {
-		List<List<Gene>> genes = new ArrayList<List<Gene>>();
+		Session session = this.openSession();
+		List<List<Gene>> genes = new ArrayList<List<Gene>>(names.size());
 		for (String name : names) {
-			genes.add(this.getAllByName(name));
+			genes.add(this.getAllByName(name, session));
 		}
+		session.close();
 		return genes;
 	}
 	
