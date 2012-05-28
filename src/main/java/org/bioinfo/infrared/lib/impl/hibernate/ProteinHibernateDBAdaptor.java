@@ -6,11 +6,13 @@ import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.Protein;
 import org.bioinfo.infrared.core.cellbase.ProteinFeature;
+import org.bioinfo.infrared.core.cellbase.ProteinInteraction;
 import org.bioinfo.infrared.core.cellbase.ProteinSequence;
 import org.bioinfo.infrared.core.cellbase.ProteinXref;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
@@ -215,6 +217,47 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 	}
 
 	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProteinInteraction> getAllProteinInteractionsByProteinName(String name) {
+		
+		Query query = this.openSession().createQuery("select distinct(pi) from Protein p, ProteinXref px, ProteinInteraction pi " +
+				"where px.name = :NAME and (px.protein = pi.proteinByProteinId1 or px.protein = pi.proteinByProteinId2) and px.protein=p.proteinId").setParameter("NAME", name);
+		List<ProteinInteraction> proteinInteractionList = (List<ProteinInteraction>)executeAndClose(query);
+		return proteinInteractionList;
+//		Criteria criteria = this.openSession().createCriteria(Protein.class)
+//		.createCriteria("proteinXrefs")
+//		.add(Restrictions.eq("name", name));
+//		List<Protein> prots = (List<Protein>) executeAndClose(criteria);
+//		
+//		if(prots != null && prots.size() > 0) {
+//			List<Integer> protIntIds = new ArrayList<Integer>(prots.size());
+//			for(Protein p: prots) {
+//				protIntIds.add(p.getProteinId());
+//			}
+//			Criterion proteinId1 = Restrictions.in("proteinByProteinId1",protIntIds);
+//			Criterion proteinId2 = Restrictions.in("proteinByProteinId2",protIntIds);
+//			LogicalExpression log = Restrictions.or(proteinId1, proteinId2);
+//			criteria = this.openSession().createCriteria(ProteinInteraction.class)
+//					.createCriteria("protein")
+//					.add(log).setFetchMode("protein", FetchMode.JOIN);
+//		}
+////		return proteinInteractionList;
+//
+//		return (List<ProteinInteraction>)executeAndClose(criteria);
+	}
+
+	@Override
+	public List<List<ProteinInteraction>> getAllProteinInteractionsByProteinNameList(	List<String> nameList) {
+		List<List<ProteinInteraction>> proteinList = new ArrayList<List<ProteinInteraction>>(nameList.size());
+		for(String name: nameList) {
+			proteinList.add(getAllProteinInteractionsByProteinName(name));
+		}
+		return proteinList;
+	}
+	
+	
 	
 
 	@SuppressWarnings("unchecked")
@@ -278,6 +321,6 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	
 }

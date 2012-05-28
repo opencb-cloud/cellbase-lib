@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.Protein;
 import org.bioinfo.infrared.core.cellbase.ProteinFeature;
+import org.bioinfo.infrared.core.cellbase.ProteinInteraction;
 import org.bioinfo.infrared.core.cellbase.ProteinSequence;
 import org.bioinfo.infrared.core.cellbase.ProteinXref;
 
@@ -55,6 +56,11 @@ public interface ProteinDBAdaptor extends FeatureDBAdaptor {
 	public List<ProteinFeature> getAllProteinFeaturesByProteinXref(String name);
 
 	public List<List<ProteinFeature>> getAllProteinFeaturesByProteinXrefList(List<String> nameList);
+	
+	
+	public List<ProteinInteraction> getAllProteinInteractionsByProteinName(String name);
+	
+	public List<List<ProteinInteraction>> getAllProteinInteractionsByProteinNameList(List<String> nameList);
 	
 	
 	public List<ProteinXref> getAllProteinXrefsByProteinName(String name);

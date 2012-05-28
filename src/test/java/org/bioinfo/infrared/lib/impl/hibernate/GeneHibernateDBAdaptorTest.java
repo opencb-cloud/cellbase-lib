@@ -50,10 +50,9 @@ public class GeneHibernateDBAdaptorTest {
 //		System.out.println("testGetAllByTfNameList" + genes.get(0).get(0).getExternalName().toString());
 	}
 
-	@Test
 	public void testGeneHibernateDBAdaptorGetAll() {
-		List<Gene> genes = geneDBAdaptor.getAll();
-		printGeneList("testGeneHibernateDBAdaptorGetAll", genes, 5);
+//		List<Gene> genes = geneDBAdaptor.getAll(); 
+//		printGeneList("testGeneHibernateDBAdaptorGetAll", genes, 5);
 	}
 	/*
 	@Test

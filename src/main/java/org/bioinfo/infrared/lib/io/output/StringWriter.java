@@ -18,6 +18,7 @@ import org.bioinfo.infrared.core.cellbase.MirnaMature;
 import org.bioinfo.infrared.core.cellbase.MirnaTarget;
 import org.bioinfo.infrared.core.cellbase.Protein;
 import org.bioinfo.infrared.core.cellbase.ProteinFeature;
+import org.bioinfo.infrared.core.cellbase.ProteinInteraction;
 import org.bioinfo.infrared.core.cellbase.ProteinXref;
 import org.bioinfo.infrared.core.cellbase.Pwm;
 import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
@@ -180,6 +181,12 @@ public class StringWriter {
 		return join("\t", obj.getType(), ""+obj.getStart(), ""+obj.getEnd(), obj.getOriginal(), obj.getVariation(), obj.getIdentifier(), obj.getDescription());
 	}
 
+	public static String serialize(ProteinInteraction obj) {
+		return join("\t", ""+obj.getProteinByProteinId1().getPrimaryAccession(), ""+obj.getProteinByProteinId2().getPrimaryAccession(), ""+obj.getIntactId(), obj.getMultiplicity(), obj. getInteractionType(), 
+				obj.getDetectionMethod(), obj.getNegative(), obj.getCellTypeShort(), obj.getCellTypeLong(), obj.getTissueShort(), obj.getTissueLong(), obj.getHostOrganismShort(), obj.getHostOrganismLong(),
+				obj.getPubmed(), obj.getSource());
+	}
+
 	public static String serialize(ProteinXref obj) {
 		return join("\t", obj.getName(), obj.getSource());
 	}
@@ -289,6 +296,11 @@ public class StringWriter {
 
 			if (object instanceof ProteinFeature){
 				sb.append(StringWriter.serialize((ProteinFeature)object)).append("\n");
+				continue;
+			}
+			
+			if (object instanceof ProteinInteraction){
+				sb.append(StringWriter.serialize((ProteinInteraction)object)).append("\n");
 				continue;
 			}
 
