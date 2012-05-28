@@ -52,27 +52,33 @@ public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor i
 		return getByRegion(region.getChromosome(), region.getStart(), region.getEnd(), sources);
 	}
 
-
 	@SuppressWarnings("unchecked")
 	private List<FeatureMap> getFeatureMapsByRegion(String chromosome, int start, int end, List<String> sources, Session session) {
 		int chunk_start = start / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
 		int chunk_end = end / GenomicRegionFeatureHibernateDBAdaptor.FEATURE_MAP_CHUNK_SIZE;
+		System.out.println("chunk start: "+chunk_start+" --- Chunk end: "+chunk_end);
 
 		Query query;
 		if (chunk_start == chunk_end){
-			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId = :chunk_start and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome = :CHROMOSOME");
+			query = this.openSession().createQuery("select featureMap from FeatureMap as featureMap where id.chunkId = :chunk_start and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome = :CHROMOSOME");
 		}
 		else{
-			query = session.createQuery("select featureMap from FeatureMap as featureMap where id.chunkId >= :chunk_start and id.chunkId <= :end_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome= :CHROMOSOME");
+			query = this.openSession().createQuery("select featureMap from FeatureMap as featureMap where id.chunkId >= :chunk_start and id.chunkId <= :end_chunk and featureMap.start<= :endparam and featureMap.end >= :startparam and chromosome= :CHROMOSOME");
 			query.setParameter("end_chunk", chunk_end);
 		}
-		//		System.out.println("Chromsoome: " + chromosome);
-		//		System.out.println("Query: " + query.getQueryString());
+				System.out.println("Chromsoome: " + chromosome);
+				System.out.println("Query: " + query.getQueryString());
 		query.setParameter("CHROMOSOME", chromosome);
 		query.setParameter("chunk_start", chunk_start);
 		query.setParameter("startparam", start);
 		query.setParameter("endparam", end);
 		return (List<FeatureMap>)execute(query);
+	}
+
+	@Override
+	public List<FeatureMap> getFeatureMapsByRegion(Region region) {
+		System.out.println("Region: " + region.getChromosome()+":"+region.getStart()+"-"+region.getEnd());
+		return getFeatureMapsByRegion(region.getChromosome(), region.getStart(), region.getEnd(), null, null);
 	}
 
 
