@@ -8,15 +8,16 @@ import org.bioinfo.infrared.lib.common.Region;
 public interface GenomeSequenceDBAdaptor {
 
 	
-	GenomeSequence getByRegion(String chromosome, int start, int end);
+	public GenomeSequence getByRegion(String chromosome, int start, int end);
 
-	GenomeSequence getByRegion(String chromosome, int start, int end, int strand);
+	public GenomeSequence getByRegion(String chromosome, int start, int end, int strand);
 	
 
-	List<GenomeSequence> getByRegionList(List<Region> regions);
+	public List<GenomeSequence> getByRegionList(List<Region> regions);
 
-	List<GenomeSequence> getByRegionList(List<Region> regions, int strand);
+	public List<GenomeSequence> getByRegionList(List<Region> regions, int strand);
 
-	String getRevComp(String sequence);
+	public String getRevComp(String sequence);
 
+	
 }

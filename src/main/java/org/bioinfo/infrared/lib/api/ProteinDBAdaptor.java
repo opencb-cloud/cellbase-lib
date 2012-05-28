@@ -7,6 +7,8 @@ import org.bioinfo.infrared.core.cellbase.ProteinFeature;
 import org.bioinfo.infrared.core.cellbase.ProteinInteraction;
 import org.bioinfo.infrared.core.cellbase.ProteinSequence;
 import org.bioinfo.infrared.core.cellbase.ProteinXref;
+import org.bioinfo.infrared.lib.common.ProteinRegion;
+import org.bioinfo.infrared.lib.common.Region;
 
 public interface ProteinDBAdaptor extends FeatureDBAdaptor {
 
@@ -61,6 +63,11 @@ public interface ProteinDBAdaptor extends FeatureDBAdaptor {
 	public List<ProteinInteraction> getAllProteinInteractionsByProteinName(String name);
 	
 	public List<List<ProteinInteraction>> getAllProteinInteractionsByProteinNameList(List<String> nameList);
+	
+	
+	public List<ProteinRegion> getAllProteinRegionByGenomicRegion(Region region);
+	
+	public List<List<ProteinRegion>> getAllProteinRegionByGenomicRegionList(List<Region> regionList);
 	
 	
 	public List<ProteinXref> getAllProteinXrefsByProteinName(String name);

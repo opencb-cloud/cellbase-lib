@@ -10,6 +10,7 @@ import org.bioinfo.infrared.core.cellbase.ProteinInteraction;
 import org.bioinfo.infrared.core.cellbase.ProteinSequence;
 import org.bioinfo.infrared.core.cellbase.ProteinXref;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
+import org.bioinfo.infrared.lib.common.ProteinRegion;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -259,6 +260,19 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 	
 	
 	
+	@Override
+	public List<ProteinRegion> getAllProteinRegionByGenomicRegion(Region region) {
+		return null;
+	}
+	@Override
+	public List<List<ProteinRegion>> getAllProteinRegionByGenomicRegionList(List<Region> regionList) {
+		List<List<ProteinRegion>> proteinRegionList = new ArrayList<List<ProteinRegion>>(regionList.size());
+		
+		return proteinRegionList;
+	}
+	
+	
+	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -321,6 +335,5 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
 	
 }

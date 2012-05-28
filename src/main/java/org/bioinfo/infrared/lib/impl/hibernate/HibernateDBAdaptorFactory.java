@@ -201,19 +201,19 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 	}
 
 	
-	@Override
-	public GenomicRegionFeatureHibernateDBAdaptor getFeatureMapDBAdaptor(String species) {
-		return getFeatureMapDBAdaptor(species, null);
-	}
-	@Override
-	public GenomicRegionFeatureHibernateDBAdaptor getFeatureMapDBAdaptor(String species, String version) {
-		String speciesVersionPrefix = getSpeciesVersionPrefix(species,version);
-		if(!sessionFactories.containsKey(speciesVersionPrefix)){
-			SessionFactory sessionFactory  = createCellBaseSessionFactory(speciesVersionPrefix);
-			sessionFactories.put(speciesVersionPrefix, sessionFactory);
-		}
-		return (GenomicRegionFeatureHibernateDBAdaptor) new GenomicRegionFeatureHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
-	}
+//	@Override
+//	public GenomicRegionFeatureHibernateDBAdaptor getFeatureMapDBAdaptor(String species) {
+//		return getFeatureMapDBAdaptor(species, null);
+//	}
+//	@Override
+//	public GenomicRegionFeatureHibernateDBAdaptor getFeatureMapDBAdaptor(String species, String version) {
+//		String speciesVersionPrefix = getSpeciesVersionPrefix(species,version);
+//		if(!sessionFactories.containsKey(speciesVersionPrefix)){
+//			SessionFactory sessionFactory  = createCellBaseSessionFactory(speciesVersionPrefix);
+//			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+//		}
+//		return (GenomicRegionFeatureHibernateDBAdaptor) new GenomicRegionFeatureHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+//	}
 	
 	
 	@Override

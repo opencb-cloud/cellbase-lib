@@ -69,17 +69,17 @@ public class HBaseDBAdaptorFactory extends DBAdaptorFactory {
 		return null;
 	}
 	
-	@Override
-	public GenomicRegionFeatureDBAdaptor getFeatureMapDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public GenomicRegionFeatureDBAdaptor getFeatureMapDBAdaptor(String species, String version) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public GenomicRegionFeatureDBAdaptor getFeatureMapDBAdaptor(String species) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//	
+//	@Override
+//	public GenomicRegionFeatureDBAdaptor getFeatureMapDBAdaptor(String species, String version) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 	
 	@Override
 	public ProteinDBAdaptor getProteinDBAdaptor(String species) {

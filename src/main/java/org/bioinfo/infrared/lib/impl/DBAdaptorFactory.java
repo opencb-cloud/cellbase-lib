@@ -73,9 +73,9 @@ public abstract class DBAdaptorFactory {
 	public abstract ExonDBAdaptor getExonDBAdaptor(String species, String version);
 	
 
-	public abstract GenomicRegionFeatureDBAdaptor getFeatureMapDBAdaptor(String species);
-	
-	public abstract GenomicRegionFeatureDBAdaptor getFeatureMapDBAdaptor(String species, String version);
+//	public abstract GenomicRegionFeatureDBAdaptor getFeatureMapDBAdaptor(String species);
+//	
+//	public abstract GenomicRegionFeatureDBAdaptor getFeatureMapDBAdaptor(String species, String version);
 	
 	
 	public abstract GenomicVariantEffectDBAdaptor getGenomicVariantEffectDBAdaptor(String species);
