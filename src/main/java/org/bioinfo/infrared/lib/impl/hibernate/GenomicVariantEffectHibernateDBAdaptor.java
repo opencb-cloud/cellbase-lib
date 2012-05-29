@@ -135,7 +135,9 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 
 		List<GenomicVariantConsequenceType> genomicVariantConsequenceTypeList = null;
 		List<Snp> snps;
-		boolean isUTR = false;
+		
+		Map<String, Boolean> isFeatureUTR = new HashMap<String, Boolean>();
+//		boolean isUTR = false;
 
 		List<FeatureMap> featureMapList = null;
 		Criteria criteria = this.openSession().createCriteria(FeatureMap.class);
@@ -143,32 +145,33 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 			int chunkId = variant.getPosition() / FEATURE_MAP_CHUNK_SIZE;
 			//			System.out.println("getAllConsequenceTypeByVariant: "+chunkId+", chromosome: "+variant.getChromosome());
 			criteria.add(Restrictions.eq("chunkId", chunkId))
-			.add(Restrictions.eq("chromosome", variant.getChromosome()))
-			.add(Restrictions.le("start", variant.getPosition()))
-			.add(Restrictions.ge("end", variant.getPosition()));
+				.add(Restrictions.eq("chromosome", variant.getChromosome()))
+				.add(Restrictions.le("start", variant.getPosition()))
+				.add(Restrictions.ge("end", variant.getPosition()));
 			featureMapList = (List<FeatureMap>) executeAndClose(criteria);
 		}
 
 		if(featureMapList != null) {
 			genomicVariantConsequenceTypeList = new ArrayList<GenomicVariantConsequenceType>(featureMapList.size());
+			
+			// we must know if the position is UTR for EACH of the transcripts
+			isFeatureUTR.clear();
 			for(FeatureMap featureMap: featureMapList) {
 				if(featureMap.getFeatureType().equalsIgnoreCase("5_prime_utr") || featureMap.getFeatureType().equalsIgnoreCase("3_prime_utr")) {
-					isUTR = true;
-					break;
+					isFeatureUTR.put(featureMap.getTranscriptStableId(), true);
+				}else {
+					if(!isFeatureUTR.containsKey(featureMap.getTranscriptStableId())) {
+						isFeatureUTR.put(featureMap.getTranscriptStableId(), false);						
+					}
 				}
 			}
 
+			// to avoid NPE
 			if(excludeSet == null) {
 				excludeSet = new HashSet<String>();
 			}
 
 			for(FeatureMap featureMap: featureMapList) {
-				//				if(excludeSet != null && excludeSet.contains(consequenceTypeMap.get(featureMap.getFeatureType()).getSoTerm())) {
-				//				if(excludeSet != null && excludeSet.contains(consequenceTypeMap.get(featureMap.getFeatureType()).getSoTerm())) {
-				//					continue;
-				//				}
-				//				System.out.println("getAllConsequenceTypeByVariant: "+featureMap.toString());
-
 				//				if(featureMap.getFeatureType().equalsIgnoreCase("gene")) {
 				////				genomicVariantConsequenceType.add(new GenomicVariantConsequenceType(chromosome, start, end, id, name, type, biotype, featureChromosome, featureStart, featureEnd, featureStrand, snpId, ancestral, alternative, geneId, transcriptId, geneName, consequenceType, consequenceTypeObo, consequenceTypeDesc, consequenceTypeType, aminoacidChange, codonChange));
 				//					continue;
@@ -216,20 +219,14 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 				if(featureMap.getFeatureType().equalsIgnoreCase("exon") && !excludeSet.contains(consequenceTypeMap.get("exon").getSoTerm())) {
 					genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "exon"));
 
-					//					int codonPosition = -1;
-					if (!isUTR && featureMap.getBiotype().equalsIgnoreCase("protein_coding")) {
-						genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "coding_sequence"));							
-						if(!featureMap.getExonPhase().equals("") && !featureMap.getExonPhase().equals("-1")) {
-							//							if(featureMap.getStrand().equals("1")) {
-							//								codonPosition = (variant.getPosition()-featureMap.getStart()+1+Integer.parseInt(featureMap.getExonPhase()))%3;
-							//							}else {
-							//								codonPosition = (featureMap.getEnd()-variant.getPosition()+1+Integer.parseInt(featureMap.getExonPhase()))%3;
-							//							}
-							//							System.out.println("codonposition: "+codonPosition);
-							//							if(codonPosition == 0) {
-							//								codonPosition = 3;
-							//							}
-							//							String[] codons =  getSequenceByCodon(variant, featureMap, codonPosition);
+					//	int codonPosition = -1;
+//					if (!isUTR && featureMap.getBiotype().equalsIgnoreCase("protein_coding")) {
+					if (isFeatureUTR.get(featureMap.getTranscriptStableId()) != null && !isFeatureUTR.get(featureMap.getTranscriptStableId()) && featureMap.getBiotype().equalsIgnoreCase("protein_coding")) {
+						genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "coding_sequence"));
+						// && !featureMap.getExonPhase().equals("-1") ==> not needed!!
+						// If exon contains a UTR part is not processed here as 'if' clause above does not allow to enter this code
+						// so there is not need to check if phase is -1 (which means that there is a 5'-UTR part)
+						if(!featureMap.getExonPhase().equals("")) { 
 
 							int aaPosition = -1;
 							if(featureMap.getStrand().equals("1")) {
@@ -325,12 +322,84 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 		}else {
 			// intergenic!!
 			genomicVariantConsequenceTypeList = new ArrayList<GenomicVariantConsequenceType>(1);
-
 		}
 
 		return genomicVariantConsequenceTypeList;
 	}
 
+	
+	private String[] getSequenceByCodon(GenomicVariant variant, FeatureMap exonFeatureMap) {
+		String[] codons = new String[2];
+		String alternativeAllele = variant.getAlternative();
+		int codonPosition = -1;
+		//		GenomeSequenceFeature sequence = null;
+		GenomeSequence sequence = null;
+
+		
+		if(variant.getPosition() - exonFeatureMap.getStart() < 2 || exonFeatureMap.getEnd() - variant.getPosition() < 2) {
+			System.out.println("hacer!!!!!!!!!!!");
+			
+		}else {
+			if (exonFeatureMap.getStrand().equals("-1")) {
+				codonPosition = (exonFeatureMap.getEnd()-variant.getPosition()+1+Integer.parseInt(exonFeatureMap.getExonPhase()))%3;
+				if(codonPosition == 1) {
+					sequence = sequenceDbAdaptor.getByRegion(exonFeatureMap.getChromosome(), variant.getPosition() - 2, variant.getPosition());
+				}
+
+				if(codonPosition == 2) {
+					sequence = sequenceDbAdaptor.getByRegion(exonFeatureMap.getChromosome(), variant.getPosition() - 1, variant.getPosition() + 1);
+				}
+				/** Caso del 3 **/
+				if(codonPosition == 0) {
+					sequence = sequenceDbAdaptor.getByRegion(exonFeatureMap.getChromosome(), variant.getPosition(), variant.getPosition() + 2);
+					codonPosition = 3;
+				}
+
+				sequence.setSequence(sequenceDbAdaptor.getRevComp(sequence.getSequence()));
+				alternativeAllele = sequenceDbAdaptor.getRevComp(alternativeAllele);
+			}else{
+				codonPosition = (variant.getPosition()-exonFeatureMap.getStart()+1+Integer.parseInt(exonFeatureMap.getExonPhase()))%3;
+				if (codonPosition == 1){
+					sequence = sequenceDbAdaptor.getByRegion(exonFeatureMap.getChromosome(), variant.getPosition(), variant.getPosition() + 2);
+				}
+
+				if (codonPosition == 2){
+					sequence = sequenceDbAdaptor.getByRegion(exonFeatureMap.getChromosome(), variant.getPosition() - 1, variant.getPosition() + 1);
+				}
+				/** Caso del 3 **/
+				if (codonPosition == 0){
+					sequence = sequenceDbAdaptor.getByRegion(exonFeatureMap.getChromosome(), variant.getPosition() - 2, variant.getPosition());
+					codonPosition = 3;
+				}
+				//			sequence.setSequence(GenomeSequenceHibernateDBAdaptor.getRevComp(sequence.getSequence()));
+				//			alternativeAllele = GenomeSequenceHibernateDBAdaptor.getRevComp(alternativeAllele);
+			}
+		}
+		
+
+		//		sequence.setSequence(GenomeSequenceHibernateDBAdaptor.getRevComp(sequence.getSequence()));
+		//		String alternativeAllele = GenomeSequenceHibernateDBAdaptor.getRevComp(alternativeAllele);
+
+		String referenceSequence = sequence.getSequence();
+
+		char[] referenceSequenceCharArray = referenceSequence.toCharArray();
+
+		referenceSequenceCharArray[codonPosition - 1] = alternativeAllele.toCharArray()[0]; 
+
+		String alternative = new String();
+		for (int i = 0; i < referenceSequenceCharArray.length; i++) {
+			alternative = alternative + referenceSequenceCharArray[i];
+		}
+
+		//		referenceSequence = referenceSequence.replaceAll("T", "U");
+		//		alternative = alternative.replaceAll("T", "U");
+		codons[0] = referenceSequence.replaceAll("T", "U");
+		codons[1] = alternative.replaceAll("T", "U");
+		//		this.addConsequenceType(transcript, "coding_sequence_variant", "SO:0001580", " In coding sequence with indeterminate effect", "consequenceTypeType" );
+		return codons;
+	}
+	
+	
 	private GenomicVariantConsequenceType createGenomicVariantConsequenceType(GenomicVariant variant, FeatureMap featureMap, String consequenceType) {
 		//		chromosome, start, end, id, name, type, biotype, featureChromosome, featureStart, featureEnd, featureStrand,
 		//		snpId, ancestral, alternative, geneId, transcriptId, geneName, consequenceType, consequenceTypeObo, consequenceTypeDesc, consequenceTypeType, aminoacidChange, codonChange));
@@ -415,71 +484,6 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 				-1,"",""
 				);
 		return g;
-	}
-
-	private String[] getSequenceByCodon(GenomicVariant variant, FeatureMap featureMap) {
-		String[] codons = new String[2];
-		String alternativeAllele = variant.getAlternative();
-		int codonPosition = -1;
-		//		GenomeSequenceFeature sequence = null;
-		GenomeSequence sequence = null;
-
-		if (featureMap.getStrand().equals("-1")) {
-			codonPosition = (featureMap.getEnd()-variant.getPosition()+1+Integer.parseInt(featureMap.getExonPhase()))%3;
-			if(codonPosition == 1) {
-				sequence = sequenceDbAdaptor.getByRegion(featureMap.getChromosome(), variant.getPosition() - 2, variant.getPosition());
-			}
-
-			if(codonPosition == 2) {
-				sequence = sequenceDbAdaptor.getByRegion(featureMap.getChromosome(), variant.getPosition() - 1, variant.getPosition() + 1);
-			}
-			/** Caso del 3 **/
-			if(codonPosition == 0) {
-				sequence = sequenceDbAdaptor.getByRegion(featureMap.getChromosome(), variant.getPosition(), variant.getPosition() + 2);
-				codonPosition = 3;
-			}
-
-			sequence.setSequence(sequenceDbAdaptor.getRevComp(sequence.getSequence()));
-			alternativeAllele = sequenceDbAdaptor.getRevComp(alternativeAllele);
-		}else{
-			codonPosition = (variant.getPosition()-featureMap.getStart()+1+Integer.parseInt(featureMap.getExonPhase()))%3;
-			if (codonPosition == 1){
-				sequence = sequenceDbAdaptor.getByRegion(featureMap.getChromosome(), variant.getPosition(), variant.getPosition() + 2);
-			}
-
-			if (codonPosition == 2){
-				sequence = sequenceDbAdaptor.getByRegion(featureMap.getChromosome(), variant.getPosition() - 1, variant.getPosition() + 1);
-			}
-			/** Caso del 3 **/
-			if (codonPosition == 0){
-				sequence = sequenceDbAdaptor.getByRegion(featureMap.getChromosome(), variant.getPosition() - 2, variant.getPosition());
-				codonPosition = 3;
-			}
-
-			//			sequence.setSequence(GenomeSequenceHibernateDBAdaptor.getRevComp(sequence.getSequence()));
-			//			alternativeAllele = GenomeSequenceHibernateDBAdaptor.getRevComp(alternativeAllele);
-		}
-
-		//		sequence.setSequence(GenomeSequenceHibernateDBAdaptor.getRevComp(sequence.getSequence()));
-		//		String alternativeAllele = GenomeSequenceHibernateDBAdaptor.getRevComp(alternativeAllele);
-
-		String referenceSequence = sequence.getSequence();
-
-		char[] referenceSequenceCharArray = referenceSequence.toCharArray();
-
-		referenceSequenceCharArray[codonPosition - 1] = alternativeAllele.toCharArray()[0]; 
-
-		String alternative = new String();
-		for (int i = 0; i < referenceSequenceCharArray.length; i++) {
-			alternative = alternative + referenceSequenceCharArray[i];
-		}
-
-		//		referenceSequence = referenceSequence.replaceAll("T", "U");
-		//		alternative = alternative.replaceAll("T", "U");
-		codons[0] = referenceSequence.replaceAll("T", "U");
-		codons[1] = alternative.replaceAll("T", "U");
-		//		this.addConsequenceType(transcript, "coding_sequence_variant", "SO:0001580", " In coding sequence with indeterminate effect", "consequenceTypeType" );
-		return codons;
 	}
 
 

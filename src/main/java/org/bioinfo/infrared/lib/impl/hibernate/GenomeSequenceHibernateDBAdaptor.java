@@ -34,6 +34,11 @@ class GenomeSequenceHibernateDBAdaptor extends HibernateDBAdaptor implements Gen
 	@Override
 	@SuppressWarnings("unchecked")
 	public GenomeSequence getByRegion(String chromosome, int start, int end) {
+		// positions below 1 are not allowed
+		if(start < 1) {
+			start = 1;
+		}
+		
 		Query query = this.openSession().createQuery("from GenomeSequence where chromosome = :chromosome and chunk >= :start and chunk <= :end")
 					.setParameter("chromosome", chromosome.trim())
 					.setParameter("start", String.valueOf(getChunk(start)))
