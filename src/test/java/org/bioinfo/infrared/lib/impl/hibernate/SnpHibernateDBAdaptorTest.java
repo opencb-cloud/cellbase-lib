@@ -202,7 +202,7 @@ public class SnpHibernateDBAdaptorTest {
 	}
 	
 	@Test
-	public void getSnpPupulationFrequency() {
+	public void getSnpPopulationFrequency() {
 		List<List<SnpPopulationFrequency>> snpPopulationList = snpDBAdaptor.getAllSnpPopulationFrequencyList(Arrays.asList("rs3934834","rs307355"));
 		System.out.println(snpPopulationList.get(0).size());
 		System.out.println(snpPopulationList.get(1).size());

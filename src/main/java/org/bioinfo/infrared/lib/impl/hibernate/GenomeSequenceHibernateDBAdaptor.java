@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.GenomeSequence;
-import org.bioinfo.infrared.core.cellbase.GenomeSequenceId;
 import org.bioinfo.infrared.lib.api.GenomeSequenceDBAdaptor;
+import org.bioinfo.infrared.lib.common.GenomeSequenceFeature;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -33,7 +33,7 @@ class GenomeSequenceHibernateDBAdaptor extends HibernateDBAdaptor implements Gen
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public GenomeSequence getByRegion(String chromosome, int start, int end) {
+	public GenomeSequenceFeature getByRegion(String chromosome, int start, int end) {
 		// positions below 1 are not allowed
 		if(start < 1) {
 			start = 1;
@@ -58,7 +58,8 @@ class GenomeSequenceHibernateDBAdaptor extends HibernateDBAdaptor implements Gen
 			subStr = sb.toString().substring(startStr, endStr);
 		}
 		
-		return new GenomeSequence(new GenomeSequenceId(chromosome, getChunk(start)), start, end, subStr);
+//		return new GenomeSequence(new GenomeSequenceId(chromosome, getChunk(start)), start, end, subStr);
+		return new GenomeSequenceFeature(chromosome, start, end, subStr);
 	}
 	
 	
@@ -82,8 +83,8 @@ class GenomeSequenceHibernateDBAdaptor extends HibernateDBAdaptor implements Gen
 	}
 	
 	@Override
-	public GenomeSequence getByRegion(String chromosome, int start, int end, int strand) {
-		GenomeSequence genomeSequence = this.getByRegion(chromosome, start, end);
+	public GenomeSequenceFeature getByRegion(String chromosome, int start, int end, int strand) {
+		GenomeSequenceFeature genomeSequence = this.getByRegion(chromosome, start, end);
 		
 		if (strand == -1){
 			genomeSequence.setSequence(getRevComp(genomeSequence.getSequence()));
@@ -93,8 +94,8 @@ class GenomeSequenceHibernateDBAdaptor extends HibernateDBAdaptor implements Gen
 	}
 	
 	@Override
-	public List<GenomeSequence> getByRegionList(List<Region> regions, int strand){
-		List<GenomeSequence> result = new ArrayList<GenomeSequence>(regions.size());
+	public List<GenomeSequenceFeature> getByRegionList(List<Region> regions, int strand){
+		List<GenomeSequenceFeature> result = new ArrayList<GenomeSequenceFeature>(regions.size());
 		for(Region region: regions) {
 			result.add(getByRegion(region.getChromosome(), region.getStart(), region.getEnd(), strand));
 		}
@@ -102,8 +103,8 @@ class GenomeSequenceHibernateDBAdaptor extends HibernateDBAdaptor implements Gen
 	}
 	
 	@Override
-	public List<GenomeSequence> getByRegionList(List<Region> regions){
-		List<GenomeSequence> result = new ArrayList<GenomeSequence>(regions.size());
+	public List<GenomeSequenceFeature> getByRegionList(List<Region> regions){
+		List<GenomeSequenceFeature> result = new ArrayList<GenomeSequenceFeature>(regions.size());
 		for(Region region: regions) {
 			result.add(getByRegion(region.getChromosome(), region.getStart(), region.getEnd(), 1));
 		}

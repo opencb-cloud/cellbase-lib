@@ -26,6 +26,7 @@ import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.core.cellbase.Xref;
+import org.bioinfo.infrared.lib.common.GenomeSequenceFeature;
 import org.bioinfo.infrared.lib.common.GenomicVariantConsequenceType;
 import org.bioinfo.infrared.lib.impl.hibernate.GenomicRegionFeatures;
 
@@ -54,6 +55,22 @@ public class StringWriter {
 	public static String serialize(GenomeSequence genomeSequence){
 //		return new StringBuilder().append(genomeSequence.getId().getChromosome()).append("\t").append(genomeSequence.getStart()).append("\t").append(genomeSequence.getEnd()).append("\t").append(genomeSequence.getSequence()).toString();
 		StringBuilder sb = new StringBuilder().append(">").append(genomeSequence.getId().getChromosome()).append("_").append(genomeSequence.getStart()).append("_").append(genomeSequence.getEnd()).append("\n");
+		int length = genomeSequence.getSequence().length();
+		int cont=0;
+		while(cont <= length) {
+			if(cont+60 > length) {
+				sb.append(genomeSequence.getSequence().substring(cont, length));				
+			}else {
+				sb.append(genomeSequence.getSequence().substring(cont, cont+60)).append("\n");
+			}
+			cont += 60;
+		}
+		return sb.toString();
+	}
+	
+	public static String serialize(GenomeSequenceFeature genomeSequence){
+//		return new StringBuilder().append(genomeSequence.getId().getChromosome()).append("\t").append(genomeSequence.getStart()).append("\t").append(genomeSequence.getEnd()).append("\t").append(genomeSequence.getSequence()).toString();
+		StringBuilder sb = new StringBuilder().append(">").append(genomeSequence.getChromosome()).append("_").append(genomeSequence.getStart()).append("_").append(genomeSequence.getEnd()).append("\n");
 		int length = genomeSequence.getSequence().length();
 		int cont=0;
 		while(cont <= length) {
@@ -226,6 +243,10 @@ public class StringWriter {
 				continue;
 			}
 			if (object instanceof GenomeSequence){
+				sb.append(StringWriter.serialize((GenomeSequence) object)).append("\n");
+				continue;
+			}
+			if (object instanceof GenomeSequenceFeature){
 				sb.append(StringWriter.serialize((GenomeSequence) object)).append("\n");
 				continue;
 			}

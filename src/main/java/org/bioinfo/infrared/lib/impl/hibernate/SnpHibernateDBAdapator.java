@@ -42,7 +42,7 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Snp> getAll(){
+	public List<Snp> getAll() {
 		Criteria criteria = this.openSession().createCriteria(Snp.class);
 		return (List<Snp>) this.executeAndClose(criteria);
 	}
@@ -463,7 +463,7 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 	@Override
 	public String getSequenceById(String id) {
 		Query query = this.openSession().createQuery("select sequence from Snp snp where snp.name= :SNPID")
-				.setParameter("SNPID", id);
+			.setParameter("SNPID", id);
 		return executeAndClose(query).toString();
 	}
 
@@ -650,10 +650,10 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 	@Override
 	public List<SnpToTranscript> getAllSnpToTranscript(String name) {
 		Criteria criteria = this.openSession().createCriteria(SnpToTranscript.class)
-				.setFetchMode("transcript", FetchMode.JOIN)
-				.setFetchMode("consequenceType", FetchMode.JOIN)
-				.createCriteria("snp")
-				.add(Restrictions.eq("name", name));
+			.setFetchMode("transcript", FetchMode.JOIN)
+			.setFetchMode("consequenceType", FetchMode.JOIN)
+			.createCriteria("snp")
+			.add(Restrictions.eq("name", name));
 		return (List<SnpToTranscript>) executeAndClose(criteria);
 	}
 
@@ -672,6 +672,8 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsequenceType> getAllConsequenceType(String name) {
+		Session session = this.openSession();
+		
 		Criteria criteria = this.openSession().createCriteria(ConsequenceType.class)
 				.createCriteria("snpToTranscripts")
 				.createCriteria("snp")
@@ -679,13 +681,23 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 		return (List<ConsequenceType>) executeAndClose(criteria);
 	}
 
+	public List<ConsequenceType> getAllConsequenceType(String name, Session session) {
+		Criteria criteria = session.createCriteria(ConsequenceType.class)
+				.createCriteria("snpToTranscripts")
+				.createCriteria("snp")
+				.add(Restrictions.eq("name", name));
+		return (List<ConsequenceType>) executeAndClose(criteria);
+	}
+	
 	@Override
 	public List<List<ConsequenceType>> getAllConsequenceTypeList(List<String> nameList) {
-			List<List<ConsequenceType>> result = new ArrayList<List<ConsequenceType>>(nameList.size());
-			for(String name: nameList) {
-				result.add(this.getAllConsequenceType(name));
-			}
-			return result;
+		Session session = this.openSession();
+		List<List<ConsequenceType>> result = new ArrayList<List<ConsequenceType>>(nameList.size());
+		for(String name: nameList) {
+			result.add(this.getAllConsequenceType(name));
+		}
+		session.close();
+		return result;
 	}
 	
 }

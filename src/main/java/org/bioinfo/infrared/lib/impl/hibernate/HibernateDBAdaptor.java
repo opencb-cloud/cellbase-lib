@@ -1,11 +1,14 @@
 package org.bioinfo.infrared.lib.impl.hibernate;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
+import org.bioinfo.commons.Config;
 import org.bioinfo.infrared.core.cellbase.Metainfo;
 import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Region;
@@ -24,11 +27,23 @@ public class HibernateDBAdaptor extends DBAdaptor{
 	private SessionFactory sessionFactory;
 	private Session session;
 
+	protected static Map<String, Number> cachedQuerySizes = new HashMap<String, Number>();
+
+	static {
+		// reading application.properties file
+		resourceBundle = ResourceBundle.getBundle("org.bioinfo.infrared.lib.impl.hibernate.conf.application");
+		try {
+			applicationProperties = new Config(resourceBundle);
+		} catch (IOException e) {
+			applicationProperties = new Config();
+			e.printStackTrace();
+		}
+	}
+	
+	
 	//	public HibernateDBAdaptor() {
 	//
 	//	}
-
-	protected static Map<String, Number> cachedQuerySizes = new HashMap<String, Number>();
 	
 	public HibernateDBAdaptor(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -83,7 +98,7 @@ public class HibernateDBAdaptor extends DBAdaptor{
 	@SuppressWarnings("unchecked")
 	protected String getDatabaseQueryCache(String key) {
 		Criteria criteria = this.openSession().createCriteria(Metainfo.class)
-				.add(Restrictions.eq("property", key));
+			.add(Restrictions.eq("property", key));
 		List<Metainfo> metaInfoList = (List<Metainfo>) executeAndClose(criteria);
 		if(metaInfoList != null && metaInfoList.size() > 0) {
 			return metaInfoList.get(0).getValue();

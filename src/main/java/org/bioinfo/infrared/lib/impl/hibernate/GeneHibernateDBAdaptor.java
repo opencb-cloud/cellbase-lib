@@ -178,10 +178,10 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@Override
 	public Gene getByEnsemblTranscriptId(String transcriptId) {
 		Criteria criteria = this.openSession().createCriteria(Gene.class)
-		.createCriteria("transcripts")
-		.add(Restrictions.eq("stableId", transcriptId.trim()))
-		.addOrder(Order.asc("chromosome"))
-		.addOrder(Order.asc("start"));
+			.createCriteria("transcripts")
+			.add(Restrictions.eq("stableId", transcriptId.trim()))
+			.addOrder(Order.asc("chromosome"))
+			.addOrder(Order.asc("start"));
 		return (Gene) executeAndClose(criteria).get(0);
 	}
 	
@@ -189,10 +189,10 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@Override
 	public List<Gene> getAllByEnsemblTranscriptIdList(List<String> transcriptIdList) {
 		Criteria criteria = this.openSession().createCriteria(Gene.class)
-		.createCriteria("transcripts")
-		.add(Restrictions.in("stableId", transcriptIdList))
-		.addOrder(Order.asc("chromosome"))
-		.addOrder(Order.asc("start"));
+			.createCriteria("transcripts")
+			.add(Restrictions.in("stableId", transcriptIdList))
+			.addOrder(Order.asc("chromosome"))
+			.addOrder(Order.asc("start"));
 		return (List<Gene>) executeAndClose(criteria);
 	}
 
@@ -223,10 +223,10 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	public List<Gene> getAllByPosition(String chromosome, int position) {
 		Criteria criteria =  this.openSession().createCriteria(Gene.class);
 		criteria.add(Restrictions.eq("chromosome", chromosome))
-		.add(Restrictions.ge("end", position))
-		.add(Restrictions.le("start", position))
-		.addOrder(Order.asc("chromosome"))
-		.addOrder(Order.asc("start"));
+			.add(Restrictions.ge("end", position))
+			.add(Restrictions.le("start", position))
+			.addOrder(Order.asc("chromosome"))
+			.addOrder(Order.asc("start"));
 		return (List<Gene>)executeAndClose(criteria);
 	}
 
@@ -258,8 +258,8 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	public List<Gene> getAllByRegion(String chromosome) {
 		Criteria criteria =  this.openSession().createCriteria(Gene.class);
 		criteria.add(Restrictions.eq("chromosome", chromosome))
-		.addOrder(Order.asc("chromosome"))
-		.addOrder(Order.asc("start"));
+			.addOrder(Order.asc("chromosome"))
+			.addOrder(Order.asc("start"));
 		return (List<Gene>)executeAndClose(criteria);
 	}
 
@@ -406,8 +406,8 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 //				keys.add(tfbs.getGeneByTfGeneId().getStableId());
 //			}
 //			
-			if (null != tfbs && !keys.contains(tfbs.getGeneByTargetGeneId().getStableId())){
-				keys.add(tfbs.getGeneByTargetGeneId().getStableId());
+			if (null != tfbs && !keys.contains(tfbs.getTranscript().getStableId())){
+				keys.add(tfbs.getTranscript().getStableId());
 			}
 		}
 		
@@ -468,10 +468,10 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		Criterion mirbaseId = Restrictions.eq("mirbaseId", miRnaMatureName.trim());
 		LogicalExpression logExpression = Restrictions.or(mirbaseAcc, mirbaseId);
 		Criteria criteria = this.openSession().createCriteria(Gene.class)
-				.createCriteria("mirnaToGenes")
-				.createCriteria("mirnaGene")
-				.createCriteria("mirnaGeneToMatures")
-				.createCriteria("mirnaMature").add(logExpression);
+			.createCriteria("mirnaToGenes")
+			.createCriteria("mirnaGene")
+			.createCriteria("mirnaGeneToMatures")
+			.createCriteria("mirnaMature").add(logExpression);
 		return (List<Gene>) executeAndClose(criteria);
 	}
 	

@@ -2,8 +2,8 @@ package org.bioinfo.infrared.lib.common;
 
 public class GenomeSequenceFeature {
 
-	private int start;
 	private String chromosome;
+	private int start;
 	private int end;
 	private String sequence;
 

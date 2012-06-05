@@ -291,13 +291,13 @@ class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDBAdaptor
 	@SuppressWarnings("unchecked")
 	public List<Exon> getAllBySnpId(String snpNameId, Session session) {
 		Criteria criteria = session
-				.createCriteria(Exon.class)
-				.addOrder(Order.asc("chromosome"))
-				.addOrder(Order.asc("start"))
-				.createCriteria("exonToTranscripts")
-				.createCriteria("transcript")
-				.createCriteria("snpToTranscripts")
-				.createCriteria("snp").add(Restrictions.eq("name", snpNameId));
+			.createCriteria(Exon.class)
+			.addOrder(Order.asc("chromosome"))
+			.addOrder(Order.asc("start"))
+			.createCriteria("exonToTranscripts")
+			.createCriteria("transcript")
+			.createCriteria("snpToTranscripts")
+			.createCriteria("snp").add(Restrictions.eq("name", snpNameId));
 		return (List<Exon>)criteria.list();
 	}
 	@Override
