@@ -16,6 +16,7 @@ import org.bioinfo.infrared.core.cellbase.MirnaDisease;
 import org.bioinfo.infrared.core.cellbase.MirnaGene;
 import org.bioinfo.infrared.core.cellbase.MirnaMature;
 import org.bioinfo.infrared.core.cellbase.MirnaTarget;
+import org.bioinfo.infrared.core.cellbase.MutationPhenotypeAnnotation;
 import org.bioinfo.infrared.core.cellbase.Protein;
 import org.bioinfo.infrared.core.cellbase.ProteinFeature;
 import org.bioinfo.infrared.core.cellbase.ProteinInteraction;
@@ -23,6 +24,7 @@ import org.bioinfo.infrared.core.cellbase.ProteinXref;
 import org.bioinfo.infrared.core.cellbase.Pwm;
 import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
 import org.bioinfo.infrared.core.cellbase.Snp;
+import org.bioinfo.infrared.core.cellbase.SnpPhenotypeAnnotation;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.core.cellbase.Xref;
@@ -86,12 +88,48 @@ public class StringWriter {
 
 	public static String serialize(Snp snp){
 		return new StringBuilder().append(snp.getName()).append("\t")
-				.append(snp.getChromosome()).append("\t")
-				.append(snp.getStart()).append("\t")
-				.append(snp.getDisplayConsequence()).append("\t")
-				.append(snp.getDisplaySoConsequence()).append("\t")
-				.append(snp.getSequence())
-				.toString(); 
+			.append(snp.getChromosome()).append("\t")
+			.append(snp.getStart()).append("\t")
+			.append(snp.getDisplayConsequence()).append("\t")
+			.append(snp.getDisplaySoConsequence()).append("\t")
+			.append(snp.getSequence())
+			.toString(); 
+	}
+	
+	public static String serialize(SnpPhenotypeAnnotation snpPhenotypeAnnotation){
+		return new StringBuilder().append(snpPhenotypeAnnotation.getSnp() != null ? snpPhenotypeAnnotation.getSnp().getName() : "").append("\t")
+			.append(snpPhenotypeAnnotation.getSource()).append("\t")
+			.append(snpPhenotypeAnnotation.getAssociatedGeneName()).append("\t")
+			.append(snpPhenotypeAnnotation.getAssociatedVariantRiskAllele()).append("\t")
+			.append(snpPhenotypeAnnotation.getRiskAlleleFrequencyInControls()).append("\t")
+			.append(snpPhenotypeAnnotation.getPValue()).append("\t")
+			.append(snpPhenotypeAnnotation.getPhenotypeName()).append("\t")
+			.append(snpPhenotypeAnnotation.getPhenotypeDescription()).append("\t")
+			.append(snpPhenotypeAnnotation.getStudyName()).append("\t")
+			.append(snpPhenotypeAnnotation.getStudyType()).append("\t")
+			.append(snpPhenotypeAnnotation.getStudyUrl()).append("\t")
+			.append(snpPhenotypeAnnotation.getStudyDescription())
+			.toString(); 
+	}
+	
+	public static String serialize(MutationPhenotypeAnnotation mutationPhenotypeAnnotation){
+		return new StringBuilder().append(mutationPhenotypeAnnotation.getChromosome()).append("\t")
+			.append(mutationPhenotypeAnnotation.getStart()).append("\t")
+			.append(mutationPhenotypeAnnotation.getEnd()).append("\t")
+			.append(mutationPhenotypeAnnotation.getGeneName()).append("\t")
+			.append(mutationPhenotypeAnnotation.getUniprotName()).append("\t")
+			.append(mutationPhenotypeAnnotation.getEnsemblTranscript()).append("\t")
+			.append(mutationPhenotypeAnnotation.getPrimarySite()).append("\t")
+			.append(mutationPhenotypeAnnotation.getSiteSubtype()).append("\t")
+			.append(mutationPhenotypeAnnotation.getPrimaryHistology()).append("\t")
+			.append(mutationPhenotypeAnnotation.getMutationCds()).append("\t")
+			.append(mutationPhenotypeAnnotation.getMutationAa()).append("\t")
+			.append(mutationPhenotypeAnnotation.getMutationDescription()).append("\t")
+			.append(mutationPhenotypeAnnotation.getMutationZigosity()).append("\t")
+			.append(mutationPhenotypeAnnotation.getPubmedId()).append("\t")
+			.append(mutationPhenotypeAnnotation.getDescription()).append("\t")
+			.append(mutationPhenotypeAnnotation.getSource())
+			.toString(); 
 	}
 
 	public static String serialize(ConsequenceType obj) {
@@ -257,6 +295,16 @@ public class StringWriter {
 
 			if (object instanceof Snp){
 				sb.append(StringWriter.serialize((Snp) object)).append("\n");
+				continue;
+			}
+			
+			if (object instanceof SnpPhenotypeAnnotation){
+				sb.append(StringWriter.serialize((SnpPhenotypeAnnotation) object)).append("\n");
+				continue;
+			}
+			
+			if (object instanceof MutationPhenotypeAnnotation){
+				sb.append(StringWriter.serialize((MutationPhenotypeAnnotation) object)).append("\n");
 				continue;
 			}
 

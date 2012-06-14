@@ -83,18 +83,24 @@ public class HibernateDBAdaptor extends DBAdaptor{
 		return session;
 	}
 
-	protected List<?> execute(Query query){
-		List<?> result = query.list();
+	
+	protected List<?> execute(Criteria criteria){
+		List<?> result = criteria.list();
 		return result;
 	}
-
-
+	
 	protected List<?> executeAndClose(Criteria criteria){
 		List<?> result = criteria.list();
 		closeSession();
 		return result;
 	}
 
+	
+	protected List<?> execute(Query query){
+		List<?> result = query.list();
+		return result;
+	}
+	
 	protected List<?> executeAndClose(Query query){
 		List<?> result = query.list();
 		closeSession();

@@ -94,8 +94,10 @@ public interface SnpDBAdaptor extends FeatureDBAdaptor {
 	public void writeAllFilteredByConsequenceType(String consequence, String outfile);
 	
 	
-	public List<SnpPhenotypeAnnotation> getAllSnpPhenotypeAnnotation(String name);
-	public List<List<SnpPhenotypeAnnotation>> getAllSnpPhenotypeAnnotationList(List<String> nameList);
+	public List<SnpPhenotypeAnnotation> getAllSnpPhenotypeAnnotationBySnpName(String name);
+	public List<List<SnpPhenotypeAnnotation>> getAllSnpPhenotypeAnnotationListBySnpNameList(List<String> nameList);
+	public List<SnpPhenotypeAnnotation> getAllSnpPhenotypeAnnotationByPosition(Position position);
+	public List<List<SnpPhenotypeAnnotation>> getAllSnpPhenotypeAnnotationListByPositionList(List<Position> positionList);
 	
 	public List<SnpPopulationFrequency> getAllSnpPopulationFrequency(String name);
 	public List<List<SnpPopulationFrequency>> getAllSnpPopulationFrequencyList(List<String> nameList);

@@ -4,12 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.MutationPhenotypeAnnotation;
+import org.bioinfo.infrared.core.cellbase.SnpPhenotypeAnnotation;
 import org.bioinfo.infrared.lib.api.MutationDBAdaptor;
 import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
+import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 
 public class MutationHibernateDBAdaptor extends HibernateDBAdaptor implements MutationDBAdaptor{
 
@@ -21,6 +26,36 @@ public class MutationHibernateDBAdaptor extends HibernateDBAdaptor implements Mu
 		super(sessionFactory, species, version);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MutationPhenotypeAnnotation> getAllMutationPhenotypeAnnotationByPosition(Position position) {
+		Criteria criteria = this.openSession().createCriteria(SnpPhenotypeAnnotation.class)
+				.add(Restrictions.eq("chromosome", position.getChromosome()))
+				.add(Restrictions.le("start", position.getPosition()))
+				.add(Restrictions.ge("end", position.getPosition()));
+			return (List<MutationPhenotypeAnnotation>) executeAndClose(criteria);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<List<MutationPhenotypeAnnotation>> getAllMutationPhenotypeAnnotationByPositionList(List<Position> position) {
+		List<List<MutationPhenotypeAnnotation>> result = new ArrayList<List<MutationPhenotypeAnnotation>>(position.size());
+		Criteria criteria;
+		// To optimize number of sessions
+		Session session =  this.openSession();
+		for(Position pos: position) {
+			criteria = session.createCriteria(MutationPhenotypeAnnotation.class)
+				.add(Restrictions.eq("chromosome", pos.getChromosome()))
+				.add(Restrictions.le("start", pos.getPosition()))
+				.add(Restrictions.ge("end", pos.getPosition()));
+			result.add((List<MutationPhenotypeAnnotation>) execute(criteria));
+		}
+		session.close();
+		return result;
+	}
+	
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<MutationPhenotypeAnnotation> getAllByRegion(Region region) {
@@ -48,5 +83,5 @@ public class MutationHibernateDBAdaptor extends HibernateDBAdaptor implements Mu
 		List<IntervalFeatureFrequency> intervalFreqsList = getIntervalFeatureFrequencies(region , interval, objectList);
 		return intervalFreqsList;
 	}
-	
+
 }

@@ -323,11 +323,11 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 	public List<Snp> getAllByRegion(String chromosome, int start, int end, List<String> consequenceTypeList) {
 		Criteria criteria =  this.openSession().createCriteria(Snp.class);
 		criteria.add(Restrictions.eq("chromosome", chromosome))
-		.add(Restrictions.ge("end", start))
-		.add(Restrictions.le("start", end))
-		.add(Restrictions.in("displaySoConsequence", consequenceTypeList))
-		.addOrder(Order.asc("chromosome"))
-		.addOrder(Order.asc("start"));
+			.add(Restrictions.ge("end", start))
+			.add(Restrictions.le("start", end))
+			.add(Restrictions.in("displaySoConsequence", consequenceTypeList))
+			.addOrder(Order.asc("chromosome"))
+			.addOrder(Order.asc("start"));
 
 		return (List<Snp>) executeAndClose(criteria);
 	}
@@ -611,21 +611,52 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<SnpPhenotypeAnnotation> getAllSnpPhenotypeAnnotation(String name) {
+	public List<SnpPhenotypeAnnotation> getAllSnpPhenotypeAnnotationBySnpName(String name) {
 		Criteria criteria = this.openSession().createCriteria(SnpPhenotypeAnnotation.class)
-				.createCriteria("snp")
-				.add(Restrictions.eq("name", name));
+			.createCriteria("snp")
+			.add(Restrictions.eq("name", name));
 		return (List<SnpPhenotypeAnnotation>) executeAndClose(criteria);
 	}
 
 	@Override
-	public List<List<SnpPhenotypeAnnotation>> getAllSnpPhenotypeAnnotationList(List<String> nameList) {
+	public List<List<SnpPhenotypeAnnotation>> getAllSnpPhenotypeAnnotationListBySnpNameList(List<String> nameList) {
 		List<List<SnpPhenotypeAnnotation>> result = new ArrayList<List<SnpPhenotypeAnnotation>>(nameList.size());
 		for(String name: nameList) {
-			result.add(this.getAllSnpPhenotypeAnnotation(name));
+			result.add(this.getAllSnpPhenotypeAnnotationBySnpName(name));
 		}
 		return result;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<SnpPhenotypeAnnotation> getAllSnpPhenotypeAnnotationByPosition(	Position position) {
+		Criteria criteria = this.openSession().createCriteria(SnpPhenotypeAnnotation.class)
+			.createCriteria("snp")
+			.add(Restrictions.eq("chromosome", position.getChromosome()))
+			.add(Restrictions.le("start", position.getPosition()))
+			.add(Restrictions.ge("end", position.getPosition()));
+		return (List<SnpPhenotypeAnnotation>) executeAndClose(criteria);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<List<SnpPhenotypeAnnotation>> getAllSnpPhenotypeAnnotationListByPositionList(List<Position> positionList) {
+		List<List<SnpPhenotypeAnnotation>> result = new ArrayList<List<SnpPhenotypeAnnotation>>(positionList.size());
+		Criteria criteria;
+		// To optimize number of sessions
+		Session session =  this.openSession();
+		for(Position position: positionList) {
+			criteria = session.createCriteria(SnpPhenotypeAnnotation.class)
+				.createCriteria("snp")
+				.add(Restrictions.eq("chromosome", position.getChromosome()))
+				.add(Restrictions.le("start", position.getPosition()))
+				.add(Restrictions.ge("end", position.getPosition()));
+			result.add((List<SnpPhenotypeAnnotation>) execute(criteria));
+		}
+		session.close();
+		return result;
+	}
+	
 	
 	
 	@SuppressWarnings("unchecked")
@@ -699,5 +730,5 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 		session.close();
 		return result;
 	}
-	
+
 }

@@ -196,7 +196,7 @@ public class SnpHibernateDBAdaptorTest {
 	
 	@Test
 	public void getSnpPhenotypeAnnotation() {
-		List<List<SnpPhenotypeAnnotation>> snpPhenotypeList = snpDBAdaptor.getAllSnpPhenotypeAnnotationList(Arrays.asList("rs3934834","rs307355"));
+		List<List<SnpPhenotypeAnnotation>> snpPhenotypeList = snpDBAdaptor.getAllSnpPhenotypeAnnotationListBySnpNameList(Arrays.asList("rs3934834","rs307355"));
 		System.out.println(snpPhenotypeList.get(0).size());
 		System.out.println(snpPhenotypeList.get(1).size());
 	}
