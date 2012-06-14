@@ -53,6 +53,18 @@ public class HibernateDBAdaptor extends DBAdaptor{
 		this.sessionFactory = sessionFactory;
 		this.species = species;
 		this.version = version;
+		
+		initSpeciesVersion(species, version);
+	}
+	
+	private void initSpeciesVersion(String species, String version) {
+		if(species != null && !species.equals("")) {
+			// if 'version' parameter has not been provided the default version is selected
+			if(this.version == null || this.version.trim().equals("")) {
+				this.version = applicationProperties.getProperty(species+".DEFAULT.VERSION").toUpperCase();
+//				logger.debug("HibernateDBAdaptorFactory in createSessionFactory(): 'version' parameter is null or empty, it's been set to: '"+version+"'");
+			}
+		}
 	}
 
 	protected Session openSession() {

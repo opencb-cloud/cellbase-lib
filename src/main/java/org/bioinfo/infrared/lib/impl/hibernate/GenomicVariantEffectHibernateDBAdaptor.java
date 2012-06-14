@@ -25,7 +25,7 @@ import org.hibernate.criterion.Restrictions;
 
 public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor implements GenomicVariantEffectDBAdaptor {
 
-	private static int FEATURE_MAP_CHUNK_SIZE = 400;
+//	private static int FEATURE_MAP_CHUNK_SIZE = 400;
 
 	/** Options **/
 	private boolean showFeatures = false;
@@ -142,7 +142,7 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 		List<FeatureMap> featureMapList = null;
 		Criteria criteria = this.openSession().createCriteria(FeatureMap.class);
 		if(variant != null) {
-			int chunkId = variant.getPosition() / FEATURE_MAP_CHUNK_SIZE;
+			int chunkId = variant.getPosition() / applicationProperties.getIntProperty("CELLBASE."+version.toUpperCase()+".FEATURE_MAP.CHUNK_SIZE", 500);
 			//			System.out.println("getAllConsequenceTypeByVariant: "+chunkId+", chromosome: "+variant.getChromosome());
 			criteria.add(Restrictions.eq("chunkId", chunkId))
 				.add(Restrictions.eq("chromosome", variant.getChromosome()))

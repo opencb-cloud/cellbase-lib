@@ -31,17 +31,17 @@ public abstract class DBAdaptorFactory {
 	static {
 		speciesAlias = new HashMap<String, String>(20);
 		
-		speciesAlias.put("Homo sapiens", "HSAPIENS");speciesAlias.put("Homo_sapiens", "HSAPIENS");speciesAlias.put("hsapiens", "HSAPIENS");speciesAlias.put("hsap", "HSAPIENS");speciesAlias.put("hsa", "HSAPIENS");
-		speciesAlias.put("Mus musculus", "MMUSCULUS");speciesAlias.put("Mus_musculus", "MMUSCULUS");speciesAlias.put("mmusculus", "MMUSCULUS");speciesAlias.put("mmus", "MMUSCULUS");speciesAlias.put("mmu", "MMUSCULUS");
-		speciesAlias.put("Rattus norvegicus", "RNORVEGICUS");speciesAlias.put("Rattus_norvegicus", "RNORVEGICUS");speciesAlias.put("rnorvegicus", "RNORVEGICUS");speciesAlias.put("rnor", "RNORVEGICUS");speciesAlias.put("rno", "RNORVEGICUS");
-		speciesAlias.put("Danio rerio", "DRERIO");speciesAlias.put("Danio_rerio", "DRERIO");speciesAlias.put("drerio", "DRERIO");speciesAlias.put("drer", "DRERIO");speciesAlias.put("dre", "DRERIO");
-		speciesAlias.put("Drosophila melanogaster", "DMELANOGASTER");speciesAlias.put("Drosophila_melanogaster", "DMELANOGASTER");speciesAlias.put("dmelanogaster", "DMELANOGASTER");speciesAlias.put("dmel", "DMELANOGASTER");speciesAlias.put("dme", "DMELANOGASTER");
-		speciesAlias.put("Caenorhabditis elegans", "CELEGANS");speciesAlias.put("Caenorhabditis_elegans", "CELEGANS");speciesAlias.put("celegans", "CELEGANS");speciesAlias.put("cele", "CELEGANS");speciesAlias.put("cel", "CELEGANS");
-		speciesAlias.put("Saccharomyces cerevisiae", "SCEREVISIAE");speciesAlias.put("Saccharomyces_cerevisiae", "SCEREVISIAE");speciesAlias.put("scerevisiae", "SCEREVISIAE");speciesAlias.put("scer", "SCEREVISIAE");speciesAlias.put("sce", "SCEREVISIAE");
-		speciesAlias.put("Canis familiaris", "CFAMILIARIS");speciesAlias.put("Canis_familiaris", "CFAMILIARIS");speciesAlias.put("cfamiliaris", "CFAMILIARIS");speciesAlias.put("cfar", "CFAMILIARIS");speciesAlias.put("cfa", "CFAMILIARIS");
-		speciesAlias.put("Sus scrofa", "SSCROFA");speciesAlias.put("Sus_scrofa", "SSCROFA");speciesAlias.put("sscrofa", "SSCROFA");speciesAlias.put("sscr", "SSCROFA");speciesAlias.put("ssc", "SSCROFA");
-		speciesAlias.put("Plasmodium falciparum", "PFALCIPARUM");speciesAlias.put("Plasmodium_falciparum", "PFALCIPARUM");speciesAlias.put("pfalciparum", "PFALCIPARUM");speciesAlias.put("pfalc", "PFALCIPARUM");speciesAlias.put("pfa", "PFALCIPARUM");
-		speciesAlias.put("Anopheles gambiae", "AGAMBIAE");speciesAlias.put("Anopheles_gambiae", "AGAMBIAE");speciesAlias.put("agambiae", "AGAMBIAE");speciesAlias.put("agam", "AGAMBIAE");speciesAlias.put("aga", "AGAMBIAE");
+		speciesAlias.put("Homo sapiens", "HSAPIENS");speciesAlias.put("Homo_sapiens", "HSAPIENS");speciesAlias.put("hsapiens", "HSAPIENS");speciesAlias.put("hsap", "HSAPIENS");speciesAlias.put("hsa", "HSAPIENS");speciesAlias.put("HSAPIENS", "HSAPIENS");
+		speciesAlias.put("Mus musculus", "MMUSCULUS");speciesAlias.put("Mus_musculus", "MMUSCULUS");speciesAlias.put("mmusculus", "MMUSCULUS");speciesAlias.put("mmus", "MMUSCULUS");speciesAlias.put("mmu", "MMUSCULUS");speciesAlias.put("MMUSCULUS", "MMUSCULUS");
+		speciesAlias.put("Rattus norvegicus", "RNORVEGICUS");speciesAlias.put("Rattus_norvegicus", "RNORVEGICUS");speciesAlias.put("rnorvegicus", "RNORVEGICUS");speciesAlias.put("rnor", "RNORVEGICUS");speciesAlias.put("rno", "RNORVEGICUS");speciesAlias.put("RNORVEGICUS", "RNORVEGICUS");
+		speciesAlias.put("Danio rerio", "DRERIO");speciesAlias.put("Danio_rerio", "DRERIO");speciesAlias.put("drerio", "DRERIO");speciesAlias.put("drer", "DRERIO");speciesAlias.put("dre", "DRERIO");speciesAlias.put("DRERIO", "DRERIO");
+		speciesAlias.put("Drosophila melanogaster", "DMELANOGASTER");speciesAlias.put("Drosophila_melanogaster", "DMELANOGASTER");speciesAlias.put("dmelanogaster", "DMELANOGASTER");speciesAlias.put("dmel", "DMELANOGASTER");speciesAlias.put("dme", "DMELANOGASTER");speciesAlias.put("DMELANOGASTER", "DMELANOGASTER");
+		speciesAlias.put("Caenorhabditis elegans", "CELEGANS");speciesAlias.put("Caenorhabditis_elegans", "CELEGANS");speciesAlias.put("celegans", "CELEGANS");speciesAlias.put("cele", "CELEGANS");speciesAlias.put("cel", "CELEGANS");speciesAlias.put("CELEGANS", "CELEGANS");
+		speciesAlias.put("Saccharomyces cerevisiae", "SCEREVISIAE");speciesAlias.put("Saccharomyces_cerevisiae", "SCEREVISIAE");speciesAlias.put("scerevisiae", "SCEREVISIAE");speciesAlias.put("scer", "SCEREVISIAE");speciesAlias.put("sce", "SCEREVISIAE");speciesAlias.put("SCEREVISIAE", "SCEREVISIAE");
+		speciesAlias.put("Canis familiaris", "CFAMILIARIS");speciesAlias.put("Canis_familiaris", "CFAMILIARIS");speciesAlias.put("cfamiliaris", "CFAMILIARIS");speciesAlias.put("cfar", "CFAMILIARIS");speciesAlias.put("cfa", "CFAMILIARIS");speciesAlias.put("CFAMILIARIS", "CFAMILIARIS");
+		speciesAlias.put("Sus scrofa", "SSCROFA");speciesAlias.put("Sus_scrofa", "SSCROFA");speciesAlias.put("sscrofa", "SSCROFA");speciesAlias.put("sscr", "SSCROFA");speciesAlias.put("ssc", "SSCROFA");speciesAlias.put("SSCROFA", "SSCROFA");
+		speciesAlias.put("Plasmodium falciparum", "PFALCIPARUM");speciesAlias.put("Plasmodium_falciparum", "PFALCIPARUM");speciesAlias.put("pfalciparum", "PFALCIPARUM");speciesAlias.put("pfalc", "PFALCIPARUM");speciesAlias.put("pfa", "PFALCIPARUM");speciesAlias.put("PFALCIPARUM", "PFALCIPARUM");
+		speciesAlias.put("Anopheles gambiae", "AGAMBIAE");speciesAlias.put("Anopheles_gambiae", "AGAMBIAE");speciesAlias.put("agambiae", "AGAMBIAE");speciesAlias.put("agam", "AGAMBIAE");speciesAlias.put("aga", "AGAMBIAE");speciesAlias.put("AGAMBIAE", "AGAMBIAE");
 	}
 	
 	public DBAdaptorFactory() {

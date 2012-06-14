@@ -247,7 +247,7 @@ public class StringWriter {
 				continue;
 			}
 			if (object instanceof GenomeSequenceFeature){
-				sb.append(StringWriter.serialize((GenomeSequence) object)).append("\n");
+				sb.append(StringWriter.serialize((GenomeSequenceFeature) object)).append("\n");
 				continue;
 			}
 			if (object instanceof Transcript){

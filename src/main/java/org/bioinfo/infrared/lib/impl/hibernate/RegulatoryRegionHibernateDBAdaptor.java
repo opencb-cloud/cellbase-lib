@@ -251,7 +251,7 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 	@Override
 	public List<ConservedRegion> getAllConservedRegionByRegion(Region region) {
 		
-		int chunk_size = applicationProperties.getIntProperty("CHUNK_SIZE", 400);
+		int chunk_size = applicationProperties.getIntProperty("CELLBASE."+version.toUpperCase()+".FEATURE_MAP.CHUNK_SIZE", 500);
 		int start_chunk = region.getStart() / chunk_size;
 		int end_chunk = region.getEnd() / chunk_size;
 		

@@ -123,8 +123,9 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 
 		if (ensemblIds.size() > 0){
 			Criteria criteria = this.openSession().createCriteria(Tfbs.class)
-			.createCriteria("geneByTargetGeneId")
-			.add(Restrictions.in("stableId", ensemblIds));
+				.createCriteria("geneByTargetGeneId")
+//					.createCriteria("gene")
+					.add(Restrictions.in("stableId", ensemblIds));
 			return (List<Tfbs>) executeAndClose(criteria);
 		}
 		else{
@@ -149,7 +150,7 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 	@Override
 	public List<Pwm> getAllPwmByTfGeneName(String geneName) {
 		Criteria criteria = this.openSession().createCriteria(Pwm.class)
-				.add(Restrictions.eq("tfName", geneName));
+			.add(Restrictions.eq("tfName", geneName));
 		List<Pwm> pwmList = (List<Pwm>) executeAndClose(criteria);
 		
 		if(pwmList == null || pwmList.size() == 0) {

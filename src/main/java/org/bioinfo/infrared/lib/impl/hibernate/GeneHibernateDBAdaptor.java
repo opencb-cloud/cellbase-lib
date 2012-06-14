@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.Gene;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
-import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.core.cellbase.Xref;
 import org.bioinfo.infrared.lib.api.GeneDBAdaptor;
 import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
@@ -402,13 +401,13 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		HashSet<String> keys = new HashSet<String>();
 		
 		for (Tfbs tfbs : result) {
-//			if (!keys.contains(tfbs.getGeneByTfGeneId().getStableId())){
-//				keys.add(tfbs.getGeneByTfGeneId().getStableId());
-//			}
-//			
-			if (null != tfbs && !keys.contains(tfbs.getTranscript().getStableId())){
-				keys.add(tfbs.getTranscript().getStableId());
+			if (!keys.contains(tfbs.getGeneByTfGeneId().getStableId())){
+				keys.add(tfbs.getGeneByTfGeneId().getStableId());
 			}
+//			
+//			if (null != tfbs && !keys.contains(tfbs.getTranscript().getStableId())){
+//				keys.add(tfbs.getTranscript().getStableId());
+//			}
 		}
 		
 		Criteria criteria = this.openSession().createCriteria(Gene.class)

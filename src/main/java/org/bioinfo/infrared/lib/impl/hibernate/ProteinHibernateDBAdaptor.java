@@ -11,7 +11,6 @@ import org.bioinfo.infrared.core.cellbase.ProteinInteraction;
 import org.bioinfo.infrared.core.cellbase.ProteinSequence;
 import org.bioinfo.infrared.core.cellbase.ProteinXref;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
-import org.bioinfo.infrared.lib.common.DNASequenceUtils;
 import org.bioinfo.infrared.lib.common.ProteinRegion;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
@@ -21,12 +20,15 @@ import org.hibernate.criterion.Restrictions;
 
 public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements ProteinDBAdaptor {
 
+	
 	public ProteinHibernateDBAdaptor(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
 	public ProteinHibernateDBAdaptor(SessionFactory sessionFactory, String species, String version) {
 		super(sessionFactory, species, version);
 	}
+	
+	
 	@Override
 	public List<String> getAllIds() {
 		// TODO Auto-generated method stub
@@ -263,6 +265,7 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 	
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProteinRegion> getAllProteinRegionByGenomicRegion(Region region) {
 		List<ProteinRegion> proteinRegionList = new ArrayList<ProteinRegion>();
@@ -270,7 +273,7 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 		List<FeatureMap> featureMapList = null;
 		Criteria criteria = this.openSession().createCriteria(FeatureMap.class);
 		if(region != null) {
-			int chunkId = region.getStart() / applicationProperties.getIntProperty("FEATURE_MAP_CHUNK_SIZE");
+			int chunkId = region.getStart() / applicationProperties.getIntProperty("CELLBASE."+version.toUpperCase()+".FEATURE_MAP.CHUNK_SIZE");
 			//			System.out.println("getAllConsequenceTypeByVariant: "+chunkId+", chromosome: "+variant.getChromosome());
 			criteria.add(Restrictions.eq("chunkId", chunkId))
 				.add(Restrictions.eq("chromosome", region.getChromosome()))

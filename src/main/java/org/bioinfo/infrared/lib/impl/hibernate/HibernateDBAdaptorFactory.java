@@ -166,7 +166,7 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 			SessionFactory sessionFactory = createCellBaseSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (GeneDBAdaptor) new GeneHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+		return (GeneDBAdaptor) new GeneHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), speciesAlias.get(species), version);
 	}
 
 
@@ -182,7 +182,7 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 			SessionFactory sessionFactory  = createCellBaseSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (TranscriptDBAdaptor) new TranscriptHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+		return (TranscriptDBAdaptor) new TranscriptHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), speciesAlias.get(species), version);
 	}
 	
 	
@@ -197,7 +197,7 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 			SessionFactory sessionFactory  = createCellBaseSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (ExonDBAdaptor) new ExonHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+		return (ExonDBAdaptor) new ExonHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), speciesAlias.get(species), version);
 	}
 
 	
@@ -227,7 +227,7 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 			SessionFactory sessionFactory  = createCellBaseSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (GenomicVariantEffectDBAdaptor) new GenomicVariantEffectHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+		return (GenomicVariantEffectDBAdaptor) new GenomicVariantEffectHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), speciesAlias.get(species), version);
 	}
 	
 	
@@ -243,7 +243,7 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 			SessionFactory sessionFactory  = createCellBaseSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (ProteinDBAdaptor) new ProteinHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+		return (ProteinDBAdaptor) new ProteinHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), speciesAlias.get(species), version);
 	}
 
 	
@@ -266,7 +266,7 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 //			}
 //		}
 		
-		return (SnpDBAdaptor) new SnpHibernateDBAdapator(sessionFactories.get(speciesVersionPrefix), species, version);
+		return (SnpDBAdaptor) new SnpHibernateDBAdapator(sessionFactories.get(speciesVersionPrefix), speciesAlias.get(species), version);
 	}
 
 	
@@ -282,7 +282,7 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 			SessionFactory sessionFactory = createCellBaseSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (GenomeSequenceDBAdaptor) new GenomeSequenceHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+		return (GenomeSequenceDBAdaptor) new GenomeSequenceHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), speciesAlias.get(species), version);
 	}
 
 	@Override
@@ -299,7 +299,7 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 			SessionFactory sessionFactory = createCellBaseSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (CytobandDBAdaptor) new CytobandHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+		return (CytobandDBAdaptor) new CytobandHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), speciesAlias.get(species), version);
 	}
 	
 
@@ -323,7 +323,7 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 			SessionFactory sessionFactory = createCellBaseSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (XRefsDBAdaptor) new XRefsHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+		return (XRefsDBAdaptor) new XRefsHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), speciesAlias.get(species), version);
 	}
 
 	
@@ -339,7 +339,7 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 			SessionFactory sessionFactory = createCellBaseSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (TfbsDBAdaptor) new TfbsHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+		return (TfbsDBAdaptor) new TfbsHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), speciesAlias.get(species), version);
 	}
 	
 	
@@ -355,7 +355,7 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 			SessionFactory sessionFactory = createCellBaseSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (RegulatoryRegionDBAdaptor) new RegulatoryRegionHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+		return (RegulatoryRegionDBAdaptor) new RegulatoryRegionHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), speciesAlias.get(species), version);
 	}
 
 	
@@ -372,7 +372,7 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
 //		System.out.println("sessionFactories " + sessionFactories.get(speciesVersionPrefix));
-		return (MirnaHibernateDBAdaptor) new MirnaHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+		return (MirnaHibernateDBAdaptor) new MirnaHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), speciesAlias.get(species), version);
 	}
 
 	
@@ -388,7 +388,7 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 			SessionFactory sessionFactory = createBioPaxSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (BioPaxDBAdaptor) new BioPaxHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+		return (BioPaxDBAdaptor) new BioPaxHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), speciesAlias.get(species), version);
 	}
 
 	
@@ -404,7 +404,7 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 			SessionFactory sessionFactory = createCellBaseSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (MutationHibernateDBAdaptor) new MutationHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+		return (MutationHibernateDBAdaptor) new MutationHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), speciesAlias.get(species), version);
 	}
 	
 	
@@ -420,7 +420,7 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 			SessionFactory sessionFactory = createCellBaseSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (CpGIslandHibernateDBAdaptor) new CpGIslandHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+		return (CpGIslandHibernateDBAdaptor) new CpGIslandHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), speciesAlias.get(species), version);
 	}
 
 	
@@ -436,7 +436,7 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 			SessionFactory sessionFactory = createCellBaseSessionFactory(speciesVersionPrefix);
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
-		return (StructuralVariationDBAdaptor) new StructuralVariationHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), species, version);
+		return (StructuralVariationDBAdaptor) new StructuralVariationHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), speciesAlias.get(species), version);
 	}
 
 }

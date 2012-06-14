@@ -12,7 +12,7 @@ import org.hibernate.SessionFactory;
 
 class GenomeSequenceHibernateDBAdaptor extends HibernateDBAdaptor implements GenomeSequenceDBAdaptor {
 
-	private final static int CHUNK_SIZE = 2000;
+//	private final static int CHUNK_SIZE = 2000;
 
 	
 	public GenomeSequenceHibernateDBAdaptor(SessionFactory sessionFactory) {
@@ -23,12 +23,14 @@ class GenomeSequenceHibernateDBAdaptor extends HibernateDBAdaptor implements Gen
 		super(sessionFactory, species, version);
 	}
 	
-	private static int getChunk(int position){
-		return (position / CHUNK_SIZE);
+	
+	private int getChunk(int position){
+		System.out.println(">>>>"+version);
+		return (position / applicationProperties.getIntProperty("CELLBASE."+version.toUpperCase()+".GENOME_SEQUENCE.CHUNK_SIZE", 2000));
 	}
 
-	private static int getOffset(int position){
-		return ((position) % CHUNK_SIZE);
+	private int getOffset(int position){
+		return ((position) % applicationProperties.getIntProperty("CELLBASE.V2.GENOME_SEQUENCE.CHUNK_SIZE", 2000));
 	}
 	
 	@Override
@@ -40,9 +42,9 @@ class GenomeSequenceHibernateDBAdaptor extends HibernateDBAdaptor implements Gen
 		}
 		
 		Query query = this.openSession().createQuery("from GenomeSequence where chromosome = :chromosome and chunk >= :start and chunk <= :end")
-					.setParameter("chromosome", chromosome.trim())
-					.setParameter("start", String.valueOf(getChunk(start)))
-					.setParameter("end", String.valueOf(getChunk(end)));
+			.setParameter("chromosome", chromosome.trim())
+			.setParameter("start", String.valueOf(getChunk(start)))
+			.setParameter("end", String.valueOf(getChunk(end)));
 		
 		List<GenomeSequence> genomeSequenceList = (List<GenomeSequence>) executeAndClose(query);
 		StringBuilder sb = new StringBuilder();
