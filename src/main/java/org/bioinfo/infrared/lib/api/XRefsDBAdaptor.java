@@ -21,8 +21,16 @@ public interface XRefsDBAdaptor {
 	
 
 	public List<Xref> getById(String id);
-	
+		
 	public List<List<Xref>> getAllByIdList(List<String> idList);
+	
+	public List<Xref> getByStartsWithQuery(String likeQuery);
+	
+	public List<List<Xref>> getByStartsWithQueryList(List<String> likeQuery);
+	
+	public List<Xref> getByContainsQuery(String likeQuery);
+	
+	public List<List<Xref>> getByContainsQueryList(List<String> likeQuery);
 	
 	public XRefs getById(String id, String type);
 	

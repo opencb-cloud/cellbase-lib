@@ -221,7 +221,7 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 
 					//	int codonPosition = -1;
 //					if (!isUTR && featureMap.getBiotype().equalsIgnoreCase("protein_coding")) {
-					if (isFeatureUTR.get(featureMap.getTranscriptStableId()) != null && !isFeatureUTR.get(featureMap.getTranscriptStableId()) && featureMap.getBiotype().equalsIgnoreCase("protein_coding")) {
+					if (isFeatureUTR.get(featureMap.getTranscriptStableId()) != null && !isFeatureUTR.get(featureMap.getTranscriptStableId()) && (featureMap.getBiotype().equalsIgnoreCase("protein_coding") || featureMap.getBiotype().equalsIgnoreCase("nonsense_mediated_decay"))) {
 						genomicVariantConsequenceTypeList.add(createGenomicVariantConsequenceType(variant, featureMap, "coding_sequence"));
 						// && !featureMap.getExonPhase().equals("-1") ==> not needed!!
 						// If exon contains a UTR part is not processed here as 'if' clause above does not allow to enter this code
@@ -229,10 +229,25 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 						if(!featureMap.getExonPhase().equals("")) { 
 
 							int aaPosition = -1;
+							int exonOffset = -1;
 							if(featureMap.getStrand().equals("1")) {
-								aaPosition = ((variant.getPosition()-featureMap.getStart()+1+featureMap.getExonCdnaCodingStart()-featureMap.getTranscriptCdnaCodingStart())/3)+1;
+								// If ExonPhase is -1 means we are in an exon with UTR and is not the UTR part, 
+								// we only need to calculate the offset in cdna without getTranscriptCdnaCodingStart()
+								exonOffset = variant.getPosition() - featureMap.getStart() + 1;
+								if(featureMap.getExonPhase() != null && featureMap.getExonPhase().equals("-1") && exonOffset > featureMap.getTranscriptCdnaCodingStart()) {
+									aaPosition = ((exonOffset - featureMap.getTranscriptCdnaCodingStart())/3)+1;
+									System.out.println("UTR-EXON: aaPosition: "+aaPosition);
+								}else {
+									aaPosition = ((exonOffset + featureMap.getExonCdnaCodingStart()-featureMap.getTranscriptCdnaCodingStart() -1 )/3)+1;
+									System.out.println("EXON: aaPosition: "+aaPosition);
+								}
 							}else {
-								aaPosition = ((featureMap.getEnd()-variant.getPosition()+1+featureMap.getExonCdnaCodingStart()-featureMap.getTranscriptCdnaCodingStart())/3)+1;
+								exonOffset = featureMap.getEnd()-variant.getPosition()+1;
+								if(featureMap.getExonPhase() != null && featureMap.getExonPhase().equals("-1") && exonOffset > featureMap.getTranscriptCdnaCodingStart()) {
+									aaPosition = ((exonOffset - featureMap.getTranscriptCdnaCodingStart())/3)+1;
+								}else {
+									aaPosition = ((exonOffset + featureMap.getExonCdnaCodingStart()-featureMap.getTranscriptCdnaCodingStart() - 1)/3)+1;
+								}
 							}
 
 							String[] codons =  getSequenceByCodon(variant, featureMap);

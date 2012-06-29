@@ -25,11 +25,14 @@ import org.bioinfo.infrared.core.cellbase.Pwm;
 import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.SnpPhenotypeAnnotation;
+import org.bioinfo.infrared.core.cellbase.SnpPopulationFrequency;
+import org.bioinfo.infrared.core.cellbase.SnpToTranscriptConsequenceType;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.core.cellbase.Xref;
 import org.bioinfo.infrared.lib.common.GenomeSequenceFeature;
 import org.bioinfo.infrared.lib.common.GenomicVariantConsequenceType;
+import org.bioinfo.infrared.lib.common.SnpRegulatoryConsequenceType;
 import org.bioinfo.infrared.lib.impl.hibernate.GenomicRegionFeatures;
 
 public class StringWriter {
@@ -72,7 +75,7 @@ public class StringWriter {
 	
 	public static String serialize(GenomeSequenceFeature genomeSequence){
 //		return new StringBuilder().append(genomeSequence.getId().getChromosome()).append("\t").append(genomeSequence.getStart()).append("\t").append(genomeSequence.getEnd()).append("\t").append(genomeSequence.getSequence()).toString();
-		StringBuilder sb = new StringBuilder().append(">").append(genomeSequence.getChromosome()).append("_").append(genomeSequence.getStart()).append("_").append(genomeSequence.getEnd()).append("\n");
+		StringBuilder sb = new StringBuilder().append(">").append(genomeSequence.getChromosome()).append("_").append(genomeSequence.getStart()).append("_").append(genomeSequence.getEnd()).append("_").append(genomeSequence.getStrand()).append("\n");
 		int length = genomeSequence.getSequence().length();
 		int cont=0;
 		while(cont <= length) {
@@ -133,10 +136,86 @@ public class StringWriter {
 	}
 
 	public static String serialize(ConsequenceType obj) {
+		StringBuilder sb = new StringBuilder();
+		if(obj.getSnpToTranscripts() != null) {
+			sb.append(obj.getSnpToTranscriptConsequenceTypes().iterator().next().getSnpToTranscript().getSnp().getName()).append("\n");
+			sb.append(obj.getSnpToTranscriptConsequenceTypes().iterator().next().getConsequenceType().toString());
+		}
 		return join("\t", obj.getSoAccession(), obj.getSoTerm(), obj.getFeatureSoTerm(), obj.getDisplayTerm(), ""+obj.getRank(), obj.getNcbiTerm(), obj.getLabel(), obj.getDescription());
 	}
+	
+	public static String serialize(SnpToTranscriptConsequenceType obj) {
+		StringBuilder sb = new StringBuilder();
+		if(obj.getSnpToTranscript() != null) {
+			if(obj.getSnpToTranscript().getSnp() != null) {			
+				sb.append(obj.getSnpToTranscript().getSnp().getName()).append("\t");
+				sb.append(obj.getSnpToTranscript().getSnp().getChromosome()).append("\t");
+				sb.append(obj.getSnpToTranscript().getSnp().getStart()).append("\t");
+				sb.append(obj.getSnpToTranscript().getSnp().getEnd()).append("\t");
+				sb.append(obj.getSnpToTranscript().getSnp().getStrand()).append("\t");
+				sb.append(obj.getSnpToTranscript().getSnp().getAlleleString()).append("\t");
+			
+				
+				if(obj.getSnpToTranscript().getTranscript() != null) {
+					sb.append(obj.getSnpToTranscript().getTranscript().getStableId()).append("\t");					
+					sb.append(obj.getSnpToTranscript().getTranscript().getExternalName()).append("\t");
+				}else {
+					sb.append("").append("\t");
+					sb.append("").append("\t");
+				}
+				if(obj.getConsequenceType() != null) {
+					sb.append(obj.getConsequenceType().getSoAccession()).append("\t");
+					sb.append(obj.getConsequenceType().getSoTerm()).append("\t");
+					sb.append(obj.getConsequenceType().getLabel()).append("\t");
+					sb.append(obj.getConsequenceType().getDescription());
+				}else {
+					sb.append("").append("\t");
+					sb.append("").append("\t");
+					sb.append("").append("\t");
+					sb.append("");
+				}
+			}
+			
+		}
+		return sb.toString();
+	}
 
+	public static String serialize(SnpRegulatoryConsequenceType snpRegulatoryConsequenceType){
+		return new StringBuilder().append(snpRegulatoryConsequenceType.getSnpName()).append("\t")
+			.append(snpRegulatoryConsequenceType.getFeatureName()).append("\t")
+			.append(snpRegulatoryConsequenceType.getFeatureType()).append("\t")
+			.append(snpRegulatoryConsequenceType.getChromosome()).append("\t")
+			.append(snpRegulatoryConsequenceType.getStart()).append("\t")
+			.append(snpRegulatoryConsequenceType.getEnd()).append("\t")
+			.append(snpRegulatoryConsequenceType.getStrand()).append("\t")
+			.append(snpRegulatoryConsequenceType.getTranscriptStableId()).append("\t")
+			.append(snpRegulatoryConsequenceType.getGeneStableId()).append("\t")
+			.append(snpRegulatoryConsequenceType.getGeneName()).append("\t")
+			.append(snpRegulatoryConsequenceType.getBiotype()).toString(); 
+	}
+	
+	public static String serialize(SnpPopulationFrequency snpPopulationFrequency){
+		StringBuilder sb = new StringBuilder();
+		sb.append(snpPopulationFrequency.getSnp().getName()).append("\t");
+		sb.append(snpPopulationFrequency.getPopulation()).append("\t");
+		sb.append(snpPopulationFrequency.getSource()).append("\t");
+		sb.append(snpPopulationFrequency.getRefAllele()).append("\t");
+		sb.append(snpPopulationFrequency.getRefAlleleFrequency()).append("\t");
+		sb.append(snpPopulationFrequency.getOtherAllele()).append("\t");
+		sb.append(snpPopulationFrequency.getOtherAlleleFrequency()).append("\t");
+		sb.append(snpPopulationFrequency.getRefAlleleHomozygote()).append("\t");
+		sb.append(snpPopulationFrequency.getRefAlleleHomozygoteFrequency()).append("\t");
+		sb.append(snpPopulationFrequency.getAlleleHeterozygote()).append("\t");
+		sb.append(snpPopulationFrequency.getAlleleHeterozygoteFrequency()).append("\t");
+		sb.append(snpPopulationFrequency.getOtherAlleleHomozygote()).append("\t");
+		sb.append(snpPopulationFrequency.getOtherAlleleHeterozygoteFrequency());
+		return sb.toString();
+	}
+	
 	public static String serialize(Transcript transcript){
+		if(transcript.getGene() != null) {
+			System.out.println("serialize transcript");
+		}
 		return new StringBuilder().append(transcript.getStableId()).append("\t")
 				.append(transcript.getExternalName()).append("\t")
 				.append(transcript.getExternalDb()).append("\t")
@@ -167,7 +246,6 @@ public class StringWriter {
 
 
 	public static String serialize(MirnaTarget object) {
-		System.out.println("holaaaaaaaaaaaaaa");
 		return new StringBuilder().append(object.getMirbaseId()).append("\t")
 				.append(object.getGeneTargetName()).append("\t")
 				.append(object.getChromosome()).append("\t")
@@ -298,6 +376,26 @@ public class StringWriter {
 				continue;
 			}
 			
+			if (object instanceof ConsequenceType){
+				sb.append(StringWriter.serialize((ConsequenceType) object)).append("\n");
+				continue;
+			}
+
+			if (object instanceof SnpToTranscriptConsequenceType){
+				sb.append(StringWriter.serialize((SnpToTranscriptConsequenceType) object)).append("\n");
+				continue;
+			}
+			
+			if (object instanceof SnpRegulatoryConsequenceType){
+				sb.append(StringWriter.serialize((SnpRegulatoryConsequenceType) object)).append("\n");
+				continue;
+			}
+			
+			if (object instanceof SnpPopulationFrequency){
+				sb.append(StringWriter.serialize((SnpPopulationFrequency) object)).append("\n");
+				continue;
+			}
+			
 			if (object instanceof SnpPhenotypeAnnotation){
 				sb.append(StringWriter.serialize((SnpPhenotypeAnnotation) object)).append("\n");
 				continue;
@@ -305,11 +403,6 @@ public class StringWriter {
 			
 			if (object instanceof MutationPhenotypeAnnotation){
 				sb.append(StringWriter.serialize((MutationPhenotypeAnnotation) object)).append("\n");
-				continue;
-			}
-
-			if (object instanceof ConsequenceType){
-				sb.append(StringWriter.serialize((ConsequenceType) object)).append("\n");
 				continue;
 			}
 

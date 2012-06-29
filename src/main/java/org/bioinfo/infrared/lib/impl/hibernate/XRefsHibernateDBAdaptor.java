@@ -11,6 +11,7 @@ import org.bioinfo.infrared.lib.api.XRefsDBAdaptor;
 import org.bioinfo.infrared.lib.common.XRefs;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
@@ -67,18 +68,69 @@ public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefs
 	@Override
 	public List<Xref> getById(String id) {
 		Criteria criteria = this.openSession().createCriteria(Xref.class)
-		.add(Restrictions.eq("displayId", id));
+			.add(Restrictions.eq("displayId", id));
 		return (List<Xref>) executeAndClose(criteria);
 	}
 
-
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<List<Xref>> getAllByIdList(List<String> ids) {
 		List<List<Xref>> results = new ArrayList<List<Xref>>(ids.size());
+		Session session = this.openSession();
+		Criteria criteria;
 		for (String id : ids) {
-			results.add(this.getById(id));
+			criteria = session.createCriteria(Xref.class)
+					.add(Restrictions.eq("displayId", id));
+			results.add((List<Xref>)execute(criteria));
 		}
+		session.close();
 		return results;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Xref> getByStartsWithQuery(String likeQuery) {
+		Criteria criteria = this.openSession().createCriteria(Xref.class)
+				.add(Restrictions.like("displayId", likeQuery+"%"));
+		return (List<Xref>) executeAndClose(criteria);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<List<Xref>> getByStartsWithQueryList(List<String> likeQuery) {
+		List<List<Xref>> xrefListList = new ArrayList<List<Xref>>(likeQuery.size());
+		Session session = this.openSession();
+		Criteria criteria;
+		for(String lq: likeQuery) {
+			criteria = session.createCriteria(Xref.class)
+				.add(Restrictions.like("displayId", lq+"%"));
+			xrefListList.add((List<Xref>)execute(criteria));
+		}
+		session.close(); 
+		return (List<List<Xref>>) xrefListList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Xref> getByContainsQuery(String likeQuery) {
+		Criteria criteria = this.openSession().createCriteria(Xref.class)
+				.add(Restrictions.like("displayId", "%"+likeQuery+"%"));
+		return (List<Xref>) executeAndClose(criteria);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<List<Xref>> getByContainsQueryList(List<String> likeQuery) {
+		List<List<Xref>> xrefListList = new ArrayList<List<Xref>>(likeQuery.size());
+		Session session = this.openSession();
+		Criteria criteria;
+		for(String lq: likeQuery) {
+			criteria = session.createCriteria(Xref.class)
+				.add(Restrictions.like("displayId", "%"+lq+"%"));
+			xrefListList.add((List<Xref>)execute(criteria));
+		}
+		session.close(); 
+		return (List<List<Xref>>) xrefListList;
 	}
 
 
@@ -102,8 +154,8 @@ public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefs
 	@Override
 	public List<Xref> getByDBName(String id, String dbname) {
 		Criteria criteria = this.openSession().createCriteria(Xref.class)
-		.add(Restrictions.eq("displayId", id))
-		.createCriteria("dbname").add(Restrictions.eq("name", dbname));
+				.add(Restrictions.eq("displayId", id))
+				.createCriteria("dbname").add(Restrictions.eq("name", dbname));
 		return (List<Xref>) executeAndClose(criteria);
 	}
 
@@ -128,10 +180,11 @@ public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefs
 	public List<Xref> getByDBNameList(String id, List<String> dbnames) {
 		List<Xref> result =  new ArrayList<Xref>();
 		
+		Session session = this.openSession();
 		//TODO: ESTA QUERY ME DEVUELVE DUPLICADOS Y HABRA QUE MEJORARLA
 		if (dbnames != null){
 			String query = "select x2.* from xref x1, xref x2, transcript_to_xref tx1, transcript_to_xref tx2, dbname db where x1.display_id=:id and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id and x2.dbname_id=db.dbname_id and db.name in :dbNameParam";
-			result = (List<Xref>)this.openSession().createSQLQuery(query)
+			result = (List<Xref>)session.createSQLQuery(query)
 			.addEntity(Xref.class)
 			.setParameterList("dbNameParam", dbnames )
 			.setParameter("id", id)
@@ -139,12 +192,12 @@ public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefs
 		}
 		else{
 			String query = "select x2.* from xref x1, xref x2, transcript_to_xref tx1, transcript_to_xref tx2 where x1.display_id=:id and x1.xref_id=tx1.xref_id and tx1.transcript_id=tx2.transcript_id and tx2.xref_id=x2.xref_id";
-			result = (List<Xref>)this.openSession().createSQLQuery(query)
+			result = (List<Xref>)session.createSQLQuery(query)
 			.addEntity(Xref.class)
 			.setParameter("id", id)
 			.list();
 		}
-		
+		session.close();
 		
 		//TODO: ESTE CODIGO BORRA LOS DUPLICADOS, ES SOLO UNA SOLUCIÓN RAPIDA
 		List<Xref> result_clean = new ArrayList<Xref>();
@@ -197,7 +250,8 @@ public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefs
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
+
 	
 	// Returns all possible DB names
 //	@SuppressWarnings("unchecked")

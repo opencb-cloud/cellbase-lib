@@ -3,6 +3,7 @@ package org.bioinfo.infrared.lib.api;
 import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.Exon;
+import org.bioinfo.infrared.core.cellbase.ExonToTranscript;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 
@@ -56,5 +57,15 @@ public interface ExonDBAdaptor extends FeatureDBAdaptor {
 
 	List<String> getAllSequencesByIdList(List<String> ensemblIdList, int strand);
 
+	
+	
+	public List<ExonToTranscript> getAllExonToTranscriptByEnsemblGeneId(String geneId);
+	
+	public List<List<ExonToTranscript>> getAllExonToTranscriptByEnsemblGeneIdList(List<String> geneIdList);
+	
+	public List<ExonToTranscript> getAllExonToTranscriptByEnsemblTranscriptId(String transcriptId);
+	
+	public List<List<ExonToTranscript>> getAllExonToTranscriptByEnsemblTranscriptIdList(List<String> transcriptIdList);
+	
 	
 }

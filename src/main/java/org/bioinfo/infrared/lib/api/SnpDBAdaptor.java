@@ -7,10 +7,11 @@ import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.SnpPhenotypeAnnotation;
 import org.bioinfo.infrared.core.cellbase.SnpPopulationFrequency;
 import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
+import org.bioinfo.infrared.core.cellbase.SnpToTranscriptConsequenceType;
 import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
-import org.hibernate.SQLQuery;
+import org.bioinfo.infrared.lib.common.SnpRegulatoryConsequenceType;
 
 public interface SnpDBAdaptor extends FeatureDBAdaptor {
 
@@ -42,7 +43,7 @@ public interface SnpDBAdaptor extends FeatureDBAdaptor {
 	
 	public List<ConsequenceType> getAllConsequenceTypesBySnpId(String snpId);
 	
-	public List<List<ConsequenceType>> getAllConsequenceTypesBySnpIdList(List<String> snpId);
+	public List<List<SnpToTranscriptConsequenceType>> getAllConsequenceTypesBySnpIdList(List<String> snpId);
 
 	public List<SnpToTranscript> getAllSnpToTranscriptsBySnpId(String snpId);
 	
@@ -92,6 +93,11 @@ public interface SnpDBAdaptor extends FeatureDBAdaptor {
 	public List<Snp> getAllFilteredByConsequenceType(List<String> snpIds, List<String> consequenceTypes);
 
 	public void writeAllFilteredByConsequenceType(String consequence, String outfile);
+	
+	
+	public List<SnpRegulatoryConsequenceType> getAllSnpRegulatoryBySnpName(String name);
+	
+	public List<List<SnpRegulatoryConsequenceType>> getAllSnpRegulatoryBySnpNameList(List<String> nameList);
 	
 	
 	public List<SnpPhenotypeAnnotation> getAllSnpPhenotypeAnnotationBySnpName(String name);

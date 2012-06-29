@@ -3,6 +3,7 @@ package org.bioinfo.infrared.lib.api;
 import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.Transcript;
+import org.bioinfo.infrared.lib.common.GenomeSequenceFeature;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 
@@ -77,4 +78,6 @@ public interface TranscriptDBAdaptor extends FeatureDBAdaptor {
 	public List<Transcript> getAllByMirnaMature(String mirnaID);
 	
 	public List<List<Transcript>> getAllByMirnaMatureList(List<String> mirnaIDList);
+	
+	
 }

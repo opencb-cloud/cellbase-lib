@@ -8,15 +8,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.ConsequenceType;
+import org.bioinfo.infrared.core.cellbase.FeatureMap;
 import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.SnpPhenotypeAnnotation;
 import org.bioinfo.infrared.core.cellbase.SnpPopulationFrequency;
 import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
+import org.bioinfo.infrared.core.cellbase.SnpToTranscriptConsequenceType;
 import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
+import org.bioinfo.infrared.lib.common.SnpRegulatoryConsequenceType;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
@@ -157,11 +160,52 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsequenceType> getAllConsequenceTypesBySnpId(String snpId) {
+		ConsequenceType intergenic = new ConsequenceType(17, "SO:0001628", "intergenic_variant", "", "INTERGENIC", 100, "", "Intergenic", "More than 5 kb either upstream or downstream of a transcript");
 		Criteria criteria = this.openSession().createCriteria(ConsequenceType.class)
 				.createCriteria("snpToTranscripts")
 				.createCriteria("snp")
 				.add(Restrictions.eq("name", snpId));
-		return (List<ConsequenceType>) executeAndClose(criteria);
+		
+		List<ConsequenceType> consquenceAux = (List<ConsequenceType>) executeAndClose(criteria);
+		if(consquenceAux != null && consquenceAux.size() > 0) {
+			return consquenceAux;
+		}else {
+			return Arrays.asList(intergenic);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<List<SnpToTranscriptConsequenceType>> getAllConsequenceTypesBySnpIdList(List<String> snpIdList) {
+		List<List<SnpToTranscriptConsequenceType>> consequenceTypeList = new ArrayList<List<SnpToTranscriptConsequenceType>>(snpIdList.size());
+		List<SnpToTranscriptConsequenceType> snpToTransConsquenceTypeListAux;
+		
+		ConsequenceType intergenic = new ConsequenceType(17, "SO:0001628", "intergenic_variant", "", "INTERGENIC", 100, "", "Intergenic", "More than 5 kb either upstream or downstream of a transcript");
+		
+		Criteria criteria;
+		Session session = this.openSession();
+		for(String snpId: snpIdList) {
+			criteria = session.createCriteria(SnpToTranscriptConsequenceType.class).setFetchMode("consequenceType", FetchMode.JOIN)
+				.createCriteria("snpToTranscript").setFetchMode("transcript", FetchMode.JOIN)
+				.createCriteria("snp")
+				.add(Restrictions.eq("name", snpId));			
+			snpToTransConsquenceTypeListAux = (List<SnpToTranscriptConsequenceType>) execute(criteria);
+			if(snpToTransConsquenceTypeListAux != null && snpToTransConsquenceTypeListAux.size() > 0) {
+				consequenceTypeList.add(snpToTransConsquenceTypeListAux);
+			}else {	// SNP is intergenic
+				criteria = session.createCriteria(Snp.class)
+					.add(Restrictions.eq("name", snpId));
+				List<Snp> snp = (List<Snp>) execute(criteria);
+				SnpToTranscript st = new SnpToTranscript();
+				if(snp != null && snp.size() > 0) {
+					st.setSnp(snp.get(0));					
+				}
+				SnpToTranscriptConsequenceType inter = new SnpToTranscriptConsequenceType(0, st, intergenic);
+				consequenceTypeList.add(Arrays.asList(inter));
+			}
+		}
+		session.close();
+		return consequenceTypeList;
 	}
 
 	@Override
@@ -172,12 +216,6 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 
 	@Override
 	public List<SnpToTranscript> getAllSnpToTranscriptsByTranscriptId(String transcriptId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<List<ConsequenceType>> getAllConsequenceTypesBySnpIdList(List<String> snpId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -609,6 +647,50 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 		return result;
 	}
 
+	
+
+	@Override
+	public List<SnpRegulatoryConsequenceType> getAllSnpRegulatoryBySnpName(	String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<List<SnpRegulatoryConsequenceType>> getAllSnpRegulatoryBySnpNameList(List<String> nameList) {
+		Query query;
+		List<List<SnpRegulatoryConsequenceType>> result = new ArrayList<List<SnpRegulatoryConsequenceType>>(nameList.size());
+		List<FeatureMap> featMapList = new ArrayList<FeatureMap>();
+		List<SnpRegulatoryConsequenceType> aux;
+		Session session = this.openSession();
+		for(String snpName: nameList) {
+//			criteria = session.createCriteria("FeatureMap")
+//					.add(Restrictions.eq("feature_name", snpName))
+//					.add(Restrictions.eq("feature_type", "snp")
+//					.add());
+//			query = session.createQuery("select fm1.featureName, fm2 from FeatureMap fm1, FeatureMap fm2 where fm1.featureType='snp' and fm1.featureName= :SNP and fm1.chunkId=fm2.chunkId and fm1.chromosome=fm2.chromosome and fm1.start<fm2.end and fm1.end>fm2.start and fm2.featureCategory='regulatory'")
+//					.setParameter("SNP", snpName)
+//					.setEntity("", arg1);
+//			query = session.createSQLQuery("select fm2.* from feature_map fm1, feature_map fm2 where fm1.feature_type='snp' and fm1.feature_name= :SNP and fm1.chunk_id=fm2.chunk_id and fm1.chromosome=fm2.chromosome and fm1.start<fm2.end and fm1.end>fm2.start and fm2.feature_category='regulatory'")
+//						.addEntity(SnpRegulatoryConsequenceType.class)
+//						.setParameter("SNP", snpName);
+			featMapList = (List<FeatureMap>) session.createSQLQuery("select fm2.* from feature_map fm1, feature_map fm2 where fm1.feature_type='snp' and fm1.feature_name= :SNP and fm1.chunk_id=fm2.chunk_id and fm1.chromosome=fm2.chromosome and fm1.start<=fm2.end and fm1.end>=fm2.start and fm2.feature_category='regulatory'")
+					.addEntity(FeatureMap.class)
+					.setParameter("SNP", snpName).list();
+			if(featMapList != null && featMapList.size() > 0) {
+				aux = new ArrayList<SnpRegulatoryConsequenceType>(featMapList.size());
+				for(FeatureMap fm: featMapList) {
+					aux.add(new SnpRegulatoryConsequenceType(snpName, fm.getFeatureName(), fm.getFeatureType(), fm.getChromosome(), fm.getStart(), fm.getEnd(), fm.getStrand(), fm.getTranscriptStableId(), fm.getGeneStableId(), fm.getGeneName(), fm.getBiotype()));
+				}
+				result.add(aux);
+			}else {
+				result.add(new ArrayList<SnpRegulatoryConsequenceType>(0));
+			}
+		}
+		session.close();
+		return result;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<SnpPhenotypeAnnotation> getAllSnpPhenotypeAnnotationBySnpName(String name) {
@@ -668,12 +750,19 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 		return (List<SnpPopulationFrequency>) executeAndClose(criteria);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<List<SnpPopulationFrequency>> getAllSnpPopulationFrequencyList(List<String> nameList) {
 		List<List<SnpPopulationFrequency>> result = new ArrayList<List<SnpPopulationFrequency>>(nameList.size());
+		Criteria criteria ;
+		Session session = this.openSession();
 		for(String name: nameList) {
-			result.add(this.getAllSnpPopulationFrequency(name));
+			criteria = this.openSession().createCriteria(SnpPopulationFrequency.class)
+				.createCriteria("snp")
+				.add(Restrictions.eq("name", name));			
+			result.add((List<SnpPopulationFrequency>) execute(criteria));
 		}
+		session.close();
 		return result;
 	}
 
@@ -730,5 +819,6 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 		session.close();
 		return result;
 	}
+
 
 }

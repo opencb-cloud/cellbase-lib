@@ -85,7 +85,11 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 		}
 		
 		query = this.openSession().createQuery(Hquery);
-		query.setParameterList("keys", ensemblIds);
+		if(ensemblIds.size() > 0) {
+			query.setParameterList("keys", ensemblIds);			
+		}else {
+			query.setParameter("keys", id);
+		}
 
 		if (cellType != null) {
 			query.setParameter("ct", cellType);				
@@ -96,7 +100,7 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 			query.setParameter("end", end);
 		}
 		
-		return (List<Tfbs>) executeAndClose(query);
+		return (List<Tfbs>) executeAndClose(query);			
 	}
 
 	@Override

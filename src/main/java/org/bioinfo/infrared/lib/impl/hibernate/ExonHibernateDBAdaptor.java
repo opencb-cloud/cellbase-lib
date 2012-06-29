@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.bioinfo.infrared.core.cellbase.Exon;
+import org.bioinfo.infrared.core.cellbase.ExonToTranscript;
 import org.bioinfo.infrared.lib.api.ExonDBAdaptor;
 import org.bioinfo.infrared.lib.common.Position;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -362,5 +364,46 @@ class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDBAdaptor
 		return sequence;
 	}
 
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ExonToTranscript> getAllExonToTranscriptByEnsemblGeneId(String geneId) {
+		Criteria criteria =  this.openSession().createCriteria(ExonToTranscript.class).setFetchMode("exon", FetchMode.JOIN)
+			.createCriteria("transcript")
+			.createCriteria("gene")
+			.add(Restrictions.eq("stableId", geneId));	
+		return (List<ExonToTranscript>)executeAndClose(criteria);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<List<ExonToTranscript>> getAllExonToTranscriptByEnsemblGeneIdList(List<String> geneIdList) {
+		List<List<ExonToTranscript>> exonToTranscripts = new ArrayList<List<ExonToTranscript>>(geneIdList.size());
+		Criteria criteria;
+		Session session = this.openSession();
+		for(String geneId: geneIdList) {
+			criteria =  session.createCriteria(ExonToTranscript.class).setFetchMode("exon", FetchMode.JOIN)
+					.createCriteria("transcript")
+					.createCriteria("gene")
+					.add(Restrictions.eq("stableId", geneId));	
+			exonToTranscripts.add((List<ExonToTranscript>)execute(criteria));
+		}
+		session.close();
+		return exonToTranscripts;
+	}
+
+	@Override
+	public List<ExonToTranscript> getAllExonToTranscriptByEnsemblTranscriptId(	String transcriptId) {
+		return null;
+	}
+
+	@Override
+	public List<List<ExonToTranscript>> getAllExonToTranscriptByEnsemblTranscriptIdList(List<String> transcriptIdList) {
+		return null;
+	}
+
+	
 
 }
