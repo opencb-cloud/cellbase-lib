@@ -442,13 +442,13 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		HashSet<String> keys = new HashSet<String>();
 
 		for (Tfbs tfbs : result) {
-			if (!keys.contains(tfbs.getGeneByTfGeneId().getStableId())){
-				keys.add(tfbs.getGeneByTfGeneId().getStableId());
-			}
+//			if (!keys.contains(tfbs.getGeneByTfGeneId().getStableId())){
+//				keys.add(tfbs.getGeneByTfGeneId().getStableId());
+//			}
 			//			
-			//			if (null != tfbs && !keys.contains(tfbs.getTranscript().getStableId())){
-			//				keys.add(tfbs.getTranscript().getStableId());
-			//			}
+			if (null != tfbs && !keys.contains(tfbs.getTranscript().getStableId())){
+				keys.add(tfbs.getTranscript().getStableId());
+			}
 		}
 
 		Criteria criteria = this.openSession().createCriteria(Gene.class)

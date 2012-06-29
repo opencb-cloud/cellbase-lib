@@ -350,9 +350,16 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 
 	@Override
 	public List<Snp> getAllByRegion(String chromosome, int start, int end) {
-		GenomicRegionFeatureDBAdaptor genomicRegionFeatureDBAdaptor = new GenomicRegionFeatureHibernateDBAdaptor(this.getSessionFactory());
-		GenomicRegionFeatures genomicRegionFeatures = genomicRegionFeatureDBAdaptor.getByRegion(new Region(chromosome, start, end), Arrays.asList("snp"));
-		return genomicRegionFeatures.getSnp();
+//		GenomicRegionFeatureDBAdaptor genomicRegionFeatureDBAdaptor = new GenomicRegionFeatureHibernateDBAdaptor(this.getSessionFactory());
+//		GenomicRegionFeatures genomicRegionFeatures = genomicRegionFeatureDBAdaptor.getByRegion(new Region(chromosome, start, end), Arrays.asList("snp"));
+//		return genomicRegionFeatures.getSnp();
+		Criteria criteria =  this.openSession().createCriteria(Snp.class);
+		criteria.add(Restrictions.eq("chromosome", chromosome))
+			.add(Restrictions.ge("end", start))
+			.add(Restrictions.le("start", end))
+			.addOrder(Order.asc("chromosome"))
+			.addOrder(Order.asc("start"));
+		return (List<Snp>) executeAndClose(criteria);
 	}
 
 	//XXX
