@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.bioinfo.infrared.core.cellbase.Dbname;
+import org.bioinfo.infrared.core.cellbase.SnpXref;
 import org.bioinfo.infrared.core.cellbase.Xref;
 import org.bioinfo.infrared.lib.api.XRefsDBAdaptor;
 import org.bioinfo.infrared.lib.common.XRefs;
@@ -13,6 +14,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefsDBAdaptor {
@@ -110,11 +112,48 @@ public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefs
 		return (List<List<Xref>>) xrefListList;
 	}
 
+	@Override
+	public List<Xref> getByStartsWithSnpQuery(String likeQuery) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<List<Xref>> getByStartsWithSnpQueryList(List<String> likeQuery) {
+		List<List<Xref>> xrefListList = new ArrayList<List<Xref>>(likeQuery.size());
+		List<Xref> auxXrefs = null;
+		List<SnpXref> snpXrefs = null;
+		Session session = this.openSession();
+		Criteria criteria;
+		for(String lq: likeQuery) {
+			criteria = session.createCriteria(SnpXref.class)
+				.add(Restrictions.like("displayId", lq+"%"))
+//				.addOrder(Order.asc("displayId"))
+				.setMaxResults(50);
+			snpXrefs = (List<SnpXref>)execute(criteria);
+			auxXrefs = new ArrayList<Xref>();
+			if(snpXrefs != null) {
+				for(SnpXref snpXref: snpXrefs) {
+					auxXrefs.add(new Xref(0, new Dbname(snpXref.getDbname(), snpXref.getDbname(), "SNP identifier", ""), snpXref.getDisplayId(), ""));
+				}
+				if(snpXrefs.size() == 50) {
+					auxXrefs.add(new Xref(0, new Dbname("", "", "SNP identifier", ""), "...", ""));
+				}
+				xrefListList.add(auxXrefs);
+			}
+		}
+		session.close(); 
+		return (List<List<Xref>>) xrefListList;
+	}
+
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Xref> getByContainsQuery(String likeQuery) {
 		Criteria criteria = this.openSession().createCriteria(Xref.class)
-				.add(Restrictions.like("displayId", "%"+likeQuery+"%"));
+				.add(Restrictions.like("displayId", "%"+likeQuery+"%")).setMaxResults(50);
 		return (List<Xref>) executeAndClose(criteria);
 	}
 
@@ -126,7 +165,7 @@ public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefs
 		Criteria criteria;
 		for(String lq: likeQuery) {
 			criteria = session.createCriteria(Xref.class)
-				.add(Restrictions.like("displayId", "%"+lq+"%"));
+				.add(Restrictions.like("displayId", "%"+lq+"%")).setMaxResults(50);
 			xrefListList.add((List<Xref>)execute(criteria));
 		}
 		session.close(); 
@@ -250,7 +289,6 @@ public class XRefsHibernateDBAdaptor extends HibernateDBAdaptor implements XRefs
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 	
 	// Returns all possible DB names

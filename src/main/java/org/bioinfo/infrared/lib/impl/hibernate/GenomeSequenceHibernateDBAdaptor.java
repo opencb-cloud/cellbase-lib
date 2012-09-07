@@ -25,12 +25,11 @@ class GenomeSequenceHibernateDBAdaptor extends HibernateDBAdaptor implements Gen
 	
 	
 	private int getChunk(int position){
-		System.out.println(">>>>"+version);
 		return (position / applicationProperties.getIntProperty("CELLBASE."+version.toUpperCase()+".GENOME_SEQUENCE.CHUNK_SIZE", 2000));
 	}
 
 	private int getOffset(int position){
-		return ((position) % applicationProperties.getIntProperty("CELLBASE.V2.GENOME_SEQUENCE.CHUNK_SIZE", 2000));
+		return ((position) % applicationProperties.getIntProperty("CELLBASE."+version.toUpperCase()+".GENOME_SEQUENCE.CHUNK_SIZE", 2000));
 	}
 	
 	@Override
@@ -56,8 +55,14 @@ class GenomeSequenceHibernateDBAdaptor extends HibernateDBAdaptor implements Gen
 		int startStr = getOffset(start);
 		int endStr = getOffset(start) + (end-start) + 1;
 		String subStr = "";
-		if(sb.toString().length() > 0 && sb.toString().length() >= endStr){
-			subStr = sb.toString().substring(startStr, endStr);
+		if(getChunk(end) > 0) {
+			if(sb.toString().length() > 0 && sb.toString().length() >= endStr){
+				subStr = sb.toString().substring(startStr, endStr);
+			}			
+		}else {
+			if(sb.toString().length() > 0 && sb.toString().length()+1 >= endStr){
+				subStr = sb.toString().substring(startStr, endStr-1);
+			}
 		}
 		
 //		return new GenomeSequence(new GenomeSequenceId(chromosome, getChunk(start)), start, end, subStr);

@@ -14,7 +14,6 @@ import org.bioinfo.infrared.core.cellbase.SnpPhenotypeAnnotation;
 import org.bioinfo.infrared.core.cellbase.SnpPopulationFrequency;
 import org.bioinfo.infrared.core.cellbase.SnpToTranscript;
 import org.bioinfo.infrared.core.cellbase.SnpToTranscriptConsequenceType;
-import org.bioinfo.infrared.lib.api.GenomicRegionFeatureDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
 import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Position;
@@ -46,7 +45,7 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Snp> getAll() {
-		Criteria criteria = this.openSession().createCriteria(Snp.class);
+		Criteria criteria = this.openSession().createCriteria(Snp.class).setMaxResults(500000);
 		return (List<Snp>) this.executeAndClose(criteria);
 	}
 
@@ -66,18 +65,24 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 		return (List<Snp>) executeAndClose(criteria);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<List<Snp>> getAllBySnpIdList(List<String> idList){
-		List<List<Snp>> result = new ArrayList<List<Snp>>(idList.size());
-		for(String id: idList) {
-			result.add(this.getAllBySnpId(id));
+	public List<List<Snp>> getAllBySnpIdList(List<String> nameList){
+		List<List<Snp>> result = new ArrayList<List<Snp>>(nameList.size());
+		Criteria criteria = null;
+		Session session = this.openSession();
+		for(String name: nameList) {
+			criteria = session.createCriteria(Snp.class)
+					.add(Restrictions.eq("name", name));
+			result.add((List<Snp>)execute(criteria));
 		}
+		session.close();
 		return result;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Snp> getAllByGeneId(String geneId) {
+	public List<Snp> getAllByGeneName(String geneId) {
 		Criteria criteria = this.openSession().createCriteria(Snp.class)
 				.createCriteria("snpToTranscripts")
 				.createCriteria("transcript")
@@ -91,20 +96,23 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 		return (List<Snp>) executeAndClose(criteria);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<List<Snp>> getAllByGeneIdList(List<String> geneIds) {
+	public List<List<Snp>> getAllByGeneNameList(List<String> geneIds) {
 		List<List<Snp>> result = new ArrayList<List<Snp>>(geneIds.size());
+		Criteria criteria = null;
+		Session session = this.openSession();
 		for(String id: geneIds) {
-			result.add(this.getAllByGeneId(id));
+			criteria = session.createCriteria(Snp.class)
+					.createCriteria("snpToTranscripts")
+					.createCriteria("transcript")
+					.createCriteria("transcriptToXrefs")
+					.createCriteria("xref")
+					.add(Restrictions.eq("displayId", id));
+			result.add((List<Snp>) execute(criteria));
 		}
+		session.close();
 		return result;
-		//	GeneHibernateDBAdaptor geneHibernateDBAdaptor = new GeneHibernateDBAdaptor(this.getSessionFactory());
-		//	List<Gene> genes = geneHibernateDBAdaptor.getAllByEnsemblIdList(ensemblIds);
-		//	List<List<Snp>> result = new ArrayList<List<Snp>>();
-		//	for (Gene gene : genes) {
-		//		result.add(this.getAllByGeneId(gene.getStableId()));
-		//	}
-		//	return result;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -188,7 +196,7 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 			criteria = session.createCriteria(SnpToTranscriptConsequenceType.class).setFetchMode("consequenceType", FetchMode.JOIN)
 				.createCriteria("snpToTranscript").setFetchMode("transcript", FetchMode.JOIN)
 				.createCriteria("snp")
-				.add(Restrictions.eq("name", snpId));			
+				.add(Restrictions.eq("name", snpId));
 			snpToTransConsquenceTypeListAux = (List<SnpToTranscriptConsequenceType>) execute(criteria);
 			if(snpToTransConsquenceTypeListAux != null && snpToTransConsquenceTypeListAux.size() > 0) {
 				consequenceTypeList.add(snpToTransConsquenceTypeListAux);
@@ -198,7 +206,7 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 				List<Snp> snp = (List<Snp>) execute(criteria);
 				SnpToTranscript st = new SnpToTranscript();
 				if(snp != null && snp.size() > 0) {
-					st.setSnp(snp.get(0));					
+					st.setSnp(snp.get(0));
 				}
 				SnpToTranscriptConsequenceType inter = new SnpToTranscriptConsequenceType(0, st, intergenic);
 				consequenceTypeList.add(Arrays.asList(inter));
@@ -260,7 +268,6 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 				.setParameter("END", end);
 
 		return (List<String>) executeAndClose(query);
-
 	}
 
 
@@ -348,6 +355,7 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 		return this.getAllByRegion(chromosome, start, Integer.MAX_VALUE);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Snp> getAllByRegion(String chromosome, int start, int end) {
 //		GenomicRegionFeatureDBAdaptor genomicRegionFeatureDBAdaptor = new GenomicRegionFeatureHibernateDBAdaptor(this.getSessionFactory());
@@ -357,12 +365,10 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 		criteria.add(Restrictions.eq("chromosome", chromosome))
 			.add(Restrictions.ge("end", start))
 			.add(Restrictions.le("start", end))
-			.addOrder(Order.asc("chromosome"))
 			.addOrder(Order.asc("start"));
 		return (List<Snp>) executeAndClose(criteria);
 	}
 
-	//XXX
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Snp> getAllByRegion(String chromosome, int start, int end, List<String> consequenceTypeList) {
@@ -371,9 +377,7 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 			.add(Restrictions.ge("end", start))
 			.add(Restrictions.le("start", end))
 			.add(Restrictions.in("displaySoConsequence", consequenceTypeList))
-			.addOrder(Order.asc("chromosome"))
 			.addOrder(Order.asc("start"));
-
 		return (List<Snp>) executeAndClose(criteria);
 	}
 
@@ -441,15 +445,13 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 
 
 
-	//XXX
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getAllIds() {
-		Query query = this.openSession().createQuery("select s.name from Snp s").setMaxResults(500000);
+		Query query = this.openSession().createQuery("select s.name from Snp s").setMaxResults(200000);
 		return (List<String>) executeAndClose(query);
 	}
 
-	//XXX
 	@Override
 	public List<Region> getAllRegionsByIdList(List<String> idList) {
 		List<Region> results = new ArrayList<Region>();
@@ -459,7 +461,6 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 		return results;
 	}
 
-	//XXX
 	@Override
 	public List<String> getAllSequencesByIdList(List<String> idList) {
 		List<String> results = new ArrayList<String>();
@@ -514,15 +515,15 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 
 	@SuppressWarnings("unchecked")
 	public List<IntervalFeatureFrequency> getAllIntervalFrequencies(Region region, int interval) {
-		SQLQuery sqlquery = this.openSession().createSQLQuery("select (cr.start - "+region.getStart()+") DIV "+interval+" as inter, count(*) from snp cr where cr.chromosome= '"+region.getChromosome()+"' and cr.start <= "+region.getEnd()+" and cr.end >= "+region.getStart()+" group by inter");
+		SQLQuery sqlquery = (SQLQuery)this.openSession().createSQLQuery("select (cr.start - "+region.getStart()+") DIV "+interval+" as inter, count(*) from snp cr where cr.chromosome= '"+region.getChromosome()+"' and cr.start <= "+region.getEnd()+" and cr.end >= "+region.getStart()+" group by inter").setTimeout(60);
 		List<Object[]> objectList =  (List<Object[]>) executeAndClose(sqlquery);
 
 		int CHUNK_SIZE = 50;
 		if(interval > 10000) {
-			CHUNK_SIZE = 200;
+			CHUNK_SIZE = 500;
 		}
 		interval = (interval / CHUNK_SIZE) * CHUNK_SIZE;
-		interval = Math.max(interval, 200);
+		interval = Math.max(interval, 500);
 
 		int numSnps = -1;
 		long t1 = System.currentTimeMillis();
@@ -541,11 +542,11 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 		double maxSnpsInterval = 1;
 		value = getDatabaseQueryCache(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase()+".INTERVAL."+interval);
 		if(value == null || value.equals("")) {
-			sqlquery = this.openSession().createSQLQuery("select (cr.start - 1) DIV "+interval+" as inter, LOG(count(*)) as t from snp cr where cr.chromosome= '"+region.getChromosome()+"' and cr.start <= "+Integer.MAX_VALUE+" and cr.end >= 1 group by inter order by t DESC limit 1 ");
+			sqlquery = (SQLQuery)this.openSession().createSQLQuery("select (cr.start - 1) DIV "+interval+" as inter, LOG(count(*)) as t from snp cr where cr.chromosome= '"+region.getChromosome()+"' and cr.start <= "+Integer.MAX_VALUE+" and cr.end >= 1 group by inter order by t DESC limit 1 ").setTimeout(60);
 			List<Object[]> integerList =  (List<Object[]>) executeAndClose(sqlquery);
 			if(integerList != null && integerList.size() > 0) {
 				System.out.println(">>Cached: "+integerList.get(0)[1]+", interval: "+interval);
-				maxSnpsInterval = ((Double)integerList.get(0)[1]).doubleValue();				
+				maxSnpsInterval = ((Double)integerList.get(0)[1]).doubleValue();
 			}
 			putDatabaseQueryCache(species.toUpperCase()+".NUM.SNP.CHR."+region.getChromosome().toUpperCase()+".INTERVAL."+interval, ""+maxSnpsInterval);
 			value = ""+maxSnpsInterval;
@@ -658,29 +659,17 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 
 	@Override
 	public List<SnpRegulatoryConsequenceType> getAllSnpRegulatoryBySnpName(	String name) {
-		// TODO Auto-generated method stub
-		return null;
+		return getAllSnpRegulatoryBySnpNameList(Arrays.asList(name)).get(0);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<List<SnpRegulatoryConsequenceType>> getAllSnpRegulatoryBySnpNameList(List<String> nameList) {
-		Query query;
 		List<List<SnpRegulatoryConsequenceType>> result = new ArrayList<List<SnpRegulatoryConsequenceType>>(nameList.size());
 		List<FeatureMap> featMapList = new ArrayList<FeatureMap>();
 		List<SnpRegulatoryConsequenceType> aux;
 		Session session = this.openSession();
 		for(String snpName: nameList) {
-//			criteria = session.createCriteria("FeatureMap")
-//					.add(Restrictions.eq("feature_name", snpName))
-//					.add(Restrictions.eq("feature_type", "snp")
-//					.add());
-//			query = session.createQuery("select fm1.featureName, fm2 from FeatureMap fm1, FeatureMap fm2 where fm1.featureType='snp' and fm1.featureName= :SNP and fm1.chunkId=fm2.chunkId and fm1.chromosome=fm2.chromosome and fm1.start<fm2.end and fm1.end>fm2.start and fm2.featureCategory='regulatory'")
-//					.setParameter("SNP", snpName)
-//					.setEntity("", arg1);
-//			query = session.createSQLQuery("select fm2.* from feature_map fm1, feature_map fm2 where fm1.feature_type='snp' and fm1.feature_name= :SNP and fm1.chunk_id=fm2.chunk_id and fm1.chromosome=fm2.chromosome and fm1.start<fm2.end and fm1.end>fm2.start and fm2.feature_category='regulatory'")
-//						.addEntity(SnpRegulatoryConsequenceType.class)
-//						.setParameter("SNP", snpName);
 			featMapList = (List<FeatureMap>) session.createSQLQuery("select fm2.* from feature_map fm1, feature_map fm2 where fm1.feature_type='snp' and fm1.feature_name= :SNP and fm1.chunk_id=fm2.chunk_id and fm1.chromosome=fm2.chromosome and fm1.start<=fm2.end and fm1.end>=fm2.start and fm2.feature_category='regulatory'")
 					.addEntity(FeatureMap.class)
 					.setParameter("SNP", snpName).list();
@@ -707,12 +696,19 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 		return (List<SnpPhenotypeAnnotation>) executeAndClose(criteria);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<List<SnpPhenotypeAnnotation>> getAllSnpPhenotypeAnnotationListBySnpNameList(List<String> nameList) {
 		List<List<SnpPhenotypeAnnotation>> result = new ArrayList<List<SnpPhenotypeAnnotation>>(nameList.size());
+		Criteria criteria = null;
+		Session session = this.openSession();
 		for(String name: nameList) {
-			result.add(this.getAllSnpPhenotypeAnnotationBySnpName(name));
+			criteria = session.createCriteria(SnpPhenotypeAnnotation.class)
+					.createCriteria("snp")
+					.add(Restrictions.eq("name", name));
+			result.add((List<SnpPhenotypeAnnotation>) execute(criteria));
 		}
+		session.close();
 		return result;
 	}
 	
@@ -731,8 +727,7 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 	@Override
 	public List<List<SnpPhenotypeAnnotation>> getAllSnpPhenotypeAnnotationListByPositionList(List<Position> positionList) {
 		List<List<SnpPhenotypeAnnotation>> result = new ArrayList<List<SnpPhenotypeAnnotation>>(positionList.size());
-		Criteria criteria;
-		// To optimize number of sessions
+		Criteria criteria = null;
 		Session session =  this.openSession();
 		for(Position position: positionList) {
 			criteria = session.createCriteria(SnpPhenotypeAnnotation.class)
@@ -761,10 +756,10 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 	@Override
 	public List<List<SnpPopulationFrequency>> getAllSnpPopulationFrequencyList(List<String> nameList) {
 		List<List<SnpPopulationFrequency>> result = new ArrayList<List<SnpPopulationFrequency>>(nameList.size());
-		Criteria criteria ;
+		Criteria criteria = null;
 		Session session = this.openSession();
 		for(String name: nameList) {
-			criteria = this.openSession().createCriteria(SnpPopulationFrequency.class)
+			criteria = session.createCriteria(SnpPopulationFrequency.class)
 				.createCriteria("snp")
 				.add(Restrictions.eq("name", name));			
 			result.add((List<SnpPopulationFrequency>) execute(criteria));
@@ -786,11 +781,11 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 
 	@Override
 	public List<List<SnpToTranscript>> getAllSnpToTranscriptList(List<String> nameList) {
-			List<List<SnpToTranscript>> result = new ArrayList<List<SnpToTranscript>>(nameList.size());
-			for(String name: nameList) {
-				result.add(this.getAllSnpToTranscript(name));
-			}
-			return result;
+		List<List<SnpToTranscript>> result = new ArrayList<List<SnpToTranscript>>(nameList.size());
+		for(String name: nameList) {
+			result.add(this.getAllSnpToTranscript(name));
+		}
+		return result;
 	}
 
 	
@@ -799,29 +794,25 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsequenceType> getAllConsequenceType(String name) {
-		Session session = this.openSession();
-		
 		Criteria criteria = this.openSession().createCriteria(ConsequenceType.class)
 				.createCriteria("snpToTranscripts")
 				.createCriteria("snp")
 				.add(Restrictions.eq("name", name));
 		return (List<ConsequenceType>) executeAndClose(criteria);
 	}
-
-	public List<ConsequenceType> getAllConsequenceType(String name, Session session) {
-		Criteria criteria = session.createCriteria(ConsequenceType.class)
-				.createCriteria("snpToTranscripts")
-				.createCriteria("snp")
-				.add(Restrictions.eq("name", name));
-		return (List<ConsequenceType>) executeAndClose(criteria);
-	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<List<ConsequenceType>> getAllConsequenceTypeList(List<String> nameList) {
-		Session session = this.openSession();
 		List<List<ConsequenceType>> result = new ArrayList<List<ConsequenceType>>(nameList.size());
+		Criteria criteria = null;
+		Session session = this.openSession();
 		for(String name: nameList) {
-			result.add(this.getAllConsequenceType(name));
+			criteria = session.createCriteria(ConsequenceType.class)
+					.createCriteria("snpToTranscripts")
+					.createCriteria("snp")
+					.add(Restrictions.eq("name", name));
+			result.add((List<ConsequenceType>) execute(criteria));
 		}
 		session.close();
 		return result;

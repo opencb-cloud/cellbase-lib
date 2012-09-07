@@ -48,15 +48,14 @@ class RegulatoryRegionHibernateDBAdaptor extends HibernateDBAdaptor implements R
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<RegulatoryRegion> getAllByRegion(Region region, String type) {
-		List<RegulatoryRegion> regulatoryRegionsList = new ArrayList<RegulatoryRegion>();
-		Criteria criteria =  this.openSession().createCriteria(RegulatoryRegion.class);
-		criteria.add(Restrictions.eq("chromosome", region.getChromosome()))
-			.add(Restrictions.le("start", region.getEnd()))
-			.add(Restrictions.ge("end", region.getStart()))
-			.add(Restrictions.eq("type", type));
-		
+		Criteria criteria =  this.openSession().createCriteria(RegulatoryRegion.class)
+				.add(Restrictions.eq("chromosome", region.getChromosome()))
+				.add(Restrictions.le("start", region.getEnd()))
+				.add(Restrictions.ge("end", region.getStart()))
+				.add(Restrictions.eq("type", type));
 		return (List<RegulatoryRegion>) executeAndClose(criteria);
 	}
 	

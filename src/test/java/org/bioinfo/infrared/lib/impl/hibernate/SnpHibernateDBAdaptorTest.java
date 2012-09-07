@@ -64,13 +64,13 @@ public class SnpHibernateDBAdaptorTest {
 	
 	@Test
 	public void getByGeneId() {
-		List<Snp> snps = snpDBAdaptor.getAllByGeneId("brca2");
+		List<Snp> snps = snpDBAdaptor.getAllByGeneName("brca2");
 		this.printSNPList("getByGeneId", snps, 6);
 	}
 	
 	@Test
 	public void getAllByGeneIdList() {
-		List<List<Snp>> snps = snpDBAdaptor.getAllByGeneIdList(Arrays.asList("brca2", "bcl2"));
+		List<List<Snp>> snps = snpDBAdaptor.getAllByGeneNameList(Arrays.asList("brca2", "bcl2"));
 		this.printSNPListList("getAllByGeneIdList", snps, 6);
 	}
 	

@@ -15,6 +15,7 @@ import org.bioinfo.infrared.lib.common.ProteinRegion;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
@@ -24,15 +25,17 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 	public ProteinHibernateDBAdaptor(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
+	
 	public ProteinHibernateDBAdaptor(SessionFactory sessionFactory, String species, String version) {
 		super(sessionFactory, species, version);
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getAllIds() {
-		// TODO Auto-generated method stub
-		return null;
+		Query query = this.openSession().createQuery("select p.primaryAccession from Protein p");
+		return (List<String>) executeAndClose(query);
 	}
 
 	@Override
@@ -85,40 +88,72 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Protein> getAll() {
-		// TODO Auto-generated method stub
-		return null;
+		Criteria criteria = this.openSession().createCriteria(Protein.class);
+		return (List<Protein>)executeAndClose(criteria);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<String> getAllUniprotIds() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> getAllUniprotAccessions() {
+		Query query = this.openSession().createQuery("select p.primaryAccession from Protein p");
+		return (List<String>) executeAndClose(query);
 	}
-
+	
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<Protein> getAllByUniprotId(String uniprotId) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> getAllUniprotNames() {
+		Query query = this.openSession().createQuery("select p.name from Protein p");
+		return (List<String>) executeAndClose(query);
 	}
+	
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<List<Protein>> getAllByUniprotIdList(List<String> uniprotIdList) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Protein> getAllByUniprotAccession(String uniprotAccession) {
+		Criteria criteria = this.openSession().createCriteria(Protein.class)
+				.add(Restrictions.eq("primary_accession", uniprotAccession));
+		return (List<Protein>)executeAndClose(criteria);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<List<Protein>> getAllByUniprotAccessionList(List<String> uniprotAccessionList) {
+		List<List<Protein>> proteinListList = new ArrayList<List<Protein>>(uniprotAccessionList.size());
+		Criteria criteria = null;
+		Session session = this.openSession();
+		for(String uniprotAcc: uniprotAccessionList) {
+			criteria = session.createCriteria(Protein.class)
+					.add(Restrictions.eq("primary_accession", uniprotAcc));
+			proteinListList.add((List<Protein>)execute(criteria));			
+		}
+		session.close();
+		return proteinListList;
+	}
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Protein> getAllByProteinName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		Criteria criteria = this.openSession().createCriteria(Protein.class)
+				.add(Restrictions.eq("name", name));
+		return (List<Protein>)executeAndClose(criteria);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<List<Protein>> getAllByProteinNameList(List<String> nameList) {
-		// TODO Auto-generated method stub
-		return null;
+		List<List<Protein>> proteinListList = new ArrayList<List<Protein>>(nameList.size());
+		Criteria criteria = null;
+		Session session = this.openSession();
+		for(String name: nameList) {
+			criteria = session.createCriteria(Protein.class)
+					.add(Restrictions.eq("name", name));
+			proteinListList.add((List<Protein>)execute(criteria));			
+		}
+		session.close();
+		return proteinListList;
 	}
 
 	@Override
@@ -140,8 +175,7 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 	}
 
 	@Override
-	public List<List<Protein>> getAllByEnsemblTranscriptIdList(
-			List<String> transcriptIdList) {
+	public List<List<Protein>> getAllByEnsemblTranscriptIdList(	List<String> transcriptIdList) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -154,12 +188,18 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 		return (List<Protein>)executeAndClose(criteria);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<List<Protein>> getAllByGeneNameList(List<String> geneNameList) {
 		List<List<Protein>> proteinList = new ArrayList<List<Protein>>(geneNameList.size());
+		Criteria criteria = null;
+		Session session = this.openSession();
 		for(String geneName: geneNameList) {
-			proteinList.add(getAllByGeneName(geneName));
+			criteria = session.createCriteria(Protein.class)
+					.add(Restrictions.eq("geneName", geneName));
+			proteinList.add((List<Protein>)execute(criteria));
 		}
+		session.close();
 		return proteinList;
 	}
 
@@ -175,12 +215,19 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 		return (List<ProteinFeature>) executeAndClose(criteria);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<List<ProteinFeature>> getAllProteinFeaturesByUniprotIdList(List<String> uniprotIdList) {
 		List<List<ProteinFeature>> proteinList = new ArrayList<List<ProteinFeature>>(uniprotIdList.size());
+		Criteria criteria = null;
+		Session session = this.openSession();
 		for(String uniprotId: uniprotIdList) {
-			proteinList.add(getAllProteinFeaturesByUniprotId(uniprotId));
+			criteria = session.createCriteria(ProteinFeature.class)
+					.createCriteria("protein")
+					.add(Restrictions.eq("primaryAccession", uniprotId));
+			proteinList.add((List<ProteinFeature>) execute(criteria));
 		}
+		session.close();
 		return proteinList;
 	}
 
@@ -193,12 +240,19 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 		return (List<ProteinFeature>) executeAndClose(criteria);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<List<ProteinFeature>> getAllProteinFeaturesByGeneNameList(List<String> nameList) {
 		List<List<ProteinFeature>> proteinList = new ArrayList<List<ProteinFeature>>(nameList.size());
+		Criteria criteria = null;
+		Session session = this.openSession();
 		for(String uniprotId: nameList) {
-			proteinList.add(getAllProteinFeaturesByGeneName(uniprotId));
+			criteria = session.createCriteria(ProteinFeature.class)
+					.createCriteria("protein")
+					.add(Restrictions.eq("geneName", uniprotId));
+			proteinList.add((List<ProteinFeature>) execute(criteria));
 		}
+		session.close();
 		return proteinList;
 	}
 	
@@ -212,21 +266,29 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 		return (List<ProteinFeature>) executeAndClose(criteria);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<List<ProteinFeature>> getAllProteinFeaturesByProteinXrefList(List<String> nameList) {
 		List<List<ProteinFeature>> proteinList = new ArrayList<List<ProteinFeature>>(nameList.size());
+		Criteria criteria = null;
+		Session session = this.openSession();
 		for(String uniprotId: nameList) {
-			proteinList.add(getAllProteinFeaturesByProteinXref(uniprotId));
+			criteria = session.createCriteria(ProteinFeature.class)
+					.createCriteria("protein")
+					.createCriteria("proteinXrefs")
+					.add(Restrictions.eq("name", uniprotId));
+			proteinList.add((List<ProteinFeature>) execute(criteria));
 		}
+		session.close();
 		return proteinList;
 	}
 
+	
 	
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProteinInteraction> getAllProteinInteractionsByProteinName(String name) {
-		
 		Query query = this.openSession().createQuery("select distinct(pi) from Protein p, ProteinXref px, ProteinInteraction pi " +
 				"where px.name = :NAME and (px.protein = pi.proteinByProteinId1 or px.protein = pi.proteinByProteinId2) and px.protein=p.proteinId").setParameter("NAME", name);
 		List<ProteinInteraction> proteinInteractionList = (List<ProteinInteraction>)executeAndClose(query);
@@ -253,15 +315,44 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 //		return (List<ProteinInteraction>)executeAndClose(criteria);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<List<ProteinInteraction>> getAllProteinInteractionsByProteinNameList(	List<String> nameList) {
+	public List<ProteinInteraction> getAllProteinInteractionsByProteinName(	String name, String source) {
+		Query query = this.openSession().createQuery("select distinct(pi) from Protein p, ProteinXref px, ProteinInteraction pi " +
+				"where px.name = :NAME and (px.protein = pi.proteinByProteinId1 or px.protein = pi.proteinByProteinId2) and px.protein = p.proteinId and pi.source= :SOURCE").setParameter("NAME", name).setParameter("SOURCE", source);
+		List<ProteinInteraction> proteinInteractionList = (List<ProteinInteraction>)executeAndClose(query);
+		return proteinInteractionList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<List<ProteinInteraction>> getAllProteinInteractionsByProteinNameList(List<String> nameList) {
 		List<List<ProteinInteraction>> proteinList = new ArrayList<List<ProteinInteraction>>(nameList.size());
+		Query query = null;
+		Session session = this.openSession();
 		for(String name: nameList) {
-			proteinList.add(getAllProteinInteractionsByProteinName(name));
+			query = session.createQuery("select distinct(pi) from Protein p, ProteinXref px, ProteinInteraction pi " +
+					"where px.name = :NAME and (px.protein = pi.proteinByProteinId1 or px.protein = pi.proteinByProteinId2) and px.protein=p.proteinId").setParameter("NAME", name);
+			proteinList.add((List<ProteinInteraction>)execute(query));
 		}
+		session.close();
 		return proteinList;
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<List<ProteinInteraction>> getAllProteinInteractionsByProteinNameList(List<String> nameList, String source) {
+		List<List<ProteinInteraction>> proteinList = new ArrayList<List<ProteinInteraction>>(nameList.size());
+		Query query = null;
+		Session session = this.openSession();
+		for(String name: nameList) {
+			query = session.createQuery("select distinct(pi) from Protein p, ProteinXref px, ProteinInteraction pi " +
+				"where px.name = :NAME and (px.protein = pi.proteinByProteinId1 or px.protein = pi.proteinByProteinId2) and px.protein=p.proteinId and pi.source= :SOURCE").setParameter("NAME", name).setParameter("SOURCE", source);
+			proteinList.add((List<ProteinInteraction>)execute(query));
+		}
+		session.close();
+		return proteinList;
+	}
 	
 	
 	
@@ -370,12 +461,18 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 		return xrefs;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<List<ProteinXref>> getAllProteinXrefsByProteinNameList(List<String> nameList) {
 		List<List<ProteinXref>> proteinList = new ArrayList<List<ProteinXref>>(nameList.size());
+		List<ProteinXref> xrefs = null;
+		String query = "select px2.* from protein_xref px1, protein_xref px2 where px1.protein_id = px2.protein_id and px1.name = :NAME";
+		Session session = this.openSession();
 		for(String name: nameList) {
-			proteinList.add(getAllProteinXrefsByProteinName(name));
+			xrefs = session.createSQLQuery(query).addEntity(ProteinXref.class).setParameter("NAME", name).list();
+			proteinList.add(xrefs);
 		}
+		session.close();
 		return proteinList;
 	}
 
@@ -410,8 +507,7 @@ public class ProteinHibernateDBAdaptor extends HibernateDBAdaptor implements Pro
 	}
 
 	@Override
-	public List<List<ProteinSequence>> getAllProteinSequenceByProteinNameList(
-			List<String> nameList) {
+	public List<List<ProteinSequence>> getAllProteinSequenceByProteinNameList(List<String> nameList) {
 		// TODO Auto-generated method stub
 		return null;
 	}

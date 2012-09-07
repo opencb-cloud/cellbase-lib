@@ -251,9 +251,10 @@ class ExonHibernateDBAdaptor extends HibernateDBAdaptor implements ExonDBAdaptor
 	@Override
 	public List<Exon> getAllByRegion(String chromosome, int start, int end) {
 		Criteria criteria =  this.openSession().createCriteria(Exon.class)
-		.addOrder(Order.asc("chromosome"))
-		.addOrder(Order.asc("start"));
-		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", start)).add(Restrictions.le("start", end));
+				.add(Restrictions.eq("chromosome", chromosome))
+				.add(Restrictions.ge("end", start))
+				.add(Restrictions.le("start", end))
+				.addOrder(Order.asc("start"));
 		return (List<Exon>)executeAndClose(criteria);
 	}
 	

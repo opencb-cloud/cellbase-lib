@@ -14,7 +14,7 @@ import org.hibernate.SessionFactory;
 @Deprecated
 public class GenomicRegionFeatureHibernateDBAdaptor extends HibernateDBAdaptor implements GenomicRegionFeatureDBAdaptor {
 
-	private static int FEATURE_MAP_CHUNK_SIZE = 400;
+	private static int FEATURE_MAP_CHUNK_SIZE = 1000;
 
 	public GenomicRegionFeatureHibernateDBAdaptor(SessionFactory sessionFactory) {
 		super(sessionFactory);

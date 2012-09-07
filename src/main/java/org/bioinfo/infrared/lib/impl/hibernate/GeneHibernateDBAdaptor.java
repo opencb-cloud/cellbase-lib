@@ -3,9 +3,11 @@ package org.bioinfo.infrared.lib.impl.hibernate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.bioinfo.infrared.core.cellbase.ExonToTranscript;
 import org.bioinfo.infrared.core.cellbase.Gene;
@@ -37,16 +39,16 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		super(sessionFactory, species, version);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<? extends Object> getAll() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Gene> getAll() {
+		Criteria criteria = this.openSession().createCriteria(Gene.class);
+		return (List<Gene>)executeAndClose(criteria);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Gene> getAll(List<String> biotype, Boolean id) {
-
 		String query = "select g from Gene g";
 		if (biotype != null && !biotype.get(0).equals("") && !id){
 			query += " where g.biotype in :biotype";
@@ -74,9 +76,8 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 
 	@Override
 	public Map<String, Object> getInfo(String id) {
-		Query query = this.openSession().createQuery("select g from Gene g");
-		@SuppressWarnings("unchecked")
-		List<Gene> genes =  (List<Gene>)query.list();
+//		Query query = this.openSession().createQuery("select g from Gene g");
+//		List<Gene> genes =  (List<Gene>)query.list();
 
 		//		System.out.println(genes.toString());
 		//		System.out.println(gene.getTranscripts());
@@ -125,12 +126,24 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Gene> getAllByEnsemblIdList(List<String> ensemblIds) {
 		List<Gene> result = new ArrayList<Gene>(ensemblIds.size());
-		for (String id : ensemblIds) {
-			result.add(this.getByEnsemblId(id));
+		Criteria criteria = null;
+		List<Gene> genes = null;
+		Session session = this.openSession();
+		for(String ensemblId: ensemblIds) {
+			criteria = session.createCriteria(Gene.class)
+					.add(Restrictions.eq("stableId", ensemblId));
+			genes = (List<Gene>)execute(criteria);
+			if(genes != null && genes.size() > 0) {
+				result.add(genes.get(0));				
+			}else {
+				result.add(null);
+			}
 		}
+		session.close();
 		return result;
 	}
 
@@ -207,7 +220,7 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	public List<List<Gene>> getAllByNameList(List<String> names) {
 		Session session = this.openSession();
 		List<List<Gene>> genes = new ArrayList<List<Gene>>(names.size());
-		for (String name : names) {
+		for(String name: names) {
 			genes.add(this.getAllByName(name, session));
 		}
 		session.close();
@@ -242,16 +255,20 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Gene> getAllByBiotype(String biotype) {
-		Criteria criteria = this.openSession().createCriteria(Gene.class);
-		criteria.add(Restrictions.eq("biotype", biotype)).addOrder(Order.asc("chromosome")).addOrder(Order.asc("start"));
+		Criteria criteria = this.openSession().createCriteria(Gene.class)
+				.add(Restrictions.eq("biotype", biotype))
+				.addOrder(Order.asc("chromosome"))
+				.addOrder(Order.asc("start"));
 		return (List<Gene>)executeAndClose(criteria);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Gene> getAllByBiotypeList(List<String> biotypeList) {
-		Criteria criteria = this.openSession().createCriteria(Gene.class);
-		criteria.add(Restrictions.in("biotype", biotypeList));
+		Criteria criteria = this.openSession().createCriteria(Gene.class)
+				.add(Restrictions.in("biotype", biotypeList))
+				.addOrder(Order.asc("chromosome"))
+				.addOrder(Order.asc("start"));
 		return (List<Gene>) executeAndClose(criteria);
 	}
 
@@ -265,7 +282,6 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		criteria.add(Restrictions.eq("chromosome", chromosome))
 			.add(Restrictions.ge("end", position))
 			.add(Restrictions.le("start", position))
-			.addOrder(Order.asc("chromosome"))
 			.addOrder(Order.asc("start"));
 		return (List<Gene>) executeAndClose(criteria);
 	}
@@ -273,10 +289,10 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 
 	@Override
 	public List<Gene> getAllByPosition(Position position) {
-		if(position == null) {
-			return null;
-		}else {
+		if(position != null) {
 			return getAllByPosition(position.getChromosome(), position.getPosition());	
+		}else {
+			return null;
 		}
 	}
 
@@ -296,10 +312,9 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Gene> getAllByRegion(String chromosome) {
-		Criteria criteria =  this.openSession().createCriteria(Gene.class);
-		criteria.add(Restrictions.eq("chromosome", chromosome))
-		.addOrder(Order.asc("chromosome"))
-		.addOrder(Order.asc("start"));
+		Criteria criteria =  this.openSession().createCriteria(Gene.class)
+				.add(Restrictions.eq("chromosome", chromosome))
+				.addOrder(Order.asc("start"));
 		return (List<Gene>)executeAndClose(criteria);
 	}
 
@@ -307,11 +322,10 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Gene> getAllByRegion(String chromosome, int start) {
-		Criteria criteria =  this.openSession().createCriteria(Gene.class);
-		criteria.add(Restrictions.eq("chromosome", chromosome))
-			.add(Restrictions.ge("end", start))
-			.addOrder(Order.asc("chromosome"))
-			.addOrder(Order.asc("start"));
+		Criteria criteria =  this.openSession().createCriteria(Gene.class)
+				.add(Restrictions.eq("chromosome", chromosome))
+				.add(Restrictions.ge("end", start))
+				.addOrder(Order.asc("start"));
 		return (List<Gene>)executeAndClose(criteria);
 	}
 
@@ -319,12 +333,11 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Gene> getAllByRegion(String chromosome, int start, int end) {
-		Criteria criteria =  this.openSession().createCriteria(Gene.class);
-		criteria.add(Restrictions.eq("chromosome", chromosome))
-			.add(Restrictions.ge("end", start))
-			.add(Restrictions.le("start", end))
-			.addOrder(Order.asc("chromosome"))
-			.addOrder(Order.asc("start"));
+		Criteria criteria =  this.openSession().createCriteria(Gene.class)
+				.add(Restrictions.eq("chromosome", chromosome))
+				.add(Restrictions.ge("end", start))
+				.add(Restrictions.le("start", end))
+				.addOrder(Order.asc("start"));
 		return (List<Gene>)executeAndClose(criteria);
 	}
 
@@ -332,33 +345,32 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Gene> getAllByRegion(String chromosome, int start, int end, List<String> biotypes) {
-		Criteria criteria =  this.openSession().createCriteria(Gene.class);
-		criteria.add(Restrictions.eq("chromosome", chromosome))
-			.add(Restrictions.ge("end", start))
-			.add(Restrictions.le("start", end))
-			.add(Restrictions.in("biotype", biotypes))
-			.addOrder(Order.asc("chromosome"))
-			.addOrder(Order.asc("start"));
+		Criteria criteria =  this.openSession().createCriteria(Gene.class)
+				.add(Restrictions.eq("chromosome", chromosome))
+				.add(Restrictions.ge("end", start))
+				.add(Restrictions.le("start", end))
+				.add(Restrictions.in("biotype", biotypes))
+				.addOrder(Order.asc("start"));
 		return (List<Gene>)executeAndClose(criteria);
 	}
 
 
 	@Override
 	public List<Gene> getAllByRegion(Region region) {
-		if(region == null) {
-			return null;
-		}else {
+		if(region != null) {
 			return getAllByRegion(region.getChromosome(), region.getStart(), region.getEnd());	
+		}else {
+			return null;
 		}
 	}
 
 
 	@Override
 	public List<Gene> getAllByRegion(Region region, List<String> biotypes) {
-		if(region == null) {
-			return null;
-		}else {
+		if(region != null) {
 			return getAllByRegion(region.getChromosome(), region.getStart(), region.getEnd(), biotypes);	
+		}else {
+			return null;
 		}
 	}
 
@@ -374,8 +386,11 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 
 	@Override
 	public List<List<Gene>> getAllByRegionList(List<Region> regions, List<String> biotypes) {
-		// TODO Auto-generated method stub
-		return null;
+		List<List<Gene>> genes = new ArrayList<List<Gene>>(regions.size());
+		for(Region region: regions) {
+			genes.add(getAllByRegion(region, biotypes));
+		}
+		return genes;
 	}
 
 
@@ -446,14 +461,27 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 //				keys.add(tfbs.getGeneByTfGeneId().getStableId());
 //			}
 			//			
-			if (null != tfbs && !keys.contains(tfbs.getTranscript().getStableId())){
-				keys.add(tfbs.getTranscript().getStableId());
+			if (tfbs != null && !keys.contains(tfbs.getGene().getStableId())){
+				keys.add(tfbs.getGene().getStableId());
 			}
 		}
-
-		Criteria criteria = this.openSession().createCriteria(Gene.class)
-				.add(Restrictions.in("stableId", keys.toArray())); // keys can't be empty due to hibernate bug
-		return (List<Gene>) executeAndClose(criteria);
+System.out.println(keys.size());
+		List<Gene> genes = new ArrayList<Gene>();
+		Query query = null;
+		String key = null;
+		Iterator<String> iter = keys.iterator();
+		Session session = this.openSession();
+		while(iter.hasNext()) {
+			key = iter.next();
+			query = session.createQuery("select g from Gene g where g.stableId = :KEY").setParameter("KEY", key);
+			genes.addAll((List<Gene>)execute(query));
+		}
+		session.close();
+		return genes;
+//		Criteria criteria = this.openSession().createCriteria(Gene.class)
+//				.createCriteria("transcript")
+//				.add(Restrictions.in("stableId", keys.toArray())); // keys can't be empty due to hibernate bug
+//		return (List<Gene>) executeAndClose(criteria);
 	}
 
 	@Override
@@ -468,8 +496,8 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Gene> getAllByTfName(String tfName) {
-		//		Query query = this.openSession().createQuery("select g from Gene g, Cytoband k where k.chromosome= :chromosome and k.cytoband = :cytoband and k.chromosome=g.chromosome and g.end>=k.start and g.start<=k.end").setParameter("chromosome", chromosome).setParameter("cytoband", cytoband);
-		Query query = this.openSession().createQuery("select g from Gene g, Tfbs t where t.geneByTfGeneId=g.geneId and t.tfName = :TFNAME group by g.geneId").setParameter("TFNAME", tfName);
+//		Query query = this.openSession().createQuery("select g from Gene g, Cytoband k where k.chromosome= :chromosome and k.cytoband = :cytoband and k.chromosome=g.chromosome and g.end>=k.start and g.start<=k.end").setParameter("chromosome", chromosome).setParameter("cytoband", cytoband);
+		Query query = this.openSession().createQuery("select g from Gene g, Tfbs t where t.gene=g.geneId and t.tfName = :TFNAME group by g.geneId").setParameter("TFNAME", tfName);
 		return (List<Gene>)executeAndClose(query);
 	}
 
@@ -482,6 +510,83 @@ class GeneHibernateDBAdaptor extends HibernateDBAdaptor implements GeneDBAdaptor
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Gene> getAllTargetsByTf(String id) {
+//		TfbsHibernateDBAdaptor tfbsAdaptor = new TfbsHibernateDBAdaptor(this.getSessionFactory());
+//		long t0 = System.currentTimeMillis();
+//		List<Tfbs> result = tfbsAdaptor.getAllByTfGeneName(id, null, Integer.MIN_VALUE, Integer.MIN_VALUE);
+//		System.out.println("******************* TFBS: "+(System.currentTimeMillis()-t0));
+//		HashSet<String> keys = new HashSet<String>();
+
+		XRefsHibernateDBAdaptor xrefsAdaptor = new XRefsHibernateDBAdaptor(this.getSessionFactory());
+		List<Xref> xrefs = xrefsAdaptor.getByDBNameList(id, Arrays.asList("ensembl_gene"));
+		List<String> ensemblIds = new ArrayList<String>();
+		for(Xref xref: xrefs) {
+			ensemblIds.add(xref.getDisplayId());
+		}
+		
+		List<Gene> genes = new ArrayList<Gene>();
+		Query query = null;
+		Session session = this.openSession();
+		if(ensemblIds != null && ensemblIds.size() > 0) {
+			for(String key: ensemblIds) {
+				query = session.createQuery("select g from Gene g, Tfbs tf, Transcript t1, Transcript t2, Xref x, TranscriptToXref tx where x.displayId= :KEY and x.xrefId=tx.xref and tx.transcript=t1.transcriptId and t1.gene=tf.gene and tf.transcript=t2.transcriptId and t2.gene=g.geneId group by g.geneId").setParameter("KEY", key);
+				genes.addAll((List<Gene>)execute(query));
+			}	
+		}else {
+			query = session.createQuery("select g from Tfbs t, Transcript tr, Gene g where t.tfName= :KEY and t.transcript=tr.transcriptId and tr.gene=g.geneId group by g.geneId").setParameter("KEY", id);
+			genes.addAll((List<Gene>)execute(query));
+		}
+		
+		session.close();
+		return genes;
+		
+		
+//		t0 = System.currentTimeMillis();
+//		for (Tfbs tfbs : result) {
+//			if (tfbs != null && !keys.contains(tfbs.getTranscript().getStableId())){
+//				keys.add(tfbs.getTranscript().getStableId());
+//			}
+//		}
+//		System.out.println("******************* Transcripts: "+(System.currentTimeMillis()-t0));
+//		
+//		List<Gene> genes = new ArrayList<Gene>();
+//		List<Gene> auxGene = new ArrayList<Gene>();
+//		Query query = null;
+//		String transcriptId = null;
+//		Set<String> visitedGenes = new HashSet<String>();
+//		Set<String> visitedTranscripts = new HashSet<String>();
+//		Iterator<String> iter = keys.iterator();
+//		Session session = this.openSession();
+//		t0 = System.currentTimeMillis();
+//		while(iter.hasNext()) {
+//			transcriptId = iter.next();
+//			if(!visitedTranscripts.contains(transcriptId)) {
+//				query = session.createQuery("select g from Gene g, Transcript t where t.gene=g.geneId and t.stableId = :KEY").setParameter("KEY", transcriptId);
+//				auxGene = (List<Gene>)execute(query);
+//				if(!visitedGenes.contains(auxGene.get(0).getStableId())) {
+//					genes.addAll(auxGene);
+//					visitedGenes.add(auxGene.get(0).getStableId());
+//				}
+//				visitedTranscripts.add(transcriptId);
+//			}
+//		}
+//		System.out.println("******************* Genes: "+(System.currentTimeMillis()-t0));
+//		session.close();
+//		return genes;
+	}
+
+	@Override
+	public List<List<Gene>> getAllTargetsByTfList(List<String> idList) {
+		List<List<Gene>> result = new ArrayList<List<Gene>>();
+		for (String id : idList) {
+			result.add(this.getAllTargetsByTf(id));
+		}
+		return result;
+	}
+	
+	
 
 	@Override
 	public List<Gene> getAllByXref(String xrefName) {

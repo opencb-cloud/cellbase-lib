@@ -24,9 +24,9 @@ public interface SnpDBAdaptor extends FeatureDBAdaptor {
 
 	public List<List<Snp>> getAllBySnpIdList(List<String> snpIdList);
 
-	public List<Snp> getAllByGeneId(String externalId);
+	public List<Snp> getAllByGeneName(String externalId);
 	
-	public List<List<Snp>> getAllByGeneIdList(List<String> externalIds);
+	public List<List<Snp>> getAllByGeneNameList(List<String> externalIds);
 	
 	public List<Snp> getAllByEnsemblGeneId(String ensemblGeneId);
 	
@@ -100,18 +100,31 @@ public interface SnpDBAdaptor extends FeatureDBAdaptor {
 	public List<List<SnpRegulatoryConsequenceType>> getAllSnpRegulatoryBySnpNameList(List<String> nameList);
 	
 	
+	
 	public List<SnpPhenotypeAnnotation> getAllSnpPhenotypeAnnotationBySnpName(String name);
+	
 	public List<List<SnpPhenotypeAnnotation>> getAllSnpPhenotypeAnnotationListBySnpNameList(List<String> nameList);
+	
 	public List<SnpPhenotypeAnnotation> getAllSnpPhenotypeAnnotationByPosition(Position position);
+	
 	public List<List<SnpPhenotypeAnnotation>> getAllSnpPhenotypeAnnotationListByPositionList(List<Position> positionList);
 	
+	
+	
 	public List<SnpPopulationFrequency> getAllSnpPopulationFrequency(String name);
+	
 	public List<List<SnpPopulationFrequency>> getAllSnpPopulationFrequencyList(List<String> nameList);
 	
+	
+	
 	public List<SnpToTranscript> getAllSnpToTranscript(String name);
+	
 	public List<List<SnpToTranscript>> getAllSnpToTranscriptList(List<String> nameList);
 	
+	
+	
 	public List<ConsequenceType> getAllConsequenceType(String name);
+	
 	public List<List<ConsequenceType>> getAllConsequenceTypeList(List<String> nameList);
 	
 	public List<IntervalFeatureFrequency> getAllIntervalFrequencies(Region region, int interval);

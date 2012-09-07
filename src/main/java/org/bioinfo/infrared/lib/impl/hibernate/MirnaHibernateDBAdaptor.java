@@ -329,6 +329,26 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 		return this.getAllMiRnaTargetsByRegion(chromosome, start, start);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MirnaTarget> getAllMiRnaTargetsByRegion(String chromosome, int start, int end) {
+		//		ProjectionList projList = Projections.projectionList();
+		//		projList.add(Projections.property("mirbaseId"));
+		//		projList.add(Projections.groupProperty("mirbaseId"));
+		Criteria criteria = this.openSession().createCriteria(MirnaTarget.class)
+				.add(Restrictions.ge("end", start))
+				.add(Restrictions.le("start", end))
+				.add(Restrictions.eq("chromosome", chromosome))
+				.addOrder(Order.asc("chromosome"));
+		//		criteria.setProjection(projList);
+		return (List<MirnaTarget>) executeAndClose(criteria);
+	}
+
+	@Override
+	public List<MirnaTarget> getAllMiRnaTargetsByRegion(Region region) {
+		return this.getAllMiRnaTargetsByRegion(region.getChromosome(), region.getStart(), region.getEnd());
+	}
+	
 	@Override
 	public List<List<MirnaTarget>> getAllMiRnaTargetsByRegionList(List<Region> regionList) {
 		List<List<MirnaTarget>> result = new ArrayList<List<MirnaTarget>>();
@@ -339,31 +359,7 @@ class MirnaHibernateDBAdaptor extends HibernateDBAdaptor implements MirnaDBAdapt
 	}
 
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<MirnaTarget> getAllMiRnaTargetsByRegion(String chromosome, int start, int end) {
-		//		ProjectionList projList = Projections.projectionList();
-		//		projList.add(Projections.property("mirbaseId"));
-		//		projList.add(Projections.groupProperty("mirbaseId"));
-
-		Criteria criteria = this.openSession().createCriteria(MirnaTarget.class)
-				.add(Restrictions.ge("end", start))
-				.add(Restrictions.le("start", end))
-				.add(Restrictions.eq("chromosome", chromosome))
-				.addOrder(Order.asc("chromosome"));
-
-		//		criteria.setProjection(projList);
-
-		return (List<MirnaTarget>) executeAndClose(criteria);
-	}
-
-
-	@Override
-	public List<MirnaTarget> getAllMiRnaTargetsByRegion(Region region) {
-		return this.getAllMiRnaTargetsByRegion(region.getChromosome(), region.getStart(), region.getEnd());
-	}
-
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IntervalFeatureFrequency> getAllMirnaTargetsIntervalFrequencies(Region region, int interval) {

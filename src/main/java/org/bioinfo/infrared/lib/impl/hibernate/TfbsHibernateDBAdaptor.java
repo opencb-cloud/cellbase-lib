@@ -13,6 +13,7 @@ import org.bioinfo.infrared.lib.api.TfbsDBAdaptor;
 import org.bioinfo.infrared.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.infrared.lib.common.Region;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
@@ -63,17 +64,45 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 	public List<Tfbs> getAllByTfGeneName(String id, String cellType, int start, int end) {
 		XRefsHibernateDBAdaptor xrefsAdaptor = new XRefsHibernateDBAdaptor(this.getSessionFactory());
 		// Search for the id in XREF
+		long t0 = System.currentTimeMillis();
 		List<Xref> xrefs = xrefsAdaptor.getByDBNameList(id, Arrays.asList("ensembl_gene"));
 		List<String> ensemblIds = new ArrayList<String>();
 		for (Xref xref : xrefs) {
 			ensemblIds.add(xref.getDisplayId());
 		}
+		System.out.println("\t******************* XREF: "+(System.currentTimeMillis()-t0));
 		Query query = null;
 		
-		String Hquery = "from Tfbs tf left join fetch tf.geneByTfGeneId p where p.stableId in :keys";
+		
+//		t0 = System.currentTimeMillis();
+//		Criteria criteria = this.openSession().createCriteria(Tfbs.class, "t").setFetchMode("gene", FetchMode.JOIN).setFetchMode("transcript", FetchMode.JOIN);
+////				.createCriteria("gene")
+////				.add(Restrictions.in("stableId", ensemblIds));
+//			
+//		if(ensemblIds.size() > 0) {
+//			criteria.createCriteria("gene")
+//			.add(Restrictions.in("stableId", ensemblIds));
+//		}else {
+//			criteria.createCriteria("gene")
+//			.add(Restrictions.eq("stableId", id));
+//		}
+//			
+//		if(cellType != null) {
+//			criteria.add(Restrictions.eq("t.celltype", cellType));
+//		}
+//		
+//		if (start != Integer.MIN_VALUE && end != Integer.MIN_VALUE) {
+//			criteria.add(Restrictions.ge("t.relativeStart", start));
+//			criteria.add(Restrictions.le("t.relativeEnd", end));
+//		}
+		System.out.println("\t******************* TFBS: "+(System.currentTimeMillis()-t0));
+//		return (List<Tfbs>) executeAndClose(criteria);	
+		
+		
+		String Hquery = "from Tfbs tf left join fetch tf.gene p where p.stableId in :keys";
 		// If we DON'T have found anything in XREF we search for the TF Ensembl name at the TFBS table
 		if (ensemblIds.size() == 0){
-			Hquery = "from Tfbs tf left join fetch tf.geneByTfGeneId p where tf.tfName = :keys";
+			Hquery = "from Tfbs tf left join fetch tf.gene p where tf.tfName = :keys";
 		}
 
 		if (cellType != null) {
@@ -124,12 +153,12 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 		for (Xref xref : xrefs) {
 			ensemblIds.add(xref.getDisplayId());
 		}
-
 		if (ensemblIds.size() > 0){
+//			Query query = this.openSession().createQuery("select t from Tfbs t, Transcript tr, Gene g where t.transcript=tr.transcriptId and tr.gene=g.geneId and g.stableId = :GENELIST").setParameter("GENELIST", "ENSG00000200051");
 			Criteria criteria = this.openSession().createCriteria(Tfbs.class)
-				.createCriteria("geneByTargetGeneId")
-//					.createCriteria("gene")
-					.add(Restrictions.in("stableId", ensemblIds));
+				.createCriteria("transcript")
+				.createCriteria("gene")
+				.add(Restrictions.in("stableId", ensemblIds));
 			return (List<Tfbs>) executeAndClose(criteria);
 		}
 		else{
@@ -198,8 +227,8 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Tfbs> getAllByRegion(String chromosome, int start, int end) {
-
-		String Hquery = "from Tfbs tf left join fetch tf.pwm p where tf.end >= :start and tf.start <= :end and tf.chromosome=:chromosome  group by tf.tfName, tf.cellType, tf.start, p.pwmId order by tf.start, tf.cellType asc";
+//		String Hquery = "from Tfbs tf left join fetch tf.pwm p where tf.end >= :start and tf.start <= :end and tf.chromosome=:chromosome  group by tf.tfName, tf.cellType, tf.start, p.pwmId order by tf.start, tf.cellType asc";
+		String Hquery = "from Tfbs tf left join fetch tf.pwm p where tf.end >= :start and tf.start <= :end and tf.chromosome=:chromosome order by tf.start, tf.cellType asc";
 		Query query = this.openSession().createQuery(Hquery);
 		query.setParameter("start", start);
 		query.setParameter("end", end);
@@ -227,6 +256,7 @@ class TfbsHibernateDBAdaptor extends HibernateDBAdaptor implements TfbsDBAdaptor
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Tfbs> getAllByInternalId(String id) {
+//		String Hquery = "from Tfbs tf left join fetch tf.pwm p left join fetch tf.geneByTargetGeneId g where tf.tfbsId=:id group by tf.tfName, tf.cellType, tf.start, p.pwmId order by tf.start, tf.cellType asc";
 		String Hquery = "from Tfbs tf left join fetch tf.pwm p left join fetch tf.geneByTargetGeneId g where tf.tfbsId=:id group by tf.tfName, tf.cellType, tf.start, p.pwmId order by tf.start, tf.cellType asc";
 		Query query = this.openSession().createQuery(Hquery);
 		query.setParameter("id", Integer.valueOf(id));

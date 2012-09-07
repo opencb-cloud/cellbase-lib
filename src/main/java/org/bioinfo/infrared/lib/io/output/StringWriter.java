@@ -7,6 +7,8 @@ import org.bioinfo.infrared.core.biopax.v3.BioEntity;
 import org.bioinfo.infrared.core.biopax.v3.NameEntity;
 import org.bioinfo.infrared.core.biopax.v3.Pathway;
 import org.bioinfo.infrared.core.cellbase.ConsequenceType;
+import org.bioinfo.infrared.core.cellbase.ConservedRegion;
+import org.bioinfo.infrared.core.cellbase.CpGIsland;
 import org.bioinfo.infrared.core.cellbase.Cytoband;
 import org.bioinfo.infrared.core.cellbase.Exon;
 import org.bioinfo.infrared.core.cellbase.FeatureMap;
@@ -27,6 +29,7 @@ import org.bioinfo.infrared.core.cellbase.Snp;
 import org.bioinfo.infrared.core.cellbase.SnpPhenotypeAnnotation;
 import org.bioinfo.infrared.core.cellbase.SnpPopulationFrequency;
 import org.bioinfo.infrared.core.cellbase.SnpToTranscriptConsequenceType;
+import org.bioinfo.infrared.core.cellbase.StructuralVariation;
 import org.bioinfo.infrared.core.cellbase.Tfbs;
 import org.bioinfo.infrared.core.cellbase.Transcript;
 import org.bioinfo.infrared.core.cellbase.Xref;
@@ -89,6 +92,7 @@ public class StringWriter {
 		return sb.toString();
 	}
 
+	
 	public static String serialize(Snp snp){
 		return new StringBuilder().append(snp.getName()).append("\t")
 			.append(snp.getChromosome()).append("\t")
@@ -212,6 +216,12 @@ public class StringWriter {
 		return sb.toString();
 	}
 	
+	public static String serialize(StructuralVariation obj){
+		return join("\t", obj.getDisplayId(), obj.getChromosome(), ""+obj.getStart(), ""+obj.getEnd(), obj.getStrand(), obj.getSoTerm(), obj.getStudyName(), obj.getStudyUrl(), obj.getStudyDescription(), obj.getSource(), obj.getSourceDescription());
+	}
+	
+	
+	
 	public static String serialize(Transcript transcript){
 		if(transcript.getGene() != null) {
 			System.out.println("serialize transcript");
@@ -289,6 +299,17 @@ public class StringWriter {
 				.toString();  
 	}
 
+	public static String serialize(CpGIsland obj){
+		return join("\t", ""+obj.getCpgId(), obj.getChromosome(), ""+obj.getStart(), ""+obj.getEnd(), obj.getName(), ""+obj.getLength(), ""+obj.getCpgNum(), ""+obj.getGcNum(), ""+obj.getPerCpG(), ""+obj.getPerGc(), ""+obj.getObservedExpectedRatio());
+	}
+	
+	public static String serialize(ConservedRegion obj){
+		return join("\t", ""+obj.getConservedRegionId(), obj.getChromosome(), ""+obj.getStart(), ""+obj.getEnd(), obj.getStrand(), ""+obj.getLength(),
+				""+obj.getLowerLimitVertebrate(), ""+obj.getDataRangeVertebrate(), ""+obj.getSumDataVertebrate(), ""+obj.getSumSquareVertebrate(),
+				""+obj.getLowerLimitMammal(), ""+obj.getDataRangeMammal(), ""+obj.getSumDataMammal(), ""+obj.getSumSquareMammal(),
+				""+obj.getLowerLimitPrimate(), ""+obj.getDataRangePrimate(), ""+obj.getSumDataPrimate(), ""+obj.getSumSquarePrimate(), obj.getMethod());
+	}
+	
 	private static Object serialize(GenomicRegionFeatures object) {
 		StringBuilder sb = new StringBuilder();
 		for (FeatureMap featureMap : object.featuresMap) {
@@ -371,41 +392,40 @@ public class StringWriter {
 				continue;
 			}
 
+			
 			if (object instanceof Snp){
 				sb.append(StringWriter.serialize((Snp) object)).append("\n");
 				continue;
-			}
-			
+			}			
 			if (object instanceof ConsequenceType){
 				sb.append(StringWriter.serialize((ConsequenceType) object)).append("\n");
 				continue;
 			}
-
 			if (object instanceof SnpToTranscriptConsequenceType){
 				sb.append(StringWriter.serialize((SnpToTranscriptConsequenceType) object)).append("\n");
 				continue;
-			}
-			
+			}			
 			if (object instanceof SnpRegulatoryConsequenceType){
 				sb.append(StringWriter.serialize((SnpRegulatoryConsequenceType) object)).append("\n");
 				continue;
-			}
-			
+			}			
 			if (object instanceof SnpPopulationFrequency){
 				sb.append(StringWriter.serialize((SnpPopulationFrequency) object)).append("\n");
 				continue;
-			}
-			
+			}			
 			if (object instanceof SnpPhenotypeAnnotation){
 				sb.append(StringWriter.serialize((SnpPhenotypeAnnotation) object)).append("\n");
 				continue;
-			}
-			
+			}			
 			if (object instanceof MutationPhenotypeAnnotation){
 				sb.append(StringWriter.serialize((MutationPhenotypeAnnotation) object)).append("\n");
 				continue;
 			}
-
+			if (object instanceof StructuralVariation){
+				sb.append(StringWriter.serialize((StructuralVariation) object)).append("\n");
+				continue;
+			}
+			
 			if (object instanceof String){
 				sb.append(StringWriter.serialize((String) object)).append("\n");
 				continue;
@@ -450,6 +470,16 @@ public class StringWriter {
 				sb.append(StringWriter.serialize((Pwm)object)).append("\n");
 				continue;
 			}
+			
+			if (object instanceof CpGIsland){
+				sb.append(StringWriter.serialize((CpGIsland)object)).append("\n");
+				continue;
+			}
+			
+			if (object instanceof ConservedRegion){
+				sb.append(StringWriter.serialize((ConservedRegion)object)).append("\n");
+				continue;
+			}
 
 			if (object instanceof Protein){
 				sb.append(StringWriter.serialize((Protein)object)).append("\n");
@@ -482,7 +512,7 @@ public class StringWriter {
 			}
 
 			if (object instanceof List){
-				System.out.println("en StringWriter: List");
+//				System.out.println("en StringWriter: List");
 				sb.append(StringWriter.serialize((List)object));
 				continue;
 			}

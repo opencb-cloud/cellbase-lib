@@ -16,12 +16,14 @@ public interface ProteinDBAdaptor extends FeatureDBAdaptor {
 	@Override
 	public List<Protein> getAll();
 
-	public List<String> getAllUniprotIds();
+	public List<String> getAllUniprotAccessions();
+	
+	public List<String> getAllUniprotNames();
 
 	
-	public List<Protein> getAllByUniprotId(String uniprotId);
+	public List<Protein> getAllByUniprotAccession(String uniprotId);
 
-	public List<List<Protein>> getAllByUniprotIdList(List<String> uniprotIdList);
+	public List<List<Protein>> getAllByUniprotAccessionList(List<String> uniprotIdList);
 
 	
 	public List<Protein> getAllByProteinName(String name);
@@ -62,7 +64,11 @@ public interface ProteinDBAdaptor extends FeatureDBAdaptor {
 	
 	public List<ProteinInteraction> getAllProteinInteractionsByProteinName(String name);
 	
+	public List<ProteinInteraction> getAllProteinInteractionsByProteinName(String name, String source);
+
 	public List<List<ProteinInteraction>> getAllProteinInteractionsByProteinNameList(List<String> nameList);
+	
+	public List<List<ProteinInteraction>> getAllProteinInteractionsByProteinNameList(List<String> nameList, String source);
 	
 	
 	public List<ProteinRegion> getAllProteinRegionByGenomicRegion(Region region);
