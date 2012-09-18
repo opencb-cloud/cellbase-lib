@@ -34,6 +34,7 @@ import org.bioinfo.infrared.lib.common.DataSourceStats;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.type.IntegerType;
 
 
 class BioPaxHibernateDBAdaptor extends HibernateDBAdaptor implements BioPaxDBAdaptor {
@@ -964,7 +965,7 @@ class BioPaxHibernateDBAdaptor extends HibernateDBAdaptor implements BioPaxDBAda
 	private int getId(String sql) {
 		int id = -1;
 		try {
-			Query query = this.openSession().createSQLQuery(sql).addScalar("id", Hibernate.INTEGER);
+			Query query = this.openSession().createSQLQuery(sql).addScalar("id", IntegerType.INSTANCE);
 			Object res = query.uniqueResult();
 			id = (res!=null ? ((Integer) res) : -1);
 		} catch (Exception e) {
@@ -976,7 +977,7 @@ class BioPaxHibernateDBAdaptor extends HibernateDBAdaptor implements BioPaxDBAda
 	private int getCounter(String sql) {
 		int id = -1;
 		try {
-			Query query = this.openSession().createSQLQuery(sql).addScalar("counter", Hibernate.INTEGER);
+			Query query = this.openSession().createSQLQuery(sql).addScalar("counter", IntegerType.INSTANCE);
 			Object res = query.uniqueResult();
 			id = (res!=null ? ((Integer) res) : -1);
 		} catch (Exception e) {
