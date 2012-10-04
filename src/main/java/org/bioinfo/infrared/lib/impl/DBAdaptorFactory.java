@@ -42,6 +42,8 @@ public abstract class DBAdaptorFactory {
 		speciesAlias.put("Sus scrofa", "SSCROFA");speciesAlias.put("Sus_scrofa", "SSCROFA");speciesAlias.put("sscrofa", "SSCROFA");speciesAlias.put("sscr", "SSCROFA");speciesAlias.put("ssc", "SSCROFA");speciesAlias.put("SSCROFA", "SSCROFA");
 		speciesAlias.put("Plasmodium falciparum", "PFALCIPARUM");speciesAlias.put("Plasmodium_falciparum", "PFALCIPARUM");speciesAlias.put("pfalciparum", "PFALCIPARUM");speciesAlias.put("pfalc", "PFALCIPARUM");speciesAlias.put("pfa", "PFALCIPARUM");speciesAlias.put("PFALCIPARUM", "PFALCIPARUM");
 		speciesAlias.put("Anopheles gambiae", "AGAMBIAE");speciesAlias.put("Anopheles_gambiae", "AGAMBIAE");speciesAlias.put("agambiae", "AGAMBIAE");speciesAlias.put("agam", "AGAMBIAE");speciesAlias.put("aga", "AGAMBIAE");speciesAlias.put("AGAMBIAE", "AGAMBIAE");
+		speciesAlias.put("Aspergillus fumigatus", "AFUMIGATUS");speciesAlias.put("Aspergillus_fumigatus", "AFUMIGATUS");speciesAlias.put("afumigatus", "AFUMIGATUS");speciesAlias.put("afum", "AFUMIGATUS");speciesAlias.put("afu", "AFUMIGATUS");speciesAlias.put("AFUMIGATUS", "AFUMIGATUS");
+		speciesAlias.put("Fusarium oxysporum", "FOXYSPORUM");speciesAlias.put("Fusarium_oxysporum", "FOXYSPORUM");speciesAlias.put("foxysporum", "FOXYSPORUM");speciesAlias.put("foxy", "FOXYSPORUM");speciesAlias.put("fox", "FOXYSPORUM");speciesAlias.put("FOXYSPORUM", "FOXYSPORUM");
 	}
 	
 	public DBAdaptorFactory() {
