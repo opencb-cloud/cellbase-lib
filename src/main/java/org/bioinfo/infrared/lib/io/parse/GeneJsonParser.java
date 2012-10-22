@@ -14,9 +14,13 @@ import org.bioinfo.formats.exception.FileFormatException;
 import org.bioinfo.infrared.lib.common.Exon;
 import org.bioinfo.infrared.lib.common.Gene;
 import org.bioinfo.infrared.lib.common.Transcript;
+import org.bson.BSON;
+import org.bson.BSONObject;
+import org.bson.types.BasicBSONList;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mongodb.util.JSON;
 
 public class GeneJsonParser {
 
@@ -47,6 +51,8 @@ public class GeneJsonParser {
 		Transcript transcript;
 		Exon exon = null;
 
+		BasicBSONList list = new BasicBSONList();
+		
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		GtfReader gtfReader = new GtfReader(file);		
 		Gtf gtf;
@@ -59,6 +65,10 @@ public class GeneJsonParser {
 				gene = new Gene(geneId, gtf.getAttributes().get("gene_name"), gtf.getAttributes().get("gene_biotype"), 
 						"KNOWN", gtf.getSequenceName().replaceFirst("chr", ""), gtf.getStart(), gtf.getEnd(), gtf.getStrand(), "Ensembl", "", new ArrayList<Transcript>());
 				genes.add(gene);
+				
+				//
+				list.add(gene);
+				
 				// Do not change order!!   size()-1 is the index of the gene ID
 				geneDict.put(geneId, genes.size()-1);
 			}else {
@@ -119,6 +129,8 @@ public class GeneJsonParser {
 		}
 
 		gtfReader.close();
+//		System.out.println(JSON.serialize(genes.get(0)));
+//		return JSON.serialize(genes);
 		return gson.toJson(genes);
 	}
 

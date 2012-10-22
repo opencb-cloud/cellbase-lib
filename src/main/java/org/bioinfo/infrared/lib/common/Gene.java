@@ -1,9 +1,16 @@
 package org.bioinfo.infrared.lib.common;
 
+import java.io.Serializable;
 import java.util.List;
 
-
-public class Gene {
+public class Gene implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5804770440067183880L;
+	/**
+	 * 
+	 */
 	private String stableId;
 	private String geneName;
 	private String biotype;
@@ -22,7 +29,7 @@ public class Gene {
 	}
 
 	public Gene(String stableId, String externalName, String biotype, String status, 
-			String chromosome, int start, int end, String strand, String source, String description, List<Transcript> transcripts) {
+			String chromosome, Integer start, Integer end, String strand, String source, String description, List<Transcript> transcripts) {
 		super();
 		this.stableId = stableId;
 		this.geneName = externalName;

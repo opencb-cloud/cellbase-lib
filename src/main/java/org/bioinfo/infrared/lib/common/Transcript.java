@@ -1,10 +1,15 @@
 package org.bioinfo.infrared.lib.common;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Transcript {
+public class Transcript implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2069002722080532350L;
 	private String stableId;
 	private String externalName;
 	private String biotype;
@@ -26,7 +31,7 @@ public class Transcript {
 		
 	}
 
-	public Transcript(String stableId, String externalName, String biotype, String status, String chromosome, int start, int end, String strand, int codingRegionStart, int codingRegionEnd, int cdnaCodingStart, int cdnaCodingEnd, String proteinId, String description, ArrayList<Exon> exons) {
+	public Transcript(String stableId, String externalName, String biotype, String status, String chromosome, Integer start, Integer end, String strand, Integer codingRegionStart, Integer codingRegionEnd, Integer cdnaCodingStart, Integer cdnaCodingEnd, String proteinId, String description, ArrayList<Exon> exons) {
 		this.stableId = stableId;
 		this.externalName = externalName;
 		this.biotype = biotype;
