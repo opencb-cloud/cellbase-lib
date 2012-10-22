@@ -1,16 +1,31 @@
 package org.bioinfo.infrared.lib.impl.mongo;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.bioinfo.infrared.core.cellbase.GenomeSequence;
-import org.bioinfo.infrared.lib.api.GenomeSequenceDBAdaptor;
-import org.bioinfo.infrared.lib.common.GenomeSequenceFeature;
-import org.bioinfo.infrared.lib.common.Region;
-import org.hibernate.Query;
+import org.bioinfo.infrared.core.biopax.v3.BioEntity;
+import org.bioinfo.infrared.core.biopax.v3.Catalysis;
+import org.bioinfo.infrared.core.biopax.v3.Complex;
+import org.bioinfo.infrared.core.biopax.v3.Control;
+import org.bioinfo.infrared.core.biopax.v3.Conversion;
+import org.bioinfo.infrared.core.biopax.v3.DataSource;
+import org.bioinfo.infrared.core.biopax.v3.Dna;
+import org.bioinfo.infrared.core.biopax.v3.Dnaregion;
+import org.bioinfo.infrared.core.biopax.v3.GeneticInteraction;
+import org.bioinfo.infrared.core.biopax.v3.Interaction;
+import org.bioinfo.infrared.core.biopax.v3.MolecularInteraction;
+import org.bioinfo.infrared.core.biopax.v3.Pathway;
+import org.bioinfo.infrared.core.biopax.v3.PhysicalEntity;
+import org.bioinfo.infrared.core.biopax.v3.Protein;
+import org.bioinfo.infrared.core.biopax.v3.Rna;
+import org.bioinfo.infrared.core.biopax.v3.Rnaregion;
+import org.bioinfo.infrared.core.biopax.v3.SmallMolecule;
+import org.bioinfo.infrared.core.biopax.v3.TemplateReaction;
+import org.bioinfo.infrared.lib.api.BioPaxDBAdaptor;
+import org.bioinfo.infrared.lib.common.ComplexComponent;
+import org.bioinfo.infrared.lib.common.DataSourceStats;
 import org.hibernate.SessionFactory;
 
-class PathwayMongoDBAdaptor extends MongoDBAdaptor implements PathwayDBAdaptor {
+class PathwayMongoDBAdaptor extends MongoDBAdaptor implements BioPaxDBAdaptor {
 
 //	private final static int CHUNK_SIZE = 2000;
 
@@ -32,90 +47,541 @@ class PathwayMongoDBAdaptor extends MongoDBAdaptor implements PathwayDBAdaptor {
 		return ((position) % applicationProperties.getIntProperty("CELLBASE."+version.toUpperCase()+".GENOME_SEQUENCE.CHUNK_SIZE", 2000));
 	}
 	
+
 	@Override
-	@SuppressWarnings("unchecked")
-	public GenomeSequenceFeature getByRegion(String chromosome, int start, int end) {
-		// positions below 1 are not allowed
-		if(start < 1) {
-			start = 1;
-		}
-		
-		Query query = this.openSession().createQuery("from GenomeSequence where chromosome = :chromosome and chunk >= :start and chunk <= :end")
-			.setParameter("chromosome", chromosome.trim())
-			.setParameter("start", String.valueOf(getChunk(start)))
-			.setParameter("end", String.valueOf(getChunk(end)));
-		
-		List<GenomeSequence> genomeSequenceList = (List<GenomeSequence>) executeAndClose(query);
-		StringBuilder sb = new StringBuilder();
-		for(GenomeSequence genomeSequence: genomeSequenceList) {
-			sb.append(genomeSequence.getSequence());
-		}
-		
-//	return new GenomeSequence(new GenomeSequenceId(chromosome, getChunk(start)), start, end, sb.toString().substring(getOffset(start), getOffset(start) + (end-start) + 1));
-		int startStr = getOffset(start);
-		int endStr = getOffset(start) + (end-start) + 1;
-		String subStr = "";
-		if(getChunk(end) > 0) {
-			if(sb.toString().length() > 0 && sb.toString().length() >= endStr){
-				subStr = sb.toString().substring(startStr, endStr);
-			}			
-		}else {
-			if(sb.toString().length() > 0 && sb.toString().length()+1 >= endStr){
-				subStr = sb.toString().substring(startStr, endStr-1);
-			}
-		}
-		
-//		return new GenomeSequence(new GenomeSequenceId(chromosome, getChunk(start)), start, end, subStr);
-		return new GenomeSequenceFeature(chromosome, start, end, subStr);
+	public boolean isDna(PhysicalEntity physicalEntity) {
+		// TODO Auto-generated method stub
+		return false;
 	}
-	
-	
-	public static String getComplementarySequence(String sequence){
-		sequence = sequence.replace("A", "1");
-		sequence = sequence.replace("T", "2");
-		sequence = sequence.replace("C", "3");
-		sequence = sequence.replace("G", "4");
-		sequence = sequence.replace("1", "T");
-		sequence = sequence.replace("2", "A");
-		sequence = sequence.replace("3", "G");
-		sequence = sequence.replace("4", "C");
-		return sequence;
-	}
-	
+
 	@Override
-	public String getRevComp(String sequence) {
-		String sequenceRef = new String();
-		sequenceRef = new StringBuffer(sequence).reverse().toString();
-		return PathwayMongoDBAdaptor.getComplementarySequence(sequenceRef);
+	public boolean isDna(int physicalEntityId) {
+		// TODO Auto-generated method stub
+		return false;
 	}
-	
+
 	@Override
-	public GenomeSequenceFeature getByRegion(String chromosome, int start, int end, int strand) {
-		GenomeSequenceFeature genomeSequence = this.getByRegion(chromosome, start, end);
-		
-		if (strand == -1){
-			genomeSequence.setSequence(getRevComp(genomeSequence.getSequence()));
-		}
-		
-		return genomeSequence;
+	public Dna getDna(PhysicalEntity ph) {
+		// TODO Auto-generated method stub
+		return null;
 	}
-	
+
 	@Override
-	public List<GenomeSequenceFeature> getByRegionList(List<Region> regions, int strand){
-		List<GenomeSequenceFeature> result = new ArrayList<GenomeSequenceFeature>(regions.size());
-		for(Region region: regions) {
-			result.add(getByRegion(region.getChromosome(), region.getStart(), region.getEnd(), strand));
-		}
-		return result;
+	public boolean isDnaregion(PhysicalEntity physicalEntity) {
+		// TODO Auto-generated method stub
+		return false;
 	}
-	
+
 	@Override
-	public List<GenomeSequenceFeature> getByRegionList(List<Region> regions){
-		List<GenomeSequenceFeature> result = new ArrayList<GenomeSequenceFeature>(regions.size());
-		for(Region region: regions) {
-			result.add(getByRegion(region.getChromosome(), region.getStart(), region.getEnd(), 1));
-		}
-		return result;
+	public boolean isDnaregion(int physicalEntityId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Dnaregion getDnaregion(PhysicalEntity ph) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isRna(PhysicalEntity physicalEntity) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isRna(int physicalEntityId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Rna getRna(PhysicalEntity ph) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isRnaregion(PhysicalEntity physicalEntity) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isRnaregion(int physicalEntityId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Rnaregion getRnaregion(PhysicalEntity ph) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isSmallMolecule(PhysicalEntity physicalEntity) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isSmallMolecule(int physicalEntityId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public SmallMolecule getSmallMolecule(PhysicalEntity ph) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getNumberOfComplexes(DataSource ds) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean isComplex(PhysicalEntity physicalEntity) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isComplex(int physicalEntityId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Complex getComplex(PhysicalEntity ph) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Complex getComplex(int complexId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Complex getComplex(String complexName, String dataSourceName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ComplexComponent> getComplexComponents(String complexName,
+			String dataSourceName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ComplexComponent> getComplexComponents(Complex input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Pathway> getPathways(String complexName, String dataSourceName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Interaction> getInteractions(Complex input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Pathway> getPathways(Complex input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Protein> getProteins(Complex input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toString(Complex input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toStringComplexes(List<Complex> input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toJson(Complex input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toJsonComplexes(List<Complex> input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getNumberOfProteins(DataSource ds) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean isProtein(PhysicalEntity physicalEntity) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isProtein(int physicalEntityId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Protein getProtein(PhysicalEntity ph) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Protein getProtein(int proteinId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Protein getProteinByXrefId(String proteinId, DataSource ds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getProteinReferenceNames(Protein protein) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Complex> getComplexes(Protein input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Interaction> getInteractions(Protein input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Pathway> getPathways(Protein input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isCatalysis(Control control) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isCatalysis(int controlId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Catalysis getCatalysis(Control c) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isControl(Interaction interaction) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isControl(int interactionId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Control getControl(Interaction ph) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Protein> getProteins(Control input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isConversion(Interaction interaction) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isConversion(int interactionId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Conversion getConversion(Interaction ph) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Protein> getProteins(Conversion input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isGeneticInteraction(Interaction interaction) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isGeneticInteraction(int interactionId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public GeneticInteraction getGeneticInteraction(Interaction ph) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isMolecularInteraction(Interaction interaction) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isMolecularInteraction(int interactionId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public MolecularInteraction getMolecularInteraction(Interaction ph) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isTemplateReaction(Interaction interaction) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isTemplateReaction(int interactionId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public TemplateReaction getTemplateReaction(Interaction ph) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getNumberOfPhysicalEntities(DataSource ds) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public List<Interaction> getInteractions(PhysicalEntity input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Pathway> getPathways(PhysicalEntity input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getNumberOfGenes(DataSource ds) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getNumberOfInteractions(DataSource ds) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public List<Protein> getProteins(Interaction input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toString(Interaction input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toStringInteractions(List<Interaction> input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toJson(Interaction input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toJsonInteractions(List<Interaction> input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getNumberOfPathways(DataSource ds) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Pathway getPathway(String pathwayName, String dataSourceName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Pathway getPathway(int pathwayId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Pathway> getPathways(String dataSourceName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Pathway> getPathways(String dataSourceName, String search,
+			boolean onlyTopLevel) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Interaction> getInteractions(Pathway input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Protein> getProteins(Pathway input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toString(Pathway input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toStringPathways(List<Pathway> input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toJson(Pathway input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toJsonPathways(List<Pathway> input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getNumberOfCellularLocations(DataSource ds) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getNumberOfPublicationXrefs(DataSource ds) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public List<DataSource> getDataSources() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public DataSource getDataSource(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public DataSourceStats getDataSourceStats(String dataSourceName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public DataSourceStats getDataSourceStats(DataSource ds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getFirstName(BioEntity entity) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 
