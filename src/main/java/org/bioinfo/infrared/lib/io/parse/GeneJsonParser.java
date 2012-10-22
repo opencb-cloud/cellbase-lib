@@ -18,14 +18,14 @@ import org.bioinfo.infrared.lib.common.Transcript;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class CoreParser {
+public class GeneJsonParser {
 
 	List<Gene> genes;
 	Map<String, Integer> geneDict;
 	Map<String, Integer> transcriptDict;
 	Map<String, Exon> exonDict;
 
-	public CoreParser() {
+	public GeneJsonParser() {
 		init();
 	}
 
