@@ -1,6 +1,7 @@
 package org.bioinfo.infrared.lib.common;
 
 import java.util.List;
+import java.util.Vector;
 
 public class FeatureJsonFormat {
 
@@ -16,6 +17,8 @@ public class FeatureJsonFormat {
 	private List<Attribute> attributes;
 	
 	public FeatureJsonFormat(){
+		display = new Display();
+		attributes = new Vector<Attribute>();
 		
 	}
 

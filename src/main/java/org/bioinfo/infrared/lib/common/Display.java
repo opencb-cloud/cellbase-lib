@@ -7,7 +7,12 @@ public class Display {
 	private int thickEnd;
 	private String itemRgb;
 	
-	public Display(){}
+	public Display(){
+		this.name = "";
+		this.thickStart = 0;
+		this.thickEnd = 0;
+		this.itemRgb = "";
+	}
 
 	public Display(String name, int thickStart, int thickEnd, String itemRgb) {
 		this.name = name;

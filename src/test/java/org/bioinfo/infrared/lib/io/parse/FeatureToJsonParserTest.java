@@ -3,7 +3,6 @@ package org.bioinfo.infrared.lib.io.parse;
 import java.io.File;
 import java.io.IOException;
 
-import org.bioinfo.commons.io.utils.IOUtils;
 import org.bioinfo.formats.exception.FileFormatException;
 import org.junit.After;
 import org.junit.Before;
@@ -23,9 +22,9 @@ public class FeatureToJsonParserTest {
 	public void test() {
 		try {
 			FeatureToJsonParser ftjp = new FeatureToJsonParser();
-			String jsonString = ftjp.gffParseToJson(new File("/home/echirivella/Downloads/AnnotatedFeatures.gff"));
-			
-			IOUtils.write(new File("/tmp/AnnotedTest.json"), jsonString);
+			ftjp.gffParseToJson(new File("/home/echirivella/Downloads/AnnotatedFeatures2.gff"),new File("/tmp/GFFannotedTest.json"));
+			//ftjp.bedParseToJson(new File("/home/echirivella/Downloads/36way_gerp_elements.Homo_sapiens2.bed"),new File("/tmp/BEDannotedTest.json"));
+			ftjp.bedParseToJson(new File("/home/echirivella/Downloads/Homo_sapiens2.bed"),new File("/tmp/BEDannotedTest.json"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -40,5 +39,6 @@ public class FeatureToJsonParserTest {
 			e.printStackTrace();
 		}
 	}
+	
 
 }

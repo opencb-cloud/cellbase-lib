@@ -6,7 +6,11 @@ public class Attribute {
 	private String value;
 	private String type;
 	
-	public Attribute(){}
+	public Attribute(){
+		this.name = "";
+		this.value = "";
+		this.type = "";
+	}
 	
 	public Attribute(String name, String value, String type) {
 		this.name = name;
