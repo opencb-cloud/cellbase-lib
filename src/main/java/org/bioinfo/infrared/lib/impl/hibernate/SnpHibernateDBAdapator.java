@@ -402,7 +402,11 @@ class SnpHibernateDBAdapator extends HibernateDBAdaptor implements SnpDBAdaptor 
 
 	@Override
 	public List<List<Snp>> getAllByRegionList(List<Region> regionList, List<String> consequenceTypeList) {
-		return null;
+		List<List<Snp>> results = new ArrayList<List<Snp>>();
+		for (Region region : regionList) {
+			results.add(this.getAllByRegion(region, consequenceTypeList));
+		}
+		return results;
 	}
 
 	@Override
