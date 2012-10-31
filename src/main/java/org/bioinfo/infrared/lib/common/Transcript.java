@@ -22,6 +22,7 @@ public class Transcript implements Serializable {
 	private int genomicCodingEnd;
 	private int cdnaCodingStart;
 	private int cdnaCodingEnd;
+	private int cdsLength;
 	private String proteinID;
 	private String description;
 	private List<Exon> exons;
@@ -31,7 +32,7 @@ public class Transcript implements Serializable {
 		
 	}
 
-	public Transcript(String stableId, String externalName, String biotype, String status, String chromosome, Integer start, Integer end, String strand, Integer codingRegionStart, Integer codingRegionEnd, Integer cdnaCodingStart, Integer cdnaCodingEnd, String proteinId, String description, ArrayList<Exon> exons) {
+	public Transcript(String stableId, String externalName, String biotype, String status, String chromosome, Integer start, Integer end, String strand, Integer codingRegionStart, Integer codingRegionEnd, Integer cdnaCodingStart, Integer cdnaCodingEnd, Integer cdsLength, String proteinId, String description, ArrayList<Exon> exons) {
 		this.stableId = stableId;
 		this.externalName = externalName;
 		this.biotype = biotype;
@@ -44,6 +45,7 @@ public class Transcript implements Serializable {
 		this.genomicCodingEnd = codingRegionEnd;
 		this.cdnaCodingStart = cdnaCodingStart;
 		this.cdnaCodingEnd = cdnaCodingEnd;
+		this.cdsLength = cdsLength;
 		this.proteinID = proteinId;
 		this.description = description;
 		this.exons = exons;
@@ -167,6 +169,14 @@ public class Transcript implements Serializable {
 
 	public void setProteinID(String proteinID) {
 		this.proteinID = proteinID;
+	}
+
+	public int getCdsLength() {
+		return cdsLength;
+	}
+
+	public void setCdsLength(int cdsLength) {
+		this.cdsLength = cdsLength;
 	}
 	
 }

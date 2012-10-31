@@ -49,9 +49,9 @@ public class GeneJsonParser {
 		Exon exon = null;
 		int cdna = 1;
 		int cds = 1;
-		
+
 		BasicBSONList list = new BasicBSONList();
-		
+
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		GtfReader gtfReader = new GtfReader(file);		
 		Gtf gtf;
@@ -66,7 +66,7 @@ public class GeneJsonParser {
 				genes.add(gene);
 				//
 				list.add(gene);
-				
+
 				// Do not change order!!   size()-1 is the index of the gene ID
 				geneDict.put(geneId, genes.size()-1);
 			}else {
@@ -76,7 +76,7 @@ public class GeneJsonParser {
 			//			// Check if Transcript exist in the Gene Set of transcripts
 			if(!transcriptDict.containsKey(transcriptId)) {
 				transcript = new Transcript(transcriptId, gtf.getAttributes().get("transcript_name"), 
-						gtf.getSource(), "KNOWN", gtf.getSequenceName().replaceFirst("chr", ""), gtf.getStart(), gtf.getEnd(), gtf.getStrand(), 0, 0, 0, 0, "", "", new ArrayList<Exon>());
+						gtf.getSource(), "KNOWN", gtf.getSequenceName().replaceFirst("chr", ""), gtf.getStart(), gtf.getEnd(), gtf.getStrand(), 0, 0, 0, 0, 0, "", "", new ArrayList<Exon>());
 				gene.getTranscripts().add(transcript);
 				// Do not change order!!   size()-1 is the index of the transcript ID
 				transcriptDict.put(transcriptId, gene.getTranscripts().size()-1);
@@ -103,49 +103,141 @@ public class GeneJsonParser {
 			}else {
 				exon = exonDict.get(transcript.getStableId()+"_"+exon.getExonNumber());
 				if(gtf.getFeature().equalsIgnoreCase("CDS")) {
-					// CDS states the beginning of coding start
-					exon.setGenomicCodingStart(gtf.getStart());
-					exon.setGenomicCodingEnd(gtf.getEnd());
-					
-					// cDNA coordinates
-					exon.setCdnaCodingStart(gtf.getStart()-exon.getStart()+cdna);
-					exon.setCdnaCodingEnd(gtf.getEnd()-exon.getStart()+cdna);
-					
-					exon.setCdsStart(cds);
-					exon.setCdsEnd(gtf.getEnd()-gtf.getStart()+cds);
-					
-					// increment in the coding length
-					cds += gtf.getEnd()-gtf.getStart()+1;
-					
-					exon.setPhase(Integer.parseInt(gtf.getFrame()));
-					transcript.setGenomicCodingStart(gtf.getStart());
-					transcript.setGenomicCodingEnd(gtf.getEnd());
+					if(gtf.getStrand().equals("+") || gtf.getStrand().equals("1")) {
+						// CDS states the beginning of coding start
+						exon.setGenomicCodingStart(gtf.getStart());
+						exon.setGenomicCodingEnd(gtf.getEnd());
+
+						// cDNA coordinates
+						exon.setCdnaCodingStart(gtf.getStart()-exon.getStart()+cdna);
+						exon.setCdnaCodingEnd(gtf.getEnd()-exon.getStart()+cdna);
+
+						exon.setCdsStart(cds);
+						exon.setCdsEnd(gtf.getEnd()-gtf.getStart()+cds);
+
+						// increment in the coding length
+						cds += gtf.getEnd()-gtf.getStart()+1;
+
+						// phase calculation
+						if(gtf.getStart() == exon.getStart()) {
+							// retrieve previous exon if exists
+							if(exonDict.get(transcript.getStableId()+"_"+(exon.getExonNumber()-1)) != null) {
+								Exon e = exonDict.get(transcript.getStableId()+"_"+(exon.getExonNumber()-1));
+								if(e.getPhase() == -1) {
+									exon.setPhase((e.getCdnaCodingEnd()-e.getCdnaCodingStart()+1)%3); // (prev-phase+1)%3
+								}else {
+									exon.setPhase(((e.getCdnaCodingEnd()-e.getCdnaCodingStart()+1)%3+e.getPhase())%3);	// (prev-phase+current-phase+1)%3
+								}
+							}else {
+								// if it is the first exon then we just take the frame
+								if(gtf.getFrame().equals("0")) {
+									exon.setPhase(Integer.parseInt(gtf.getFrame()));									
+								}else {
+									if(gtf.getFrame().equals("1")) {
+										exon.setPhase(2);
+									}else {
+										exon.setPhase(1);
+									}
+								}
+							}
+						}else {
+							// if coding start and genomic start is different then there is UTR: -1
+							exon.setPhase(-1);
+						}
+
+						transcript.setGenomicCodingStart(gtf.getStart());
+						transcript.setGenomicCodingEnd(gtf.getEnd());
+						// only first time
+						if(transcript.getCdnaCodingStart() == 0) {
+							transcript.setCdnaCodingStart(gtf.getStart()-exon.getStart()+cdna);						
+						}
+						// strand -
+					}else {
+						// CDS states the beginning of coding start
+						exon.setGenomicCodingStart(gtf.getStart());
+						exon.setGenomicCodingEnd(gtf.getEnd());
+
+						// cDNA coordinates
+						exon.setCdnaCodingStart(exon.getEnd()-gtf.getEnd()+cdna);
+						exon.setCdnaCodingEnd(exon.getEnd()-gtf.getStart()+cdna);
+
+						exon.setCdsStart(cds);
+						exon.setCdsEnd(gtf.getEnd()-gtf.getStart()+cds);
+
+						// increment in the coding length
+						cds += gtf.getEnd()-gtf.getStart()+1;
+
+						// phase calculation
+						if(gtf.getEnd() == exon.getEnd()) {
+							// retrieve previous exon if exists
+							if(exonDict.get(transcript.getStableId()+"_"+(exon.getExonNumber()-1)) != null) {
+								Exon e = exonDict.get(transcript.getStableId()+"_"+(exon.getExonNumber()-1));
+								if(e.getPhase() == -1) {
+									exon.setPhase((e.getCdnaCodingEnd()-e.getCdnaCodingStart()+1)%3); // (prev-phase+1)%3
+								}else {
+									exon.setPhase(((e.getCdnaCodingEnd()-e.getCdnaCodingStart()+1)%3+e.getPhase())%3);	// (prev-phase+current-phase+1)%3
+								}
+							}else {
+								// if it is the first exon then we just take the frame
+								if(gtf.getFrame().equals("0")) {
+									exon.setPhase(Integer.parseInt(gtf.getFrame()));									
+								}else {
+									if(gtf.getFrame().equals("1")) {
+										exon.setPhase(2);
+									}else {
+										exon.setPhase(1);
+									}
+								}						
+							}
+						}else {
+							// if coding start and genomic start is different then there is UTR: -1
+							exon.setPhase(-1);
+						}
+
+						transcript.setGenomicCodingStart(gtf.getStart());
+						transcript.setGenomicCodingEnd(gtf.getEnd());
+						// only first time
+						if(transcript.getCdnaCodingStart() == 0) {
+							transcript.setCdnaCodingStart(gtf.getStart()-exon.getStart()+cdna);						
+						}
+					}
+
+					// no strand deppendent
 					transcript.setProteinID(gtf.getAttributes().get("protein_id"));
 				}
+
 				if(gtf.getFeature().equalsIgnoreCase("start_codon")) {
 					if(exon.getStrand().equals("+")) {
-//						exon.setCodingRegionStart(gtf.getStart());
-//						transcript.setCodingRegionStart(gtf.getStart());						
+						//						exon.setCodingRegionStart(gtf.getStart());
+						//						transcript.setCodingRegionStart(gtf.getStart());						
 					}else {
-//						exon.setCodingRegionEnd(gtf.getEnd());
-//						transcript.setCodingRegionEnd(gtf.getEnd());
+						//						exon.setCodingRegionEnd(gtf.getEnd());
+						//						transcript.setCodingRegionEnd(gtf.getEnd());
 					}
 				}
+
 				if(gtf.getFeature().equalsIgnoreCase("stop_codon")) {
 					if(exon.getStrand().equals("+")) {
+						// we need to increment 3 nts, the stop_codon length.
 						exon.setGenomicCodingEnd(gtf.getEnd());
-						transcript.setGenomicCodingEnd(gtf.getEnd());						
+						exon.setCdnaCodingEnd(gtf.getEnd()-exon.getStart()+cdna);
+						exon.setCdsEnd(gtf.getEnd()-gtf.getStart()+cds);
+						cds += gtf.getEnd()-gtf.getStart();
+
+						transcript.setGenomicCodingEnd(gtf.getEnd());
+						transcript.setCdnaCodingEnd(gtf.getEnd()-exon.getStart()+cdna);
+						transcript.setCdsLength(cds);
 					}else {
-//						exon.setCodingRegionEnd(gtf.getEnd());
-//						transcript.setCodingRegionStart(gtf.getStart());
+						//						exon.setCodingRegionEnd(gtf.getEnd());
+						//						transcript.setCodingRegionStart(gtf.getStart());
 					}
 				}
 			}
 		}
 
 		gtfReader.close();
-//		System.out.println(JSON.serialize(genes.get(0)));
-//		return JSON.serialize(genes);
+		//		System.out.println(JSON.serialize(genes.get(0)));
+		//		return JSON.serialize(genes);
 		return gson.toJson(genes);
 	}
 
