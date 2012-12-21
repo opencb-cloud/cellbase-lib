@@ -14,6 +14,7 @@ import org.bioinfo.infrared.lib.api.GenomeSequenceDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomicVariantEffectDBAdaptor;
 import org.bioinfo.infrared.lib.api.MirnaDBAdaptor;
 import org.bioinfo.infrared.lib.api.MutationDBAdaptor;
+import org.bioinfo.infrared.lib.api.PathwayDBAdaptor;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
@@ -147,5 +148,10 @@ public abstract class DBAdaptorFactory {
 	public abstract StructuralVariationDBAdaptor getStructuralVariationDBAdaptor(String species);
 	
 	public abstract StructuralVariationDBAdaptor getStructuralVariationDBAdaptor(String species, String version);
+	
+	
+	public abstract PathwayDBAdaptor getPathwayDBAdaptor(String species);
+	
+	public abstract PathwayDBAdaptor getPathwayDBAdaptor(String species, String version);
 	
 }
