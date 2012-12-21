@@ -1,8 +1,9 @@
-package org.bioinfo.infrared.lib.common;
+package org.bioinfo.infrared.lib.common.core;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class Transcript implements Serializable {
 
@@ -10,8 +11,8 @@ public class Transcript implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 2069002722080532350L;
-	private String stableId;
-	private String externalName;
+	private String id;
+	private String name;
 	private String biotype;
 	private String status;
 	private String chromosome;
@@ -25,6 +26,7 @@ public class Transcript implements Serializable {
 	private int cdsLength;
 	private String proteinID;
 	private String description;
+	private List<Xref> xrefs;
 	private List<Exon> exons;
 	
 
@@ -32,9 +34,9 @@ public class Transcript implements Serializable {
 		
 	}
 
-	public Transcript(String stableId, String externalName, String biotype, String status, String chromosome, Integer start, Integer end, String strand, Integer codingRegionStart, Integer codingRegionEnd, Integer cdnaCodingStart, Integer cdnaCodingEnd, Integer cdsLength, String proteinId, String description, ArrayList<Exon> exons) {
-		this.stableId = stableId;
-		this.externalName = externalName;
+	public Transcript(String id, String name, String biotype, String status, String chromosome, Integer start, Integer end, String strand, Integer codingRegionStart, Integer codingRegionEnd, Integer cdnaCodingStart, Integer cdnaCodingEnd, Integer cdsLength, String proteinId, String description, ArrayList<Xref> xrefs, ArrayList<Exon> exons) {
+		this.id = id;
+		this.name = name;
 		this.biotype = biotype;
 		this.status = status;
 		this.chromosome = chromosome;
@@ -48,23 +50,24 @@ public class Transcript implements Serializable {
 		this.cdsLength = cdsLength;
 		this.proteinID = proteinId;
 		this.description = description;
+		this.xrefs = xrefs;
 		this.exons = exons;
 	}
 
-	public String getStableId() {
-		return stableId;
+	public String getId() {
+		return id;
 	}
 
-	public void setStableId(String stableId) {
-		this.stableId = stableId;
+	public void setId(String id) {
+		this.id = id;
 	}
 
-	public String getExternalName() {
-		return externalName;
+	public String getName() {
+		return name;
 	}
 
-	public void setExternalName(String externalName) {
-		this.externalName = externalName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getBiotype() {
@@ -177,6 +180,14 @@ public class Transcript implements Serializable {
 
 	public void setCdsLength(int cdsLength) {
 		this.cdsLength = cdsLength;
+	}
+
+	public List<Xref> getXrefs() {
+		return xrefs;
+	}
+
+	public void setXrefs(List<Xref> xrefs) {
+		this.xrefs = xrefs;
 	}
 	
 }

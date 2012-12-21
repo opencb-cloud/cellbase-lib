@@ -1,7 +1,8 @@
-package org.bioinfo.infrared.lib.common;
+package org.bioinfo.infrared.lib.common.core;
 
 import java.io.Serializable;
 import java.util.List;
+
 
 public class Gene implements Serializable {
 	/**
@@ -11,8 +12,9 @@ public class Gene implements Serializable {
 	/**
 	 * 
 	 */
-	private String stableId;
-	private String geneName;
+	private String _id;
+	private String id;
+	private String name;
 	private String biotype;
 	private String status;
 	private String chromosome;
@@ -28,11 +30,12 @@ public class Gene implements Serializable {
 		
 	}
 
-	public Gene(String stableId, String externalName, String biotype, String status, 
+	public Gene(String id, String name, String biotype, String status, 
 			String chromosome, Integer start, Integer end, String strand, String source, String description, List<Transcript> transcripts) {
 		super();
-		this.stableId = stableId;
-		this.geneName = externalName;
+		this._id = id;
+		this.id = id;
+		this.name = name;
 		this.biotype = biotype;
 		this.status = status;
 		this.chromosome = chromosome;
@@ -44,20 +47,20 @@ public class Gene implements Serializable {
 		this.transcripts = transcripts;
 	}
 
-	public String getStableId() {
-		return stableId;
+	public String getId() {
+		return id;
 	}
 
-	public void setStableId(String stableId) {
-		this.stableId = stableId;
+	public void setId(String id) {
+		this.id = id;
 	}
 
-	public String getGeneName() {
-		return geneName;
+	public String getName() {
+		return name;
 	}
 
-	public void setGeneName(String externalName) {
-		this.geneName = externalName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getBiotype() {

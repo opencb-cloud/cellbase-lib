@@ -1,4 +1,4 @@
-package org.bioinfo.infrared.lib.common;
+package org.bioinfo.infrared.lib.common.core;
 
 import java.io.Serializable;
 
@@ -8,7 +8,8 @@ public class Exon implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -6453125614383801773L;
-	private String stableId;
+	
+	private String id;
 	private String chromosome;
 	private int start;
 	private int end;
@@ -26,9 +27,9 @@ public class Exon implements Serializable{
 		
 	}
 
-	public Exon(String stableId, String chromosome, Integer start, Integer end, String strand, Integer genomicCodingStart, Integer genomicCodingEnd, Integer cdnaCodingStart, Integer cdnaCodingEnd, Integer cdsStart, Integer cdsEnd, Integer phase, Integer exonNumber) {
+	public Exon(String id, String chromosome, Integer start, Integer end, String strand, Integer genomicCodingStart, Integer genomicCodingEnd, Integer cdnaCodingStart, Integer cdnaCodingEnd, Integer cdsStart, Integer cdsEnd, Integer phase, Integer exonNumber) {
 		super();
-		this.stableId = stableId;
+		this.id = id;
 		this.chromosome = chromosome;
 		this.start = start;
 		this.end = end;
@@ -43,12 +44,12 @@ public class Exon implements Serializable{
 		this.exonNumber = exonNumber;
 	}
 
-	public String getStableId() {
-		return stableId;
+	public String getId() {
+		return id;
 	}
 
-	public void setStableId(String stableId) {
-		this.stableId = stableId;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getChromosome() {

@@ -9,7 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CoreParserTest {
+public class GtfParserTest {
 
 	@Before
 	public void setUp() throws Exception {
@@ -21,10 +21,13 @@ public class CoreParserTest {
 
 	@Test
 	public void testParseToJson() {
-		GeneJsonParser coreParser = new GeneJsonParser();
+		GtfParser coreParser = new GtfParser();
 		try {
-			String jsonString = coreParser.parseToJson(new File("/home/imedina/Downloads/Homo_sapiens.GRCh37.69_50000.gtf"));
-			IOUtils.write(new File("/tmp/hsapiens_core.json"), jsonString);
+			File file = new File("/home/imedina/cellbase_v3/hsapiens/hsapiens_core.json");
+			file.createNewFile();
+//			String jsonString =
+			coreParser.parseToJson(new File("/home/imedina/cellbase_v3/hsapiens/Homo_sapiens.GRCh37.69.gtf"), new File("/home/imedina/cellbase_v3/hsapiens/gene_description.txt"), new File("/home/imedina/cellbase_v3/hsapiens/xrefs.txt"), file);
+//			IOUtils.write(file, jsonString);
 			
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
