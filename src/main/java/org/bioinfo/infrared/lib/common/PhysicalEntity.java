@@ -5,9 +5,9 @@ import java.util.Map;
 
 public class PhysicalEntity {
 	String name, type;
-	Map<String, List<String>> params;
+	Map<String, List<Object>> params;
 	
-	public PhysicalEntity(String id, String type, Map<String, List<String>> params) {
+	public PhysicalEntity(String id, String type, Map<String, List<Object>> params) {
 		this.name = id;
 		this.type = type;
 		this.params = params;

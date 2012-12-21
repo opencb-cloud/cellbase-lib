@@ -1,6 +1,8 @@
 package org.bioinfo.infrared.lib.impl.mongo;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.bioinfo.infrared.core.biopax.v3.BioEntity;
 import org.bioinfo.infrared.core.biopax.v3.Catalysis;
@@ -20,24 +22,35 @@ import org.bioinfo.infrared.core.biopax.v3.Rna;
 import org.bioinfo.infrared.core.biopax.v3.Rnaregion;
 import org.bioinfo.infrared.core.biopax.v3.SmallMolecule;
 import org.bioinfo.infrared.core.biopax.v3.TemplateReaction;
-import org.bioinfo.infrared.lib.api.BioPaxDBAdaptor;
+import org.bioinfo.infrared.lib.api.PathwayDBAdaptor;
 import org.bioinfo.infrared.lib.common.ComplexComponent;
 import org.bioinfo.infrared.lib.common.DataSourceStats;
 import org.hibernate.SessionFactory;
 
-class PathwayMongoDBAdaptor extends MongoDBAdaptor implements BioPaxDBAdaptor {
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+
+class PathwayMongoDBAdaptor extends MongoDBAdaptor implements PathwayDBAdaptor {
 
 //	private final static int CHUNK_SIZE = 2000;
 
 	
-	public PathwayMongoDBAdaptor(SessionFactory sessionFactory) {
-		super(sessionFactory);
-	}
+//	public PathwayMongoDBAdaptor(SessionFactory sessionFactory) {
+//		super(sessionFactory);
+//	}
+//	
+//	public PathwayMongoDBAdaptor(SessionFactory sessionFactory, String species, String version) {
+//		super(sessionFactory, species, version);
+//	}
 	
-	public PathwayMongoDBAdaptor(SessionFactory sessionFactory, String species, String version) {
-		super(sessionFactory, species, version);
-	}
+	DB db = this.mongo.getDB("reactome");
+	DBCollection coll = db.getCollection("pathway");
 	
+	public PathwayMongoDBAdaptor(String species, String version) {
+		super(species, version);
+	}
 	
 	private int getChunk(int position){
 		return (position / applicationProperties.getIntProperty("CELLBASE."+version.toUpperCase()+".GENOME_SEQUENCE.CHUNK_SIZE", 2000));
@@ -47,6 +60,93 @@ class PathwayMongoDBAdaptor extends MongoDBAdaptor implements BioPaxDBAdaptor {
 		return ((position) % applicationProperties.getIntProperty("CELLBASE."+version.toUpperCase()+".GENOME_SEQUENCE.CHUNK_SIZE", 2000));
 	}
 	
+	@Override
+	public String getPathways() {
+		BasicDBObject query = new BasicDBObject();
+		
+		BasicDBObject returnFields = new BasicDBObject();
+		returnFields.put("_id", 0);
+		returnFields.put("name", 1);
+		returnFields.put("displayName", 1);
+		returnFields.put("subPathways", 1);
+		returnFields.put("parentPathway", 1);
+		
+		BasicDBObject orderBy = new BasicDBObject();
+		orderBy.put("name", 1);
+		
+		DBCursor cursor = coll.find(query, returnFields).sort(orderBy);
+		String result = cursor.toArray().toString();
+		cursor.close();
+		
+		return result;
+	}
+	
+	@Override
+	public String getTree() {
+		BasicDBObject query = new BasicDBObject();
+		query.put("parentPathway", "none");
+		
+		BasicDBObject returnFields = new BasicDBObject();
+		returnFields.put("_id", 0);
+		returnFields.put("name", 1);
+		returnFields.put("displayName", 1);
+		returnFields.put("subPathways", 1);
+		
+		BasicDBObject orderBy = new BasicDBObject();
+		orderBy.put("displayName", 1);
+		
+		DBCursor cursor = coll.find(query, returnFields).sort(orderBy);
+		String result = cursor.toArray().toString();
+		cursor.close();
+		
+		return result;
+	}
+	
+	@Override
+	public String getPathway(String pathwayId) {
+		BasicDBObject query = new BasicDBObject();
+		query.put("name", pathwayId);
+		
+		BasicDBObject returnFields = new BasicDBObject();
+		returnFields.put("_id", 0);
+		
+		DBCursor cursor = coll.find(query, returnFields);
+		String result = cursor.toArray().toString();
+		cursor.close();
+		
+		return result;
+	}
+	
+	@Override
+	public String search(String searchBy, String searchText, boolean returnOnlyIds) {
+		Pattern regex = Pattern.compile(searchText, Pattern.CASE_INSENSITIVE);
+		
+		BasicDBObject query = new BasicDBObject();
+		if(searchBy.equalsIgnoreCase("pathway")) {
+			query.put("displayName", regex);
+		}
+		else {
+			BasicDBObject query1 = new BasicDBObject("physicalEntities.params.displayName", regex);
+			BasicDBObject query2 = new BasicDBObject("interactions.params.displayName", regex);
+			ArrayList<BasicDBObject> queryList = new ArrayList<BasicDBObject>();
+			queryList.add(query1);
+			queryList.add(query2);
+			query.put("$or", queryList);
+		}
+		
+		System.out.println("Query: "+query);
+		
+		BasicDBObject returnFields = new BasicDBObject();
+		returnFields.put("_id", 0);
+		if(returnOnlyIds) {
+			returnFields.put("name", 1);
+		}
+		
+		DBCursor cursor = coll.find(query, returnFields);
+		String result = cursor.toArray().toString();
+		cursor.close();
+		return result;
+	}
 
 	@Override
 	public boolean isDna(PhysicalEntity physicalEntity) {
@@ -500,8 +600,7 @@ class PathwayMongoDBAdaptor extends MongoDBAdaptor implements BioPaxDBAdaptor {
 	}
 
 	@Override
-	public List<Pathway> getPathways(String dataSourceName, String search,
-			boolean onlyTopLevel) {
+	public List<Pathway> getPathways(String dataSourceName, String search, boolean onlyTopLevel) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -583,7 +682,4 @@ class PathwayMongoDBAdaptor extends MongoDBAdaptor implements BioPaxDBAdaptor {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-
-
 }

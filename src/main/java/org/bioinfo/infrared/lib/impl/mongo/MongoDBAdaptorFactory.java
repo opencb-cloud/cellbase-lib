@@ -11,6 +11,7 @@ import org.bioinfo.infrared.lib.api.GenomeSequenceDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomicVariantEffectDBAdaptor;
 import org.bioinfo.infrared.lib.api.MirnaDBAdaptor;
 import org.bioinfo.infrared.lib.api.MutationDBAdaptor;
+import org.bioinfo.infrared.lib.api.PathwayDBAdaptor;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
@@ -19,6 +20,7 @@ import org.bioinfo.infrared.lib.api.TfbsDBAdaptor;
 import org.bioinfo.infrared.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.infrared.lib.api.XRefsDBAdaptor;
 import org.bioinfo.infrared.lib.impl.DBAdaptorFactory;
+import org.hibernate.SessionFactory;
 
 public class MongoDBAdaptorFactory extends DBAdaptorFactory {
 
@@ -243,6 +245,21 @@ public class MongoDBAdaptorFactory extends DBAdaptorFactory {
 			String species, String version) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public PathwayDBAdaptor getPathwayDBAdaptor(String species) {
+		return getPathwayDBAdaptor(species, null);
+	}
+
+	@Override
+	public PathwayDBAdaptor getPathwayDBAdaptor(String species, String version) {
+//		String speciesVersionPrefix = getSpeciesVersionPrefix(species,version);
+//		if(!sessionFactories.containsKey(speciesVersionPrefix)){
+//			SessionFactory sessionFactory  = createCellBaseSessionFactory(speciesVersionPrefix);
+//			sessionFactories.put(speciesVersionPrefix, sessionFactory);
+//		}
+		return (PathwayDBAdaptor) new PathwayMongoDBAdaptor(speciesAlias.get(species), version);
 	}
 
 }

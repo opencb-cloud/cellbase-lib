@@ -16,6 +16,7 @@ import org.bioinfo.infrared.lib.api.GenomeSequenceDBAdaptor;
 import org.bioinfo.infrared.lib.api.GenomicVariantEffectDBAdaptor;
 import org.bioinfo.infrared.lib.api.MirnaDBAdaptor;
 import org.bioinfo.infrared.lib.api.MutationDBAdaptor;
+import org.bioinfo.infrared.lib.api.PathwayDBAdaptor;
 import org.bioinfo.infrared.lib.api.ProteinDBAdaptor;
 import org.bioinfo.infrared.lib.api.RegulatoryRegionDBAdaptor;
 import org.bioinfo.infrared.lib.api.SnpDBAdaptor;
@@ -390,7 +391,6 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 		}
 		return (BioPaxDBAdaptor) new BioPaxHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), speciesAlias.get(species), version);
 	}
-
 	
 	@Override
 	public MutationDBAdaptor getMutationDBAdaptor(String species) {
@@ -437,6 +437,19 @@ System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(s
 			sessionFactories.put(speciesVersionPrefix, sessionFactory);
 		}
 		return (StructuralVariationDBAdaptor) new StructuralVariationHibernateDBAdaptor(sessionFactories.get(speciesVersionPrefix), speciesAlias.get(species), version);
+	}
+
+	@Override
+	public PathwayDBAdaptor getPathwayDBAdaptor(String species) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PathwayDBAdaptor getPathwayDBAdaptor(String species,
+			String version) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
