@@ -20,8 +20,8 @@ import org.bioinfo.infrared.core.biopax.v3.Rna;
 import org.bioinfo.infrared.core.biopax.v3.Rnaregion;
 import org.bioinfo.infrared.core.biopax.v3.SmallMolecule;
 import org.bioinfo.infrared.core.biopax.v3.TemplateReaction;
-import org.bioinfo.infrared.lib.common.ComplexComponent;
 import org.bioinfo.infrared.lib.common.DataSourceStats;
+import org.bioinfo.infrared.lib.common.pathway.ComplexComponent;
 
 
 public interface PathwayDBAdaptor {

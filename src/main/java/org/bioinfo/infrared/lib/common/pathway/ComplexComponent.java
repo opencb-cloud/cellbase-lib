@@ -1,4 +1,4 @@
-package org.bioinfo.infrared.lib.common;
+package org.bioinfo.infrared.lib.common.pathway;
 
 public class ComplexComponent {
 

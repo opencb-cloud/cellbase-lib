@@ -11,10 +11,11 @@ import org.bioinfo.commons.io.utils.IOUtils;
 import org.bioinfo.formats.exception.FileFormatException;
 import org.bioinfo.formats.parser.biopax.BioPax;
 import org.bioinfo.formats.parser.biopax.BioPaxParser;
-import org.bioinfo.infrared.lib.common.BiopaxPathway;
-import org.bioinfo.infrared.lib.common.Interaction;
-import org.bioinfo.infrared.lib.common.PhysicalEntity;
-import org.bioinfo.infrared.lib.common.SubPathway;
+import org.bioinfo.infrared.lib.common.pathway.BiopaxPathway;
+import org.bioinfo.infrared.lib.common.pathway.Interaction;
+import org.bioinfo.infrared.lib.common.pathway.PhysicalEntity;
+import org.bioinfo.infrared.lib.common.pathway.SubPathway;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mongodb.DBObject;

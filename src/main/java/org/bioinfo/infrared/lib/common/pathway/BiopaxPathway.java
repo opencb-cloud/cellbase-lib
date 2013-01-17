@@ -1,10 +1,11 @@
-package org.bioinfo.infrared.lib.common;
+package org.bioinfo.infrared.lib.common.pathway;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 
 public class BiopaxPathway {
 	String id, name, dbName, dbSource, dbVersion, parentPathway;
