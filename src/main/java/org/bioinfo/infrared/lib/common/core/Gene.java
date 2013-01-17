@@ -12,6 +12,7 @@ public class Gene implements Serializable {
 	/**
 	 * 
 	 */
+	@SuppressWarnings("unused")
 	private String _id;
 	private String id;
 	private String name;

@@ -52,7 +52,7 @@ public class MongoDBAdaptor extends DBAdaptor{
 		this.mongoOptions = new MongoOptions();
 		this.mongoOptions.setConnectionsPerHost(20);
 		try {
-			this.mongo = new Mongo("localhost", mongoOptions);
+			this.mongo = new Mongo("mem15", mongoOptions);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
