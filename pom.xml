@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.bioinfo</groupId>
 	<artifactId>cellbase-lib</artifactId>
-	<name>CellBase project</name>
+	<name>Cellbase project</name>
 	<version>2.1.1</version>
 	<description>Infrared API and application</description>
 	<dependencies>
