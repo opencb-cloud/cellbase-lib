@@ -3,8 +3,6 @@ package org.bioinfo.cellbase.lib.io.output;
 import java.util.Iterator;
 import java.util.List;
 
-import org.bioinfo.cellbase.lib.common.GenomicVariantConsequenceType;
-import org.bioinfo.cellbase.lib.impl.hibernate.GenomicRegionFeatures;
 import org.bioinfo.infrared.core.biopax.v3.BioEntity;
 import org.bioinfo.infrared.core.biopax.v3.NameEntity;
 import org.bioinfo.infrared.core.biopax.v3.Pathway;
@@ -111,9 +109,6 @@ public class JsonWriter {
 		return gson.toJson(obj); 
 	}
 	
-	public Object serialize(GenomicRegionFeatures obj) {
-		return gson.toJson(obj); 
-	}
 	
 	public Object serialize(RegulatoryRegion obj) {
 		return gson.toJson(obj); 
@@ -131,10 +126,6 @@ public class JsonWriter {
 		return gson.toJson(obj); 
 	}
 	
-	
-	public String serialize(GenomicVariantConsequenceType obj){
-		return gson.toJson(obj); 
-	}
 	
 	public String serialize(String string){
 		return string;
@@ -294,15 +285,6 @@ public class JsonWriter {
 				continue;
 			}
 			
-			if (object instanceof GenomicVariantConsequenceType){
-				sb.append(serialize((GenomicVariantConsequenceType)object)).append(",");
-				continue;
-			}
-			
-			if (object instanceof GenomicRegionFeatures){
-				sb.append(serialize((GenomicRegionFeatures)object)).append(",");
-				continue;
-			}
 			
 			if (object instanceof List){
 				sb.append(serialize((List)object));

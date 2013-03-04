@@ -26,7 +26,6 @@ import org.bioinfo.cellbase.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.cellbase.lib.api.XRefsDBAdaptor;
 import org.bioinfo.cellbase.lib.impl.DBAdaptorFactory;
 import org.bioinfo.commons.Config;
-import org.hibernate.SessionFactory;
 
 import com.mongodb.DB;
 import com.mongodb.MongoClient;

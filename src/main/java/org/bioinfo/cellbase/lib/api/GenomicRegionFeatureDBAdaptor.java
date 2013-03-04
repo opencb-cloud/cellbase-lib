@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.bioinfo.cellbase.lib.common.GenomicVariant;
 import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.cellbase.lib.impl.hibernate.GenomicRegionFeatures;
 import org.bioinfo.infrared.core.cellbase.FeatureMap;
 
 
@@ -14,20 +13,20 @@ import org.bioinfo.infrared.core.cellbase.FeatureMap;
 public interface GenomicRegionFeatureDBAdaptor {
 	
 	
-	public GenomicRegionFeatures getByRegion(String chromosome, int start, int end);
+	public String getByRegion(String chromosome, int start, int end);
 	
-	public GenomicRegionFeatures getByRegion(Region region);
+	public String getByRegion(Region region);
 	
-	public List<GenomicRegionFeatures> getAllByRegionList(List<Region> regions);
+	public List<String> getAllByRegionList(List<Region> regions);
 
 	
-	public GenomicRegionFeatures getByRegion(Region region, List<String> sources);	// sources: gene, exon, snp, ...
+	public String getByRegion(Region region, List<String> sources);	// sources: gene, exon, snp, ...
 	
-	public List<GenomicRegionFeatures> getAllByRegionList(List<Region> regions, List<String> sources);
+	public List<String> getAllByRegionList(List<Region> regions, List<String> sources);
 
-	public List<GenomicRegionFeatures> getByVariants(List<GenomicVariant> variants, List<String> sources);
+	public List<String> getByVariants(List<GenomicVariant> variants, List<String> sources);
 
-	List<GenomicRegionFeatures> getByVariants(List<GenomicVariant> variants);
+	List<String> getByVariants(List<GenomicVariant> variants);
 	
 	public List<FeatureMap> getFeatureMapsByRegion(Region region);
 

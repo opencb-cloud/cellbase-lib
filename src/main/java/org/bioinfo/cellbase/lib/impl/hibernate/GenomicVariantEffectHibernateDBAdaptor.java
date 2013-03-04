@@ -1,30 +1,11 @@
 package org.bioinfo.cellbase.lib.impl.hibernate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.bioinfo.cellbase.lib.api.GenomeSequenceDBAdaptor;
-import org.bioinfo.cellbase.lib.api.GenomicVariantEffectDBAdaptor;
-import org.bioinfo.cellbase.lib.api.SnpDBAdaptor;
-import org.bioinfo.cellbase.lib.common.DNASequenceUtils;
-import org.bioinfo.cellbase.lib.common.GenomeSequenceFeature;
-import org.bioinfo.cellbase.lib.common.GenomicVariant;
-import org.bioinfo.cellbase.lib.common.GenomicVariantConsequenceType;
-import org.bioinfo.cellbase.lib.impl.DBAdaptorFactory;
 import org.bioinfo.infrared.core.cellbase.ConsequenceType;
-import org.bioinfo.infrared.core.cellbase.FeatureMap;
-import org.bioinfo.infrared.core.cellbase.Snp;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 
-public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor implements GenomicVariantEffectDBAdaptor {
+public class GenomicVariantEffectHibernateDBAdaptor {
 
 	//	private static int FEATURE_MAP_CHUNK_SIZE = 400;
 
@@ -34,9 +15,9 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 	private boolean showRegulatory = true;
 	private boolean showDiseases = true;
 
-	private DBAdaptorFactory dbAdaptorFact;
-	private GenomeSequenceDBAdaptor sequenceDbAdaptor;
-	private SnpDBAdaptor snpDbAdaptor;
+//	private DBAdaptorFactory dbAdaptorFact;
+//	private GenomeSequenceDBAdaptor sequenceDbAdaptor;
+//	private SnpDBAdaptor snpDbAdaptor;
 
 	private static Map<String, ConsequenceType> consequenceTypeMap;
 
@@ -71,6 +52,7 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 		consequenceTypeMap.put("intergenic", new ConsequenceType(17, "SO:0001628", "intergenic_variant", "", "INTERGENIC", 100, "", "Intergenic", "More than 5 kb either upstream or downstream of a transcript"));
 	}
 
+	/*
 	public GenomicVariantEffectHibernateDBAdaptor(SessionFactory sessionFactory) {
 		super(sessionFactory);
 		dbAdaptorFact = new HibernateDBAdaptorFactory();
@@ -424,7 +406,6 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 			if(codonPosition == 2) {
 				sequence = sequenceDbAdaptor.getByRegion(exonFeatureMap.getChromosome(), variant.getPosition() - 1, variant.getPosition() + 1);
 			}
-			/** Caso del 3 **/
 			if(codonPosition == 0) {
 				sequence = sequenceDbAdaptor.getByRegion(exonFeatureMap.getChromosome(), variant.getPosition(), variant.getPosition() + 2);
 				codonPosition = 3;
@@ -441,7 +422,6 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 			if (codonPosition == 2){
 				sequence = sequenceDbAdaptor.getByRegion(exonFeatureMap.getChromosome(), variant.getPosition() - 1, variant.getPosition() + 1);
 			}
-			/** Caso del 3 **/
 			if (codonPosition == 0){
 				sequence = sequenceDbAdaptor.getByRegion(exonFeatureMap.getChromosome(), variant.getPosition() - 2, variant.getPosition());
 				codonPosition = 3;
@@ -628,5 +608,5 @@ public class GenomicVariantEffectHibernateDBAdaptor extends HibernateDBAdaptor i
 		this.showDiseases = showDiseases;
 	}
 
-
+*/
 }

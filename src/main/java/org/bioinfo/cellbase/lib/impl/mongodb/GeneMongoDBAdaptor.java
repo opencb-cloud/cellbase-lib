@@ -8,13 +8,12 @@ import org.bioinfo.cellbase.lib.api.GeneDBAdaptor;
 import org.bioinfo.cellbase.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.cellbase.lib.common.Position;
 import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.infrared.core.cellbase.Gene;
+import org.bioinfo.cellbase.lib.common.core.Gene;
 
 import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 //import org.bioinfo.infrared.core.cellbase.Gene;
 
 public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor {

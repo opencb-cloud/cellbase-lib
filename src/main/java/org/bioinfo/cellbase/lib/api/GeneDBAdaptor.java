@@ -5,7 +5,7 @@ import java.util.List;
 import org.bioinfo.cellbase.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.cellbase.lib.common.Position;
 import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.infrared.core.cellbase.Gene;
+import org.bioinfo.cellbase.lib.common.core.Gene;
 
 public interface GeneDBAdaptor extends FeatureDBAdaptor {
 

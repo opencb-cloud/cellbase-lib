@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.bioinfo.cellbase.lib.common.GenomeSequenceFeature;
 import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.infrared.core.cellbase.GenomeSequence;
 
 public interface GenomeSequenceDBAdaptor {
 
