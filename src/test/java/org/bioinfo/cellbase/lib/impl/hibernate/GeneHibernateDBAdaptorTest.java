@@ -20,7 +20,7 @@ public class GeneHibernateDBAdaptorTest {
 	private DBAdaptorFactory dbAdaptorFact = new HibernateDBAdaptorFactory();
 	private GeneDBAdaptor geneDBAdaptor;
 	private long startExecTime;
-	private String species = "mmu";
+	private String species = "hsa";
 	
 	@Before
 	public void beforeTestStart() {

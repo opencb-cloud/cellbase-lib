@@ -28,12 +28,10 @@ import org.bioinfo.commons.Config;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-
 public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 
-//	private static Map<String, HibernateDBAdaptor> sessionFactories;
 	private static Map<String, SessionFactory> sessionFactories;
-	private static Config applicationProperties;
+//	private static Config applicationProperties;
 	private static ResourceBundle resourceBundle;
 
 	static {
@@ -50,23 +48,23 @@ public class HibernateDBAdaptorFactory extends DBAdaptorFactory {
 		}
 	}
 
-	private String getSpeciesVersionPrefix(String species, String version) {
-		String speciesPrefix = null;
-		if(species != null && !species.equals("")) {
-			// coding an alias to application code species
-			species = speciesAlias.get(species);
-			// if 'version' parameter has not been provided the default version is selected
-			if(version == null || version.trim().equals("")) {
-				version = applicationProperties.getProperty(species+".DEFAULT.VERSION").toUpperCase();
-//				logger.debug("HibernateDBAdaptorFactory in createSessionFactory(): 'version' parameter is null or empty, it's been set to: '"+version+"'");
-			}
-
-			// setting database configuration for the 'species.version'
-			speciesPrefix = species.toUpperCase() + "." + version.toUpperCase();
-		}
-		
-		return speciesPrefix;
-	}
+//	private String getSpeciesVersionPrefix(String species, String version) {
+//		String speciesPrefix = null;
+//		if(species != null && !species.equals("")) {
+//			// coding an alias to application code species
+//			species = speciesAlias.get(species);
+//			// if 'version' parameter has not been provided the default version is selected
+//			if(version == null || version.trim().equals("")) {
+//				version = applicationProperties.getProperty(species+".DEFAULT.VERSION").toUpperCase();
+////				logger.debug("HibernateDBAdaptorFactory in createSessionFactory(): 'version' parameter is null or empty, it's been set to: '"+version+"'");
+//			}
+//
+//			// setting database configuration for the 'species.version'
+//			speciesPrefix = species.toUpperCase() + "." + version.toUpperCase();
+//		}
+//		
+//		return speciesPrefix;
+//	}
 
 	private SessionFactory createCellBaseSessionFactory(String speciesVersionPrefix) {
 //		logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): creating Hibernate SessionFactory object for SPECIES.VERSION: '"+speciesVersionPrefix+"' ...");

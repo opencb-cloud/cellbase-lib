@@ -21,11 +21,14 @@ import org.bioinfo.cellbase.lib.api.StructuralVariationDBAdaptor;
 import org.bioinfo.cellbase.lib.api.TfbsDBAdaptor;
 import org.bioinfo.cellbase.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.cellbase.lib.api.XRefsDBAdaptor;
+import org.bioinfo.commons.Config;
 import org.bioinfo.commons.log.Logger;
 
 public abstract class DBAdaptorFactory {
 
 	protected Logger logger;
+	
+	protected static Config applicationProperties;
 	
 	protected static Map<String, String> speciesAlias;
 	
@@ -52,6 +55,23 @@ public abstract class DBAdaptorFactory {
 		logger.setLevel(Logger.ERROR_LEVEL);
 	}
 
+	protected String getSpeciesVersionPrefix(String species, String version) {
+		String speciesPrefix = null;
+		if(species != null && !species.equals("")) {
+			// coding an alias to application code species
+			species = speciesAlias.get(species);
+			// if 'version' parameter has not been provided the default version is selected
+			if(version == null || version.trim().equals("")) {
+				version = applicationProperties.getProperty(species+".DEFAULT.VERSION").toUpperCase();
+//				logger.debug("HibernateDBAdaptorFactory in createSessionFactory(): 'version' parameter is null or empty, it's been set to: '"+version+"'");
+			}
+
+			// setting database configuration for the 'species.version'
+			speciesPrefix = species.toUpperCase() + "." + version.toUpperCase();
+		}
+		
+		return speciesPrefix;
+	}
 
 	public abstract void setConfiguration(Properties properties);
 	

@@ -40,11 +40,6 @@ public class HibernateDBAdaptor extends DBAdaptor{
 		}
 	}
 	
-	
-	//	public HibernateDBAdaptor() {
-	//
-	//	}
-	
 	public HibernateDBAdaptor(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
