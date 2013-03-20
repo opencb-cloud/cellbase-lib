@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.bioinfo.cellbase.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.infrared.core.cellbase.MirnaDisease;
-import org.bioinfo.infrared.core.cellbase.MirnaGene;
-import org.bioinfo.infrared.core.cellbase.MirnaMature;
-import org.bioinfo.infrared.core.cellbase.MirnaTarget;
+import org.bioinfo.cellbase.lib.common.regulatory.MirnaDisease;
+import org.bioinfo.cellbase.lib.common.regulatory.MirnaGene;
+import org.bioinfo.cellbase.lib.common.regulatory.MirnaMature;
+import org.bioinfo.cellbase.lib.common.regulatory.MirnaTarget;
 
 public interface MirnaDBAdaptor {
 

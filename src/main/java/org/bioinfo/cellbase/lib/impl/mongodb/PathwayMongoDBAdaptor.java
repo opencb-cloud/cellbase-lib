@@ -1,37 +1,14 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import org.bioinfo.cellbase.lib.api.PathwayDBAdaptor;
-import org.bioinfo.cellbase.lib.common.DataSourceStats;
-import org.bioinfo.cellbase.lib.common.pathway.ComplexComponent;
-import org.bioinfo.infrared.core.biopax.v3.BioEntity;
-import org.bioinfo.infrared.core.biopax.v3.Catalysis;
-import org.bioinfo.infrared.core.biopax.v3.Complex;
-import org.bioinfo.infrared.core.biopax.v3.Control;
-import org.bioinfo.infrared.core.biopax.v3.Conversion;
-import org.bioinfo.infrared.core.biopax.v3.DataSource;
-import org.bioinfo.infrared.core.biopax.v3.Dna;
-import org.bioinfo.infrared.core.biopax.v3.Dnaregion;
-import org.bioinfo.infrared.core.biopax.v3.GeneticInteraction;
-import org.bioinfo.infrared.core.biopax.v3.Interaction;
-import org.bioinfo.infrared.core.biopax.v3.MolecularInteraction;
-import org.bioinfo.infrared.core.biopax.v3.Pathway;
-import org.bioinfo.infrared.core.biopax.v3.PhysicalEntity;
-import org.bioinfo.infrared.core.biopax.v3.Protein;
-import org.bioinfo.infrared.core.biopax.v3.Rna;
-import org.bioinfo.infrared.core.biopax.v3.Rnaregion;
-import org.bioinfo.infrared.core.biopax.v3.SmallMolecule;
-import org.bioinfo.infrared.core.biopax.v3.TemplateReaction;
-import org.hibernate.SessionFactory;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
-import com.mongodb.MongoClient;
 
 class PathwayMongoDBAdaptor extends MongoDBAdaptor implements PathwayDBAdaptor {
 
@@ -158,6 +135,7 @@ class PathwayMongoDBAdaptor extends MongoDBAdaptor implements PathwayDBAdaptor {
 		return result;
 	}
 
+	/*
 	@Override
 	public boolean isDna(PhysicalEntity physicalEntity) {
 		// TODO Auto-generated method stub
@@ -692,4 +670,5 @@ class PathwayMongoDBAdaptor extends MongoDBAdaptor implements PathwayDBAdaptor {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	*/
 }

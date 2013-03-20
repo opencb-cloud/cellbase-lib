@@ -3,8 +3,9 @@ package org.bioinfo.cellbase.lib.api;
 import java.util.List;
 
 import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.infrared.core.cellbase.Cytoband;
+import org.bioinfo.cellbase.lib.common.core.Cytoband;
 
+@Deprecated
 public interface CytobandDBAdaptor extends FeatureDBAdaptor {
 
 	

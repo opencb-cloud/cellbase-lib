@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.bioinfo.cellbase.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.infrared.core.cellbase.CpGIsland;
+import org.bioinfo.cellbase.lib.common.core.CpGIsland;
 
 public interface CpGIslandDBAdaptor {
 	

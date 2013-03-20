@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import org.bioinfo.cellbase.lib.api.BioPaxDBAdaptor;
 import org.bioinfo.cellbase.lib.api.ChromosomeDBAdaptor;
 import org.bioinfo.cellbase.lib.api.CpGIslandDBAdaptor;
 import org.bioinfo.cellbase.lib.api.CytobandDBAdaptor;
@@ -293,18 +292,6 @@ public class MongoDBAdaptorFactory extends DBAdaptorFactory {
 
 	@Override
 	public MirnaDBAdaptor getMirnaDBAdaptor(String species, String version) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public BioPaxDBAdaptor getBioPaxDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public BioPaxDBAdaptor getBioPaxDBAdaptor(String species, String version) {
 		// TODO Auto-generated method stub
 		return null;
 	}

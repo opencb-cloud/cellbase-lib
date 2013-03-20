@@ -5,7 +5,7 @@ import java.util.List;
 import org.bioinfo.cellbase.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.cellbase.lib.common.Position;
 import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.infrared.core.cellbase.MutationPhenotypeAnnotation;
+import org.bioinfo.cellbase.lib.common.variation.MutationPhenotypeAnnotation;
 
 public interface MutationDBAdaptor {
 	

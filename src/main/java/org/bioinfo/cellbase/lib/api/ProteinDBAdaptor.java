@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.bioinfo.cellbase.lib.common.ProteinRegion;
 import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.infrared.core.cellbase.Protein;
-import org.bioinfo.infrared.core.cellbase.ProteinFeature;
-import org.bioinfo.infrared.core.cellbase.ProteinInteraction;
-import org.bioinfo.infrared.core.cellbase.ProteinSequence;
-import org.bioinfo.infrared.core.cellbase.ProteinXref;
+import org.bioinfo.formats.parser.biopax.ProteinInteraction;
+import org.bioinfo.formats.parser.uniprot.v140jaxb.DbReferenceType;
+import org.bioinfo.formats.parser.uniprot.v140jaxb.FeatureType;
+import org.bioinfo.formats.parser.uniprot.v140jaxb.Protein;
+import org.bioinfo.formats.parser.uniprot.v140jaxb.SequenceType;
 
 public interface ProteinDBAdaptor extends FeatureDBAdaptor {
 
@@ -44,22 +44,22 @@ public interface ProteinDBAdaptor extends FeatureDBAdaptor {
 	public List<List<Protein>> getAllByGeneNameList(List<String> geneNameList);
 	
 	
-	public List<ProteinSequence> getAllProteinSequenceByProteinName(String name);
+	public List<SequenceType> getAllProteinSequenceByProteinName(String name);
 	
-	public List<List<ProteinSequence>> getAllProteinSequenceByProteinNameList(List<String> nameList);
+	public List<List<SequenceType>> getAllProteinSequenceByProteinNameList(List<String> nameList);
 	
 	
-	public List<ProteinFeature> getAllProteinFeaturesByUniprotId(String name);
+	public List<FeatureType> getAllProteinFeaturesByUniprotId(String name);
 
-	public List<List<ProteinFeature>> getAllProteinFeaturesByUniprotIdList(List<String> nameList);
+	public List<List<FeatureType>> getAllProteinFeaturesByUniprotIdList(List<String> nameList);
 	
-	public List<ProteinFeature> getAllProteinFeaturesByGeneName(String name);
+	public List<FeatureType> getAllProteinFeaturesByGeneName(String name);
 
-	public List<List<ProteinFeature>> getAllProteinFeaturesByGeneNameList(List<String> nameList);
+	public List<List<FeatureType>> getAllProteinFeaturesByGeneNameList(List<String> nameList);
 	
-	public List<ProteinFeature> getAllProteinFeaturesByProteinXref(String name);
+	public List<FeatureType> getAllProteinFeaturesByProteinXref(String name);
 
-	public List<List<ProteinFeature>> getAllProteinFeaturesByProteinXrefList(List<String> nameList);
+	public List<List<FeatureType>> getAllProteinFeaturesByProteinXrefList(List<String> nameList);
 	
 	
 	public List<ProteinInteraction> getAllProteinInteractionsByProteinName(String name);
@@ -76,16 +76,16 @@ public interface ProteinDBAdaptor extends FeatureDBAdaptor {
 	public List<List<ProteinRegion>> getAllProteinRegionByGenomicRegionList(List<Region> regionList);
 	
 	
-	public List<ProteinXref> getAllProteinXrefsByProteinName(String name);
+	public List<DbReferenceType> getAllProteinXrefsByProteinName(String name);
 
-	public List<List<ProteinXref>> getAllProteinXrefsByProteinNameList(List<String> nameList);
+	public List<List<DbReferenceType>> getAllProteinXrefsByProteinNameList(List<String> nameList);
 	
-	public List<ProteinXref> getAllProteinXrefsByProteinName(String name, String dbname);
+	public List<DbReferenceType> getAllProteinXrefsByProteinName(String name, String dbname);
 
-	public List<List<ProteinXref>> getAllProteinXrefsByProteinNameList(List<String> nameList, String dbname);
+	public List<List<DbReferenceType>> getAllProteinXrefsByProteinNameList(List<String> nameList, String dbname);
 	
-	public List<ProteinXref> getAllProteinXrefsByProteinName(String name, List<String> dbname);
+	public List<DbReferenceType> getAllProteinXrefsByProteinName(String name, List<String> dbname);
 
-	public List<List<ProteinXref>> getAllProteinXrefsByProteinNameList(List<String> nameList, List<String> dbname);
+	public List<List<DbReferenceType>> getAllProteinXrefsByProteinNameList(List<String> nameList, List<String> dbname);
 
 }

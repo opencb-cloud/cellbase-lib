@@ -2,7 +2,6 @@ package org.bioinfo.cellbase.lib.api;
 
 import java.util.List;
 
-import org.bioinfo.cellbase.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.cellbase.lib.common.Position;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.Gene;

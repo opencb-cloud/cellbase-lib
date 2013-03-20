@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.bioinfo.cellbase.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.infrared.core.cellbase.ConservedRegion;
-import org.bioinfo.infrared.core.cellbase.RegulatoryRegion;
+import org.bioinfo.cellbase.lib.common.regulatory.ConservedRegion;
+import org.bioinfo.cellbase.lib.common.regulatory.RegulatoryRegion;
 
 public interface RegulatoryRegionDBAdaptor extends FeatureDBAdaptor {
 

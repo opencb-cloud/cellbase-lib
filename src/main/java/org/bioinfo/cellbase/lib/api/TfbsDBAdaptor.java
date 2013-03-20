@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.bioinfo.cellbase.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.infrared.core.cellbase.Protein;
-import org.bioinfo.infrared.core.cellbase.Pwm;
-import org.bioinfo.infrared.core.cellbase.Tfbs;
+import org.bioinfo.cellbase.lib.common.regulatory.Pwm;
+import org.bioinfo.cellbase.lib.common.regulatory.Tfbs;
+import org.bioinfo.formats.parser.uniprot.v140jaxb.Protein;
 
 public interface TfbsDBAdaptor extends FeatureDBAdaptor {
 

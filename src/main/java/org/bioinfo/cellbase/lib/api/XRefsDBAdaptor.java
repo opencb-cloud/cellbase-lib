@@ -3,22 +3,19 @@ package org.bioinfo.cellbase.lib.api;
 import java.util.List;
 
 import org.bioinfo.cellbase.lib.common.XRefs;
+import org.bioinfo.cellbase.lib.common.core.DBName;
 import org.bioinfo.cellbase.lib.common.core.Xref;
-import org.bioinfo.infrared.core.cellbase.Dbname;
-
 
 public interface XRefsDBAdaptor {
 
 
-	public List<Dbname> getAllDBNames();
+	public List<DBName> getAllDBNames();
 
-	public List<Dbname> getAllDBNamesById(String id);
-	
-	public List<Dbname> getAllDBNamesByName(String name);
+	public List<DBName> getAllDBNamesById(String id);
 
 	public List<String> getAllTypes();
 
-	public List<Dbname> getAllDBNamesByType(String type);
+	public List<DBName> getAllDBNamesByType(String type);
 
 	public List<String> getAllIdsByDBName(String dbname);
 	

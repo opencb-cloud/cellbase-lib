@@ -37,19 +37,7 @@ public class XRefsMongoDBAdaptor extends MongoDBAdaptor implements XRefsDBAdapto
 
 	@Override
 	public List<List<DBname>> getAllDBNamesByName(String name) {
-		BasicDBObject query = new BasicDBObject("transcripts.xrefs.id", name);
-
-		List<List<DBname>> result = new ArrayList<List<DBname>>();
-		List<Transcript> transcripts = executeQuery(query);
-		for (Transcript transcript : transcripts) {
-			for (Xref xref : transcript.getXrefs()) {
-				if (xref.getId().equals(name)) {
-					result.add(transcript.ge);
-					break;
-				}
-			}
-		}
-		return result;
+		return null;
 	}
 
 	@Override

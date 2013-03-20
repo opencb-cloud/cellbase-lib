@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.bioinfo.cellbase.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.infrared.core.cellbase.StructuralVariation;
+import org.bioinfo.cellbase.lib.common.variation.StructuralVariation;
 
 public interface StructuralVariationDBAdaptor {
 	
