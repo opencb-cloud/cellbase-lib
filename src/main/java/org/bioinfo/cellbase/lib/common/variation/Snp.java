@@ -1,5 +1,8 @@
 package org.bioinfo.cellbase.lib.common.variation;
 
+import java.util.HashSet;
+import java.util.Set;
+
 // Generated Jun 5, 2012 6:41:13 PM by Hibernate Tools 3.4.0.CR1
 
 
@@ -25,8 +28,8 @@ public class Snp implements java.io.Serializable {
 //	private Set<SnpXref> snpXrefs = new HashSet<SnpXref>(0);
 //	private Set<SnpToTranscript> snpToTranscripts = new HashSet<SnpToTranscript>(
 //			0);
-//	private Set<SnpPhenotypeAnnotation> snpPhenotypeAnnotations = new HashSet<SnpPhenotypeAnnotation>(
-//			0);
+	private Set<SnpPhenotypeAnnotation> snpPhenotypeAnnotations = new HashSet<SnpPhenotypeAnnotation>(
+			0);
 //	private Set<SnpPopulationFrequency> snpPopulationFrequencies = new HashSet<SnpPopulationFrequency>(
 //			0);
 
@@ -53,33 +56,27 @@ public class Snp implements java.io.Serializable {
 		this.sequence = sequence;
 	}
 
-//	public Snp(int snpId, String name, String chromosome, int start, int end,
-//			String strand, int mapWeight, String alleleString,
-//			String ancestralAllele, String source, String displaySoConsequence,
-//			String soConsequenceType, String displayConsequence,
-//			String sequence, Set<SnpXref> snpXrefs,
-//			Set<SnpToTranscript> snpToTranscripts,
-//			Set<SnpPhenotypeAnnotation> snpPhenotypeAnnotations,
-//			Set<SnpPopulationFrequency> snpPopulationFrequencies) {
-//		this.snpId = snpId;
-//		this.name = name;
-//		this.chromosome = chromosome;
-//		this.start = start;
-//		this.end = end;
-//		this.strand = strand;
-//		this.mapWeight = mapWeight;
-//		this.alleleString = alleleString;
-//		this.ancestralAllele = ancestralAllele;
-//		this.source = source;
-//		this.displaySoConsequence = displaySoConsequence;
-//		this.soConsequenceType = soConsequenceType;
-//		this.displayConsequence = displayConsequence;
-//		this.sequence = sequence;
-//		this.snpXrefs = snpXrefs;
-//		this.snpToTranscripts = snpToTranscripts;
-//		this.snpPhenotypeAnnotations = snpPhenotypeAnnotations;
-//		this.snpPopulationFrequencies = snpPopulationFrequencies;
-//	}
+	public Snp(int snpId, String name, String chromosome, int start, int end,
+			String strand, int mapWeight, String alleleString,
+			String ancestralAllele, String source, String displaySoConsequence,
+			String soConsequenceType, String displayConsequence,
+			String sequence, Set<SnpPhenotypeAnnotation> snpPhenotypeAnnotations) {
+		this.snpId = snpId;
+		this.name = name;
+		this.chromosome = chromosome;
+		this.start = start;
+		this.end = end;
+		this.strand = strand;
+		this.mapWeight = mapWeight;
+		this.alleleString = alleleString;
+		this.ancestralAllele = ancestralAllele;
+		this.source = source;
+		this.displaySoConsequence = displaySoConsequence;
+		this.soConsequenceType = soConsequenceType;
+		this.displayConsequence = displayConsequence;
+		this.sequence = sequence;
+		this.snpPhenotypeAnnotations = snpPhenotypeAnnotations;
+	}
 
 	public int getSnpId() {
 		return this.snpId;
@@ -192,6 +189,16 @@ public class Snp implements java.io.Serializable {
 	public void setSequence(String sequence) {
 		this.sequence = sequence;
 	}
+	
+	public Set<SnpPhenotypeAnnotation> getSnpPhenotypeAnnotations() {
+		return this.snpPhenotypeAnnotations;
+	}
+
+	public void setSnpPhenotypeAnnotations(
+			Set<SnpPhenotypeAnnotation> snpPhenotypeAnnotations) {
+		this.snpPhenotypeAnnotations = snpPhenotypeAnnotations;
+	}
+	
 /*
 	public Set<SnpXref> getSnpXrefs() {
 		return this.snpXrefs;
@@ -207,15 +214,6 @@ public class Snp implements java.io.Serializable {
 
 	public void setSnpToTranscripts(Set<SnpToTranscript> snpToTranscripts) {
 		this.snpToTranscripts = snpToTranscripts;
-	}
-
-	public Set<SnpPhenotypeAnnotation> getSnpPhenotypeAnnotations() {
-		return this.snpPhenotypeAnnotations;
-	}
-
-	public void setSnpPhenotypeAnnotations(
-			Set<SnpPhenotypeAnnotation> snpPhenotypeAnnotations) {
-		this.snpPhenotypeAnnotations = snpPhenotypeAnnotations;
 	}
 
 	public Set<SnpPopulationFrequency> getSnpPopulationFrequencies() {

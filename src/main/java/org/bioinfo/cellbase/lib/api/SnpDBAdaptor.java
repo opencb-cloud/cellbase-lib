@@ -8,6 +8,7 @@ import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.SnpRegulatoryConsequenceType;
 import org.bioinfo.cellbase.lib.common.variation.ConsequenceType;
 import org.bioinfo.cellbase.lib.common.variation.Snp;
+import org.bioinfo.cellbase.lib.common.variation.SnpPhenotypeAnnotation;
 
 public interface SnpDBAdaptor extends FeatureDBAdaptor {
 
@@ -97,16 +98,16 @@ public interface SnpDBAdaptor extends FeatureDBAdaptor {
 	
 	
 	
-//	public List<SnpPhenotypeAnnotation> getAllSnpPhenotypeAnnotationBySnpName(String name);
-//	
-//	public List<List<SnpPhenotypeAnnotation>> getAllSnpPhenotypeAnnotationListBySnpNameList(List<String> nameList);
-//	
-//	public List<SnpPhenotypeAnnotation> getAllSnpPhenotypeAnnotationByPosition(Position position);
-//	
-//	public List<List<SnpPhenotypeAnnotation>> getAllSnpPhenotypeAnnotationListByPositionList(List<Position> positionList);
-//	
-//	
-//	
+	public List<SnpPhenotypeAnnotation> getAllSnpPhenotypeAnnotationBySnpName(String name);
+	
+	public List<List<SnpPhenotypeAnnotation>> getAllSnpPhenotypeAnnotationListBySnpNameList(List<String> nameList);
+	
+	public List<SnpPhenotypeAnnotation> getAllSnpPhenotypeAnnotationByPosition(Position position);
+	
+	public List<List<SnpPhenotypeAnnotation>> getAllSnpPhenotypeAnnotationListByPositionList(List<Position> positionList);
+	
+	
+	
 //	public List<SnpPopulationFrequency> getAllSnpPopulationFrequency(String name);
 //	
 //	public List<List<SnpPopulationFrequency>> getAllSnpPopulationFrequencyList(List<String> nameList);
