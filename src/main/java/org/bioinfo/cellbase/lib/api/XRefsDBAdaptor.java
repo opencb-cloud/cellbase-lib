@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bioinfo.cellbase.lib.common.XRefs;
 import org.bioinfo.cellbase.lib.common.core.Xref;
+import org.bioinfo.infrared.core.cellbase.Dbname;
 
 
 public interface XRefsDBAdaptor {
@@ -12,6 +13,8 @@ public interface XRefsDBAdaptor {
 	public List<Dbname> getAllDBNames();
 
 	public List<Dbname> getAllDBNamesById(String id);
+	
+	public List<Dbname> getAllDBNamesByName(String name);
 
 	public List<String> getAllTypes();
 

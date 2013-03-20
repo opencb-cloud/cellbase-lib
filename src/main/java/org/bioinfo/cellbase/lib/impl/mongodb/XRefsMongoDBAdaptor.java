@@ -9,6 +9,7 @@ import org.bioinfo.cellbase.lib.common.core.Gene;
 import org.bioinfo.cellbase.lib.common.core.Transcript;
 import org.bioinfo.cellbase.lib.common.core.Xref;
 import org.bioinfo.cellbase.lib.common.core.DBname;
+import org.bioinfo.infrared.core.cellbase.Dbname;
 
 import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
@@ -35,9 +36,20 @@ public class XRefsMongoDBAdaptor extends MongoDBAdaptor implements XRefsDBAdapto
 	}
 
 	@Override
-	public List<DBname> getAllDBNamesById(String id) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<List<DBname>> getAllDBNamesByName(String name) {
+		BasicDBObject query = new BasicDBObject("transcripts.xrefs.id", name);
+
+		List<List<DBname>> result = new ArrayList<List<DBname>>();
+		List<Transcript> transcripts = executeQuery(query);
+		for (Transcript transcript : transcripts) {
+			for (Xref xref : transcript.getXrefs()) {
+				if (xref.getId().equals(name)) {
+					result.add(transcript.ge);
+					break;
+				}
+			}
+		}
+		return result;
 	}
 
 	@Override
@@ -187,6 +199,12 @@ public class XRefsMongoDBAdaptor extends MongoDBAdaptor implements XRefsDBAdapto
 		}
 
 		return result;
+	}
+
+	@Override
+	public List<Dbname> getAllDBNamesById(String id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	
