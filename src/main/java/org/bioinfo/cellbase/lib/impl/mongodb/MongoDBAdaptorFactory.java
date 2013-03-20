@@ -247,14 +247,18 @@ public class MongoDBAdaptorFactory extends DBAdaptorFactory {
 
 	@Override
 	public XRefsDBAdaptor getXRefDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
+		return getXRefDBAdaptor(species, null);
 	}
 
 	@Override
 	public XRefsDBAdaptor getXRefDBAdaptor(String species, String version) {
-		// TODO Auto-generated method stub
-		return null;
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+		if (!mongoDBFactory.containsKey(speciesVersionPrefix)) {
+			DB db = createCellBaseMongoDB(speciesVersionPrefix);
+			mongoDBFactory.put(speciesVersionPrefix, db);
+		}
+		return (XRefsDBAdaptor) new XRefsMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix),
+				speciesAlias.get(species), version);
 	}
 
 	@Override

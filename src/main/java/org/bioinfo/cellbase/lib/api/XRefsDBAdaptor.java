@@ -3,8 +3,8 @@ package org.bioinfo.cellbase.lib.api;
 import java.util.List;
 
 import org.bioinfo.cellbase.lib.common.XRefs;
-import org.bioinfo.infrared.core.cellbase.Dbname;
-import org.bioinfo.infrared.core.cellbase.Xref;
+import org.bioinfo.cellbase.lib.common.core.Xref;
+
 
 public interface XRefsDBAdaptor {
 
