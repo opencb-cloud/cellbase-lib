@@ -1,13 +1,13 @@
 package org.bioinfo.cellbase.lib.impl.mongo;
 
+import java.io.StringWriter;
 import java.util.List;
 
 import org.bioinfo.cellbase.lib.api.GeneDBAdaptor;
 import org.bioinfo.cellbase.lib.common.Region;
+import org.bioinfo.cellbase.lib.common.core.Gene;
 import org.bioinfo.cellbase.lib.impl.DBAdaptorFactory;
 import org.bioinfo.cellbase.lib.impl.mongodb.MongoDBAdaptorFactory;
-import org.bioinfo.cellbase.lib.io.output.StringWriter;
-import org.bioinfo.infrared.core.cellbase.Gene;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,10 +44,10 @@ public class GeneMongoDBAdaptorTest {
 	
 	@Test
 	public void testGetAllByRegionTest() {
-		List<Gene> genes = geneDBAdaptor.getAllByRegion(new Region("2", 1000, 50000));
+		List<Gene> genes = geneDBAdaptor.getAllByRegion(new Region("2", 1000, 50000), true);
 		for(Gene gene: genes) {
 			
-			System.out.println(StringWriter.serialize(gene));			
+			System.out.println(gene.toString());			
 		}
 	}
 	

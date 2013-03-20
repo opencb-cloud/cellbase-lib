@@ -1,27 +1,5 @@
 package org.bioinfo.cellbase.lib.api;
 
-import java.util.List;
-
-import org.bioinfo.cellbase.lib.common.DataSourceStats;
-import org.bioinfo.cellbase.lib.common.pathway.ComplexComponent;
-import org.bioinfo.infrared.core.biopax.v3.BioEntity;
-import org.bioinfo.infrared.core.biopax.v3.Catalysis;
-import org.bioinfo.infrared.core.biopax.v3.Complex;
-import org.bioinfo.infrared.core.biopax.v3.Control;
-import org.bioinfo.infrared.core.biopax.v3.Conversion;
-import org.bioinfo.infrared.core.biopax.v3.DataSource;
-import org.bioinfo.infrared.core.biopax.v3.Dna;
-import org.bioinfo.infrared.core.biopax.v3.Dnaregion;
-import org.bioinfo.infrared.core.biopax.v3.GeneticInteraction;
-import org.bioinfo.infrared.core.biopax.v3.Interaction;
-import org.bioinfo.infrared.core.biopax.v3.MolecularInteraction;
-import org.bioinfo.infrared.core.biopax.v3.Pathway;
-import org.bioinfo.infrared.core.biopax.v3.PhysicalEntity;
-import org.bioinfo.infrared.core.biopax.v3.Protein;
-import org.bioinfo.infrared.core.biopax.v3.Rna;
-import org.bioinfo.infrared.core.biopax.v3.Rnaregion;
-import org.bioinfo.infrared.core.biopax.v3.SmallMolecule;
-import org.bioinfo.infrared.core.biopax.v3.TemplateReaction;
 
 
 public interface PathwayDBAdaptor {
@@ -34,6 +12,7 @@ public interface PathwayDBAdaptor {
 	
 	public String search(String searchBy, String searchText, boolean returnOnlyIds);
 	
+	/*
 	public boolean isDna(PhysicalEntity physicalEntity) ;
 
     public boolean isDna(int physicalEntityId) ;
@@ -212,4 +191,5 @@ public interface PathwayDBAdaptor {
     public DataSourceStats getDataSourceStats(DataSource ds);
     
     public String getFirstName(BioEntity entity);
+    */
 }

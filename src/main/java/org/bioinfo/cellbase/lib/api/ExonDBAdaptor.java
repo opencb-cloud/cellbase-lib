@@ -4,8 +4,7 @@ import java.util.List;
 
 import org.bioinfo.cellbase.lib.common.Position;
 import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.infrared.core.cellbase.Exon;
-import org.bioinfo.infrared.core.cellbase.ExonToTranscript;
+import org.bioinfo.cellbase.lib.common.core.Exon;
 
 public interface ExonDBAdaptor extends FeatureDBAdaptor {
 
@@ -59,13 +58,13 @@ public interface ExonDBAdaptor extends FeatureDBAdaptor {
 
 	
 	
-	public List<ExonToTranscript> getAllExonToTranscriptByEnsemblGeneId(String geneId);
-	
-	public List<List<ExonToTranscript>> getAllExonToTranscriptByEnsemblGeneIdList(List<String> geneIdList);
-	
-	public List<ExonToTranscript> getAllExonToTranscriptByEnsemblTranscriptId(String transcriptId);
-	
-	public List<List<ExonToTranscript>> getAllExonToTranscriptByEnsemblTranscriptIdList(List<String> transcriptIdList);
+//	public List<ExonToTranscript> getAllExonToTranscriptByEnsemblGeneId(String geneId);
+//	
+//	public List<List<ExonToTranscript>> getAllExonToTranscriptByEnsemblGeneIdList(List<String> geneIdList);
+//	
+//	public List<ExonToTranscript> getAllExonToTranscriptByEnsemblTranscriptId(String transcriptId);
+//	
+//	public List<List<ExonToTranscript>> getAllExonToTranscriptByEnsemblTranscriptIdList(List<String> transcriptIdList);
 	
 	
 }

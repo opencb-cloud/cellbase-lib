@@ -8,12 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import javax.management.Query;
+
 import org.bioinfo.cellbase.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.impl.DBAdaptor;
 import org.bioinfo.commons.Config;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
 
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -91,28 +91,28 @@ public class MongoDBAdaptor extends DBAdaptor{
 	//	}
 
 
-	protected List<?> execute(Criteria criteria){
-		List<?> result = criteria.list();
-		return result;
-	}
-
-	protected List<?> executeAndClose(Criteria criteria){
-		List<?> result = criteria.list();
-		//		closeSession();
-		return result;
-	}
-
-
-	protected List<?> execute(Query query){
-		List<?> result = query.list();
-		return result;
-	}
-
-	protected List<?> executeAndClose(Query query){
-		List<?> result = query.list();
-		//		closeSession();
-		return result;
-	}
+//	protected List<?> execute(Criteria criteria){
+//		List<?> result = criteria.list();
+//		return result;
+//	}
+//
+//	protected List<?> executeAndClose(Criteria criteria){
+//		List<?> result = criteria.list();
+//		//		closeSession();
+//		return result;
+//	}
+//
+//
+//	protected List<?> execute(Query query){
+//		List<?> result = query.list();
+//		return result;
+//	}
+//
+//	protected List<?> executeAndClose(Query query){
+//		List<?> result = query.list();
+//		//		closeSession();
+//		return result;
+//	}
 
 	//	protected void closeSession() {
 	//		if(session != null && session.isOpen()) {

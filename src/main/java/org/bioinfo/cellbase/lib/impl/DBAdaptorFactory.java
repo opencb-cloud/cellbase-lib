@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.bioinfo.cellbase.lib.api.BioPaxDBAdaptor;
 import org.bioinfo.cellbase.lib.api.ChromosomeDBAdaptor;
 import org.bioinfo.cellbase.lib.api.CpGIslandDBAdaptor;
 import org.bioinfo.cellbase.lib.api.CytobandDBAdaptor;
@@ -150,11 +149,6 @@ public abstract class DBAdaptorFactory {
 	public abstract MirnaDBAdaptor getMirnaDBAdaptor(String species);
 	
 	public abstract MirnaDBAdaptor getMirnaDBAdaptor(String species, String version);
-
-
-	public abstract BioPaxDBAdaptor getBioPaxDBAdaptor(String species);
-	
-	public abstract BioPaxDBAdaptor getBioPaxDBAdaptor(String species, String version);
 
 
 	public abstract MutationDBAdaptor getMutationDBAdaptor(String species);

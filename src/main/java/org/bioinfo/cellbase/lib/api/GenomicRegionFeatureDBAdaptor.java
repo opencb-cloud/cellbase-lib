@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.bioinfo.cellbase.lib.common.GenomicVariant;
 import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.infrared.core.cellbase.FeatureMap;
 
 
 // Como no es una fetaure no deberia implementas FeatureDBAdaptor no?
@@ -28,7 +27,7 @@ public interface GenomicRegionFeatureDBAdaptor {
 
 	List<String> getByVariants(List<GenomicVariant> variants);
 	
-	public List<FeatureMap> getFeatureMapsByRegion(Region region);
+//	public List<FeatureMap> getFeatureMapsByRegion(Region region);
 
 //	public HashMap<String, List<String>> getConsequenceType(String chromosome, int position);
 //
