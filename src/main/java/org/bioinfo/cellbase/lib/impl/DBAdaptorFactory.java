@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.bioinfo.cellbase.lib.api.BioPaxDBAdaptor;
+import org.bioinfo.cellbase.lib.api.ChromosomeDBAdaptor;
 import org.bioinfo.cellbase.lib.api.CpGIslandDBAdaptor;
 import org.bioinfo.cellbase.lib.api.CytobandDBAdaptor;
 import org.bioinfo.cellbase.lib.api.ExonDBAdaptor;
@@ -48,6 +49,7 @@ public abstract class DBAdaptorFactory {
 		speciesAlias.put("Anopheles gambiae", "AGAMBIAE");speciesAlias.put("Anopheles_gambiae", "AGAMBIAE");speciesAlias.put("agambiae", "AGAMBIAE");speciesAlias.put("agam", "AGAMBIAE");speciesAlias.put("aga", "AGAMBIAE");speciesAlias.put("AGAMBIAE", "AGAMBIAE");
 		speciesAlias.put("Aspergillus fumigatus", "AFUMIGATUS");speciesAlias.put("Aspergillus_fumigatus", "AFUMIGATUS");speciesAlias.put("afumigatus", "AFUMIGATUS");speciesAlias.put("afum", "AFUMIGATUS");speciesAlias.put("afu", "AFUMIGATUS");speciesAlias.put("AFUMIGATUS", "AFUMIGATUS");
 		speciesAlias.put("Fusarium oxysporum", "FOXYSPORUM");speciesAlias.put("Fusarium_oxysporum", "FOXYSPORUM");speciesAlias.put("foxysporum", "FOXYSPORUM");speciesAlias.put("foxy", "FOXYSPORUM");speciesAlias.put("fox", "FOXYSPORUM");speciesAlias.put("FOXYSPORUM", "FOXYSPORUM");
+		speciesAlias.put("Citrus clementina", "CCLEMENTINA");speciesAlias.put("Citrus_clementina", "CCLEMENTINA");speciesAlias.put("cclementina", "CCLEMENTINA");speciesAlias.put("ccle", "CCLEMENTINA");speciesAlias.put("ccl", "CCLEMENTINA");speciesAlias.put("CCLEMENTINA", "CCLEMENTINA");
 	}
 	
 	public DBAdaptorFactory() {
@@ -89,6 +91,11 @@ public abstract class DBAdaptorFactory {
 	
 	public abstract TranscriptDBAdaptor getTranscriptDBAdaptor(String species, String version);
 	
+	
+	public abstract ChromosomeDBAdaptor getChromosomeDBAdaptor(String species);
+	
+	public abstract ChromosomeDBAdaptor getChromosomeDBAdaptor(String species, String version);
+	
 
 	public abstract ExonDBAdaptor getExonDBAdaptor(String species);
 	
@@ -118,11 +125,6 @@ public abstract class DBAdaptorFactory {
 	public abstract GenomeSequenceDBAdaptor getGenomeSequenceDBAdaptor(String species);
 	
 	public abstract GenomeSequenceDBAdaptor getGenomeSequenceDBAdaptor(String species, String version);
-
-
-	public abstract GeneDBAdaptor getChromosomeDBAdaptor(String species);
-
-	
 
 
 	public abstract CytobandDBAdaptor getCytobandDBAdaptor(String species);
@@ -173,5 +175,6 @@ public abstract class DBAdaptorFactory {
 	public abstract PathwayDBAdaptor getPathwayDBAdaptor(String species);
 	
 	public abstract PathwayDBAdaptor getPathwayDBAdaptor(String species, String version);
+
 	
 }

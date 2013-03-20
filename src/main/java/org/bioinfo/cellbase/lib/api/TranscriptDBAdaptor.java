@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.bioinfo.cellbase.lib.common.Position;
 import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.infrared.core.cellbase.Transcript;
+import org.bioinfo.cellbase.lib.common.core.Transcript;
 
 public interface TranscriptDBAdaptor extends FeatureDBAdaptor {
 

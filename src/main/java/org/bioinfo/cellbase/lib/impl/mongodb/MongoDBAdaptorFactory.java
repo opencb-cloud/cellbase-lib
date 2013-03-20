@@ -8,6 +8,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.bioinfo.cellbase.lib.api.BioPaxDBAdaptor;
+import org.bioinfo.cellbase.lib.api.ChromosomeDBAdaptor;
 import org.bioinfo.cellbase.lib.api.CpGIslandDBAdaptor;
 import org.bioinfo.cellbase.lib.api.CytobandDBAdaptor;
 import org.bioinfo.cellbase.lib.api.ExonDBAdaptor;
@@ -35,11 +36,11 @@ import com.mongodb.ServerAddress;
 public class MongoDBAdaptorFactory extends DBAdaptorFactory {
 
 	private static Map<String, DB> mongoDBFactory;
-	//	private static Config applicationProperties;
+	// private static Config applicationProperties;
 	private static ResourceBundle resourceBundle;
 
 	static {
-		//		mongoDBFactory = new HashMap<String, HibernateDBAdaptor>(20);
+		// mongoDBFactory = new HashMap<String, HibernateDBAdaptor>(20);
 		mongoDBFactory = new HashMap<String, DB>(10);
 
 		// reading application.properties file
@@ -53,29 +54,37 @@ public class MongoDBAdaptorFactory extends DBAdaptorFactory {
 	}
 
 	private DB createCellBaseMongoDB(String speciesVersionPrefix) {
-		//		logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): creating Hibernate SessionFactory object for SPECIES.VERSION: '"+speciesVersionPrefix+"' ...");
-		//		long t1 = System.currentTimeMillis();
-		System.out.println(speciesVersionPrefix+"=>"+applicationProperties.getProperty(speciesVersionPrefix+".DATABASE"));
+		// logger.debug("HibernateDBAdaptorFactory in getGeneDBAdaptor(): creating Hibernate SessionFactory object for SPECIES.VERSION: '"+speciesVersionPrefix+"' ...");
+		// long t1 = System.currentTimeMillis();
+		System.out.println(speciesVersionPrefix + "=>"
+				+ applicationProperties.getProperty(speciesVersionPrefix + ".DATABASE"));
 		// initial load and setup from hibernate.cfg.xml
-		//		Configuration cfg = new Configuration().configure("cellbase-hibernate.cfg.xml");
+		// Configuration cfg = new
+		// Configuration().configure("cellbase-hibernate.cfg.xml");
 		MongoClient mc = null;
 		DB db = null;
-		if(speciesVersionPrefix != null && !speciesVersionPrefix.trim().equals("")) {
-			// read DB configuration for that SPECIES.VERSION, by default PRIMARY_DB is selected 
-			String dbPrefix = applicationProperties.getProperty(speciesVersionPrefix+".DB", "PRIMARY_DB");
+		if (speciesVersionPrefix != null && !speciesVersionPrefix.trim().equals("")) {
+			// read DB configuration for that SPECIES.VERSION, by default
+			// PRIMARY_DB is selected
+			String dbPrefix = applicationProperties.getProperty(speciesVersionPrefix + ".DB", "PRIMARY_DB");
 			try {
 				MongoClientOptions mongoClientOptions = new MongoClientOptions.Builder()
-				.connectionsPerHost(applicationProperties.getIntProperty(speciesVersionPrefix+".MAX_POOL_SIZE", 10))
-				.connectTimeout(applicationProperties.getIntProperty(speciesVersionPrefix+".TIMEOUT", 10000)).build();
-				
-				mc = new MongoClient(new ServerAddress(applicationProperties.getProperty(dbPrefix+".HOST", "localhost"), applicationProperties.getIntProperty(dbPrefix+".PORT", 27017)), mongoClientOptions);
-System.out.println(applicationProperties.getProperty(speciesVersionPrefix+".DATABASE"));
-				db = mc.getDB(applicationProperties.getProperty(speciesVersionPrefix+".DATABASE"));
-//				db.authenticate(applicationProperties.getProperty(dbPrefix+".USERNAME"), applicationProperties.getProperty(dbPrefix+".PASSWORD").toCharArray());
+						.connectionsPerHost(
+								applicationProperties.getIntProperty(speciesVersionPrefix + ".MAX_POOL_SIZE", 10))
+						.connectTimeout(applicationProperties.getIntProperty(speciesVersionPrefix + ".TIMEOUT", 10000))
+						.build();
+
+				mc = new MongoClient(new ServerAddress(applicationProperties.getProperty(dbPrefix + ".HOST",
+						"localhost"), applicationProperties.getIntProperty(dbPrefix + ".PORT", 27017)),
+						mongoClientOptions);
+				System.out.println(applicationProperties.getProperty(speciesVersionPrefix + ".DATABASE"));
+				db = mc.getDB(applicationProperties.getProperty(speciesVersionPrefix + ".DATABASE"));
+				// db.authenticate(applicationProperties.getProperty(dbPrefix+".USERNAME"),
+				// applicationProperties.getProperty(dbPrefix+".PASSWORD").toCharArray());
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			}
-		}else {
+		} else {
 			logger.debug("HibernateDBAdaptorFactory in createSessionFactory(): 'species' parameter is null or empty");
 		}
 
@@ -84,11 +93,11 @@ System.out.println(applicationProperties.getProperty(speciesVersionPrefix+".DATA
 
 	@Override
 	public void setConfiguration(Properties properties) {
-		if(properties != null) {
-			if(applicationProperties == null) {
+		if (properties != null) {
+			if (applicationProperties == null) {
 				applicationProperties = new Config();
 			}
-			for(Object key: properties.keySet()) {
+			for (Object key : properties.keySet()) {
 				applicationProperties.setProperty((String) key, properties.getProperty((String) key));
 			}
 		}
@@ -97,7 +106,7 @@ System.out.println(applicationProperties.getProperty(speciesVersionPrefix+".DATA
 	@Override
 	public void open(String species, String version) {
 		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
-		if(!mongoDBFactory.containsKey(speciesVersionPrefix)) {
+		if (!mongoDBFactory.containsKey(speciesVersionPrefix)) {
 			DB db = createCellBaseMongoDB(speciesVersionPrefix);
 			mongoDBFactory.put(speciesVersionPrefix, db);
 		}
@@ -105,13 +114,12 @@ System.out.println(applicationProperties.getProperty(speciesVersionPrefix+".DATA
 
 	@Override
 	public void close() {
-		for(DB sessionFactory: mongoDBFactory.values()) {
-			if(sessionFactory != null) {
+		for (DB sessionFactory : mongoDBFactory.values()) {
+			if (sessionFactory != null) {
 				sessionFactory.cleanCursors(true);
 			}
 		}
 	}
-
 
 	@Override
 	public GeneDBAdaptor getGeneDBAdaptor(String species) {
@@ -121,24 +129,44 @@ System.out.println(applicationProperties.getProperty(speciesVersionPrefix+".DATA
 	@Override
 	public GeneDBAdaptor getGeneDBAdaptor(String species, String version) {
 		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
-		if(!mongoDBFactory.containsKey(speciesVersionPrefix)) {
+		if (!mongoDBFactory.containsKey(speciesVersionPrefix)) {
 			DB db = createCellBaseMongoDB(speciesVersionPrefix);
 			mongoDBFactory.put(speciesVersionPrefix, db);
 		}
-		return (GeneDBAdaptor) new GeneMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix), speciesAlias.get(species), version);
+		return (GeneDBAdaptor) new GeneMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix),
+				speciesAlias.get(species), version);
 	}
 
 	@Override
 	public TranscriptDBAdaptor getTranscriptDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
+		return getTranscriptDBAdaptor(species, null);
 	}
 
 	@Override
-	public TranscriptDBAdaptor getTranscriptDBAdaptor(String species,
-			String version) {
-		// TODO Auto-generated method stub
-		return null;
+	public TranscriptDBAdaptor getTranscriptDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+		if (!mongoDBFactory.containsKey(speciesVersionPrefix)) {
+			DB db = createCellBaseMongoDB(speciesVersionPrefix);
+			mongoDBFactory.put(speciesVersionPrefix, db);
+		}
+		return (TranscriptDBAdaptor) new TranscriptMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix),
+				speciesAlias.get(species), version);
+	}
+
+	@Override
+	public ChromosomeDBAdaptor getChromosomeDBAdaptor(String species) {
+		return getChromosomeDBAdaptor(species, null);
+	}
+
+	@Override
+	public ChromosomeDBAdaptor getChromosomeDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+		if (!mongoDBFactory.containsKey(speciesVersionPrefix)) {
+			DB db = createCellBaseMongoDB(speciesVersionPrefix);
+			mongoDBFactory.put(speciesVersionPrefix, db);
+		}
+		return (ChromosomeDBAdaptor) new ChromosomeMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix),
+				speciesAlias.get(species), version);
 	}
 
 	@Override
@@ -154,15 +182,13 @@ System.out.println(applicationProperties.getProperty(speciesVersionPrefix+".DATA
 	}
 
 	@Override
-	public GenomicVariantEffectDBAdaptor getGenomicVariantEffectDBAdaptor(
-			String species) {
+	public GenomicVariantEffectDBAdaptor getGenomicVariantEffectDBAdaptor(String species) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public GenomicVariantEffectDBAdaptor getGenomicVariantEffectDBAdaptor(
-			String species, String version) {
+	public GenomicVariantEffectDBAdaptor getGenomicVariantEffectDBAdaptor(String species, String version) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -193,21 +219,18 @@ System.out.println(applicationProperties.getProperty(speciesVersionPrefix+".DATA
 
 	@Override
 	public GenomeSequenceDBAdaptor getGenomeSequenceDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
+		return getGenomeSequenceDBAdaptor(species, null);
 	}
 
 	@Override
-	public GenomeSequenceDBAdaptor getGenomeSequenceDBAdaptor(String species,
-			String version) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public GeneDBAdaptor getChromosomeDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
+	public GenomeSequenceDBAdaptor getGenomeSequenceDBAdaptor(String species, String version) {
+		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+		if (!mongoDBFactory.containsKey(speciesVersionPrefix)) {
+			DB db = createCellBaseMongoDB(speciesVersionPrefix);
+			mongoDBFactory.put(speciesVersionPrefix, db);
+		}
+		return (GenomeSequenceDBAdaptor) new GenomeSequenceMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix),
+				speciesAlias.get(species), version);
 	}
 
 	@Override
@@ -253,8 +276,7 @@ System.out.println(applicationProperties.getProperty(speciesVersionPrefix+".DATA
 	}
 
 	@Override
-	public RegulatoryRegionDBAdaptor getRegulatoryRegionDBAdaptor(
-			String species, String version) {
+	public RegulatoryRegionDBAdaptor getRegulatoryRegionDBAdaptor(String species, String version) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -302,22 +324,19 @@ System.out.println(applicationProperties.getProperty(speciesVersionPrefix+".DATA
 	}
 
 	@Override
-	public CpGIslandDBAdaptor getCpGIslandDBAdaptor(String species,
-			String version) {
+	public CpGIslandDBAdaptor getCpGIslandDBAdaptor(String species, String version) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public StructuralVariationDBAdaptor getStructuralVariationDBAdaptor(
-			String species) {
+	public StructuralVariationDBAdaptor getStructuralVariationDBAdaptor(String species) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public StructuralVariationDBAdaptor getStructuralVariationDBAdaptor(
-			String species, String version) {
+	public StructuralVariationDBAdaptor getStructuralVariationDBAdaptor(String species, String version) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -330,11 +349,12 @@ System.out.println(applicationProperties.getProperty(speciesVersionPrefix+".DATA
 	@Override
 	public PathwayDBAdaptor getPathwayDBAdaptor(String species, String version) {
 		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
-		if(!mongoDBFactory.containsKey(speciesVersionPrefix)) {
+		if (!mongoDBFactory.containsKey(speciesVersionPrefix)) {
 			DB db = createCellBaseMongoDB(speciesVersionPrefix);
 			mongoDBFactory.put(speciesVersionPrefix, db);
 		}
-		return (PathwayDBAdaptor) new PathwayMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix), speciesAlias.get(species), version);
+		return (PathwayDBAdaptor) new PathwayMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix),
+				speciesAlias.get(species), version);
 	}
 
 }

@@ -1,34 +1,18 @@
 package org.bioinfo.cellbase.lib.impl.hibernate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
-import org.bioinfo.cellbase.lib.api.TranscriptDBAdaptor;
-import org.bioinfo.cellbase.lib.common.Position;
-import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.infrared.core.cellbase.Transcript;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-
-class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements TranscriptDBAdaptor {
+class TranscriptHibernateDBAdaptor {
+	/*
 	
+//	public TranscriptHibernateDBAdaptor(SessionFactory sessionFactory) {
+//		super(sessionFactory);
+//	}
+//	
+//	public TranscriptHibernateDBAdaptor(SessionFactory sessionFactory, String species, String version) {
+//		super(sessionFactory, species, version);
+//	}
+//	
 	
-	public TranscriptHibernateDBAdaptor(SessionFactory sessionFactory) {
-		super(sessionFactory);
-	}
-	
-	public TranscriptHibernateDBAdaptor(SessionFactory sessionFactory, String species, String version) {
-		super(sessionFactory, species, version);
-	}
-	
-	@Override
 	@SuppressWarnings("unchecked")
 	public List<Transcript> getAll() {
 //		Criteria criteria = this.openSession().createCriteria(Transcript.class)
@@ -41,38 +25,38 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 //		return (List<Transcript>) executeAndClose(query);
 	}
 	
-	@Override
+	
 	public List<String> getAllIds() {
 		return this.getAllEnsemblIds();
 	}
 
-	/*********************No se implementan todavia*/
-	@Override
+// *********************No se implementan todavia
+	
 	public Map<String, Object> getInfo(String id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public List<Map<String, Object>> getInfoByIdList(List<String> idList) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	
-	@Override
+	
 	public Map<String, Object> getFullInfo(String id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public List<Map<String, Object>> getFullInfoByIdList(List<String> idList) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
-	@Override
+	
 	@SuppressWarnings("unchecked")
 	public List<String> getAllEnsemblIds() {
 		Criteria criteria = this.openSession().createCriteria(Transcript.class);
@@ -84,7 +68,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	
 
 	
-	@Override
+	
 	public Transcript getByEnsemblId(String ensemblId) {
 		Session session = this.openSession();
 		Transcript transcript = this.getByEnsemblId(ensemblId, session);
@@ -104,7 +88,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 			return null;
 		}
 	}
-	@Override
+	
 	public List<Transcript> getAllByEnsemblIdList(List<String> ensemblIds) {
 		List<Transcript> transcripts = new ArrayList<Transcript>(ensemblIds.size());
 		Session session = this.openSession();
@@ -115,7 +99,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		return transcripts;
 	}
 	
-	@Override
+	
 	public List<Transcript> getAllByName(String name) {
 		Session session = this.openSession();
 		List<Transcript> transcripts = getAllByName(name, session);
@@ -126,7 +110,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	@SuppressWarnings("unchecked")
 	private List<Transcript> getAllByName(String name, Session session) {
 		
-		/**WARNING Xref no estan rellenos para todas las especies **/
+//		/**WARNING Xref no estan rellenos para todas las especies 
 		Query query = session.createQuery("select distinct(t) from Xref as x1, Xref as x2, TranscriptToXref as tx1, TranscriptToXref as tx2, Dbname as db, Transcript as t where" +
 			 " x1.displayId= :name and" +
 			 " x1.xrefId=tx1.xref and" +
@@ -149,7 +133,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 //		 return (List<Transcript>)criteria.list();
 	}
 
-	@Override
+	
 	public List<List<Transcript>> getAllByNameList(List<String> names) {
 		List<List<Transcript>> transcripts =  new ArrayList<List<Transcript>>(names.size());
 		Session session = this.openSession();
@@ -160,7 +144,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		return transcripts;
 	}
 
-	@Override
+	
 	public List<Transcript> getByEnsemblGeneId(String ensemblGeneId) {
 		Session session = this.openSession();
 		List<Transcript> transcripts = this.getByEnsemblGeneId(ensemblGeneId, session);
@@ -179,7 +163,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 	
 	
-	@Override
+	
 	public List<List<Transcript>> getByEnsemblGeneIdList(List<String> ensemblGeneIds) {
 		List<List<Transcript>> transcripts =  new ArrayList<List<Transcript>>(ensemblGeneIds.size());
 		Session session = this.openSession();
@@ -191,7 +175,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 	
 	@SuppressWarnings("unchecked")
-	@Override
+	
 	public List<Transcript> getAllByBiotype(String biotype) {
 		Criteria criteria = this.openSession().createCriteria(Transcript.class);
 		criteria.add(Restrictions.eq("biotype", biotype))
@@ -202,7 +186,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 	
 	@SuppressWarnings("unchecked")
-	@Override
+	
 	public List<Transcript> getAllByBiotypeList(List<String> biotypeList) {
 		Criteria criteria = this.openSession().createCriteria(Transcript.class);
 		criteria.add(Restrictions.in("biotype", biotypeList));
@@ -210,14 +194,14 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
+	
 	public List<Transcript> getAllByPosition(String chromosome, int position) {
 		Criteria criteria =  this.openSession().createCriteria(Transcript.class);
 		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", position)).add(Restrictions.le("start", position));
 		return (List<Transcript>)executeAndClose(criteria);
 	}
 
-	@Override
+	
 	public List<Transcript> getAllByPosition(Position position) {
 		if(position != null){
 			return getAllByPosition(position.getChromosome(), position.getPosition());	
@@ -226,7 +210,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		}
 	}
 
-	@Override
+	
 	public List<List<Transcript>> getAllByPositionList(List<Position> positions) {
 		List<List<Transcript>> transcripts = null;
 		if(positions != null) {
@@ -240,7 +224,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	
 
 	@SuppressWarnings("unchecked")
-	@Override
+	
 	public List<Transcript> getAllByRegion(String chromosome) {
 		Criteria criteria =  this.openSession().createCriteria(Transcript.class);
 		criteria.add(Restrictions.eq("chromosome", chromosome));
@@ -249,7 +233,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 
 	@SuppressWarnings("unchecked")
-	@Override
+	
 	public List<Transcript> getAllByRegion(String chromosome, int start) {
 		Criteria criteria =  this.openSession().createCriteria(Transcript.class);
 		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", start));
@@ -258,7 +242,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 
 	@SuppressWarnings("unchecked")
-	@Override
+	
 	public List<Transcript> getAllByRegion(String chromosome, int start, int end) {
 		Criteria criteria =  this.openSession().createCriteria(Transcript.class);
 		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", start)).add(Restrictions.le("start", end));
@@ -267,7 +251,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 
 
 	@SuppressWarnings("unchecked")
-	@Override
+	
 	public List<Transcript> getAllByRegion(String chromosome, int start, int end,	List<String> biotypes) {
 		Criteria criteria =  this.openSession().createCriteria(Transcript.class);
 		criteria.add(Restrictions.eq("chromosome", chromosome)).add(Restrictions.ge("end", start)).add(Restrictions.le("start", end)).add(Restrictions.in("biotype", biotypes));
@@ -275,7 +259,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 
 
-	@Override
+	
 	public List<Transcript> getAllByRegion(Region region) {
 		if(region == null) {
 			return null;
@@ -285,7 +269,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 
 
-	@Override
+	
 	public List<Transcript> getAllByRegion(Region region, List<String> biotypes) {
 		if(region == null) {
 			return null;
@@ -295,7 +279,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 
 
-	@Override
+	
 	public List<List<Transcript>> getAllByRegionList(List<Region> regions) {
 		List<List<Transcript>> transcripts = new ArrayList<List<Transcript>>(regions.size());
 		for(Region region: regions) {
@@ -304,7 +288,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		return transcripts;
 	}
 
-	@Override
+	
 	public List<List<Transcript>> getAllByRegionList(List<Region> regions, List<String> biotypes) {
 		List<List<Transcript>> transcripts = new ArrayList<List<Transcript>>(regions.size());
 		for(Region region: regions){
@@ -314,7 +298,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 
 
-	@Override
+	
 	@SuppressWarnings("unchecked")
 	public List<Transcript> getAllByCytoband(String chromosome, String cytoband) {
 		Query query = this.openSession().createQuery("select t from Transcript t, Cytoband k where k.chromosome= :chromosome and k.cytoband = :cytoband and k.chromosome=t.chromosome and t.end>=k.start and t.start<=k.end").setParameter("chromosome", chromosome).setParameter("cytoband", cytoband);
@@ -322,7 +306,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 
 
-	@Override
+	
 	public List<Transcript> getAllBySnpId(String snpNameId) {
 		Session session = this.openSession();
 		List<Transcript> list = this.getAllBySnpId(snpNameId, session);
@@ -337,7 +321,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 			.createCriteria("snp").add(Restrictions.eq("name", snpNameId));
 		return (List<Transcript>)criteria.list();
 	}
-	@Override
+	
 	public List<List<Transcript>> getAllBySnpIdList(List<String> snpNameIds) {
 		List<List<Transcript>> transcripts = new ArrayList<List<Transcript>>(snpNameIds.size());
 		Session session = this.openSession();
@@ -349,13 +333,13 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 
 	
-	@Override
+	
 	public Region getRegionById(String ensemblId) {
 		Transcript transcript = this.getByEnsemblId(ensemblId);
 		return new Region(transcript.getChromosome(),transcript.getStart(),transcript.getEnd());
 	}
 	
-	@Override
+	
 	public List<Region> getAllRegionsByIdList(List<String> ensemblIdList) {
 		List<Region> regions = new ArrayList<Region>(ensemblIdList.size());
 		List<Transcript> transcripts = getAllByEnsemblIdList(ensemblIdList);
@@ -366,7 +350,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 
 	
-	@Override
+	
 	public String getSequenceById(String ensemblId) {
 		Transcript transcript = this.getByEnsemblId(ensemblId);
 		GenomeSequenceHibernateDBAdaptor da = new GenomeSequenceHibernateDBAdaptor(this.getSessionFactory());
@@ -374,7 +358,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 
 	
-	@Override
+	
 	public List<String> getAllSequencesByIdList(List<String> ensemblIdList) {
 		List<String> sequence = new ArrayList<String>(ensemblIdList.size());
 		List<Transcript> transcripts = getAllByEnsemblIdList(ensemblIdList);
@@ -387,7 +371,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	
 	
 	@SuppressWarnings("unchecked")
-	@Override
+	
 	public List<Transcript> getAllByEnsemblExonId(String ensemblExonId) {
 		Criteria criteria =  this.openSession().createCriteria(Transcript.class)
 			.createCriteria("exonToTranscripts")
@@ -396,7 +380,7 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		return (List<Transcript>) executeAndClose(criteria);
 	}
 	
-	@Override
+	
 	public List<List<Transcript>> getAllByEnsemblExonId(List<String> ensemblExonId) {
 		List<List<Transcript>> result = new ArrayList<List<Transcript>>();
 		for (String id : ensemblExonId) {
@@ -406,13 +390,13 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
+	
 	public List<Transcript> getAllByProteinName(String proteinName) {
 		Query query = this.openSession().createQuery("select t from Transcript t, Protein p, ProteinXref px where (p.primaryAccession = :proteinName or p.name = :proteinName or p.geneName = :proteinName) and p.proteinId=px.protein and px.source='Ensembl' and px.name=t.stableId").setParameter("proteinName", proteinName);
 		return (List<Transcript>)executeAndClose(query);
 	}
 	
-	@Override
+	
 	public List<List<Transcript>> getAllByProteinNameList(List<String> proteinNameList) {
 		List<List<Transcript>> result = new ArrayList<List<Transcript>>();
 		for (String proteinName : proteinNameList) {
@@ -422,13 +406,13 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
+	
 	public List<Transcript> getAllByMirnaMature(String mirnaID) {
 		Query query = this.openSession().createQuery("select t from Transcript t, MirnaMature mm, MirnaGeneToMature g2m, MirnaGene mg, MirnaToGene m2g where mm.mirbaseId = :MIRNAID and mm.mirnaMatureId=g2m.mirnaMature and g2m.mirnaGene=mg.mirnaGeneId and mg.mirnaGeneId=m2g.mirnaGene and m2g.transcript=t.transcriptId").setParameter("MIRNAID", mirnaID);
 		return (List<Transcript>)executeAndClose(query);
 	}
 
-	@Override
+	
 	public List<List<Transcript>> getAllByMirnaMatureList(List<String> mirnaIDList) {
 		List<List<Transcript>> result = new ArrayList<List<Transcript>>();
 		for (String mirnaID : mirnaIDList) {
@@ -436,6 +420,6 @@ class TranscriptHibernateDBAdaptor extends HibernateDBAdaptor implements Transcr
 		}
 		return result;
 	}
-
+*/
 	
 }
