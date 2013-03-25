@@ -31,7 +31,37 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 		super(db, species, version);
 		mongoDBCollection = db.getCollection("core");
 	}
-
+	
+	private List<Gene> executeQuery(DBObject query, List<String> excludeFields) {
+		List<Gene> result = null;
+		
+		DBCursor cursor = null;
+		if (excludeFields != null && excludeFields.size() > 0) {
+			BasicDBObject returnFields = new BasicDBObject("_id", 0);
+			for (String field : excludeFields) {
+				returnFields.put(field, 0);
+			}
+			cursor = mongoDBCollection.find(query, returnFields);
+		} else {
+			cursor = mongoDBCollection.find(query);
+		}
+		
+		try {
+			if (cursor != null) {
+				result = new ArrayList<Gene>(cursor.size());
+				Gson gson = new Gson();
+				Gene gene;
+				while (cursor.hasNext()) {
+					gene = (Gene) gson.fromJson(cursor.next().toString(), Gene.class);
+					result.add(gene);
+				}
+			}
+		} finally {
+			cursor.close();
+		}
+		return result;
+	}
+	
 	@Override
 	public List<? extends Object> getAll() {
 		BasicDBObject query = new BasicDBObject();
@@ -154,7 +184,7 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 			return executeQuery(query, null);
 		}
 	}
-
+	
 	@Override
 	public List<List<Gene>> getAllByNameList(List<String> nameList, boolean fetchTranscripts) {
 		List<List<Gene>> genes = new ArrayList<List<Gene>>(nameList.size());
@@ -163,7 +193,7 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 		}
 		return genes;
 	}
-
+	
 	@Override
 	public Gene getByEnsemblTranscriptId(String transcriptId) {
 		BasicDBObject query = new BasicDBObject("transcripts.id", transcriptId.toUpperCase());
@@ -407,34 +437,5 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 
 	}
 
-	private List<Gene> executeQuery(DBObject query, List<String> excludeFields) {
-		List<Gene> result = null;
-
-		DBCursor cursor = null;
-		if (excludeFields != null && excludeFields.size() > 0) {
-			BasicDBObject returnFields = new BasicDBObject("_id", 0);
-			for (String field : excludeFields) {
-				returnFields.put(field, 0);
-			}
-			cursor = mongoDBCollection.find(query, returnFields);
-		} else {
-			cursor = mongoDBCollection.find(query);
-		}
-
-		try {
-			if (cursor != null) {
-				result = new ArrayList<Gene>(cursor.size());
-				Gson gson = new Gson();
-				Gene gene;
-				while (cursor.hasNext()) {
-					gene = (Gene) gson.fromJson(cursor.next().toString(), Gene.class);
-					result.add(gene);
-				}
-			}
-		} finally {
-			cursor.close();
-		}
-		return result;
-	}
 
 }

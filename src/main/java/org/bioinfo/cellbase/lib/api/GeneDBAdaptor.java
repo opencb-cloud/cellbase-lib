@@ -6,6 +6,8 @@ import org.bioinfo.cellbase.lib.common.Position;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.Gene;
 
+import com.mongodb.BasicDBList;
+
 public interface GeneDBAdaptor extends FeatureDBAdaptor {
 
 	// @Override
@@ -85,5 +87,4 @@ public interface GeneDBAdaptor extends FeatureDBAdaptor {
 	public List<List<Gene>> getAllTargetsByMiRnaMatureList(List<String> mirbaseIds);
 
 	public String getAllIntervalFrequencies(Region region, int interval);
-
 }

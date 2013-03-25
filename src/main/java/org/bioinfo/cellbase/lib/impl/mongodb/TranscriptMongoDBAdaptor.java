@@ -29,6 +29,29 @@ public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements Transcri
 		mongoDBCollection = db.getCollection("core");
 	}
 
+	private List<Transcript> executeQuery(DBObject query) {
+		List<Transcript> result = null;
+
+		BasicDBObject returnFields = new BasicDBObject("transcripts", 1);
+		DBCursor cursor = mongoDBCollection.find(query, returnFields);
+
+		try {
+			if (cursor != null) {
+				result = new ArrayList<Transcript>();
+				Gson gson = new Gson();
+				Gene gene;
+				while (cursor.hasNext()) {
+					gene = (Gene) gson.fromJson(cursor.next().toString(), Gene.class);
+					result.addAll(gene.getTranscripts());
+				}
+			}
+		} finally {
+			cursor.close();
+		}
+
+		return result;
+	}
+
 	@Override
 	public List<String> getAllIds() {
 		// TODO Auto-generated method stub
@@ -114,7 +137,7 @@ public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements Transcri
 		List<Transcript> result = new ArrayList<Transcript>();
 		List<Transcript> transcripts = executeQuery(query);
 		for (Transcript transcript : transcripts) {
-//			List<Xref> xrefs = transcript.getXrefs();
+			// List<Xref> xrefs = transcript.getXrefs();
 			for (Xref xref : transcript.getXrefs()) {
 				if (xref.getId().equals(name)) {
 					result.add(transcript);
@@ -283,28 +306,5 @@ public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements Transcri
 	public List<List<Transcript>> getAllByMirnaMatureList(List<String> mirnaIDList) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	private List<Transcript> executeQuery(DBObject query) {
-		List<Transcript> result = null;
-
-		BasicDBObject returnFields = new BasicDBObject("transcripts", 1);
-		DBCursor cursor = mongoDBCollection.find(query, returnFields);
-
-		try {
-			if (cursor != null) {
-				result = new ArrayList<Transcript>();
-				Gson gson = new Gson();
-				Gene gene;
-				while (cursor.hasNext()) {
-					gene = (Gene) gson.fromJson(cursor.next().toString(), Gene.class);
-					result.addAll(gene.getTranscripts());
-				}
-			}
-		} finally {
-			cursor.close();
-		}
-
-		return result;
 	}
 }

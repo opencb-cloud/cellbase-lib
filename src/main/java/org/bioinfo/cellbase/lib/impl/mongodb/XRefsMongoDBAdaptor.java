@@ -1,25 +1,28 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bioinfo.cellbase.lib.api.XRefsDBAdaptor;
 import org.bioinfo.cellbase.lib.common.XRefs;
+import org.bioinfo.cellbase.lib.common.core.DBName;
 import org.bioinfo.cellbase.lib.common.core.Gene;
 import org.bioinfo.cellbase.lib.common.core.Transcript;
 import org.bioinfo.cellbase.lib.common.core.Xref;
-import org.bioinfo.cellbase.lib.common.core.DBname;
-import org.bioinfo.infrared.core.cellbase.Dbname;
 
 import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.QueryBuilder;
 
 public class XRefsMongoDBAdaptor extends MongoDBAdaptor implements XRefsDBAdaptor {
-	
-	
+
 	public XRefsMongoDBAdaptor(DB db) {
 		super(db);
 	}
@@ -29,14 +32,41 @@ public class XRefsMongoDBAdaptor extends MongoDBAdaptor implements XRefsDBAdapto
 		mongoDBCollection = db.getCollection("core");
 	}
 
+	private List<Xref> executeQuery(DBObject query) {
+		List<Xref> result = null;
+		Set<Xref> xrefSet = new LinkedHashSet<Xref>();
+		
+		BasicDBObject returnFields = new BasicDBObject("transcripts", 1);
+		DBCursor cursor = mongoDBCollection.find(query, returnFields);
+
+		try {
+			if (cursor != null) {
+				Gson gson = new Gson();
+				Gene gene;
+				while (cursor.hasNext()) {
+					gene = (Gene) gson.fromJson(cursor.next().toString(), Gene.class);
+					for (Transcript transcript : gene.getTranscripts()) {
+						xrefSet.addAll(transcript.getXrefs());
+					}
+				}
+			}
+			result = new ArrayList<Xref>(xrefSet);
+		} finally {
+			cursor.close();
+		}
+
+		return result;
+	}
+
 	@Override
-	public List<DBname> getAllDBNames() {
+	public List<DBName> getAllDBNames() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<List<DBname>> getAllDBNamesByName(String name) {
+	public List<DBName> getAllDBNamesById(String id) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -47,7 +77,7 @@ public class XRefsMongoDBAdaptor extends MongoDBAdaptor implements XRefsDBAdapto
 	}
 
 	@Override
-	public List<Dbname> getAllDBNamesByType(String type) {
+	public List<DBName> getAllDBNamesByType(String type) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -132,14 +162,32 @@ public class XRefsMongoDBAdaptor extends MongoDBAdaptor implements XRefsDBAdapto
 
 	@Override
 	public List<Xref> getByDBNameList(String id, List<String> dbnames) {
-		// TODO Auto-generated method stub
-		return null;
+
+		QueryBuilder builder = QueryBuilder.start("transcripts.xrefs.id").is(id.toUpperCase());
+		List<Xref> xrefQuery = executeQuery(builder.get());
+		logger.info("->>>>>>>>>>>>>>>>"+xrefQuery.size());
+		if(dbnames == null) {
+			dbnames = Collections.emptyList();
+		}
+		Set<String> dbnameSet = new HashSet<String>(dbnames);
+		
+		List<Xref> xrefReturnList = new ArrayList<Xref>(xrefQuery.size());
+		for(Xref xref: xrefQuery) {
+			if(dbnameSet.size() == 0 || dbnameSet.contains(xref.getDbNameShort())) {
+				logger.info("->>>>>>>>>>>>>>>>"+xref.getId());
+				xrefReturnList.add(xref);
+			}
+		}
+		return xrefReturnList;
 	}
 
 	@Override
 	public List<List<Xref>> getAllByDBNameList(List<String> ids, List<String> dbnames) {
-		// TODO Auto-generated method stub
-		return null;
+		List<List<Xref>> xrefs = new ArrayList<List<Xref>>(ids.size());
+		for (String id : ids) {
+			xrefs.add(getByDBNameList(id, dbnames));
+		}
+		return xrefs;
 	}
 
 	@Override
@@ -165,35 +213,5 @@ public class XRefsMongoDBAdaptor extends MongoDBAdaptor implements XRefsDBAdapto
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	private List<Transcript> executeQuery(DBObject query) {
-		List<Transcript> result = null;
 
-		BasicDBObject returnFields = new BasicDBObject("transcripts", 1);
-		DBCursor cursor = mongoDBCollection.find(query, returnFields);
-
-		try {
-			if (cursor != null) {
-				result = new ArrayList<Transcript>();
-				Gson gson = new Gson();
-				Gene gene;
-				while (cursor.hasNext()) {
-					gene = (Gene) gson.fromJson(cursor.next().toString(), Gene.class);
-					result.addAll(gene.getTranscripts());
-				}
-			}
-		} finally {
-			cursor.close();
-		}
-
-		return result;
-	}
-
-	@Override
-	public List<Dbname> getAllDBNamesById(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	
 }

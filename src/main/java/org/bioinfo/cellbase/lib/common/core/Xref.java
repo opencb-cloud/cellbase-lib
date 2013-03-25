@@ -14,6 +14,18 @@ public class Xref {
 		this.description = description;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		Xref xrefObj = (Xref)obj;
+		return id.equals(xrefObj.id) && dbNameShort.equals(xrefObj.dbNameShort);
+	}
+	
+	@Override
+	public int hashCode() {
+		return (id+dbNameShort).hashCode();
+	}
+	
+	
 	public String getId() {
 		return id;
 	}
