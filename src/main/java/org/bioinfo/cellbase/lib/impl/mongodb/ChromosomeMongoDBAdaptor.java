@@ -23,6 +23,16 @@ public class ChromosomeMongoDBAdaptor extends MongoDBAdaptor implements Chromoso
 		mongoDBCollection = db.getCollection("info_stats");
 	}
 
+
+    private List<Chromosome> executeQuery() {
+        Gson gson = new Gson();
+        DBObject item = mongoDBCollection.findOne();
+//		System.out.println(item.toString());
+        InfoStats infoStats = (InfoStats) gson.fromJson(item.toString(), InfoStats.class);
+
+        return infoStats.getChromosomes();
+    }
+
 	@Override
 	public Chromosome getChromosomeByName(String name) {
 		for (Chromosome chromosome : executeQuery()) {
@@ -80,14 +90,4 @@ public class ChromosomeMongoDBAdaptor extends MongoDBAdaptor implements Chromoso
 		}
 		return names;
 	}
-
-	private List<Chromosome> executeQuery() {
-		Gson gson = new Gson();
-		DBObject item = mongoDBCollection.findOne();
-//		System.out.println(item.toString());
-		InfoStats infoStats = (InfoStats) gson.fromJson(item.toString(), InfoStats.class);
-
-		return infoStats.getChromosomes();
-	}
-
 }

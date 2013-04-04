@@ -7,6 +7,8 @@ public class GenomeSequenceChunk {
 	private int start;
 	private int end;
 	private String sequence;
+    private Float[] phastCons;
+    private Float[] phylop;
 	
 	
 	public GenomeSequenceChunk(String chromosome, int chunkId, int start, int end, String sequence) {
@@ -15,6 +17,10 @@ public class GenomeSequenceChunk {
 		this.start = start;
 		this.end = end;
 		this.sequence = sequence;
+
+        int size = end - start + 1;
+        this.phastCons = new Float[size];
+        this.phylop = new Float[size];
 	}
 	
 	
@@ -52,6 +58,22 @@ public class GenomeSequenceChunk {
 	public void setSequence(String sequence) {
 		this.sequence = sequence;
 	}
-	
+
+
+    public Float[] getPhastCons() {
+        return phastCons;
+    }
+
+    public void setPhastCons(Float[] phastCons) {
+        this.phastCons = phastCons;
+    }
+
+    public Float[] getPhylop() {
+        return phylop;
+    }
+
+    public void setPhylop(Float[] phylop) {
+        this.phylop = phylop;
+    }
 	
 }
