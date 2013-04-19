@@ -78,8 +78,12 @@ public class MongoDBAdaptorFactory extends DBAdaptorFactory {
 						mongoClientOptions);
 				System.out.println(applicationProperties.getProperty(speciesVersionPrefix + ".DATABASE"));
 				db = mc.getDB(applicationProperties.getProperty(speciesVersionPrefix + ".DATABASE"));
-				// db.authenticate(applicationProperties.getProperty(dbPrefix+".USERNAME"),
-				// applicationProperties.getProperty(dbPrefix+".PASSWORD").toCharArray());
+
+                String user = applicationProperties.getProperty(dbPrefix+".USERNAME");
+                String pass = applicationProperties.getProperty(dbPrefix+".PASSWORD");
+                if(!user.equals("") || !pass.equals("")){
+				    db.authenticate(user,pass.toCharArray());
+                }
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			}
