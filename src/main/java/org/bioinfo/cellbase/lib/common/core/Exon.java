@@ -22,12 +22,13 @@ public class Exon implements Serializable{
 	private int cdsEnd;
 	private int phase;
 	private int exonNumber;
+	private String sequence;
 	
 	public Exon() {
 		
 	}
 
-	public Exon(String id, String chromosome, Integer start, Integer end, String strand, Integer genomicCodingStart, Integer genomicCodingEnd, Integer cdnaCodingStart, Integer cdnaCodingEnd, Integer cdsStart, Integer cdsEnd, Integer phase, Integer exonNumber) {
+	public Exon(String id, String chromosome, Integer start, Integer end, String strand, Integer genomicCodingStart, Integer genomicCodingEnd, Integer cdnaCodingStart, Integer cdnaCodingEnd, Integer cdsStart, Integer cdsEnd, Integer phase, Integer exonNumber, String sequence) {
 		super();
 		this.id = id;
 		this.chromosome = chromosome;
@@ -42,6 +43,7 @@ public class Exon implements Serializable{
 		this.cdsEnd = cdsEnd;
 		this.phase = phase;
 		this.exonNumber = exonNumber;
+		this.sequence = sequence;
 	}
 
 	public String getId() {
@@ -146,6 +148,14 @@ public class Exon implements Serializable{
 
 	public void setCdsEnd(int cdsEnd) {
 		this.cdsEnd = cdsEnd;
+	}
+
+	public String getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(String sequence) {
+		this.sequence = sequence;
 	}
 	
 	

@@ -11,6 +11,7 @@ import org.bioinfo.cellbase.lib.common.core.Exon;
 import org.bioinfo.cellbase.lib.common.core.Gene;
 import org.bioinfo.cellbase.lib.common.core.Transcript;
 import org.bioinfo.cellbase.lib.common.core.Xref;
+import org.bioinfo.cellbase.lib.common.regulatory.MirnaGene;
 import org.bioinfo.commons.io.TextFileWriter;
 import org.bioinfo.commons.io.utils.FileUtils;
 import org.bioinfo.commons.io.utils.IOUtils;
@@ -101,7 +102,7 @@ public class GtfParser {
 				
 				
 				gene = new Gene(geneId, gtf.getAttributes().get("gene_name"), gtf.getAttributes().get("gene_biotype"), 
-						"KNOWN", gtf.getSequenceName().replaceFirst("chr", ""), gtf.getStart(), gtf.getEnd(), gtf.getStrand(), "Ensembl", geneDescriptionMap.get(geneId), new ArrayList<Transcript>());
+						"KNOWN", gtf.getSequenceName().replaceFirst("chr", ""), gtf.getStart(), gtf.getEnd(), gtf.getStrand(), "Ensembl", geneDescriptionMap.get(geneId), new ArrayList<Transcript>(), null);
 //				genes.add(gene);
 				
 				// Do not change order!!   size()-1 is the index of the gene ID
@@ -111,7 +112,7 @@ public class GtfParser {
 			// Check if Transcript exist in the Gene Set of transcripts
 			if(!transcriptDict.containsKey(transcriptId)) {
 				transcript = new Transcript(transcriptId, gtf.getAttributes().get("transcript_name"), 
-						gtf.getSource(), "KNOWN", gtf.getSequenceName().replaceFirst("chr", ""), gtf.getStart(), gtf.getEnd(), gtf.getStrand(), 0, 0, 0, 0, 0, "", "", xrefMap.get(transcriptId), new ArrayList<Exon>());
+						gtf.getSource(), "KNOWN", gtf.getSequenceName().replaceFirst("chr", ""), gtf.getStart(), gtf.getEnd(), gtf.getStrand(), 0, 0, 0, 0, 0, "", "", xrefMap.get(transcriptId), new ArrayList<Exon>(), null);
 				gene.getTranscripts().add(transcript);
 				// Do not change order!!   size()-1 is the index of the transcript ID
 				transcriptDict.put(transcriptId, gene.getTranscripts().size()-1);
@@ -125,7 +126,7 @@ public class GtfParser {
 			updateTranscriptAndGeneCoords(transcript, gene, gtf);
 
 			if(gtf.getFeature().equalsIgnoreCase("exon")) {
-				exon = new Exon(gtf.getAttributes().get("exon_id"), gtf.getSequenceName().replaceFirst("chr", ""), gtf.getStart(), gtf.getEnd(), gtf.getStrand(), 0, 0, 0, 0, 0, 0, -1, Integer.parseInt(gtf.getAttributes().get("exon_number")));
+				exon = new Exon(gtf.getAttributes().get("exon_id"), gtf.getSequenceName().replaceFirst("chr", ""), gtf.getStart(), gtf.getEnd(), gtf.getStrand(), 0, 0, 0, 0, 0, 0, -1, Integer.parseInt(gtf.getAttributes().get("exon_number")), "");
 				transcript.getExons().add(exon);
 				exonDict.put(transcript.getId()+"_"+exon.getExonNumber(), exon);
 				if(gtf.getAttributes().get("exon_number").equals("1")) {

@@ -27,14 +27,14 @@ public class Transcript implements Serializable {
 	private String proteinID;
 	private String description;
 	private List<Xref> xrefs;
+	private List<TranscriptTfbs> tfbs;
 	private List<Exon> exons;
-	
 
 	public Transcript() {
 		
 	}
 
-	public Transcript(String id, String name, String biotype, String status, String chromosome, Integer start, Integer end, String strand, Integer codingRegionStart, Integer codingRegionEnd, Integer cdnaCodingStart, Integer cdnaCodingEnd, Integer cdsLength, String proteinId, String description, ArrayList<Xref> xrefs, ArrayList<Exon> exons) {
+	public Transcript(String id, String name, String biotype, String status, String chromosome, Integer start, Integer end, String strand, Integer codingRegionStart, Integer codingRegionEnd, Integer cdnaCodingStart, Integer cdnaCodingEnd, Integer cdsLength, String proteinId, String description, ArrayList<Xref> xrefs, ArrayList<Exon> exons, ArrayList<TranscriptTfbs> tfbs) {
 		this.id = id;
 		this.name = name;
 		this.biotype = biotype;
@@ -52,6 +52,7 @@ public class Transcript implements Serializable {
 		this.description = description;
 		this.xrefs = xrefs;
 		this.exons = exons;
+		this.tfbs = tfbs;
 	}
 
 	public String getId() {
@@ -189,5 +190,14 @@ public class Transcript implements Serializable {
 	public void setXrefs(List<Xref> xrefs) {
 		this.xrefs = xrefs;
 	}
+
+	public List<TranscriptTfbs> getTfbs() {
+		return tfbs;
+	}
+
+	public void setTfbs(List<TranscriptTfbs> tfbs) {
+		this.tfbs = tfbs;
+	}
+	
 	
 }

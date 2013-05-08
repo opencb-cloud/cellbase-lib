@@ -25,14 +25,14 @@ public class Gene implements Serializable {
 	private String source;
 	private String description;
 	private List<Transcript> transcripts;
-
+	private MiRNAGene mirna;
 	
 	public Gene() {
 		
 	}
 
 	public Gene(String id, String name, String biotype, String status, 
-			String chromosome, Integer start, Integer end, String strand, String source, String description, List<Transcript> transcripts) {
+			String chromosome, Integer start, Integer end, String strand, String source, String description, List<Transcript> transcripts, MiRNAGene mirna) {
 		super();
 		this._id = id;
 		this.id = id;
@@ -46,6 +46,7 @@ public class Gene implements Serializable {
 		this.source = source;
 		this.description = description;
 		this.transcripts = transcripts;
+		this.mirna = mirna;
 	}
 
 	public String getId() {
@@ -134,6 +135,14 @@ public class Gene implements Serializable {
 
 	public void setTranscripts(List<Transcript> transcripts) {
 		this.transcripts = transcripts;
+	}
+
+	public MiRNAGene getMirna() {
+		return mirna;
+	}
+
+	public void setMirna(MiRNAGene mirna) {
+		this.mirna = mirna;
 	}
 	
 }
