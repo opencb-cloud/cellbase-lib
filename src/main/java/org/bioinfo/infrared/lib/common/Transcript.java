@@ -1,10 +1,15 @@
 package org.bioinfo.infrared.lib.common;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Transcript {
+public class Transcript implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2069002722080532350L;
 	private String stableId;
 	private String externalName;
 	private String biotype;
@@ -13,8 +18,8 @@ public class Transcript {
 	private int start;
 	private int end;
 	private String strand;
-	private int codingRegionStart;
-	private int codingRegionEnd;
+	private int genomicCodingStart;
+	private int genomicCodingEnd;
 	private int cdnaCodingStart;
 	private int cdnaCodingEnd;
 	private String proteinID;
@@ -26,7 +31,7 @@ public class Transcript {
 		
 	}
 
-	public Transcript(String stableId, String externalName, String biotype, String status, String chromosome, int start, int end, String strand, int codingRegionStart, int codingRegionEnd, int cdnaCodingStart, int cdnaCodingEnd, String proteinId, String description, ArrayList<Exon> exons) {
+	public Transcript(String stableId, String externalName, String biotype, String status, String chromosome, Integer start, Integer end, String strand, Integer codingRegionStart, Integer codingRegionEnd, Integer cdnaCodingStart, Integer cdnaCodingEnd, String proteinId, String description, ArrayList<Exon> exons) {
 		this.stableId = stableId;
 		this.externalName = externalName;
 		this.biotype = biotype;
@@ -35,8 +40,8 @@ public class Transcript {
 		this.start = start;
 		this.end = end;
 		this.strand = strand;
-		this.codingRegionStart = codingRegionStart;
-		this.codingRegionEnd = codingRegionEnd;
+		this.genomicCodingStart = codingRegionStart;
+		this.genomicCodingEnd = codingRegionEnd;
 		this.cdnaCodingStart = cdnaCodingStart;
 		this.cdnaCodingEnd = cdnaCodingEnd;
 		this.proteinID = proteinId;
@@ -108,20 +113,20 @@ public class Transcript {
 		this.strand = strand;
 	}
 
-	public int getCodingRegionStart() {
-		return codingRegionStart;
+	public int getGenomicCodingStart() {
+		return genomicCodingStart;
 	}
 
-	public void setCodingRegionStart(int codingRegionStart) {
-		this.codingRegionStart = codingRegionStart;
+	public void setGenomicCodingStart(int genomicCodingStart) {
+		this.genomicCodingStart = genomicCodingStart;
 	}
 
-	public int getCodingRegionEnd() {
-		return codingRegionEnd;
+	public int getGenomicCodingEnd() {
+		return genomicCodingEnd;
 	}
 
-	public void setCodingRegionEnd(int codingRegionEnd) {
-		this.codingRegionEnd = codingRegionEnd;
+	public void setGenomicCodingEnd(int genomicCodingEnd) {
+		this.genomicCodingEnd = genomicCodingEnd;
 	}
 
 	public int getCdnaCodingStart() {

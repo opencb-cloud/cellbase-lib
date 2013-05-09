@@ -21,7 +21,7 @@ public class CoreParserTest {
 
 	@Test
 	public void testParseToJson() {
-		CoreParser coreParser = new CoreParser();
+		GeneJsonParser coreParser = new GeneJsonParser();
 		try {
 			String jsonString = coreParser.parseToJson(new File("/home/imedina/Downloads/Homo_sapiens.GRCh37.69_50000.gtf"));
 			IOUtils.write(new File("/tmp/hsapiens_core.json"), jsonString);

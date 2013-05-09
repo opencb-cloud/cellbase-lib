@@ -1,16 +1,24 @@
 package org.bioinfo.infrared.lib.common;
 
-public class Exon {
+import java.io.Serializable;
 
+public class Exon implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6453125614383801773L;
 	private String stableId;
 	private String chromosome;
 	private int start;
 	private int end;
 	private String strand;
-	private int codingRegionStart;
-	private int codingRegionEnd;
+	private int genomicCodingStart;
+	private int genomicCodingEnd;
 	private int cdnaCodingStart;
 	private int cdnaCodingEnd;
+	private int cdsStart;
+	private int cdsEnd;
 	private int phase;
 	private int exonNumber;
 	
@@ -18,17 +26,19 @@ public class Exon {
 		
 	}
 
-	public Exon(String stableId, String chromosome, int start, int end, String strand, int codingRegionStart, int codingRegionEnd, int cdnaCodingStart, int cdnaCodingEnd, int phase, int exonNumber) {
+	public Exon(String stableId, String chromosome, Integer start, Integer end, String strand, Integer genomicCodingStart, Integer genomicCodingEnd, Integer cdnaCodingStart, Integer cdnaCodingEnd, Integer cdsStart, Integer cdsEnd, Integer phase, Integer exonNumber) {
 		super();
 		this.stableId = stableId;
 		this.chromosome = chromosome;
 		this.start = start;
 		this.end = end;
 		this.strand = strand;
-		this.codingRegionStart = codingRegionStart;
-		this.codingRegionEnd = codingRegionEnd;
+		this.genomicCodingStart = genomicCodingStart;
+		this.genomicCodingEnd = genomicCodingEnd;
 		this.cdnaCodingStart = cdnaCodingStart;
 		this.cdnaCodingEnd = cdnaCodingEnd;
+		this.cdsStart = cdsStart;
+		this.cdsEnd = cdsEnd;
 		this.phase = phase;
 		this.exonNumber = exonNumber;
 	}
@@ -89,20 +99,20 @@ public class Exon {
 		this.phase = phase;
 	}
 
-	public int getCodingRegionStart() {
-		return codingRegionStart;
+	public int getGenomicCodingStart() {
+		return genomicCodingStart;
 	}
 
-	public void setCodingRegionStart(int codingRegionStart) {
-		this.codingRegionStart = codingRegionStart;
+	public void setGenomicCodingStart(int codingRegionStart) {
+		this.genomicCodingStart = codingRegionStart;
 	}
 
-	public int getCodingRegionEnd() {
-		return codingRegionEnd;
+	public int getGenomicCodingEnd() {
+		return genomicCodingEnd;
 	}
 
-	public void setCodingRegionEnd(int codingRegionEnd) {
-		this.codingRegionEnd = codingRegionEnd;
+	public void setGenomicCodingEnd(int codingRegionEnd) {
+		this.genomicCodingEnd = codingRegionEnd;
 	}
 
 	public int getCdnaCodingStart() {
@@ -119,6 +129,22 @@ public class Exon {
 
 	public void setCdnaCodingEnd(int cdnaCodingEnd) {
 		this.cdnaCodingEnd = cdnaCodingEnd;
+	}
+
+	public int getCdsStart() {
+		return cdsStart;
+	}
+
+	public void setCdsStart(int cdsStart) {
+		this.cdsStart = cdsStart;
+	}
+
+	public int getCdsEnd() {
+		return cdsEnd;
+	}
+
+	public void setCdsEnd(int cdsEnd) {
+		this.cdsEnd = cdsEnd;
 	}
 	
 	
