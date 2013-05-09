@@ -3,35 +3,31 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.bioinfo</groupId>
 	<artifactId>cellbase-lib</artifactId>
-	<name>CellBase project</name>
-	<version>2.1.1</version>
-	<description>Infrared API and application</description>
+	<name>CellBase library project</name>
+	<version>3.0.0</version>
+	<description>CellBase library API</description>
 	<dependencies>
 		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		<dependency>
 			<groupId>org.bioinfo</groupId>
-			<artifactId>infrared-core</artifactId>
-			<version>2.1.1</version>
+			<artifactId>bioinfo-formats</artifactId>
+			<version>0.4.0</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
-            <groupId>org.bioinfo</groupId>
-            <artifactId>bioinfo-formats</artifactId>
-            <version>0.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>2.9.1</version>
-            <optional>true</optional>
-        </dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>3.6.10.Final</version>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>2.10.1</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-c3p0</artifactId>
-			<version>3.6.10.Final</version>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -39,16 +35,19 @@
 			<version>4.8.2</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>net.sf</groupId>
-			<artifactId>samtools</artifactId>
-			<version>1.72</version>
-		</dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.7.2</version>
+            <optional>true</optional>
+        </dependency>
 	</dependencies>
 
 	<build>
-		<sourceDirectory>src/main</sourceDirectory>
-		<testSourceDirectory>src/test</testSourceDirectory>
+        <directory>target</directory>
+        <outputDirectory>target/classes</outputDirectory>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
 
 		<extensions>
 			<extension>
@@ -63,8 +62,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 					<showDeprecation>true</showDeprecation>
 					<showWarnings>true</showWarnings>
 					<encoding>UTF-8</encoding>
@@ -81,11 +80,33 @@
 		</plugins>
 	</build>
 
+	<!-- <distributionManagement> -->
+	<!-- <repository> -->
+	<!-- <id>default</id> -->
+	<!-- <name>Bioinfo Repository</name> -->
+	<!-- <url>scp://repos/var/local/commons/repository</url> -->
+	<!-- </repository> -->
+	<!-- </distributionManagement> -->
+	<repositories>
+		<repository>
+			<id>maven2-repository.dev.java.net</id>
+			<name>Java.net Repository for Maven</name>
+			<url>http://download.java.net/maven/2/</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>BioinfoSDK</id>
+			<name>Repository for Bioinfo SDK builds</name>
+			<url>http://repos.bioinfo.cipf.es/maven2</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+
 	<distributionManagement>
 		<repository>
 			<id>default</id>
 			<name>Bioinfo Repository</name>
-			<url>scp://repos/var/local/commons/repository</url>
+			<url>http://repos.bioinfo.cipf.es/maven2/</url>
 		</repository>
 	</distributionManagement>
 
