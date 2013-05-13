@@ -7,23 +7,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import org.bioinfo.cellbase.lib.api.ChromosomeDBAdaptor;
-import org.bioinfo.cellbase.lib.api.CpGIslandDBAdaptor;
-import org.bioinfo.cellbase.lib.api.CytobandDBAdaptor;
-import org.bioinfo.cellbase.lib.api.ExonDBAdaptor;
-import org.bioinfo.cellbase.lib.api.GeneDBAdaptor;
-import org.bioinfo.cellbase.lib.api.GenomeSequenceDBAdaptor;
-import org.bioinfo.cellbase.lib.api.GenomicVariantEffectDBAdaptor;
-import org.bioinfo.cellbase.lib.api.MirnaDBAdaptor;
-import org.bioinfo.cellbase.lib.api.MutationDBAdaptor;
-import org.bioinfo.cellbase.lib.api.PathwayDBAdaptor;
-import org.bioinfo.cellbase.lib.api.ProteinDBAdaptor;
-import org.bioinfo.cellbase.lib.api.RegulatoryRegionDBAdaptor;
-import org.bioinfo.cellbase.lib.api.SnpDBAdaptor;
-import org.bioinfo.cellbase.lib.api.StructuralVariationDBAdaptor;
-import org.bioinfo.cellbase.lib.api.TfbsDBAdaptor;
-import org.bioinfo.cellbase.lib.api.TranscriptDBAdaptor;
-import org.bioinfo.cellbase.lib.api.XRefsDBAdaptor;
+import org.bioinfo.cellbase.lib.api.*;
 import org.bioinfo.cellbase.lib.impl.DBAdaptorFactory;
 import org.bioinfo.commons.Config;
 
@@ -351,5 +335,19 @@ public class MongoDBAdaptorFactory extends DBAdaptorFactory {
 		return (PathwayDBAdaptor) new PathwayMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix),
 				speciesAlias.get(species), version);
 	}
+
+    public RegulationDBAdaptor getRegulationDBAdaptor(String species) {
+        return getRegulationDBAdaptor(species, null);
+    }
+
+    public RegulationDBAdaptor getRegulationDBAdaptor(String species, String version) {
+        String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+        if (!mongoDBFactory.containsKey(speciesVersionPrefix)) {
+            DB db = createCellBaseMongoDB(speciesVersionPrefix);
+            mongoDBFactory.put(speciesVersionPrefix, db);
+        }
+        return (RegulationDBAdaptor) new RegulationMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix),
+                speciesAlias.get(species), version);
+    }
 
 }

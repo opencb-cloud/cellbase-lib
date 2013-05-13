@@ -6,23 +6,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import org.bioinfo.cellbase.lib.api.ChromosomeDBAdaptor;
-import org.bioinfo.cellbase.lib.api.CpGIslandDBAdaptor;
-import org.bioinfo.cellbase.lib.api.CytobandDBAdaptor;
-import org.bioinfo.cellbase.lib.api.ExonDBAdaptor;
-import org.bioinfo.cellbase.lib.api.GeneDBAdaptor;
-import org.bioinfo.cellbase.lib.api.GenomeSequenceDBAdaptor;
-import org.bioinfo.cellbase.lib.api.GenomicVariantEffectDBAdaptor;
-import org.bioinfo.cellbase.lib.api.MirnaDBAdaptor;
-import org.bioinfo.cellbase.lib.api.MutationDBAdaptor;
-import org.bioinfo.cellbase.lib.api.PathwayDBAdaptor;
-import org.bioinfo.cellbase.lib.api.ProteinDBAdaptor;
-import org.bioinfo.cellbase.lib.api.RegulatoryRegionDBAdaptor;
-import org.bioinfo.cellbase.lib.api.SnpDBAdaptor;
-import org.bioinfo.cellbase.lib.api.StructuralVariationDBAdaptor;
-import org.bioinfo.cellbase.lib.api.TfbsDBAdaptor;
-import org.bioinfo.cellbase.lib.api.TranscriptDBAdaptor;
-import org.bioinfo.cellbase.lib.api.XRefsDBAdaptor;
+import org.bioinfo.cellbase.lib.api.*;
 import org.bioinfo.commons.Config;
 import org.bioinfo.commons.log.Logger;
 
@@ -195,5 +179,9 @@ public abstract class DBAdaptorFactory {
 	
 	public abstract PathwayDBAdaptor getPathwayDBAdaptor(String species, String version);
 
+
+    public abstract RegulationDBAdaptor getRegulationDBAdaptor(String species);
+
+    public abstract RegulationDBAdaptor getRegulationDBAdaptor(String species, String version);
 	
 }
