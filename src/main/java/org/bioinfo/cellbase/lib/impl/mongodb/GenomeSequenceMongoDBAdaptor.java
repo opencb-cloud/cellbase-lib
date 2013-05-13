@@ -53,6 +53,9 @@ public class GenomeSequenceMongoDBAdaptor extends MongoDBAdaptor implements Geno
 		if (start < 1) {
 			start = 1;
 		}
+        if (end < 1) {
+            end = 1;
+        }
 		QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome.trim()).and("chunkId")
 				.greaterThanEquals(getChunk(start)).lessThanEquals(getChunk(end));
 
@@ -72,7 +75,7 @@ public class GenomeSequenceMongoDBAdaptor extends MongoDBAdaptor implements Geno
 			}
 		} else {
 			if (sb.toString().length() > 0 && sb.toString().length() + 1 >= endStr) {
-				subStr = sb.toString().substring(startStr, endStr - 1);
+				subStr = sb.toString().substring(startStr-1, endStr - 1);
 			}
 		}
 
