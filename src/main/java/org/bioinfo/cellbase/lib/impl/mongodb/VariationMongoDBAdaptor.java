@@ -10,11 +10,10 @@ import org.bioinfo.cellbase.lib.api.VariationDBAdaptor;
 import org.bioinfo.cellbase.lib.common.GenericFeature;
 import org.bioinfo.cellbase.lib.common.GenericFeatureChunk;
 import org.bioinfo.cellbase.lib.common.Region;
+import org.bioinfo.cellbase.lib.common.variation.TranscriptVariation;
 import org.bioinfo.cellbase.lib.common.variation.Variation;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class VariationMongoDBAdaptor extends MongoDBAdaptor implements VariationDBAdaptor {
 
@@ -75,9 +74,11 @@ public class VariationMongoDBAdaptor extends MongoDBAdaptor implements Variation
                List<TranscriptVariation> transcriptVariationList = variation.getTranscriptVariations();
                 for(TranscriptVariation transcriptVariation : transcriptVariationList){
                     List<String> consequenceTypes = transcriptVariation.getConsequenceTypes();
-                    Collection<String> intersection = consequenceTypes.retainAll(consequence_types);
-                    if(!intersection.isEmpty()){
-                        filteredList.add(variation);
+                    for(String consequence_type : consequence_types){
+                        if(consequenceTypes.contains(consequence_type)){
+                            filteredList.add(variation);
+                            break;
+                        }
                     }
                 }
             }
