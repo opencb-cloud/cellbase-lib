@@ -9,7 +9,7 @@ package org.bioinfo.cellbase.lib.common.variation;
 public class SnpPhenotypeAnnotation implements java.io.Serializable {
 
 	private int snpPhenotypeAnnotationId;
-	private Snp snp;
+//	private Snp snp;
 	private String source;
 	private String associatedGeneName;
 	private String associatedVariantRiskAllele;
@@ -25,7 +25,8 @@ public class SnpPhenotypeAnnotation implements java.io.Serializable {
 	public SnpPhenotypeAnnotation() {
 	}
 
-	public SnpPhenotypeAnnotation(int snpPhenotypeAnnotationId, Snp snp,
+	public SnpPhenotypeAnnotation(int snpPhenotypeAnnotationId, 
+//			Snp snp,
 			String source, String associatedGeneName,
 			String associatedVariantRiskAllele,
 			double riskAlleleFrequencyInControls, double PValue,
@@ -33,7 +34,7 @@ public class SnpPhenotypeAnnotation implements java.io.Serializable {
 			String studyName, String studyType, String studyUrl,
 			String studyDescription) {
 		this.snpPhenotypeAnnotationId = snpPhenotypeAnnotationId;
-		this.snp = snp;
+//		this.snp = snp;
 		this.source = source;
 		this.associatedGeneName = associatedGeneName;
 		this.associatedVariantRiskAllele = associatedVariantRiskAllele;
@@ -55,13 +56,13 @@ public class SnpPhenotypeAnnotation implements java.io.Serializable {
 		this.snpPhenotypeAnnotationId = snpPhenotypeAnnotationId;
 	}
 
-	public Snp getSnp() {
-		return this.snp;
-	}
-
-	public void setSnp(Snp snp) {
-		this.snp = snp;
-	}
+//	public Snp getSnp() {
+//		return this.snp;
+//	}
+//
+//	public void setSnp(Snp snp) {
+//		this.snp = snp;
+//	}
 
 	public String getSource() {
 		return this.source;
