@@ -5,10 +5,8 @@ import com.mongodb.DB;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.QueryBuilder;
-import org.bioinfo.cellbase.lib.api.RegulationDBAdaptor;
 import org.bioinfo.cellbase.lib.api.VariationDBAdaptor;
 import org.bioinfo.cellbase.lib.common.GenericFeature;
-import org.bioinfo.cellbase.lib.common.GenericFeatureChunk;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.variation.TranscriptVariation;
 import org.bioinfo.cellbase.lib.common.variation.Variation;
@@ -87,7 +85,7 @@ public class VariationMongoDBAdaptor extends MongoDBAdaptor implements Variation
     }
 
     @Override
-    public List<List<GenericFeature>> getByRegionList(List<Region> regions) {
+    public List<List<Variation>> getByRegionList(List<Region> regions) {
         return this.getByRegionList(regions, new ArrayList<String>());
     }
 
