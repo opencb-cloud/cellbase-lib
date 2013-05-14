@@ -93,6 +93,7 @@ public class MongoDBAdaptorFactory extends DBAdaptorFactory {
 	@Override
 	public void open(String species, String version) {
 		String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+
 		if (!mongoDBFactory.containsKey(speciesVersionPrefix)) {
 			DB db = createCellBaseMongoDB(speciesVersionPrefix);
 			mongoDBFactory.put(speciesVersionPrefix, db);
@@ -347,6 +348,35 @@ public class MongoDBAdaptorFactory extends DBAdaptorFactory {
             mongoDBFactory.put(speciesVersionPrefix, db);
         }
         return (RegulationDBAdaptor) new RegulationMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix),
+                speciesAlias.get(species), version);
+    }
+
+    public VariationDBAdaptor getVariationDBAdaptor(String species) {
+        return getVariationDBAdaptor(species, null);
+    }
+
+    public VariationDBAdaptor getVariationDBAdaptor(String species, String version) {
+        String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+        if (!mongoDBFactory.containsKey(speciesVersionPrefix)) {
+            DB db = createCellBaseMongoDB(speciesVersionPrefix);
+            mongoDBFactory.put(speciesVersionPrefix, db);
+        }
+        return (VariationDBAdaptor) new VariationMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix),
+                speciesAlias.get(species), version);
+    }
+
+    public ConservationDBAdaptor getConservationDBAdaptor(String species) {
+        return getConservationDBAdaptor(species, null);
+    }
+
+
+    public ConservationDBAdaptor getConservationDBAdaptor(String species, String version) {
+        String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+        if (!mongoDBFactory.containsKey(speciesVersionPrefix)) {
+            DB db = createCellBaseMongoDB(speciesVersionPrefix);
+            mongoDBFactory.put(speciesVersionPrefix, db);
+        }
+        return (ConservationDBAdaptor) new ConservationMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix),
                 speciesAlias.get(species), version);
     }
 
