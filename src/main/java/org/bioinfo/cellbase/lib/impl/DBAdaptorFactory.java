@@ -183,5 +183,14 @@ public abstract class DBAdaptorFactory {
     public abstract RegulationDBAdaptor getRegulationDBAdaptor(String species);
 
     public abstract RegulationDBAdaptor getRegulationDBAdaptor(String species, String version);
-	
+
+
+    public abstract VariationDBAdaptor getVariationDBAdaptor(String species);
+
+    public abstract VariationDBAdaptor getVariationDBAdaptor(String species, String version);
+
+
+    public abstract ConservationDBAdaptor getConservationDBAdaptor(String species);
+
+    public abstract ConservationDBAdaptor getConservationDBAdaptor(String species, String version);
 }
