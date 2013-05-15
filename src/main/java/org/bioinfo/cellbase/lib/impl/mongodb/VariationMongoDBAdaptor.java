@@ -25,11 +25,6 @@ public class VariationMongoDBAdaptor extends MongoDBAdaptor implements Variation
         mongoDBCollection = db.getCollection("variation");
     }
 
-    private int getChunk(int position) {
-        return (position / applicationProperties.getIntProperty("CELLBASE." + version.toUpperCase()
-                + ".REGULATION.CHUNK_SIZE", 2000));
-    }
-
     private List<Variation> executeQuery(DBObject query) {
         List<Variation> result = null;
         DBCursor cursor = mongoDBCollection.find(query);
@@ -59,13 +54,15 @@ public class VariationMongoDBAdaptor extends MongoDBAdaptor implements Variation
         if (end < 1) {
             end = 1;
         }
-        QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome.trim()).and("chunkId")
-                .greaterThanEquals(getChunk(start)).lessThanEquals(getChunk(end));
+        QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome.trim()).and("start").greaterThanEquals(start).lessThanEquals(end);
 
         System.out.println(builder.get().toString());
         List<Variation> variationList = executeQuery(builder.get());
+        System.out.println("-----------------------------------"+variationList.size());
+        System.out.println("-----------------------------------"+consequence_types);
         List<Variation> filteredList  = new ArrayList<>();
-        if(consequence_types.isEmpty()){
+        if(consequence_types == null){
+
             return variationList;
         }else{
             for (Variation variation : variationList) {
@@ -86,7 +83,7 @@ public class VariationMongoDBAdaptor extends MongoDBAdaptor implements Variation
 
     @Override
     public List<List<Variation>> getByRegionList(List<Region> regions) {
-        return this.getByRegionList(regions, new ArrayList<String>());
+        return this.getByRegionList(regions, null);
     }
 
     @Override
@@ -97,5 +94,23 @@ public class VariationMongoDBAdaptor extends MongoDBAdaptor implements Variation
         }
         return result;
     }
+
+    @Override
+    public List<Variation> getById(String id) {
+        QueryBuilder builder = QueryBuilder.start("id").is(id);
+        System.out.println(builder.get().toString());
+        List<Variation> variationList = executeQuery(builder.get());
+        return variationList;
+    }
+
+    @Override
+    public List<List<Variation>> getByIdList(List<String> idList) {
+        List<List<Variation>> result = new ArrayList<List<Variation>>(idList.size());
+        for (String id : idList) {
+            result.add(getById(id));
+        }
+        return result;
+    }
+
 
 }

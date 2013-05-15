@@ -190,7 +190,7 @@ public abstract class DBAdaptorFactory {
     public abstract VariationDBAdaptor getVariationDBAdaptor(String species, String version);
 
 
-    public abstract ConservationDBAdaptor getConservationDBAdaptor(String species);
+    public abstract ConservedRegionDBAdaptor getConservedRegionDBAdaptor(String species);
 
-    public abstract ConservationDBAdaptor getConservationDBAdaptor(String species, String version);
+    public abstract ConservedRegionDBAdaptor getConservedRegionDBAdaptor(String species, String version);
 }

@@ -365,18 +365,18 @@ public class MongoDBAdaptorFactory extends DBAdaptorFactory {
                 speciesAlias.get(species), version);
     }
 
-    public ConservationDBAdaptor getConservationDBAdaptor(String species) {
-        return getConservationDBAdaptor(species, null);
+    public ConservedRegionDBAdaptor getConservedRegionDBAdaptor(String species) {
+        return getConservedRegionDBAdaptor(species, null);
     }
 
 
-    public ConservationDBAdaptor getConservationDBAdaptor(String species, String version) {
+    public ConservedRegionDBAdaptor getConservedRegionDBAdaptor(String species, String version) {
         String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
         if (!mongoDBFactory.containsKey(speciesVersionPrefix)) {
             DB db = createCellBaseMongoDB(speciesVersionPrefix);
             mongoDBFactory.put(speciesVersionPrefix, db);
         }
-        return (ConservationDBAdaptor) new ConservationMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix),
+        return (ConservedRegionDBAdaptor) new ConservedRegionMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix),
                 speciesAlias.get(species), version);
     }
 
