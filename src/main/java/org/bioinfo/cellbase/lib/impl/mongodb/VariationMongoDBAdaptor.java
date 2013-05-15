@@ -1,13 +1,11 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
 import com.google.gson.Gson;
-import com.mongodb.DB;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.QueryBuilder;
+import com.mongodb.*;
 import org.bioinfo.cellbase.lib.api.VariationDBAdaptor;
 import org.bioinfo.cellbase.lib.common.GenericFeature;
 import org.bioinfo.cellbase.lib.common.Region;
+import org.bioinfo.cellbase.lib.common.core.Gene;
 import org.bioinfo.cellbase.lib.common.variation.TranscriptVariation;
 import org.bioinfo.cellbase.lib.common.variation.Variation;
 
@@ -25,9 +23,20 @@ public class VariationMongoDBAdaptor extends MongoDBAdaptor implements Variation
         mongoDBCollection = db.getCollection("variation");
     }
 
-    private List<Variation> executeQuery(DBObject query) {
+    private List<Variation> executeQuery(DBObject query, List<String> excludeFields) {
         List<Variation> result = null;
-        DBCursor cursor = mongoDBCollection.find(query);
+
+        DBCursor cursor = null;
+        if (excludeFields != null && excludeFields.size() > 0) {
+            BasicDBObject returnFields = new BasicDBObject("_id", 0);
+            for (String field : excludeFields) {
+                returnFields.put(field, 0);
+            }
+            cursor = mongoDBCollection.find(query, returnFields);
+        } else {
+            cursor = mongoDBCollection.find(query);
+        }
+
         try {
             if (cursor != null) {
                 result = new ArrayList<Variation>(cursor.size());
@@ -57,9 +66,7 @@ public class VariationMongoDBAdaptor extends MongoDBAdaptor implements Variation
         QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome.trim()).and("start").greaterThanEquals(start).lessThanEquals(end);
 
         System.out.println(builder.get().toString());
-        List<Variation> variationList = executeQuery(builder.get());
-        System.out.println("-----------------------------------"+variationList.size());
-        System.out.println("-----------------------------------"+consequence_types);
+        List<Variation> variationList = executeQuery(builder.get(), null);
         List<Variation> filteredList  = new ArrayList<>();
         if(consequence_types == null){
 
@@ -95,11 +102,12 @@ public class VariationMongoDBAdaptor extends MongoDBAdaptor implements Variation
         return result;
     }
 
+
     @Override
     public List<Variation> getById(String id) {
         QueryBuilder builder = QueryBuilder.start("id").is(id);
         System.out.println(builder.get().toString());
-        List<Variation> variationList = executeQuery(builder.get());
+        List<Variation> variationList = executeQuery(builder.get(), null);
         return variationList;
     }
 
@@ -112,5 +120,46 @@ public class VariationMongoDBAdaptor extends MongoDBAdaptor implements Variation
         return result;
     }
 
+    public String getAllIntervalFrequencies(Region region, int interval) {
+
+        QueryBuilder builder = QueryBuilder.start("chromosome").is(region.getChromosome()).and("end")
+                .greaterThan(region.getStart()).and("start").lessThan(region.getEnd());
+
+        int numIntervals = (region.getEnd() - region.getStart()) / interval + 1;
+        int[] intervalCount = new int[numIntervals];
+
+        List<Variation> variationList = executeQuery(builder.get(), Arrays.asList("id,chromosome,end,strand,type,reference,alternate,alleleString,species,assembly,source,version,transcriptVariations,xrefs,featureId,featureAlias,variantFreq,validationStatus"));
+
+        System.out.println("Variation index");
+        System.out.println("numIntervals: " + numIntervals);
+        for (Variation variation : variationList) {
+            System.out.print("gsnp start:" + variation.getStart() + " ");
+            if (variation.getStart() >= region.getStart() && variation.getStart() <= region.getEnd()) {
+                int intervalIndex = (variation.getStart() - region.getStart()) / interval; // truncate
+                System.out.print(intervalIndex + " ");
+                intervalCount[intervalIndex]++;
+            }
+        }
+        System.out.println("Variation index");
+
+        int intervalStart = region.getStart();
+        int intervalEnd = intervalStart + interval - 1;
+        BasicDBList intervalList = new BasicDBList();
+        for (int i = 0; i < numIntervals; i++) {
+            BasicDBObject intervalObj = new BasicDBObject();
+            intervalObj.put("start", intervalStart);
+            intervalObj.put("end", intervalEnd);
+            intervalObj.put("interval", i);
+            intervalObj.put("value", intervalCount[i]);
+            intervalList.add(intervalObj);
+            intervalStart = intervalEnd + 1;
+            intervalEnd = intervalStart + interval - 1;
+        }
+
+        System.out.println(region.getChromosome());
+        System.out.println(region.getStart());
+        System.out.println(region.getEnd());
+        return intervalList.toString();
+    }
 
 }

@@ -18,4 +18,6 @@ public interface VariationDBAdaptor {
 
     public List<List<Variation>> getByRegionList(List<Region> regions, List<String> consequence_types);
 
+    public String getAllIntervalFrequencies(Region region, int interval);
+
 }
