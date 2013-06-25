@@ -24,15 +24,17 @@ public interface GeneDBAdaptor extends FeatureDBAdaptor {
 
 	public List<Gene> getAllByEnsemblIdList(List<String> ensemblIdList, boolean fetchTranscriptsAndExons);
 
-	public List<Gene> getAllByName(String name, boolean fetchTranscripts);
+	public List<Gene> getAllByName(String name, List<String> exclude);
 
-	public List<List<Gene>> getAllByNameList(List<String> nameList, boolean fetchTranscripts);
+	public List<List<Gene>> getAllByNameList(List<String> nameList, List<String> exclude);
 
 	public Gene getByEnsemblTranscriptId(String transcriptId);
 
 	public List<Gene> getAllByEnsemblTranscriptIdList(List<String> transcriptIdList);
 
-	public List<Gene> getAllByXref(String xref);
+//	public List<Gene> getByXref(String xref, List<String> exclude);
+//
+//	public List<List<Gene>> getByXrefList(List<String> xrefList, List<String> exclude);
 
 	public List<Gene> getAllByBiotype(String biotype);
 

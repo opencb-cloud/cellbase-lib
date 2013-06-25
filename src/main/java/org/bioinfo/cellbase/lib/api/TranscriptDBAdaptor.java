@@ -19,9 +19,9 @@ public interface TranscriptDBAdaptor extends FeatureDBAdaptor {
 	
 	public List<Transcript> getAllByEnsemblIdList(List<String> ensemblIdList);
 
-	public List<Transcript> getAllByName(String name);
+	public List<List<Transcript>> getAllByName(String name, List<String> exclude);
 
-	public List<List<Transcript>> getAllByNameList(List<String> nameList);
+	public List<List<List<Transcript>>> getAllByNameList(List<String> nameList, List<String> exclude);
 	
 	public List<Transcript> getByEnsemblGeneId(String ensemblGeneId);
 	

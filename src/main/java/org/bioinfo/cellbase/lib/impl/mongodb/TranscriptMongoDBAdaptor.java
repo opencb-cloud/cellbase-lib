@@ -29,20 +29,20 @@ public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements Transcri
 		mongoDBCollection = db.getCollection("core");
 	}
 
-	private List<Transcript> executeQuery(DBObject query) {
-		List<Transcript> result = null;
+	private List<List<Transcript>> executeQuery(DBObject query) {
+		List<List<Transcript>> result = null;
 
 		BasicDBObject returnFields = new BasicDBObject("transcripts", 1);
 		DBCursor cursor = mongoDBCollection.find(query, returnFields);
 
 		try {
 			if (cursor != null) {
-				result = new ArrayList<Transcript>();
+				result = new ArrayList<List<Transcript>>();
 				Gson gson = new Gson();
 				Gene gene;
 				while (cursor.hasNext()) {
 					gene = (Gene) gson.fromJson(cursor.next().toString(), Gene.class);
-					result.addAll(gene.getTranscripts());
+					result.add(gene.getTranscripts());
 //					BasicDBList b = new BasicDBList();
 //					b.addAll((BasicDBList)cursor.next().get("transcripts"));
 //					trans = (Transcript) gson.fromJson(cursor.next().get("transcripts").toString(), Transcript.class);
@@ -134,29 +134,38 @@ public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements Transcri
 	}
 
 	@Override
-	public List<Transcript> getAllByName(String name) {
-		BasicDBObject query = new BasicDBObject("transcripts.xrefs.id", name);
+	public List<List<Transcript>> getAllByName(String name, List<String> exclude) {
+		BasicDBObject query = new BasicDBObject("transcripts.xrefs.id", name.toUpperCase());
+        List<List<Transcript>> result = new ArrayList<List<Transcript>>();
+        List<List<Transcript>> transcriptsList = executeQuery(query);
 
-		List<Transcript> result = new ArrayList<Transcript>();
-		List<Transcript> transcripts = executeQuery(query);
-		for (Transcript transcript : transcripts) {
-			// List<Xref> xrefs = transcript.getXrefs();
-			for (Xref xref : transcript.getXrefs()) {
-				if (xref.getId().equals(name)) {
-					result.add(transcript);
-					break;
-				}
-			}
+        boolean found = false;
+		for (List<Transcript> transcripts : transcriptsList) {
+
+            found = false;
+            for (Transcript transcript : transcripts) {
+                for (Xref xref : transcript.getXrefs()) {
+                    if (xref.getId().equals(name.toUpperCase())) {
+                        result.add(transcripts);
+                        found = true;
+                        break;
+                    }
+                }
+                if(found){
+                    break;
+                }
+            }
+
+
 		}
 		return result;
-
 	}
 
 	@Override
-	public List<List<Transcript>> getAllByNameList(List<String> nameList) {
-		List<List<Transcript>> transcripts = new ArrayList<List<Transcript>>(nameList.size());
+	public List<List<List<Transcript>>> getAllByNameList(List<String> nameList, List<String> exclude) {
+        List<List<List<Transcript>>> transcripts = new ArrayList<List<List<Transcript>>>(nameList.size());
 		for (String name : nameList) {
-			transcripts.add(getAllByName(name));
+			transcripts.add(getAllByName(name, exclude));
 		}
 		return transcripts;
 	}

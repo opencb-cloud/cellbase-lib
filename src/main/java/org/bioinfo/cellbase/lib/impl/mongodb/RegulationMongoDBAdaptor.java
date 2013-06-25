@@ -35,6 +35,7 @@ public class RegulationMongoDBAdaptor extends MongoDBAdaptor implements Regulati
 
     private List<GenericFeatureChunk> executeQuery(DBObject query) {
         List<GenericFeatureChunk> result = null;
+        logger.info(query);
         DBCursor cursor = mongoDBCollection.find(query);
         try {
             if (cursor != null) {
@@ -64,6 +65,7 @@ public class RegulationMongoDBAdaptor extends MongoDBAdaptor implements Regulati
         }
         QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome.trim()).and("chunkId")
                 .greaterThanEquals(getChunk(start)).lessThanEquals(getChunk(end));
+
 
         System.out.println(builder.get().toString());
         List<GenericFeatureChunk> chunkList = executeQuery(builder.get());
