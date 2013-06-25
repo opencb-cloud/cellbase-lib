@@ -159,14 +159,18 @@ public class MongoDBAdaptorFactory extends DBAdaptorFactory {
 
 	@Override
 	public ExonDBAdaptor getExonDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
+        return getExonDBAdaptor(species, null);
 	}
 
 	@Override
 	public ExonDBAdaptor getExonDBAdaptor(String species, String version) {
-		// TODO Auto-generated method stub
-		return null;
+        String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+        if (!mongoDBFactory.containsKey(speciesVersionPrefix)) {
+            DB db = createCellBaseMongoDB(speciesVersionPrefix);
+            mongoDBFactory.put(speciesVersionPrefix, db);
+        }
+        return (ExonDBAdaptor) new ExonMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix),
+                speciesAlias.get(species), version);
 	}
 
 	@Override

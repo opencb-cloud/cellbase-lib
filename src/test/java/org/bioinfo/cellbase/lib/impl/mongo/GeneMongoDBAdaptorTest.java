@@ -1,6 +1,7 @@
 package org.bioinfo.cellbase.lib.impl.mongo;
 
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bioinfo.cellbase.lib.api.GeneDBAdaptor;
@@ -17,11 +18,11 @@ public class GeneMongoDBAdaptorTest {
 	private DBAdaptorFactory dbAdaptorFact = new MongoDBAdaptorFactory();
 	private GeneDBAdaptor geneDBAdaptor;
 	private long startExecTime;
-	private String species = "hsa";
+	private String species = "hsapiens";
 	
 	@Before
 	public void beforeTestStart() {
-		geneDBAdaptor = dbAdaptorFact.getGeneDBAdaptor(species, "V3");
+		geneDBAdaptor = dbAdaptorFact.getGeneDBAdaptor(species, "v3");
 		startExecTime = System.currentTimeMillis();
 	}
 	
@@ -59,5 +60,21 @@ public class GeneMongoDBAdaptorTest {
 //			System.out.println(StringWriter.serialize(gene));			
 //		}
 	}
-	
+
+
+    @Test
+    public void testXref() {
+//        List<List<Gene>> genes = geneDBAdaptor.getByXrefList(Arrays.asList("brca2"));
+//        List<Gene> genes2 = geneDBAdaptor.getByXref("brca2");
+//        System.out.println(genes.size());
+//        System.out.println(genes.get(0));
+//        System.out.println(genes2.size());
+//		for(Gene gene: genes2) {
+//			System.out.println(gene);
+//		}
+        String str = "a,b, ";
+
+        System.out.println(Arrays.asList(str.split(",")));
+
+    }
 }

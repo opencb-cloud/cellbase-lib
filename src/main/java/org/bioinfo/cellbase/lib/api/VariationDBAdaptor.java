@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface VariationDBAdaptor {
 
-    public List<Variation> getById(String id);
+    public List<Variation> getById(String id, List<String> exclude);
 
-    List<List<Variation>> getByIdList(List<String> idList);
+    List<List<Variation>> getByIdList(List<String> idList, List<String> exclude);
 
-    public List<Variation> getByRegion(String chromosome, int start, int end, List<String> consequence_types);
+    public List<Variation> getByRegion(String chromosome, int start, int end, List<String> consequence_types, List<String> exclude);
 
-    public List<List<Variation>> getByRegionList(List<Region> regions);
+    public List<List<Variation>> getByRegionList(List<Region> regions, List<String> exclude);
 
-    public List<List<Variation>> getByRegionList(List<Region> regions, List<String> consequence_types);
+    public List<List<Variation>> getByRegionList(List<Region> regions, List<String> consequence_types, List<String> exclude);
 
     public String getAllIntervalFrequencies(Region region, int interval);
 
