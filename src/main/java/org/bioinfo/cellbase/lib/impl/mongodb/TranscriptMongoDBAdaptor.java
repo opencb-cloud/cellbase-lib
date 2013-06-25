@@ -1,18 +1,18 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.bioinfo.cellbase.lib.api.TranscriptDBAdaptor;
-import org.bioinfo.cellbase.lib.common.core.Transcript;
-import org.bioinfo.cellbase.lib.common.core.Xref;
 import org.bioinfo.cellbase.lib.common.Position;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.Gene;
+import org.bioinfo.cellbase.lib.common.core.Transcript;
+import org.bioinfo.cellbase.lib.common.core.Xref;
 
 import com.google.gson.Gson;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCursor;
@@ -43,6 +43,9 @@ public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements Transcri
 				while (cursor.hasNext()) {
 					gene = (Gene) gson.fromJson(cursor.next().toString(), Gene.class);
 					result.addAll(gene.getTranscripts());
+//					BasicDBList b = new BasicDBList();
+//					b.addAll((BasicDBList)cursor.next().get("transcripts"));
+//					trans = (Transcript) gson.fromJson(cursor.next().get("transcripts").toString(), Transcript.class);
 				}
 			}
 		} finally {

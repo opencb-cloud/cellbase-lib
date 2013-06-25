@@ -11,7 +11,7 @@ public class TranscriptVariation {
 	private int cdsStart;
 	private int cdsEnd;
 	private int cdnaStart;
-	private int cdnEnd;
+	private int cdnaEnd;
 	private int translationStart;
 	private int translationEnd;
 	private int distanceToTranscript;
@@ -40,7 +40,7 @@ public class TranscriptVariation {
 		this.cdsStart = cdsStart;
 		this.cdsEnd = cdsEnd;
 		this.cdnaStart = cdnaStart;
-		this.cdnEnd = cdnEnd;
+		this.cdnaEnd = cdnEnd;
 		this.translationStart = translationStart;
 		this.translationEnd = translationEnd;
 		this.distanceToTranscript = distanceToTranscript;
@@ -98,11 +98,11 @@ public class TranscriptVariation {
 	public void setCdnaStart(int cdnaStart) {
 		this.cdnaStart = cdnaStart;
 	}
-	public int getCdnEnd() {
-		return cdnEnd;
+	public int getCdnaEnd() {
+		return cdnaEnd;
 	}
-	public void setCdnEnd(int cdnEnd) {
-		this.cdnEnd = cdnEnd;
+	public void setCdnaEnd(int cdnaEnd) {
+		this.cdnaEnd = cdnaEnd;
 	}
 	public int getTranslationStart() {
 		return translationStart;
