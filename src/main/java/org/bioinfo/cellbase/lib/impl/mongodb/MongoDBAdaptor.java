@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import javax.management.Query;
+import java.util.Set;
 
 import org.bioinfo.cellbase.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.cellbase.lib.common.Region;
@@ -33,7 +33,19 @@ public class MongoDBAdaptor extends DBAdaptor{
 		// reading application.properties file
 		resourceBundle = ResourceBundle.getBundle("org.bioinfo.cellbase.lib.impl.mongodb.conf.application");
 		try {
-			applicationProperties = new Config(resourceBundle);
+			if(applicationProperties == null) {
+				applicationProperties = new Config(resourceBundle);				
+			}else {
+				// applicationProperties object must have been filled in DBAdpator class,
+				// then just append MongoDB properties
+				String key;
+				Set<String> keys = resourceBundle.keySet();
+				Iterator<String> keysIter = keys.iterator();
+				while(keysIter.hasNext()) {
+					key = keysIter.next();
+					applicationProperties.put(key, resourceBundle.getObject(key));	
+				}
+			}
 		} catch (IOException e) {
 			applicationProperties = new Config();
 			e.printStackTrace();
@@ -60,7 +72,7 @@ public class MongoDBAdaptor extends DBAdaptor{
 		this.db = db;
 		this.species = species;
 		this.version = version;
-
+//		logger.warn(applicationProperties.toString());
 		initSpeciesVersion(species, version);
 	}
 

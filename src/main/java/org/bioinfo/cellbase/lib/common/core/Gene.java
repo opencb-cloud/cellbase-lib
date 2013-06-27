@@ -48,6 +48,18 @@ public class Gene implements Serializable {
 		this.transcripts = transcripts;
 		this.mirna = mirna;
 	}
+	
+	
+
+	@Override
+	public String toString() {
+		return "Gene [_id=" + _id + ", id=" + id + ", name=" + name
+				+ ", biotype=" + biotype + ", status=" + status
+				+ ", chromosome=" + chromosome + ", start=" + start + ", end="
+				+ end + ", strand=" + strand + ", source=" + source
+				+ ", description=" + description + ", transcripts="
+				+ transcripts + ", mirna=" + mirna + "]";
+	}
 
 	public String getId() {
 		return id;

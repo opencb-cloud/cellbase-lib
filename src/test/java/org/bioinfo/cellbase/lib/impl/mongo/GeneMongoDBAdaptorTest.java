@@ -45,9 +45,13 @@ public class GeneMongoDBAdaptorTest {
 	
 	@Test
 	public void testGetAllByRegionTest() {
-		List<Gene> genes = geneDBAdaptor.getAllByRegion(new Region("2", 1000, 50000), true);
+		List<Gene> genes = geneDBAdaptor.getAllByRegion(new Region("2", 1000, 90000), true);
 		for(Gene gene: genes) {
-			
+			System.out.println(gene.toString());			
+		}
+		
+		genes = geneDBAdaptor.getAllByRegion(new Region("2", 1000, 90000), true);
+		for(Gene gene: genes) {
 			System.out.println(gene.toString());			
 		}
 	}

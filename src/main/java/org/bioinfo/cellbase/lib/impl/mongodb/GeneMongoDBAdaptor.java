@@ -3,6 +3,9 @@ package org.bioinfo.cellbase.lib.impl.mongodb;
 import java.util.*;
 
 import com.mongodb.*;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.bioinfo.cellbase.lib.api.GeneDBAdaptor;
 import org.bioinfo.cellbase.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.cellbase.lib.common.Position;
@@ -15,6 +18,7 @@ import com.google.gson.Gson;
 
 public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor {
 
+	
 	public GeneMongoDBAdaptor(DB db) {
 		super(db);
 	}
@@ -22,6 +26,8 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 	public GeneMongoDBAdaptor(DB db, String species, String version) {
 		super(db, species, version);
 		mongoDBCollection = db.getCollection("core");
+			
+		System.out.println("In GeneMongoDBAdaptor constructor");
 	}
 	
 	private List<Gene> executeQuery(DBObject query, List<String> excludeFields) {

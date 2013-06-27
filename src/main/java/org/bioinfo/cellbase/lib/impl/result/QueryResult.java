@@ -1,7 +1,6 @@
 package org.bioinfo.cellbase.lib.impl.result;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class QueryResult extends LinkedHashMap<String, Object> {
 
@@ -10,24 +9,62 @@ public class QueryResult extends LinkedHashMap<String, Object> {
 
 	
 	public QueryResult() {
-
+		initialize();
 	}
 
 	public QueryResult(int size) {
-		super(size); 
+		super(size);
+		initialize();
 	}
 
 	public QueryResult(String key, Object value) {
-		put(key, value); 
-	}
-
-	public QueryResult(Map<String, Object> map) {
-		super(map);
+		initialize();
+		put(key, value);
 	}
 	
-	public static QueryResult build() {
-		return new QueryResult();
+	public QueryResult(Object key, Object value, Object a) {
+		initialize();
+//		put(key, value);
 	}
+
+	private void initialize() {
+		this.put("time", "");
+		this.put("dbVersion", "");
+		this.put("apiVersion", "");
+		this.put("numResults", "");
+		this.put("warningMsg", "");
+		this.put("errorMsg", "");
+		this.put("featureType", "");
+		this.put("resultType", "");
+		this.put("result", "");
+	}
+	
+	/**
+	 * Some shortcuts methods for most common attributes
+	 * 
+	 */
+	public Object getTime() {
+		return this.get("time");
+	}
+	
+	public void setTime(Object value) {
+		this.put("time", value);
+	}
+	
+	
+	public Object getResult() {
+		return this.get("result");
+	}
+	
+	public void setResult(Object value) {
+		this.put("result", value);
+	}
+	
+	
+	/**
+	 * 
+	 *
+	 */
 	
 	public boolean containsField(String key) {
 		return this.containsKey(key);

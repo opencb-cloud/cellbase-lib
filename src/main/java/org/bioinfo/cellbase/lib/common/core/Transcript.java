@@ -55,6 +55,21 @@ public class Transcript implements Serializable {
 		this.tfbs = tfbs;
 	}
 
+	
+	
+	@Override
+	public String toString() {
+		return "Transcript [id=" + id + ", name=" + name + ", biotype="
+				+ biotype + ", status=" + status + ", chromosome=" + chromosome
+				+ ", start=" + start + ", end=" + end + ", strand=" + strand
+				+ ", genomicCodingStart=" + genomicCodingStart
+				+ ", genomicCodingEnd=" + genomicCodingEnd
+				+ ", cdnaCodingStart=" + cdnaCodingStart + ", cdnaCodingEnd="
+				+ cdnaCodingEnd + ", cdsLength=" + cdsLength + ", proteinID="
+				+ proteinID + ", description=" + description + ", xrefs="
+				+ xrefs + ", tfbs=" + tfbs + ", exons=" + exons + "]";
+	}
+
 	public String getId() {
 		return id;
 	}
