@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bioinfo.cellbase.lib.common.ProteinRegion;
 import org.bioinfo.cellbase.lib.common.Region;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 import org.bioinfo.formats.parser.biopax.ProteinInteraction;
 import org.bioinfo.formats.parser.uniprot.v140jaxb.DbReferenceType;
 import org.bioinfo.formats.parser.uniprot.v140jaxb.FeatureType;
@@ -14,7 +15,7 @@ public interface ProteinDBAdaptor extends FeatureDBAdaptor {
 
 	
 	@Override
-	public List<Protein> getAll();
+	public QueryResult getAll();
 
 	public List<String> getAllUniprotAccessions();
 	

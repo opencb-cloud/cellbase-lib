@@ -5,12 +5,13 @@ import java.util.List;
 import org.bioinfo.cellbase.lib.common.Position;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.Exon;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 
 public interface ExonDBAdaptor extends FeatureDBAdaptor {
 
 	
 	@Override
-	public List<Exon> getAll();
+	public QueryResult getAll();
 
 	
 	public List<String> getAllEnsemblIds();

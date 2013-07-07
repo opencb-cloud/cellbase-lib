@@ -1,6 +1,6 @@
 package org.bioinfo.cellbase.lib.impl.mongo;
 
-import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -8,6 +8,9 @@ import org.bioinfo.cellbase.lib.api.GeneDBAdaptor;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.Gene;
 import org.bioinfo.cellbase.lib.impl.DBAdaptorFactory;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 import org.bioinfo.cellbase.lib.impl.mongodb.MongoDBAdaptorFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -39,26 +42,35 @@ public class GeneMongoDBAdaptorTest {
 	}
 
 	@Test
-	public void testGetAllEnsemblIds() {
-		System.out.println(geneDBAdaptor.getAllEnsemblIds().size());
+	public void testGetAllBYId() {
+		QueryResponse qr = geneDBAdaptor.getAllById("BRCA2", new QueryOptions("transcripts", true));
+		System.out.println(qr.toJson());
+		
+		qr = geneDBAdaptor.getAllByIdList(Arrays.asList("SNORA16", "BRCA2"), new QueryOptions("transcripts", false));
+		System.out.println(qr.toJson());
 	}
 	
 	@Test
 	public void testGetAllByRegionTest() {
-		List<Gene> genes = geneDBAdaptor.getAllByRegion(new Region("2", 1000, 90000), true);
-		for(Gene gene: genes) {
-			System.out.println(gene.toString());			
-		}
+//		QueryResponse qr = geneDBAdaptor.getAllByRegion(new Region("2", 1000, 11190000), new QueryOptions("transcripts", false));
+//		System.out.println(qr.toJson());
 		
-		genes = geneDBAdaptor.getAllByRegion(new Region("2", 1000, 90000), true);
-		for(Gene gene: genes) {
-			System.out.println(gene.toString());			
-		}
+		
+		List<Region> regions = new ArrayList<>();
+		regions.add(new Region("2", 1000, 1190000));
+		regions.add(new Region("12", 5000, 1190000));
+		QueryResponse qr = geneDBAdaptor.getAllByRegionList(regions, new QueryOptions("transcripts", false));
+//		System.out.println(qr.toJson());
+		
+//		for(Gene gene: genes) {
+//			System.out.println(gene.toString());			
+//		}
+		
 	}
 	
 	@Test
 	public void testGetAllByBiotypeTest() {
-		List<Gene> genes = geneDBAdaptor.getAllByBiotype("protein_coding");
+//		List<Gene> genes = geneDBAdaptor.getAllByBiotype("protein_coding");
 //		for(Gene gene: genes) {
 //			
 //			System.out.println(StringWriter.serialize(gene));			

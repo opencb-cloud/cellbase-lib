@@ -5,62 +5,92 @@ import java.util.List;
 import org.bioinfo.cellbase.lib.common.Position;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.Gene;
-
-import com.mongodb.BasicDBList;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
 
 public interface GeneDBAdaptor extends FeatureDBAdaptor {
 
 	// @Override
 
-	public List<Gene> getAll(List<String> biotype, Boolean id);
+	/**
+	 * List<Gene>
+	 * @param biotype
+	 * @param id
+	 * @return
+	 */
+//	public QueryResult getAll(List<String> biotype, Boolean id);
+	
+	public QueryResponse getAll(QueryOptions options);
 
-	public List<String> getAllEnsemblIds();
+	/**
+	 * List<String>
+	 * @return
+	 */
+//	public QueryResult getAllEnsemblIds();
 
-	public Gene getByEnsemblId(String ensemblId);
+	
+//	public QueryResult getByEnsemblId(String ensemblId);
+//
+//	public List<Gene> getAllByEnsemblIdList(List<String> ensemblIdList);
+	
+	public QueryResponse getAllById(String id, QueryOptions options);
 
-	public List<Gene> getAllByEnsemblIdList(List<String> ensemblIdList);
+	public QueryResponse getAllByIdList(List<String> idList, QueryOptions options);
 
-	public Gene getByEnsemblId(String ensemblId, boolean fetchTranscriptsAndExons);
-
-	public List<Gene> getAllByEnsemblIdList(List<String> ensemblIdList, boolean fetchTranscriptsAndExons);
-
-	public List<Gene> getAllByName(String name, List<String> exclude);
-
-	public List<List<Gene>> getAllByNameList(List<String> nameList, List<String> exclude);
-
-	public Gene getByEnsemblTranscriptId(String transcriptId);
-
-	public List<Gene> getAllByEnsemblTranscriptIdList(List<String> transcriptIdList);
+//	public Gene getByEnsemblId(String ensemblId, boolean fetchTranscriptsAndExons);
+//
+//	public List<Gene> getAllByEnsemblIdList(List<String> ensemblIdList, boolean fetchTranscriptsAndExons);
+//
+//	public QueryResult getAllByName(String name, List<String> exclude);
+//
+//	public List<List<Gene>> getAllByNameList(List<String> nameList, List<String> exclude);
+//
+//	public QueryResult getByEnsemblTranscriptId(String transcriptId);
+//
+//	public QueryResult getAllByEnsemblTranscriptIdList(List<String> transcriptIdList);
 
 //	public List<Gene> getByXref(String xref, List<String> exclude);
 //
 //	public List<List<Gene>> getByXrefList(List<String> xrefList, List<String> exclude);
 
-	public List<Gene> getAllByBiotype(String biotype);
+	// Now they are filters of getAll
+//	public QueryResult getAllByBiotype(String biotype);
+//
+//	public List<Gene> getAllByBiotypeList(List<String> biotypeList);
 
-	public List<Gene> getAllByBiotypeList(List<String> biotypeList);
+//	public List<Gene> getAllByPosition(String chromosome, int position);
+	
+	public QueryResponse getAllByPosition(String chromosome, int position, QueryOptions options);
 
-	public List<Gene> getAllByPosition(String chromosome, int position);
+//	public List<Gene> getAllByPosition(Position position);
+	
+	public QueryResponse getAllByPosition(Position position, QueryOptions options);
 
-	public List<Gene> getAllByPosition(Position position);
-
-	public List<List<Gene>> getAllByPositionList(List<Position> positionList);
+//	public List<List<Gene>> getAllByPositionList(List<Position> positionList);
+	
+	public QueryResponse getAllByPositionList(List<Position> positionList, QueryOptions options);
 
 //	public List<Gene> getAllByRegion(String chromosome);
 //
 //	public List<Gene> getAllByRegion(String chromosome, int start);
 //
-	public List<Gene> getAllByRegion(String chromosome, int start, int end, boolean fetchTranscripts);
+//	public QueryResult getAllByRegion(String chromosome, int start, int end, boolean fetchTranscripts);
 
-	public List<Gene> getAllByRegion(String chromosome, int start, int end, List<String> biotypeList, boolean fetchTranscripts);
+//	public QueryResult getAllByRegion(String chromosome, int start, int end, List<String> biotypeList, boolean fetchTranscripts);
+	
+	public QueryResponse getAllByRegion(String chromosome, int start, int end, QueryOptions options);
 
-	public List<Gene> getAllByRegion(Region region, boolean fetchTranscripts);
+//	public QueryResult getAllByRegion(Region region, boolean fetchTranscripts);
+//
+//	public QueryResult getAllByRegion(Region region, List<String> biotypeList, boolean fetchTranscripts);
+	
+	public QueryResponse getAllByRegion(Region region, QueryOptions options);
 
-	public List<Gene> getAllByRegion(Region region, List<String> biotypeList, boolean fetchTranscripts);
-
-	public List<List<Gene>> getAllByRegionList(List<Region> regionList, boolean fetchTranscripts);
-
-	public List<List<Gene>> getAllByRegionList(List<Region> regions, List<String> biotypeList, boolean fetchTranscripts);
+//	public QueryResult getAllByRegionList(List<Region> regionList, boolean fetchTranscripts);
+//
+//	public QueryResult getAllByRegionList(List<Region> regions, List<String> biotypeList, boolean fetchTranscripts);
+	
+	public QueryResponse getAllByRegionList(List<Region> regions, QueryOptions options);
 
 	public List<Gene> getAllByCytoband(String chromosome, String cytoband);
 

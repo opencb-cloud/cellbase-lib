@@ -10,6 +10,7 @@ import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.Gene;
 import org.bioinfo.cellbase.lib.common.core.Transcript;
 import org.bioinfo.cellbase.lib.common.core.Xref;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 
 import com.google.gson.Gson;
 import com.mongodb.BasicDBList;
@@ -110,7 +111,7 @@ public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements Transcri
 	}
 
 	@Override
-	public List<Transcript> getAll() {
+	public QueryResult getAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

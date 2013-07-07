@@ -1,18 +1,26 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import com.mongodb.*;
-
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.bioinfo.cellbase.lib.api.GeneDBAdaptor;
-import org.bioinfo.cellbase.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.cellbase.lib.common.Position;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.Gene;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 
-import com.google.gson.Gson;
+import com.mongodb.AggregationOutput;
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.QueryBuilder;
 
 //import org.bioinfo.infrared.core.cellbase.Gene;
 
@@ -26,187 +34,142 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 	public GeneMongoDBAdaptor(DB db, String species, String version) {
 		super(db, species, version);
 		mongoDBCollection = db.getCollection("core");
-			
+		
 		System.out.println("In GeneMongoDBAdaptor constructor");
 	}
 	
-	private List<Gene> executeQuery(DBObject query, List<String> excludeFields) {
-		List<Gene> result = null;
-		
-		DBCursor cursor = null;
-		if (excludeFields != null && excludeFields.size() > 0) {
-			BasicDBObject returnFields = new BasicDBObject("_id", 0);
-			for (String field : excludeFields) {
-				returnFields.put(field, 0);
-			}
-			cursor = mongoDBCollection.find(query, returnFields);
-		} else {
-			cursor = mongoDBCollection.find(query);
-		}
-		
-		try {
-			if (cursor != null) {
-				result = new ArrayList<Gene>(cursor.size());
-				Gson gson = new Gson();
-				Gene gene;
-				while (cursor.hasNext()) {
-					gene = (Gene) gson.fromJson(cursor.next().toString(), Gene.class);
-					result.add(gene);
-				}
-			}
-		} finally {
-			cursor.close();
-		}
-		return result;
-	}
+//	private List<Gene> executeQuery(DBObject query, List<String> excludeFields) {
+//		List<Gene> result = null;
+//		
+//		DBCursor cursor = null;
+//		if (excludeFields != null && excludeFields.size() > 0) {
+//			BasicDBObject returnFields = new BasicDBObject("_id", 0);
+//			for (String field : excludeFields) {
+//				returnFields.put(field, 0);
+//			}
+//			cursor = mongoDBCollection.find(query, returnFields);
+//		} else {
+//			cursor = mongoDBCollection.find(query);
+//		}
+//		
+//		try {
+//			if (cursor != null) {
+//				result = new ArrayList<Gene>(cursor.size());
+//				Gson gson = new Gson();
+//				Gene gene;
+//				while (cursor.hasNext()) {
+//					gene = (Gene) gson.fromJson(cursor.next().toString(), Gene.class);
+//					result.add(gene);
+//				}
+//			}
+//		} finally {
+//			cursor.close();
+//		}
+//		return result;
+//	}
+	
 	
 	@Override
-	public List<? extends Object> getAll() {
-		BasicDBObject query = new BasicDBObject();
-		return executeQuery(query, null);
+	public QueryResponse getAll(QueryOptions options) {
+		QueryBuilder builder = new QueryBuilder();
+		
+		List<Object> biotypes = options.getList("biotypes", null);
+		if (biotypes != null && biotypes.size() > 0) {
+			BasicDBList biotypeIds = new BasicDBList();
+			biotypeIds.addAll(biotypes);
+			builder = builder.and("biotype").in(biotypeIds);
+		}
+		
+		if (options.getBoolean("transcripts", true)) {
+			return executeQuery("result", builder.get(), null, null, options);
+		} else {
+			return executeQuery("result", builder.get(), Arrays.asList("transcripts"), null, options);
+		}
 	}
 
 	@Override
-	public List<String> getAllIds() {
-		// TODO Auto-generated method stub
-		return null;
+	public QueryResponse getAllById(String id, QueryOptions options) {
+		QueryBuilder builder = QueryBuilder.start("transcripts.xrefs.id").is(id);
+		
+		if (options.getBoolean("transcripts", true)) {
+			return executeQuery(id, builder.get(), null, null, options);
+		} else {
+			return executeQuery(id, builder.get(), Arrays.asList("transcripts"), null, options);
+		}
 	}
 
 	@Override
-	public Map<String, Object> getInfo(String id) {
-		// TODO Auto-generated method stub
-		return null;
+	public QueryResponse getAllByIdList(List<String> idList, QueryOptions options) {
+//		QueryBuilder builder = QueryBuilder.start("transcripts.xrefs.id").in(idList);
+		
+		List<DBObject> queries = new ArrayList<>();
+		for(String id: idList) {
+			QueryBuilder builder = QueryBuilder.start("transcripts.xrefs.id").is(id);
+			queries.add(builder.get());
+		}
+		
+		if (options.getBoolean("transcripts", true)) {
+			return executeQueryList(idList, queries, null, null, options);
+		} else {
+			return executeQueryList(idList, queries, Arrays.asList("transcripts"), null, options);
+		}
 	}
 
-	@Override
-	public List<Map<String, Object>> getInfoByIdList(List<String> idList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public Map<String, Object> getFullInfo(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Map<String, Object>> getFullInfoByIdList(List<String> idList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Region getRegionById(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Region> getAllRegionsByIdList(List<String> idList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getSequenceById(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<String> getAllSequencesByIdList(List<String> idList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Gene> getAll(List<String> biotype, Boolean id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<String> getAllEnsemblIds() {
+	public QueryResponse getAllEnsemblIds() {
 		BasicDBObject query = new BasicDBObject();
 
+		query.put("id", "ENSG00000260748");
 		BasicDBObject returnFields = new BasicDBObject();
+		returnFields.put("transcripts.xrefs", 1);
+		DBCursor cursor = mongoDBCollection.find(query);
+		DBObject res = cursor.next();
+		System.out.println(res.get("transcripts"));
+		
+//		BasicDBObject returnFields = new BasicDBObject();
 		// returnFields.put("id", 1);
-		returnFields.put("transcripts", 0);
+//		returnFields.put("_id", 0);
+//		returnFields.put("id", 1);
+//		returnFields.put("name", 1);
 
+		query = new BasicDBObject();
 		BasicDBObject orderBy = new BasicDBObject();
 		orderBy.put("id", 1);
 
-		DBCursor cursor = mongoDBCollection.find(query, returnFields).sort(orderBy);
-		List<String> result = new ArrayList<String>(cursor.size());
-		while (cursor.hasNext()) {
-			result.add(cursor.next().get("id").toString());
-		}
-		// List<DBObject> result = cursor.toArray();
-		cursor.close();
-
+		QueryResponse result = executeQuery("result", query, null, Arrays.asList("id", "name"), null);
+		result.safePrint();
+//		List<String> idList = new ArrayList<String>(65000);
+//		DBCursor cursor = mongoDBCollection.find(query, returnFields).sort(orderBy);
+//		
+//		QueryResult result = new QueryResult();
+//		
+//		
+//		DBObject explain = cursor.explain();
+//		
+//		
+//		//		((BasicBSONList)cursor).get("id");
+////		DBObject explain = cursor.explain();
+//		long start1 = System.currentTimeMillis();
+//		BasicDBList list = new BasicDBList();
+////		BasicBSONList list1 = new BasicBSONList();
+//		while(cursor.hasNext()) {
+//			list.add(cursor.next());
+////			list1.add(cursor.next());
+////			idList.add(obj.get("id").toString());
+//		}
+//		result.setResult(list.toString());
+//		long end1 = System.currentTimeMillis();
+//		System.out.println("DBCursor to JSON1:\n"+(end1-start1));
+//		cursor.close();
+//		
+//		result.setDBTime(explain.get("millis"));
+//System.out.println(result.safeToString());
 		return result;
 	}
 
-	@Override
-	public Gene getByEnsemblId(String ensemblId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Gene> getAllByEnsemblIdList(List<String> ensemblIdList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Gene getByEnsemblId(String ensemblId, boolean fetchTranscriptsAndExons) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Gene> getAllByEnsemblIdList(List<String> ensemblIdList, boolean fetchTranscriptsAndExons) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Gene> getAllByName(String name, List<String> exclude) {
-		BasicDBObject query = new BasicDBObject("transcripts.xrefs.id", name.toUpperCase());
-        return executeQuery(query, exclude);
-	}
 	
-	@Override
-	public List<List<Gene>> getAllByNameList(List<String> nameList, List<String> exclude) {
-		List<List<Gene>> genes = new ArrayList<List<Gene>>(nameList.size());
-		for (String name : nameList) {
-			genes.add(getAllByName(name, exclude));
-		}
-		return genes;
-	}
+
 	
-	@Override
-	public Gene getByEnsemblTranscriptId(String transcriptId) {
-		BasicDBObject query = new BasicDBObject("transcripts.id", transcriptId.toUpperCase());
-
-		List<Gene> genes = executeQuery(query, Arrays.asList("transcripts"));
-		if (genes != null && genes.size() > 0) {
-			return genes.get(0);
-		}
-		return null;
-	}
-
-	@Override
-	public List<Gene> getAllByEnsemblTranscriptIdList(List<String> transcriptIdList) {
-		List<Gene> genes = new ArrayList<Gene>(transcriptIdList.size());
-		for (String name : transcriptIdList) {
-			genes.add(getByEnsemblTranscriptId(name));
-		}
-		return genes;
-	}
-
 //	@Override
 //	public List<Gene> getByXref(String xref, List<String> exclude) {
 //		BasicDBObject query = new BasicDBObject("transcripts.xrefs.id", xref.toUpperCase());
@@ -223,98 +186,78 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 //    }
 
 	@Override
-	public List<Gene> getAllByBiotype(String biotype) {
-		BasicDBObject query = new BasicDBObject("biotype", biotype);
-		return executeQuery(query, Arrays.asList("transcripts"));
+	public QueryResponse getAllByPosition(String chromosome, int position, QueryOptions options) {
+		return getAllByRegion(chromosome, position, position, options);
 	}
 
 	@Override
-	public List<Gene> getAllByBiotypeList(List<String> biotypeList) {
-		// TODO Auto-generated method stub
-		return null;
+	public QueryResponse getAllByPosition(Position position, QueryOptions options) {
+		return getAllByRegion(new Region(position.getChromosome(), position.getPosition(), position.getPosition()), options);
 	}
 
 	@Override
-	public List<Gene> getAllByPosition(String chromosome, int position) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Gene> getAllByPosition(Position position) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<List<Gene>> getAllByPositionList(List<Position> positionList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Gene> getAllByRegion(String chromosome, int start, int end, boolean fetchTranscripts) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Gene> getAllByRegion(String chromosome, int start, int end, List<String> biotypeList,
-			boolean fetchTranscripts) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Gene> getAllByRegion(Region region, boolean fetchTranscripts) {
-		BasicDBObject query = new BasicDBObject("chromosome", region.getChromosome());
-		query.put("end", new BasicDBObject("$gt", region.getStart()));
-		query.put("start", new BasicDBObject("$lt", region.getEnd()));
-
-		if (!fetchTranscripts) {
-			return executeQuery(query, Arrays.asList("transcripts"));
-		} else {
-			return executeQuery(query, null);
+	public QueryResponse getAllByPositionList(List<Position> positionList, QueryOptions options) {
+		List<Region> regions = new ArrayList<>();
+		for(Position position: positionList) {
+			regions.add(new Region(position.getChromosome(), position.getPosition(), position.getPosition()));
 		}
+		return getAllByRegionList(regions, options);
 	}
+	
 
 	@Override
-	public List<Gene> getAllByRegion(Region region, List<String> biotypeList, boolean fetchTranscripts) {
+	public QueryResponse getAllByRegion(String chromosome, int start, int end, QueryOptions options) {
+		return getAllByRegion(new Region(chromosome, start, end), options);
+	}
+
+	
+	@Override
+	public QueryResponse getAllByRegion(Region region, QueryOptions options) {
 		QueryBuilder builder = QueryBuilder.start("chromosome").is(region.getChromosome()).and("end")
 				.greaterThan(region.getStart()).and("start").lessThan(region.getEnd());
 
-		if (biotypeList != null && biotypeList.size() > 0) {
+		List<Object> biotypes = options.getList("biotypes", null);
+		if (biotypes != null && biotypes.size() > 0) {
 			BasicDBList biotypeIds = new BasicDBList();
-			biotypeIds.addAll(biotypeList);
+			biotypeIds.addAll(biotypes);
 			builder = builder.and("biotype").in(biotypeIds);
 		}
 
-		if (!fetchTranscripts) {
-			return executeQuery(builder.get(), Arrays.asList("transcripts"));
+		if (options.getBoolean("transcripts", true)) {
+			return executeQuery(region, builder.get(), null, null, options);
 		} else {
-			return executeQuery(builder.get(), null);
+			return executeQuery(region, builder.get(), Arrays.asList("transcripts"), null, options);
 		}
 	}
-
+	
 	@Override
-	public List<List<Gene>> getAllByRegionList(List<Region> regionList, boolean fetchTranscripts) {
-		List<List<Gene>> genes = new ArrayList<List<Gene>>(regionList.size());
-		for (Region region : regionList) {
-			genes.add(getAllByRegion(region, fetchTranscripts));
+	public QueryResponse getAllByRegionList(List<Region> regions, QueryOptions options) {
+		List<DBObject> queries = new ArrayList<>();
+		
+		List<Object> biotypes = options.getList("biotypes", null);
+		BasicDBList biotypeIds = new BasicDBList();
+		if (biotypes != null && biotypes.size() > 0) {
+			biotypeIds.addAll(biotypes);
 		}
-		return genes;
+		
+		for(Region region: regions) {
+			QueryBuilder builder = QueryBuilder.start("chromosome").is(region.getChromosome()).and("end")
+					.greaterThan(region.getStart()).and("start").lessThan(region.getEnd());
+			if(biotypeIds.size() > 0) {
+				builder = builder.and("biotype").in(biotypeIds);				
+			}
+			queries.add(builder.get());
+		}
+		
+		if (options.getBoolean("transcripts", true)) {
+			return executeQueryList(regions, queries, null, null, options);
+		} else {
+			return executeQueryList(regions, queries, Arrays.asList("transcripts"), null, options);
+		}
 	}
 
-	@Override
-	public List<List<Gene>> getAllByRegionList(List<Region> regionList, List<String> biotypeList,
-			boolean fetchTranscripts) {
-		List<List<Gene>> genes = new ArrayList<List<Gene>>(regionList.size());
-		for (Region region : regionList) {
-			genes.add(getAllByRegion(region, biotypeList, fetchTranscripts));
-		}
-		return genes;
-	}
 
+	
 	@Override
 	public List<Gene> getAllByCytoband(String chromosome, String cytoband) {
 		// TODO Auto-generated method stub
@@ -506,4 +449,67 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
     private int getChunkEnd(int id, int chunksize){
         return (id*chunksize)+chunksize-1;
     }
+
+    
+    @Override
+	public QueryResult getAll() {
+		BasicDBObject query = new BasicDBObject();
+//		return executeQuery("result", query, Arrays.asList("_id"), null);
+		return null;
+	}
+
+	@Override
+	public List<String> getAllIds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> getInfo(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Map<String, Object>> getInfoByIdList(List<String> idList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> getFullInfo(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Map<String, Object>> getFullInfoByIdList(List<String> idList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Region getRegionById(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Region> getAllRegionsByIdList(List<String> idList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSequenceById(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getAllSequencesByIdList(List<String> idList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

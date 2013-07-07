@@ -4,12 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.bioinfo.cellbase.lib.common.Region;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 
 
 public interface FeatureDBAdaptor {
 
 	
-	public List<? extends Object> getAll();
+	public QueryResult getAll();
 	
 	public List<String> getAllIds();
 

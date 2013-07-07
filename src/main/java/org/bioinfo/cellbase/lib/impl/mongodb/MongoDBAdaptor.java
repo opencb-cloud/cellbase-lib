@@ -3,6 +3,7 @@ package org.bioinfo.cellbase.lib.impl.mongodb;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -13,21 +14,29 @@ import java.util.Set;
 import org.bioinfo.cellbase.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.impl.DBAdaptor;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 import org.bioinfo.commons.Config;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 
 public class MongoDBAdaptor extends DBAdaptor{
 
 	protected String species;
 	protected String version;
 
-//	private MongoOptions mongoOptions;
-//	protected MongoClient mongoClient;
+	//	private MongoOptions mongoOptions;
+	//	protected MongoClient mongoClient;
 	protected DB db;
 	protected DBCollection mongoDBCollection;
 	protected static Map<String, Number> cachedQuerySizes = new HashMap<String, Number>();
+	
 
 	static {
 		// reading application.properties file
@@ -52,17 +61,17 @@ public class MongoDBAdaptor extends DBAdaptor{
 		}
 	}
 
-//	public MongoDBAdaptor(String species, String version) {
-//		logger.info("Species: "+species+" Version: "+version);
-//		this.mongoOptions = new MongoOptions();
-//		this.mongoOptions.setAutoConnectRetry(true);
-//		this.mongoOptions.setConnectionsPerHost(40);
-//		try {
-//			this.mongoClient = new MongoClient("mem15", mongoOptions);
-//		} catch (UnknownHostException e) {
-//			e.printStackTrace();
-//		}
-//	}
+	//	public MongoDBAdaptor(String species, String version) {
+	//		logger.info("Species: "+species+" Version: "+version);
+	//		this.mongoOptions = new MongoOptions();
+	//		this.mongoOptions.setAutoConnectRetry(true);
+	//		this.mongoOptions.setConnectionsPerHost(40);
+	//		try {
+	//			this.mongoClient = new MongoClient("mem15", mongoOptions);
+	//		} catch (UnknownHostException e) {
+	//			e.printStackTrace();
+	//		}
+	//	}
 
 	public MongoDBAdaptor(DB db) {
 		this.db = db;
@@ -72,7 +81,7 @@ public class MongoDBAdaptor extends DBAdaptor{
 		this.db = db;
 		this.species = species;
 		this.version = version;
-//		logger.warn(applicationProperties.toString());
+		//		logger.warn(applicationProperties.toString());
 		initSpeciesVersion(species, version);
 	}
 
@@ -102,29 +111,176 @@ public class MongoDBAdaptor extends DBAdaptor{
 	//		return session;
 	//	}
 
+//	protected QueryResult executeQuery(DBObject query, List<String> excludeFields, List<String> includeFields) {
+//		long timeStart = System.currentTimeMillis();
+//		QueryResult queryResult = new QueryResult();
+//		DBCursor cursor = null;
+//		
+//		// Select which fields are excluded and included
+//		BasicDBObject returnFields = new BasicDBObject("_id", 0);
+//		if(excludeFields != null && excludeFields.size() > 0) {
+//			for (String field : excludeFields) {
+//				returnFields.put(field, 0);
+//			}
+//		} 
+//		if(includeFields != null && includeFields.size() > 0) {
+//			for (String field : includeFields) {
+//				returnFields.put(field, 1);
+//			}
+//		}
+//
+//		// Execute query and calculate time
+//		long dbTimeStart = System.currentTimeMillis();
+//		cursor = mongoDBCollection.find(query, returnFields);
+//		long dbTimeEnd = System.currentTimeMillis();
+//		queryResult.setDBTime(dbTimeEnd - dbTimeStart);
+//
+//		try {
+//			if(cursor != null) {
+//				BasicDBList list = new BasicDBList();
+//				while (cursor.hasNext()) {
+//					list.add(cursor.next());
+//				}
+//				queryResult.setResult(list.toString());
+//			}
+//		} finally {
+//			if(cursor != null) {
+//				cursor.close();
+//			}
+//		}
+//		long timeEnd = System.currentTimeMillis();
+//		queryResult.put("time", timeEnd - timeStart);
+//
+//		return queryResult;
+//	}
+	
+	protected QueryResponse executeQuery(Object id, DBObject query, List<String> excludeFields, List<String> includeFields, QueryOptions options) {
+		return executeQueryList(Arrays.asList(id), Arrays.asList(query), excludeFields, includeFields, options);
+	}
+	
+	protected QueryResponse executeQueryList(List<? extends Object> ids, List<DBObject> queries, List<String> excludeFields, List<String> includeFields, QueryOptions options) {
+		long timeStart = System.currentTimeMillis();
+		QueryResponse queryResponse = new QueryResponse();
+		DBCursor cursor = null;
+		
+		// Select which fields are excluded and included
+		BasicDBObject returnFields = new BasicDBObject("_id", 0);
+		// Read and process 'exclude' field from 'options' object
+		if(options != null && options.containsField("exclude")) {
+			List<Object> excludedOptionField = options.getList("exclude", null); 
+			if(excludedOptionField != null && excludedOptionField.size() > 0) {
+				for (Object field: excludedOptionField) {
+					returnFields.put(field.toString(), 0);
+				}			
+			}
+		}
+		if(excludeFields != null && excludeFields.size() > 0) {
+			for (String field: excludeFields) {
+				returnFields.put(field, 0);
+			}
+		} 
+		if(includeFields != null && includeFields.size() > 0) {
+			for (String field: includeFields) {
+				returnFields.put(field, 1);
+			}
+		}
 
-//	protected List<?> execute(Criteria criteria){
-//		List<?> result = criteria.list();
-//		return result;
-//	}
-//
-//	protected List<?> executeAndClose(Criteria criteria){
-//		List<?> result = criteria.list();
-//		//		closeSession();
-//		return result;
-//	}
-//
-//
-//	protected List<?> execute(Query query){
-//		List<?> result = query.list();
-//		return result;
-//	}
-//
-//	protected List<?> executeAndClose(Query query){
-//		List<?> result = query.list();
-//		//		closeSession();
-//		return result;
-//	}
+		long dbTimeStart, dbTimeEnd;
+		for(int i=0; i<queries.size(); i++) {
+			DBObject query = queries.get(i);
+			QueryResult queryResult = new QueryResult();
+			// Execute query and calculate time
+			dbTimeStart = System.currentTimeMillis();
+			cursor = mongoDBCollection.find(query, returnFields);
+			dbTimeEnd = System.currentTimeMillis();
+			
+//			BasicDBList list = new BasicDBList();
+			BasicDBList list = new BasicDBList();
+			try {
+				if(cursor != null) {
+					list = new BasicDBList();
+					while(cursor.hasNext()) {
+						list.add(cursor.next());
+					}
+//					list.add(aux);
+				}
+			} finally {
+				if(cursor != null) {
+					cursor.close();
+				}
+			}
+			queryResult.setDBTime((dbTimeEnd - dbTimeStart));
+			queryResult.setResult(list);	//.toString()
+			
+			// Save QueryResult into QueryResponse object
+			queryResponse.put(ids.get(i).toString(), queryResult);
+		}
+
+		long timeEnd = System.currentTimeMillis();
+		queryResponse.getMetadata().put("queryIds", ids);
+		queryResponse.getMetadata().put("time", timeEnd - timeStart);
+		
+		return queryResponse;
+	}
+
+	protected BasicDBList executeQueryList(DBObject query, List<String> excludeFields, List<String> includeFields) {
+		BasicDBList queryResult = null;
+		DBCursor cursor = null;
+		
+		// Select which fields are excluded and included
+		BasicDBObject returnFields = new BasicDBObject("_id", 0);
+		if(excludeFields != null && excludeFields.size() > 0) {
+			for (String field : excludeFields) {
+				returnFields.put(field, 0);
+			}
+		} 
+		if(includeFields != null && includeFields.size() > 0) {
+			for (String field : includeFields) {
+				returnFields.put(field, 1);
+			}
+		}
+
+		// Execute query and calculate time
+		cursor = mongoDBCollection.find(query, returnFields);
+
+		try {
+			if(cursor != null) {
+				queryResult = new BasicDBList();
+				while (cursor.hasNext()) {
+					queryResult.add(cursor.next());
+				}
+			}
+		} finally {
+			if(cursor != null) {
+				cursor.close();
+			}
+		}
+
+		return queryResult;
+	}
+	
+	//	protected List<?> execute(Criteria criteria){
+	//		List<?> result = criteria.list();
+	//		return result;
+	//	}
+	//
+	//	protected List<?> executeAndClose(Criteria criteria){
+	//		List<?> result = criteria.list();
+	//		//		closeSession();
+	//		return result;
+	//	}
+	//
+	//
+	//	protected List<?> execute(Query query){
+	//		List<?> result = query.list();
+	//		return result;
+	//	}
+	//
+	//	protected List<?> executeAndClose(Query query){
+	//		List<?> result = query.list();
+	//		//		closeSession();
+	//		return result;
+	//	}
 
 	//	protected void closeSession() {
 	//		if(session != null && session.isOpen()) {
