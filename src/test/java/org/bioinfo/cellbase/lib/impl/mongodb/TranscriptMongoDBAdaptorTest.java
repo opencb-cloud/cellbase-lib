@@ -1,18 +1,10 @@
-package org.bioinfo.cellbase.lib.impl.mongo;
+package org.bioinfo.cellbase.lib.impl.mongodb;
 
-import org.bioinfo.cellbase.lib.api.GeneDBAdaptor;
 import org.bioinfo.cellbase.lib.api.TranscriptDBAdaptor;
-import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.cellbase.lib.common.core.Gene;
-import org.bioinfo.cellbase.lib.common.core.Transcript;
 import org.bioinfo.cellbase.lib.impl.DBAdaptorFactory;
-import org.bioinfo.cellbase.lib.impl.mongodb.MongoDBAdaptorFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class TranscriptMongoDBAdaptorTest {
 

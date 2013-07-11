@@ -1,4 +1,4 @@
-package org.bioinfo.cellbase.lib.impl.mongo;
+package org.bioinfo.cellbase.lib.impl.mongodb;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,12 +6,9 @@ import java.util.List;
 
 import org.bioinfo.cellbase.lib.api.GeneDBAdaptor;
 import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.cellbase.lib.common.core.Gene;
 import org.bioinfo.cellbase.lib.impl.DBAdaptorFactory;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
-import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
-import org.bioinfo.cellbase.lib.impl.mongodb.MongoDBAdaptorFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
