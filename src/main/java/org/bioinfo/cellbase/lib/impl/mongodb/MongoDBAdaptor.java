@@ -19,6 +19,8 @@ import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 import org.bioinfo.commons.Config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -37,6 +39,7 @@ public class MongoDBAdaptor extends DBAdaptor{
 	protected DBCollection mongoDBCollection;
 	protected static Map<String, Number> cachedQuerySizes = new HashMap<String, Number>();
 	
+	protected ObjectMapper jsonObjectMapper;
 
 	static {
 		// reading application.properties file
@@ -83,6 +86,8 @@ public class MongoDBAdaptor extends DBAdaptor{
 		this.version = version;
 		//		logger.warn(applicationProperties.toString());
 		initSpeciesVersion(species, version);
+		
+		jsonObjectMapper = new ObjectMapper();
 	}
 
 	private void initSpeciesVersion(String species, String version) {
@@ -163,28 +168,42 @@ public class MongoDBAdaptor extends DBAdaptor{
 		QueryResponse queryResponse = new QueryResponse();
 		DBCursor cursor = null;
 		
-		// Select which fields are excluded and included
+		// Select which fields are excluded and included in MongoDB query
 		BasicDBObject returnFields = new BasicDBObject("_id", 0);
 		// Read and process 'exclude' field from 'options' object
-		if(options != null && options.containsField("exclude")) {
-			List<Object> excludedOptionField = options.getList("exclude", null); 
-			if(excludedOptionField != null && excludedOptionField.size() > 0) {
-				for (Object field: excludedOptionField) {
-					returnFields.put(field.toString(), 0);
-				}			
+		if((options != null && options.getList("include") != null) && options.getList("include").size() > 0 || (includeFields != null && includeFields.size() > 0)) {
+			if(options != null && options.getList("include") != null) {
+				List<Object> excludedOptionFields = (List<Object>) options.getList("include");
+				if(excludedOptionFields != null && excludedOptionFields.size() > 0) {
+					for (Object field: excludedOptionFields) {
+						returnFields.put(field.toString(), 1);
+					}			
+				}
+			}		
+			if(includeFields != null && includeFields.size() > 0) {
+				for (String field: includeFields) {
+					returnFields.put(field, 1);
+				}
 			}
-		}
-		if(excludeFields != null && excludeFields.size() > 0) {
-			for (String field: excludeFields) {
-				returnFields.put(field, 0);
+		}else {
+			if(options != null && options.getList("exclude") != null) {
+//			String[] excludedOptionFields = options.getString("exclude", "").split(","); 
+				List<Object> excludedOptionFields = (List<Object>) options.getList("exclude");
+				if(excludedOptionFields != null && excludedOptionFields.size() > 0) {
+					for (Object field: excludedOptionFields) {
+						returnFields.put(field.toString(), 0);
+					}			
+				}
 			}
-		} 
-		if(includeFields != null && includeFields.size() > 0) {
-			for (String field: includeFields) {
-				returnFields.put(field, 1);
-			}
+			if(excludeFields != null && excludeFields.size() > 0) {
+				for (String field: excludeFields) {
+					returnFields.put(field, 0);
+				}
+			} 			
 		}
 
+
+//		BasicDBList list2 = new BasicDBList();
 		long dbTimeStart, dbTimeEnd;
 		for(int i=0; i<queries.size(); i++) {
 			DBObject query = queries.get(i);
@@ -194,7 +213,6 @@ public class MongoDBAdaptor extends DBAdaptor{
 			cursor = mongoDBCollection.find(query, returnFields);
 			dbTimeEnd = System.currentTimeMillis();
 			
-//			BasicDBList list = new BasicDBList();
 			BasicDBList list = new BasicDBList();
 			try {
 				if(cursor != null) {
@@ -202,7 +220,6 @@ public class MongoDBAdaptor extends DBAdaptor{
 					while(cursor.hasNext()) {
 						list.add(cursor.next());
 					}
-//					list.add(aux);
 				}
 			} finally {
 				if(cursor != null) {
@@ -211,15 +228,24 @@ public class MongoDBAdaptor extends DBAdaptor{
 			}
 			queryResult.setDBTime((dbTimeEnd - dbTimeStart));
 			queryResult.setResult(list);	//.toString()
-			
+//			list2.add(list);
 			// Save QueryResult into QueryResponse object
 			queryResponse.put(ids.get(i).toString(), queryResult);
 		}
-
 		long timeEnd = System.currentTimeMillis();
-		queryResponse.getMetadata().put("queryIds", ids);
-		queryResponse.getMetadata().put("time", timeEnd - timeStart);
+
 		
+		// Check if 'metadata' field must be returned
+		if(options != null && options.getBoolean("metadata", true)) {
+			queryResponse.getMetadata().put("queryIds", ids);
+			queryResponse.getMetadata().put("time", timeEnd - timeStart);			
+		}else {
+			queryResponse.removeField("metadata");
+		}
+		
+//		QueryResponse q = new QueryResponse();
+//		q.put("results", list2);
+//		q.removeField("metadata");
 		return queryResponse;
 	}
 
@@ -433,4 +459,3 @@ public class MongoDBAdaptor extends DBAdaptor{
 	}
 
 }
-

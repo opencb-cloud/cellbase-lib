@@ -9,6 +9,7 @@ import org.bioinfo.cellbase.lib.common.Region;
 // Como no es una fetaure no deberia implementas FeatureDBAdaptor no?
 //public interface FeatureMapDBAdaptor extends FeatureDBAdaptor {	
 
+@Deprecated
 public interface GenomicRegionFeatureDBAdaptor {
 	
 	

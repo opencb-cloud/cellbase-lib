@@ -6,11 +6,10 @@ import java.util.List;
 import org.bioinfo.cellbase.lib.api.ChromosomeDBAdaptor;
 import org.bioinfo.cellbase.lib.common.core.Chromosome;
 import org.bioinfo.cellbase.lib.common.core.Cytoband;
-import org.bioinfo.cellbase.lib.common.core.InfoStats;
 
-import com.google.gson.Gson;
 import com.mongodb.DB;
 import com.mongodb.DBObject;
+
 
 public class ChromosomeMongoDBAdaptor extends MongoDBAdaptor implements ChromosomeDBAdaptor {
 
@@ -25,16 +24,17 @@ public class ChromosomeMongoDBAdaptor extends MongoDBAdaptor implements Chromoso
 
 
     private List<Chromosome> executeQuery() {
-        Gson gson = new Gson();
+//        Gson jsonObjectMapper = new Gson();
         DBObject item = mongoDBCollection.findOne();
 //		System.out.println(item.toString());
-        InfoStats infoStats = (InfoStats) gson.fromJson(item.toString(), InfoStats.class);
+//        InfoStats infoStats = (InfoStats) jsonObjectMapper.fromJson(item.toString(), InfoStats.class);
 
-        return infoStats.getChromosomes();
+//        return infoStats.getChromosomes();
+        return null;
     }
 
 	@Override
-	public Chromosome getChromosomeByName(String name) {
+	public Chromosome getById(String name) {
 		for (Chromosome chromosome : executeQuery()) {
 			if (chromosome.getName().equals(name)) {
 				return chromosome;
@@ -44,7 +44,7 @@ public class ChromosomeMongoDBAdaptor extends MongoDBAdaptor implements Chromoso
 	}
 
 	@Override
-	public List<Chromosome> getChromosomeByNameList(List<String> nameList) {
+	public List<Chromosome> getAllByIdList(List<String> nameList) {
 		List<Chromosome> foundList = new ArrayList<Chromosome>(nameList.size());
 
 		for (Chromosome chromosome : executeQuery()) {
@@ -78,7 +78,7 @@ public class ChromosomeMongoDBAdaptor extends MongoDBAdaptor implements Chromoso
 	}
 
 	@Override
-	public List<Chromosome> getChromosomes() {
+	public List<Chromosome> getAll() {
 		return executeQuery();
 	}
 

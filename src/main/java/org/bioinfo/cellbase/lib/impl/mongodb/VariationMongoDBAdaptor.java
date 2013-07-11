@@ -1,15 +1,21 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
-import com.google.gson.Gson;
-import com.mongodb.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import org.bioinfo.cellbase.lib.api.VariationDBAdaptor;
-import org.bioinfo.cellbase.lib.common.GenericFeature;
 import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.cellbase.lib.common.core.Gene;
 import org.bioinfo.cellbase.lib.common.variation.TranscriptVariation;
 import org.bioinfo.cellbase.lib.common.variation.Variation;
 
-import java.util.*;
+import com.mongodb.AggregationOutput;
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.QueryBuilder;
 
 public class VariationMongoDBAdaptor extends MongoDBAdaptor implements VariationDBAdaptor {
 
@@ -46,10 +52,10 @@ public class VariationMongoDBAdaptor extends MongoDBAdaptor implements Variation
         try {
             if (cursor != null) {
                 result = new ArrayList<Variation>(cursor.size());
-                Gson gson = new Gson();
-                Variation variation;
+//                Gson jsonObjectMapper = new Gson();
+                Variation variation = null;
                 while (cursor.hasNext()) {
-                    variation = (Variation) gson.fromJson(cursor.next().toString(), Variation.class);
+//                    variation = (Variation) jsonObjectMapper.fromJson(cursor.next().toString(), Variation.class);
                     result.add(variation);
                 }
             }

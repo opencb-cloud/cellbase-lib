@@ -8,12 +8,12 @@ import org.bioinfo.cellbase.lib.common.GenomeSequenceFeature;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.GenomeSequenceChunk;
 
-import com.google.gson.Gson;
 import com.mongodb.DB;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.QueryBuilder;
 
+@Deprecated
 public class GenomeSequenceMongoDBAdaptor extends MongoDBAdaptor implements GenomeSequenceDBAdaptor {
 
 	public GenomeSequenceMongoDBAdaptor(DB db) {
@@ -124,10 +124,10 @@ public class GenomeSequenceMongoDBAdaptor extends MongoDBAdaptor implements Geno
 		try {
 			if (cursor != null) {
 				result = new ArrayList<GenomeSequenceChunk>(cursor.size());
-				Gson gson = new Gson();
-				GenomeSequenceChunk chunk;
+//				Gson jsonObjectMapper = new Gson();
+				GenomeSequenceChunk chunk = null;
 				while (cursor.hasNext()) {
-					chunk = (GenomeSequenceChunk) gson.fromJson(cursor.next().toString(), GenomeSequenceChunk.class);
+//					chunk = (GenomeSequenceChunk) jsonObjectMapper.fromJson(cursor.next().toString(), GenomeSequenceChunk.class);
 					result.add(chunk);
 				}
 			}

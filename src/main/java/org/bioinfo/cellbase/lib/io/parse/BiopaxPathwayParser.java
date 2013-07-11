@@ -16,8 +16,6 @@ import org.bioinfo.formats.exception.FileFormatException;
 import org.bioinfo.formats.parser.biopax.BioPax;
 import org.bioinfo.formats.parser.biopax.BioPaxParser;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 
@@ -34,7 +32,7 @@ public class BiopaxPathwayParser {
 //		String json = "";
 		List<BiopaxPathway> pathwayList = new ArrayList<BiopaxPathway>();
 		List<DBObject> dbObjList = new ArrayList<DBObject>();
-		Gson gson = new GsonBuilder().create();
+//		Gson jsonObjectMapper = new GsonBuilder().create();
 
 		try {
 			BioPaxParser parser = new BioPaxParser(filename);
@@ -221,9 +219,9 @@ public class BiopaxPathwayParser {
 				p.addedEntities = null;
 				p.addedInteractions = null;
 				pathwayList.add(p);
-				dbObjList.add((DBObject)JSON.parse(gson.toJson(p)));
+//				dbObjList.add((DBObject)JSON.parse(jsonObjectMapper.toJson(p)));
 			}
-//			System.out.println(gson.toJson(pathwayList));
+//			System.out.println(jsonObjectMapper.toJson(pathwayList));
 //			String json = g.toJson(pathwayList);
 //			IOUtils.write(new File("/tmp/test2.json"), json);
 			

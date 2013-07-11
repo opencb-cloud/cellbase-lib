@@ -13,14 +13,11 @@ import java.util.List;
 
 import org.bioinfo.cellbase.lib.common.core.GenomeSequenceChunk;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 public class GenomeSequenceFastaParser {
 
 	private int chunkSize = 2000;
 	
-	Gson gson = new GsonBuilder().create(); // .setPrettyPrinting()
+//	Gson jsonObjectMapper = new GsonBuilder().create(); // .setPrettyPrinting()
 
 	public GenomeSequenceFastaParser() {
 		
@@ -92,7 +89,7 @@ public class GenomeSequenceFastaParser {
 		
 		// Process all onjects and convert them into JSON format
 		for(GenomeSequenceChunk gsc: genomeSequenceChunks) {
-			bw.write(gson.toJson(gsc)+"\n");
+//			bw.write(jsonObjectMapper.toJson(gsc)+"\n");
 		}
 		
 		genomeSequenceChunks.clear();

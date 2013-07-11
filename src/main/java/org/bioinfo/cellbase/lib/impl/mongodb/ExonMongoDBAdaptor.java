@@ -1,24 +1,21 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
-import com.google.gson.Gson;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.bioinfo.cellbase.lib.api.ExonDBAdaptor;
-import org.bioinfo.cellbase.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.cellbase.lib.common.Position;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.Exon;
 import org.bioinfo.cellbase.lib.common.core.Gene;
 import org.bioinfo.cellbase.lib.common.core.Transcript;
-import org.bioinfo.cellbase.lib.common.core.Xref;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 
 public class ExonMongoDBAdaptor extends MongoDBAdaptor implements ExonDBAdaptor {
 
@@ -48,10 +45,10 @@ public class ExonMongoDBAdaptor extends MongoDBAdaptor implements ExonDBAdaptor 
         try {
             if (cursor != null) {
                 result = new ArrayList<Gene>(cursor.size());
-                Gson gson = new Gson();
-                Gene gene;
+//                Gson jsonObjectMapper = new Gson();
+                Gene gene = null;
                 while (cursor.hasNext()) {
-                    gene = (Gene) gson.fromJson(cursor.next().toString(), Gene.class);
+//                    gene = (Gene) jsonObjectMapper.fromJson(cursor.next().toString(), Gene.class);
                     result.add(gene);
                 }
             }

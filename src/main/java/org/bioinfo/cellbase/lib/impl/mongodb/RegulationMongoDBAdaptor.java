@@ -1,20 +1,17 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
-import com.google.gson.Gson;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bioinfo.cellbase.lib.api.RegulationDBAdaptor;
+import org.bioinfo.cellbase.lib.common.GenericFeature;
+import org.bioinfo.cellbase.lib.common.GenericFeatureChunk;
+import org.bioinfo.cellbase.lib.common.Region;
+
 import com.mongodb.DB;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.QueryBuilder;
-import org.bioinfo.cellbase.lib.api.RegulationDBAdaptor;
-import org.bioinfo.cellbase.lib.common.GenericFeature;
-import org.bioinfo.cellbase.lib.common.GenericFeatureChunk;
-import org.bioinfo.cellbase.lib.common.GenomeSequenceFeature;
-import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.cellbase.lib.common.core.GenomeSequenceChunk;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class RegulationMongoDBAdaptor extends MongoDBAdaptor implements RegulationDBAdaptor {
 
@@ -40,10 +37,10 @@ public class RegulationMongoDBAdaptor extends MongoDBAdaptor implements Regulati
         try {
             if (cursor != null) {
                 result = new ArrayList<GenericFeatureChunk>(cursor.size());
-                Gson gson = new Gson();
-                GenericFeatureChunk chunk;
+//                Gson jsonObjectMapper = new Gson();
+                GenericFeatureChunk chunk = null;
                 while (cursor.hasNext()) {
-                    chunk = (GenericFeatureChunk) gson.fromJson(cursor.next().toString(), GenericFeatureChunk.class);
+//                    chunk = (GenericFeatureChunk) jsonObjectMapper.fromJson(cursor.next().toString(), GenericFeatureChunk.class);
                     result.add(chunk);
                 }
             }

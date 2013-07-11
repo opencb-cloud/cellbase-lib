@@ -6,6 +6,7 @@ import org.bioinfo.cellbase.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.CpGIsland;
 
+
 public interface CpGIslandDBAdaptor {
 	
 	public List< CpGIsland> getAllByRegion(Region region);

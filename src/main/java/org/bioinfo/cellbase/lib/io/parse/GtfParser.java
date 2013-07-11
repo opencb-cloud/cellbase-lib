@@ -11,16 +11,12 @@ import org.bioinfo.cellbase.lib.common.core.Exon;
 import org.bioinfo.cellbase.lib.common.core.Gene;
 import org.bioinfo.cellbase.lib.common.core.Transcript;
 import org.bioinfo.cellbase.lib.common.core.Xref;
-import org.bioinfo.cellbase.lib.common.regulatory.MirnaGene;
 import org.bioinfo.commons.io.TextFileWriter;
 import org.bioinfo.commons.io.utils.FileUtils;
 import org.bioinfo.commons.io.utils.IOUtils;
 import org.bioinfo.formats.core.feature.Gtf;
 import org.bioinfo.formats.core.feature.io.GtfReader;
 import org.bioinfo.formats.exception.FileFormatException;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 public class GtfParser {
 
@@ -80,7 +76,7 @@ public class GtfParser {
 		
 //		BasicBSONList list = new BasicBSONList();
 		int cont = 0;
-		Gson gson = new GsonBuilder().create(); // .setPrettyPrinting()
+//		Gson jsonObjectMapper = new GsonBuilder().create(); // .setPrettyPrinting()
 		GtfReader gtfReader = new GtfReader(getFile);		
 		Gtf gtf;
 		boolean first = false;
@@ -94,9 +90,9 @@ public class GtfParser {
 					if(first) {
 						tfw.writeStringToFile("\n");						
 					}
-//					tfw.writeStringToFile(gson.toJson(genes.get(genes.size()-1)));
+//					tfw.writeStringToFile(jsonObjectMapper.toJson(genes.get(genes.size()-1)));
 //					genes.remove(genes.size()-1);
-					tfw.writeStringToFile(gson.toJson(gene));
+//					tfw.writeStringToFile(jsonObjectMapper.toJson(gene));
 					first = true;
 				}
 				
@@ -278,7 +274,7 @@ public class GtfParser {
 		
 		gtfReader.close();
 		tfw.close();
-//		return gson.toJson(genes);
+//		return jsonObjectMapper.toJson(genes);
 	}
 
 	private void updateTranscriptAndGeneCoords(Transcript transcript, Gene gene, Gtf gtf) {

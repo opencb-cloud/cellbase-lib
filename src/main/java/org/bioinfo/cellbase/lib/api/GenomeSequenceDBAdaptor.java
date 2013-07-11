@@ -2,20 +2,17 @@ package org.bioinfo.cellbase.lib.api;
 
 import java.util.List;
 
-import org.bioinfo.cellbase.lib.common.GenomeSequenceFeature;
 import org.bioinfo.cellbase.lib.common.Region;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
+
 
 public interface GenomeSequenceDBAdaptor {
 
 	
-	public GenomeSequenceFeature getByRegion(String chromosome, int start, int end);
+	public QueryResponse getByRegion(String chromosome, int start, int end, QueryOptions options);
 
-	public GenomeSequenceFeature getByRegion(String chromosome, int start, int end, int strand);
-	
-
-	public List<GenomeSequenceFeature> getByRegionList(List<Region> regions);
-
-	public List<GenomeSequenceFeature> getByRegionList(List<Region> regions, int strand);
+	public QueryResponse getAllByRegionList(List<Region> regions, QueryOptions options);
 
 	public String getRevComp(String sequence);
 

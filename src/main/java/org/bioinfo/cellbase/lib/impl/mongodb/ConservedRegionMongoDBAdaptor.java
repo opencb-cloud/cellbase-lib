@@ -1,17 +1,18 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
-import com.google.gson.Gson;
-import com.mongodb.DB;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.QueryBuilder;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bioinfo.cellbase.lib.api.ConservedRegionDBAdaptor;
 import org.bioinfo.cellbase.lib.common.ConservedRegion;
 import org.bioinfo.cellbase.lib.common.Region;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.mongodb.DB;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.QueryBuilder;
 
+@Deprecated
 public class ConservedRegionMongoDBAdaptor extends MongoDBAdaptor implements ConservedRegionDBAdaptor {
 
 
@@ -33,10 +34,10 @@ public class ConservedRegionMongoDBAdaptor extends MongoDBAdaptor implements Con
         try {
             if (cursor != null) {
                 result = new ArrayList<ConservedRegion>(cursor.size());
-                Gson gson = new Gson();
-                ConservedRegion feature;
+//                Gson jsonObjectMapper = new Gson();
+                ConservedRegion feature = null;
                 while (cursor.hasNext()) {
-                    feature = (ConservedRegion) gson.fromJson(cursor.next().toString(), ConservedRegion.class);
+//                    feature = (ConservedRegion) jsonObjectMapper.fromJson(cursor.next().toString(), ConservedRegion.class);
                     result.add(feature);
                 }
             }

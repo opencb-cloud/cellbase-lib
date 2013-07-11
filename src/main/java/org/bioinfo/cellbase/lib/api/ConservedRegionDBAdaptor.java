@@ -1,15 +1,17 @@
 package org.bioinfo.cellbase.lib.api;
 
-import org.bioinfo.cellbase.lib.common.ConservedRegion;
-import org.bioinfo.cellbase.lib.common.Region;
-
 import java.util.List;
+
+import org.bioinfo.cellbase.lib.common.Region;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
+
 
 public interface ConservedRegionDBAdaptor {
 
-    public List<ConservedRegion> getByRegion(String chromosome, int start, int end);
+    public QueryResponse getAllByRegion(Region region, QueryOptions options);
 
-    public List<List<ConservedRegion>> getByRegionList(List<Region> regions);
+    public QueryResponse getAllByRegionList(List<Region> regions, QueryOptions options);
 
 
 }

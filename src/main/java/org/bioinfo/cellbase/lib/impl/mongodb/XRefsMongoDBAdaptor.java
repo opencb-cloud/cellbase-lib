@@ -14,7 +14,6 @@ import org.bioinfo.cellbase.lib.common.core.Gene;
 import org.bioinfo.cellbase.lib.common.core.Transcript;
 import org.bioinfo.cellbase.lib.common.core.Xref;
 
-import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCursor;
@@ -32,31 +31,32 @@ public class XRefsMongoDBAdaptor extends MongoDBAdaptor implements XRefsDBAdapto
 		mongoDBCollection = db.getCollection("core");
 	}
 
-	private List<Xref> executeQuery(DBObject query) {
-		List<Xref> result = null;
-		Set<Xref> xrefSet = new LinkedHashSet<Xref>();
-		
-		BasicDBObject returnFields = new BasicDBObject("transcripts", 1);
-		DBCursor cursor = mongoDBCollection.find(query, returnFields);
-
-		try {
-			if (cursor != null) {
-				Gson gson = new Gson();
-				Gene gene;
-				while (cursor.hasNext()) {
-					gene = (Gene) gson.fromJson(cursor.next().toString(), Gene.class);
-					for (Transcript transcript : gene.getTranscripts()) {
-						xrefSet.addAll(transcript.getXrefs());
-					}
-				}
-			}
-			result = new ArrayList<Xref>(xrefSet);
-		} finally {
-			cursor.close();
-		}
-
-		return result;
-	}
+//	private List<Xref> executeQuery(DBObject query) {
+//		List<Xref> result = null;
+//		Set<Xref> xrefSet = new LinkedHashSet<Xref>();
+//		
+//		BasicDBObject returnFields = new BasicDBObject("transcripts", 1);
+//		DBCursor cursor = mongoDBCollection.find(query, returnFields);
+//
+//		try {
+//			if (cursor != null) {
+////				Gson jsonObjectMapper = new Gson();
+//				Gene gene;
+//				while (cursor.hasNext()) {
+////					gene = (Gene) jsonObjectMapper.fromJson(cursor.next().toString(), Gene.class);
+//					gene = (Gene) jsonObjectMapper.writeValueAsBytes(cursor.next().toString(), Gene.class);
+//					for (Transcript transcript : gene.getTranscripts()) {
+//						xrefSet.addAll(transcript.getXrefs());
+//					}
+//				}
+//			}
+//			result = new ArrayList<Xref>(xrefSet);
+//		} finally {
+//			cursor.close();
+//		}
+//
+//		return result;
+//	}
 
 	@Override
 	public List<DBName> getAllDBNames() {
@@ -164,7 +164,7 @@ public class XRefsMongoDBAdaptor extends MongoDBAdaptor implements XRefsDBAdapto
 	public List<Xref> getByDBNameList(String id, List<String> dbnames) {
 
 		QueryBuilder builder = QueryBuilder.start("transcripts.xrefs.id").is(id.toUpperCase());
-		List<Xref> xrefQuery = executeQuery(builder.get());
+		List<Xref> xrefQuery = new ArrayList<>();//;executeQuery(builder.get());
 		logger.info("->>>>>>>>>>>>>>>>"+xrefQuery.size());
 		if(dbnames == null) {
 			dbnames = Collections.emptyList();

@@ -55,10 +55,10 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 //		try {
 //			if (cursor != null) {
 //				result = new ArrayList<Gene>(cursor.size());
-//				Gson gson = new Gson();
+//				Gson jsonObjectMapper = new Gson();
 //				Gene gene;
 //				while (cursor.hasNext()) {
-//					gene = (Gene) gson.fromJson(cursor.next().toString(), Gene.class);
+//					gene = (Gene) jsonObjectMapper.fromJson(cursor.next().toString(), Gene.class);
 //					result.add(gene);
 //				}
 //			}
@@ -224,9 +224,9 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 		}
 
 		if (options.getBoolean("transcripts", true)) {
-			return executeQuery(region, builder.get(), null, null, options);
+			return executeQuery(region.toString(), builder.get(), null, null, options);
 		} else {
-			return executeQuery(region, builder.get(), Arrays.asList("transcripts"), null, options);
+			return executeQuery(region.toString(), builder.get(), Arrays.asList("transcripts"), null, options);
 		}
 	}
 	
@@ -240,6 +240,7 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 			biotypeIds.addAll(biotypes);
 		}
 		
+		List<String> ids = new ArrayList<>(regions.size());
 		for(Region region: regions) {
 			QueryBuilder builder = QueryBuilder.start("chromosome").is(region.getChromosome()).and("end")
 					.greaterThan(region.getStart()).and("start").lessThan(region.getEnd());
@@ -247,12 +248,13 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 				builder = builder.and("biotype").in(biotypeIds);				
 			}
 			queries.add(builder.get());
+			ids.add(region.toString());
 		}
 		
 		if (options.getBoolean("transcripts", true)) {
-			return executeQueryList(regions, queries, null, null, options);
+			return executeQueryList(ids, queries, null, null, options);
 		} else {
-			return executeQueryList(regions, queries, Arrays.asList("transcripts"), null, options);
+			return executeQueryList(ids, queries, Arrays.asList("transcripts"), null, options);
 		}
 	}
 

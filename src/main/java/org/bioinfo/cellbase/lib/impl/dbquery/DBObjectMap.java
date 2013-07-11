@@ -1,18 +1,22 @@
 package org.bioinfo.cellbase.lib.impl.dbquery;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DBObjectMap extends LinkedHashMap<String, Object> {
 
 	
 	private static final long serialVersionUID = 3765181002574467833L;
 
-	protected static Gson gson = new Gson();
+	protected ObjectMapper jsonObjectMapper = new ObjectMapper();
 	
 	
 	public DBObjectMap() {
@@ -28,11 +32,20 @@ public class DBObjectMap extends LinkedHashMap<String, Object> {
 	}
 	
 	public DBObjectMap(String json) {
-		this.putAll(gson.fromJson(json, this.getClass()));
+		try {
+			this.putAll(jsonObjectMapper.readValue(json, this.getClass()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public String toJson() {
-		return gson.toJson(this);
+		try {
+			return jsonObjectMapper.writeValueAsString(this);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public String safeToString() {

@@ -39,7 +39,7 @@ public class GenomeSequenceMongoDBAdaptorTest {
 	public void testGetByRegionList() {
         List<Region> regions = Region.parseRegions("13:1998-1999,13:1999-2000");
         int strand = 1;
-        List<GenomeSequenceFeature> a = genomeSequenceDBAdaptor.getByRegionList(regions, strand);
+        List<GenomeSequenceFeature> a = genomeSequenceDBAdaptor.getAllByRegionList(regions, strand);
         System.out.println(gson.toJson(a));
 	}
 	

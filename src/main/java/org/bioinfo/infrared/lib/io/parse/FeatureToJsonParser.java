@@ -6,7 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.bioinfo.commons.io.utils.FileUtils;
 import org.bioinfo.formats.core.feature.Bed;
@@ -14,12 +13,7 @@ import org.bioinfo.formats.core.feature.Gff;
 import org.bioinfo.formats.core.feature.io.BedReader;
 import org.bioinfo.formats.core.feature.io.GffReader;
 import org.bioinfo.formats.exception.FileFormatException;
-import org.bioinfo.infrared.lib.common.Attribute;
-import org.bioinfo.infrared.lib.common.Display;
 import org.bioinfo.infrared.lib.common.FeatureJsonFormat;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 public class FeatureToJsonParser {
 
@@ -46,8 +40,8 @@ public class FeatureToJsonParser {
 		Integer thickEnd = 0;
 		String itemRgb = "";
 		
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-//		Gson gson = new Gson();
+//		Gson jsonObjectMapper = new GsonBuilder().setPrettyPrinting().create();
+//		Gson jsonObjectMapper = new Gson();
 		BedReader bedReader = new BedReader(fileRead);
 //		System.out.println(bedReader.size());
 		Bed bed;
@@ -86,7 +80,7 @@ public class FeatureToJsonParser {
 			else 
 				featJsonFormat.getDisplay().setItemRgb("");
 
-			bfr.write(gson.toJson(featJsonFormat));
+//			bfr.write(jsonObjectMapper.toJson(featJsonFormat));
 		}
 		bfr.close();
 		bedReader.close();
@@ -98,8 +92,8 @@ public class FeatureToJsonParser {
 		
 		FeatureJsonFormat featJsonFormat = new FeatureJsonFormat();
 		BufferedWriter bfr = new BufferedWriter(new FileWriter(fileWrite));
-		Gson gson = new GsonBuilder().setPrettyPrinting().create(); 
-//		Gson gson = new Gson(); // Este ocupa la mitad que el anterior
+//		Gson jsonObjectMapper = new GsonBuilder().setPrettyPrinting().create(); 
+//		Gson jsonObjectMapper = new Gson(); // Este ocupa la mitad que el anterior
 		GffReader gffReader = new GffReader(fileRead);		
 		Gff gff;
 		while((gff = gffReader.read()) != null) {
@@ -113,7 +107,7 @@ public class FeatureToJsonParser {
 			featJsonFormat.setGroup(gff.getGroup());
 //			featJsonFormat.setDisplay(display);
 //			featJsonFormat.setAttributes(attribute);
-			bfr.write(gson.toJson(featJsonFormat));
+//			bfr.write(jsonObjectMapper.toJson(featJsonFormat));
 		}
 		bfr.close();
 		gffReader.close();

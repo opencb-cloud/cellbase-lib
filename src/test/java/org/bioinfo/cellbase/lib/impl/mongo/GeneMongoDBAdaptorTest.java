@@ -43,7 +43,7 @@ public class GeneMongoDBAdaptorTest {
 
 	@Test
 	public void testGetAllBYId() {
-		QueryResponse qr = geneDBAdaptor.getAllById("BRCA2", new QueryOptions("transcripts", true));
+		QueryResponse qr = geneDBAdaptor.getAllById("BRCA2", new QueryOptions("transcripts", false));
 		System.out.println(qr.toJson());
 		
 		qr = geneDBAdaptor.getAllByIdList(Arrays.asList("SNORA16", "BRCA2"), new QueryOptions("transcripts", false));
@@ -59,8 +59,8 @@ public class GeneMongoDBAdaptorTest {
 		List<Region> regions = new ArrayList<>();
 		regions.add(new Region("2", 1000, 1190000));
 		regions.add(new Region("12", 5000, 1190000));
-		QueryResponse qr = geneDBAdaptor.getAllByRegionList(regions, new QueryOptions("transcripts", false));
-//		System.out.println(qr.toJson());
+		QueryResponse qr = geneDBAdaptor.getAllByRegionList(regions, new QueryOptions("{'transcripts': false, 'metadata': false, 'exclude': 'id'}"));
+		System.out.println(qr.toJson());
 		
 //		for(Gene gene: genes) {
 //			System.out.println(gene.toString());			

@@ -12,8 +12,6 @@ import org.bioinfo.cellbase.lib.common.core.Transcript;
 import org.bioinfo.cellbase.lib.common.core.Xref;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 
-import com.google.gson.Gson;
-import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCursor;
@@ -39,14 +37,14 @@ public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements Transcri
 		try {
 			if (cursor != null) {
 				result = new ArrayList<List<Transcript>>();
-				Gson gson = new Gson();
-				Gene gene;
+//				Gson jsonObjectMapper = new Gson();
+				Gene gene = null;
 				while (cursor.hasNext()) {
-					gene = (Gene) gson.fromJson(cursor.next().toString(), Gene.class);
+//					gene = (Gene) jsonObjectMapper.fromJson(cursor.next().toString(), Gene.class);
 					result.add(gene.getTranscripts());
 //					BasicDBList b = new BasicDBList();
 //					b.addAll((BasicDBList)cursor.next().get("transcripts"));
-//					trans = (Transcript) gson.fromJson(cursor.next().get("transcripts").toString(), Transcript.class);
+//					trans = (Transcript) jsonObjectMapper.fromJson(cursor.next().get("transcripts").toString(), Transcript.class);
 				}
 			}
 		} finally {
