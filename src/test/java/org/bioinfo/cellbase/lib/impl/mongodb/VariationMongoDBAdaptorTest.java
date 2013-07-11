@@ -1,6 +1,5 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
-import com.google.gson.Gson;
 import org.bioinfo.cellbase.lib.api.VariationDBAdaptor;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.variation.Variation;
@@ -18,13 +17,11 @@ public class VariationMongoDBAdaptorTest {
 	private VariationDBAdaptor variationDBAdaptor;
 	private long startExecTime;
 	private String species = "hsapiens";
-    Gson gson;
 
 	@Before
 	public void beforeTestStart() {
 		variationDBAdaptor = dbAdaptorFact.getVariationDBAdaptor(species, "v3");
 		startExecTime = System.currentTimeMillis();
-        gson = new Gson();
 	}
 
 	@Before
@@ -38,7 +35,7 @@ public class VariationMongoDBAdaptorTest {
 	@Test
 	public void testGetAllByRegionTest() {
 		List<Variation> variations = variationDBAdaptor.getByRegion("13", 32889607,32889731, null, Arrays.asList("transcriptVariations,id".split(",")));
-        System.out.println(gson.toJson(variations));
+//        System.out.println(gson.toJson(variations));
 	}
 
     @Test

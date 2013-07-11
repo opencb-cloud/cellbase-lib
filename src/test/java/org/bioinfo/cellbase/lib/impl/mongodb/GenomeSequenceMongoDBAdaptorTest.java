@@ -1,6 +1,5 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
-import com.google.gson.Gson;
 import org.bioinfo.cellbase.lib.api.GenomeSequenceDBAdaptor;
 import org.bioinfo.cellbase.lib.common.GenomeSequenceFeature;
 import org.bioinfo.cellbase.lib.common.Region;
@@ -17,7 +16,7 @@ public class GenomeSequenceMongoDBAdaptorTest {
     GenomeSequenceDBAdaptor genomeSequenceDBAdaptor;
 	private String species = "hsa";
 	private String version = "v3";
-    Gson gson = new Gson();
+//    Gson gson = new Gson();
 
 	@Before
 	public void beforeTestStart() {
@@ -32,13 +31,13 @@ public class GenomeSequenceMongoDBAdaptorTest {
 	public void tearDown() throws Exception {
 	}
 
-	@Test
-	public void testGetByRegionList() {
-        List<Region> regions = Region.parseRegions("13:1998-1999,13:1999-2000");
-        int strand = 1;
-        List<GenomeSequenceFeature> a = genomeSequenceDBAdaptor.getAllByRegionList(regions, strand);
-        System.out.println(gson.toJson(a));
-	}
+//	@Test
+//	public void testGetByRegionList() {
+//        List<Region> regions = Region.parseRegions("13:1998-1999,13:1999-2000");
+//        int strand = 1;
+//        List<GenomeSequenceFeature> a = genomeSequenceDBAdaptor.getAllByRegionList(regions, strand);
+////        System.out.println(gson.toJson(a));
+//	}
 	
 
 	

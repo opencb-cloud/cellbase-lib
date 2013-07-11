@@ -20,7 +20,7 @@ public class GenericFeature {
     private String itemRGB;
     private String name;
     private String id;
-    private String classStr;
+    private String featureClass;
     private String alias;
     private List<String> cellTypes = new ArrayList<>();
     private String matrix;
@@ -110,12 +110,12 @@ public class GenericFeature {
         this.id = id;
     }
 
-    public String getClassStr() {
-        return classStr;
+    public String getFeatureClass() {
+        return featureClass;
     }
 
-    public void setClassStr(String classStr) {
-        this.classStr = classStr;
+    public void setFeatureClass(String featureClass) {
+        this.featureClass = featureClass;
     }
 
     public String getAlias() {
