@@ -5,6 +5,8 @@ import java.util.List;
 import org.bioinfo.cellbase.lib.common.Position;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.Transcript;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 
 public interface TranscriptDBAdaptor extends FeatureDBAdaptor {
@@ -12,6 +14,10 @@ public interface TranscriptDBAdaptor extends FeatureDBAdaptor {
 	
 	@Override
 	public QueryResult getAll();
+
+    public QueryResponse getAllById(String id, QueryOptions options);
+
+    public QueryResponse getAllByIdList(List<String> idList, QueryOptions options);
 
 	
 	public List<String> getAllEnsemblIds();

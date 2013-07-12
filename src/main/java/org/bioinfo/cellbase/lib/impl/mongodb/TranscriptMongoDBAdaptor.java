@@ -1,5 +1,6 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
+import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,8 @@ import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.Gene;
 import org.bioinfo.cellbase.lib.common.core.Transcript;
 import org.bioinfo.cellbase.lib.common.core.Xref;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 
 import com.mongodb.BasicDBObject;
@@ -27,6 +30,25 @@ public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements Transcri
 		super(db, species, version);
 		mongoDBCollection = db.getCollection("core");
 	}
+
+    @Override
+    public QueryResponse getAllById(String id, QueryOptions options) {
+        //        db.core.aggregate({$match: {"transcripts.id": "ENST00000343281"}}, {$unwind: "$transcripts"}, {$match: {"transcripts.id": "ENST00000343281"}})
+
+        DBObject[] commands = new DBObject[3];
+        DBObject match = new BasicDBObject("$match", new BasicDBObject("transcripts.id", id) );
+        DBObject unwind = new BasicDBObject("$unwind", "$transcripts" );
+        commands[0] = match;
+        commands[1] = unwind;
+        commands[2] = match;
+
+        return executeAggregation(id, commands, null, null, options);
+    }
+
+    @Override
+    public QueryResponse getAllByIdList(List<String> idList, QueryOptions options) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
 	private List<List<Transcript>> executeQuery(DBObject query) {
 		List<List<Transcript>> result = null;
@@ -114,7 +136,8 @@ public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements Transcri
 		return null;
 	}
 
-	@Override
+
+    @Override
 	public List<String> getAllEnsemblIds() {
 		// TODO Auto-generated method stub
 		return null;
