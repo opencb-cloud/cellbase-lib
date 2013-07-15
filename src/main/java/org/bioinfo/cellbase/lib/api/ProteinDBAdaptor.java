@@ -14,8 +14,6 @@ import org.bioinfo.formats.parser.uniprot.v140jaxb.SequenceType;
 public interface ProteinDBAdaptor extends FeatureDBAdaptor {
 
 	
-	@Override
-	public QueryResult getAll();
 
 	public List<String> getAllUniprotAccessions();
 	

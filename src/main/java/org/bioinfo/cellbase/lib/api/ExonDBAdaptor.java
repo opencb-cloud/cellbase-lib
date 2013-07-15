@@ -10,9 +10,6 @@ import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 public interface ExonDBAdaptor extends FeatureDBAdaptor {
 
 	
-	@Override
-	public QueryResult getAll();
-
 	
 	public List<String> getAllEnsemblIds();
 

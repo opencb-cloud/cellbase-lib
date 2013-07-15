@@ -12,8 +12,6 @@ import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 public interface TranscriptDBAdaptor extends FeatureDBAdaptor {
 
 	
-	@Override
-	public QueryResult getAll();
 
     public QueryResponse getAllById(String id, QueryOptions options);
 
