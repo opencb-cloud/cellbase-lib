@@ -26,7 +26,7 @@ import com.mongodb.QueryBuilder;
 
 public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor {
 
-	
+
 	public GeneMongoDBAdaptor(DB db) {
 		super(db);
 	}
@@ -34,85 +34,76 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 	public GeneMongoDBAdaptor(DB db, String species, String version) {
 		super(db, species, version);
 		mongoDBCollection = db.getCollection("core");
-		
+
 		System.out.println("In GeneMongoDBAdaptor constructor");
 	}
-	
-//	private List<Gene> executeQuery(DBObject query, List<String> excludeFields) {
-//		List<Gene> result = null;
-//		
-//		DBCursor cursor = null;
-//		if (excludeFields != null && excludeFields.size() > 0) {
-//			BasicDBObject returnFields = new BasicDBObject("_id", 0);
-//			for (String field : excludeFields) {
-//				returnFields.put(field, 0);
-//			}
-//			cursor = mongoDBCollection.find(query, returnFields);
-//		} else {
-//			cursor = mongoDBCollection.find(query);
-//		}
-//		
-//		try {
-//			if (cursor != null) {
-//				result = new ArrayList<Gene>(cursor.size());
-//				Gson jsonObjectMapper = new Gson();
-//				Gene gene;
-//				while (cursor.hasNext()) {
-//					gene = (Gene) jsonObjectMapper.fromJson(cursor.next().toString(), Gene.class);
-//					result.add(gene);
-//				}
-//			}
-//		} finally {
-//			cursor.close();
-//		}
-//		return result;
-//	}
-	
-	
+
+	//	private List<Gene> executeQuery(DBObject query, List<String> excludeFields) {
+	//		List<Gene> result = null;
+	//		
+	//		DBCursor cursor = null;
+	//		if (excludeFields != null && excludeFields.size() > 0) {
+	//			BasicDBObject returnFields = new BasicDBObject("_id", 0);
+	//			for (String field : excludeFields) {
+	//				returnFields.put(field, 0);
+	//			}
+	//			cursor = mongoDBCollection.find(query, returnFields);
+	//		} else {
+	//			cursor = mongoDBCollection.find(query);
+	//		}
+	//		
+	//		try {
+	//			if (cursor != null) {
+	//				result = new ArrayList<Gene>(cursor.size());
+	//				Gson jsonObjectMapper = new Gson();
+	//				Gene gene;
+	//				while (cursor.hasNext()) {
+	//					gene = (Gene) jsonObjectMapper.fromJson(cursor.next().toString(), Gene.class);
+	//					result.add(gene);
+	//				}
+	//			}
+	//		} finally {
+	//			cursor.close();
+	//		}
+	//		return result;
+	//	}
+
+
 	@Override
 	public QueryResponse getAll(QueryOptions options) {
 		QueryBuilder builder = new QueryBuilder();
-		
+
 		List<Object> biotypes = options.getList("biotypes", null);
 		if (biotypes != null && biotypes.size() > 0) {
 			BasicDBList biotypeIds = new BasicDBList();
 			biotypeIds.addAll(biotypes);
 			builder = builder.and("biotype").in(biotypeIds);
 		}
-		
-		if (options.getBoolean("transcripts", true)) {
-			return executeQuery("result", builder.get(), null, null, options);
-		} else {
-			return executeQuery("result", builder.get(), Arrays.asList("transcripts"), null, options);
-		}
+
+		options = addExcludeReturnFields("transcripts", options);
+		return executeQuery("result", builder.get(), options);
 	}
 
 	@Override
 	public QueryResponse getAllById(String id, QueryOptions options) {
 		QueryBuilder builder = QueryBuilder.start("transcripts.xrefs.id").is(id);
-		
-		if (options.getBoolean("transcripts", true)) {
-			return executeQuery(id, builder.get(), null, null, options);
-		} else {
-			return executeQuery(id, builder.get(), Arrays.asList("transcripts"), null, options);
-		}
+
+		options = addExcludeReturnFields("transcripts", options);
+		return executeQuery("result", builder.get(), options);
 	}
 
 	@Override
 	public QueryResponse getAllByIdList(List<String> idList, QueryOptions options) {
-//		QueryBuilder builder = QueryBuilder.start("transcripts.xrefs.id").in(idList);
-		
+		//		QueryBuilder builder = QueryBuilder.start("transcripts.xrefs.id").in(idList);
+
 		List<DBObject> queries = new ArrayList<>();
 		for(String id: idList) {
 			QueryBuilder builder = QueryBuilder.start("transcripts.xrefs.id").is(id);
 			queries.add(builder.get());
 		}
-		
-		if (options.getBoolean("transcripts", true)) {
-			return executeQueryList(idList, queries, null, null, options);
-		} else {
-			return executeQueryList(idList, queries, Arrays.asList("transcripts"), null, options);
-		}
+
+		options = addExcludeReturnFields("transcripts", options);
+		return executeQueryList(idList, queries, options);
 	}
 
 
@@ -125,65 +116,65 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 		DBCursor cursor = mongoDBCollection.find(query);
 		DBObject res = cursor.next();
 		System.out.println(res.get("transcripts"));
-		
-//		BasicDBObject returnFields = new BasicDBObject();
+
+		//		BasicDBObject returnFields = new BasicDBObject();
 		// returnFields.put("id", 1);
-//		returnFields.put("_id", 0);
-//		returnFields.put("id", 1);
-//		returnFields.put("name", 1);
+		//		returnFields.put("_id", 0);
+		//		returnFields.put("id", 1);
+		//		returnFields.put("name", 1);
 
 		query = new BasicDBObject();
 		BasicDBObject orderBy = new BasicDBObject();
 		orderBy.put("id", 1);
 
-		QueryResponse result = executeQuery("result", query, null, Arrays.asList("id", "name"), null);
+		QueryResponse result = executeQuery("result", query, null);
 		result.safePrint();
-//		List<String> idList = new ArrayList<String>(65000);
-//		DBCursor cursor = mongoDBCollection.find(query, returnFields).sort(orderBy);
-//		
-//		QueryResult result = new QueryResult();
-//		
-//		
-//		DBObject explain = cursor.explain();
-//		
-//		
-//		//		((BasicBSONList)cursor).get("id");
-////		DBObject explain = cursor.explain();
-//		long start1 = System.currentTimeMillis();
-//		BasicDBList list = new BasicDBList();
-////		BasicBSONList list1 = new BasicBSONList();
-//		while(cursor.hasNext()) {
-//			list.add(cursor.next());
-////			list1.add(cursor.next());
-////			idList.add(obj.get("id").toString());
-//		}
-//		result.setResult(list.toString());
-//		long end1 = System.currentTimeMillis();
-//		System.out.println("DBCursor to JSON1:\n"+(end1-start1));
-//		cursor.close();
-//		
-//		result.setDBTime(explain.get("millis"));
-//System.out.println(result.safeToString());
+		//		List<String> idList = new ArrayList<String>(65000);
+		//		DBCursor cursor = mongoDBCollection.find(query, returnFields).sort(orderBy);
+		//		
+		//		QueryResult result = new QueryResult();
+		//		
+		//		
+		//		DBObject explain = cursor.explain();
+		//		
+		//		
+		//		//		((BasicBSONList)cursor).get("id");
+		////		DBObject explain = cursor.explain();
+		//		long start1 = System.currentTimeMillis();
+		//		BasicDBList list = new BasicDBList();
+		////		BasicBSONList list1 = new BasicBSONList();
+		//		while(cursor.hasNext()) {
+		//			list.add(cursor.next());
+		////			list1.add(cursor.next());
+		////			idList.add(obj.get("id").toString());
+		//		}
+		//		result.setResult(list.toString());
+		//		long end1 = System.currentTimeMillis();
+		//		System.out.println("DBCursor to JSON1:\n"+(end1-start1));
+		//		cursor.close();
+		//		
+		//		result.setDBTime(explain.get("millis"));
+		//System.out.println(result.safeToString());
 		return result;
 	}
 
-	
 
-	
-//	@Override
-//	public List<Gene> getByXref(String xref, List<String> exclude) {
-//		BasicDBObject query = new BasicDBObject("transcripts.xrefs.id", xref.toUpperCase());
-//		return executeQuery(query, exclude);
-//	}
-//
-//    @Override
-//    public List<List<Gene>> getByXrefList(List<String> xrefList, List<String> exclude) {
-//        List<List<Gene>> genes = new ArrayList<List<Gene>>(xrefList.size());
-//        for (String name : xrefList) {
-//            genes.add(getByXref(name, exclude));
-//        }
-//        return genes;
-//    }
+
+
+	//	@Override
+	//	public List<Gene> getByXref(String xref, List<String> exclude) {
+	//		BasicDBObject query = new BasicDBObject("transcripts.xrefs.id", xref.toUpperCase());
+	//		return executeQuery(query, exclude);
+	//	}
+	//
+	//    @Override
+	//    public List<List<Gene>> getByXrefList(List<String> xrefList, List<String> exclude) {
+	//        List<List<Gene>> genes = new ArrayList<List<Gene>>(xrefList.size());
+	//        for (String name : xrefList) {
+	//            genes.add(getByXref(name, exclude));
+	//        }
+	//        return genes;
+	//    }
 
 	@Override
 	public QueryResponse getAllByPosition(String chromosome, int position, QueryOptions options) {
@@ -203,14 +194,14 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 		}
 		return getAllByRegionList(regions, options);
 	}
-	
+
 
 	@Override
 	public QueryResponse getAllByRegion(String chromosome, int start, int end, QueryOptions options) {
 		return getAllByRegion(new Region(chromosome, start, end), options);
 	}
 
-	
+
 	@Override
 	public QueryResponse getAllByRegion(Region region, QueryOptions options) {
 		QueryBuilder builder = QueryBuilder.start("chromosome").is(region.getChromosome()).and("end")
@@ -223,23 +214,20 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 			builder = builder.and("biotype").in(biotypeIds);
 		}
 
-		if (options.getBoolean("transcripts", true)) {
-			return executeQuery(region.toString(), builder.get(), null, null, options);
-		} else {
-			return executeQuery(region.toString(), builder.get(), Arrays.asList("transcripts"), null, options);
-		}
+		options = addExcludeReturnFields("transcripts", options);
+		return executeQuery(region.toString(), builder.get(), options);
 	}
-	
+
 	@Override
 	public QueryResponse getAllByRegionList(List<Region> regions, QueryOptions options) {
 		List<DBObject> queries = new ArrayList<>();
-		
+
 		List<Object> biotypes = options.getList("biotypes", null);
 		BasicDBList biotypeIds = new BasicDBList();
 		if (biotypes != null && biotypes.size() > 0) {
 			biotypeIds.addAll(biotypes);
 		}
-		
+
 		List<String> ids = new ArrayList<>(regions.size());
 		for(Region region: regions) {
 			QueryBuilder builder = QueryBuilder.start("chromosome").is(region.getChromosome()).and("end")
@@ -250,16 +238,13 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 			queries.add(builder.get());
 			ids.add(region.toString());
 		}
-		
-		if (options.getBoolean("transcripts", true)) {
-			return executeQueryList(ids, queries, null, null, options);
-		} else {
-			return executeQueryList(ids, queries, Arrays.asList("transcripts"), null, options);
-		}
+
+		options = addExcludeReturnFields("transcripts", options);
+		return executeQueryList(ids, queries, options);
 	}
 
 
-	
+
 	@Override
 	public List<Gene> getAllByCytoband(String chromosome, String cytoband) {
 		// TODO Auto-generated method stub
@@ -341,122 +326,122 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 	@Override
 	public String getAllIntervalFrequencies(Region region, int interval) {
 
-        BasicDBObject start = new BasicDBObject("$gt",region.getStart());
-        start.append("$lt",region.getEnd());
+		BasicDBObject start = new BasicDBObject("$gt",region.getStart());
+		start.append("$lt",region.getEnd());
 
-        BasicDBList andArr = new BasicDBList();
-        andArr.add(new BasicDBObject("chromosome",region.getChromosome()));
-        andArr.add(new BasicDBObject("start",start));
+		BasicDBList andArr = new BasicDBList();
+		andArr.add(new BasicDBObject("chromosome",region.getChromosome()));
+		andArr.add(new BasicDBObject("start",start));
 
-        BasicDBObject match = new BasicDBObject("$match",new BasicDBObject("$and",andArr));
-
-
-
-        BasicDBList divide1 = new BasicDBList();
-        divide1.add("$start");
-        divide1.add(interval);
-
-        BasicDBList divide2 = new BasicDBList();
-        divide2.add(new BasicDBObject("$mod",divide1));
-        divide2.add(interval);
-
-        BasicDBList subtractList = new BasicDBList();
-        subtractList.add(new BasicDBObject("$divide",divide1));
-        subtractList.add(new BasicDBObject("$divide",divide2));
+		BasicDBObject match = new BasicDBObject("$match",new BasicDBObject("$and",andArr));
 
 
-        BasicDBObject substract = new BasicDBObject("$subtract",subtractList);
 
-        DBObject totalCount = new BasicDBObject("$sum",1);
+		BasicDBList divide1 = new BasicDBList();
+		divide1.add("$start");
+		divide1.add(interval);
 
-        BasicDBObject g = new BasicDBObject("_id",substract);
-        g.append("features_count",totalCount);
-        BasicDBObject group = new BasicDBObject("$group",g);
+		BasicDBList divide2 = new BasicDBList();
+		divide2.add(new BasicDBObject("$mod",divide1));
+		divide2.add(interval);
 
-        BasicDBObject sort = new BasicDBObject("$sort",new BasicDBObject("_id",1));
+		BasicDBList subtractList = new BasicDBList();
+		subtractList.add(new BasicDBObject("$divide",divide1));
+		subtractList.add(new BasicDBObject("$divide",divide2));
 
-        AggregationOutput output = mongoDBCollection.aggregate(match, group, sort);
 
-        System.out.println(output.getCommand());
+		BasicDBObject substract = new BasicDBObject("$subtract",subtractList);
 
-        HashMap<Long,DBObject> ids = new HashMap<>();
-        BasicDBList resultList = new BasicDBList();
+		DBObject totalCount = new BasicDBObject("$sum",1);
 
-        for (DBObject intervalObj : output.results()){
-            Long _id = Math.round((Double)intervalObj.get("_id"));//is double
+		BasicDBObject g = new BasicDBObject("_id",substract);
+		g.append("features_count",totalCount);
+		BasicDBObject group = new BasicDBObject("$group",g);
 
-            DBObject intervalVisited = ids.get(_id);
-            if(intervalVisited == null){
-                intervalObj.put("_id",_id);
-                intervalObj.put("start",getChunkStart(_id.intValue(), interval));
-                intervalObj.put("end",getChunkEnd(_id.intValue(), interval));
-                intervalObj.put("features_count",Math.log((int)intervalObj.get("features_count")));
-                ids.put(_id,intervalObj);
-                resultList.add(intervalObj);
-            }else{
-                Double sum = (Double)intervalVisited.get("features_count") + Math.log((int)intervalObj.get("features_count"));
-                intervalVisited.put("features_count", sum.intValue());
-            }
-        }
-        return resultList.toString();
+		BasicDBObject sort = new BasicDBObject("$sort",new BasicDBObject("_id",1));
 
-//		QueryBuilder builder = QueryBuilder.start("chromosome").is(region.getChromosome()).and("end")
-//				.greaterThan(region.getStart()).and("start").lessThan(region.getEnd());
-//
-//		int numIntervals = (region.getEnd() - region.getStart()) / interval + 1;
-//		int[] intervalCount = new int[numIntervals];
-//
-//		List<Gene> genes = executeQuery(builder.get(),
-//				Arrays.asList("transcripts,id,name,biotype,status,chromosome,end,strand,source,description"));
-//
-//		System.out.println("GENES index");
-//		System.out.println("numIntervals: " + numIntervals);
-//		for (Gene gene : genes) {
-//			System.out.print("gs:" + gene.getStart() + " ");
-//			if (gene.getStart() >= region.getStart() && gene.getStart() <= region.getEnd()) {
-//				int intervalIndex = (gene.getStart() - region.getStart()) / interval; // truncate
-//				System.out.print(intervalIndex + " ");
-//				intervalCount[intervalIndex]++;
-//			}
-//		}
-//		System.out.println("GENES index");
-//
-//		int intervalStart = region.getStart();
-//		int intervalEnd = intervalStart + interval - 1;
-//		BasicDBList intervalList = new BasicDBList();
-//		for (int i = 0; i < numIntervals; i++) {
-//			BasicDBObject intervalObj = new BasicDBObject();
-//			intervalObj.put("start", intervalStart);
-//			intervalObj.put("end", intervalEnd);
-//			intervalObj.put("interval", i);
-//			intervalObj.put("value", intervalCount[i]);
-//			intervalList.add(intervalObj);
-//			intervalStart = intervalEnd + 1;
-//			intervalEnd = intervalStart + interval - 1;
-//		}
-//
-//		System.out.println(region.getChromosome());
-//		System.out.println(region.getStart());
-//		System.out.println(region.getEnd());
-//		return intervalList.toString();
+		AggregationOutput output = mongoDBCollection.aggregate(match, group, sort);
+
+		System.out.println(output.getCommand());
+
+		HashMap<Long,DBObject> ids = new HashMap<>();
+		BasicDBList resultList = new BasicDBList();
+
+		for (DBObject intervalObj : output.results()){
+			Long _id = Math.round((Double)intervalObj.get("_id"));//is double
+
+			DBObject intervalVisited = ids.get(_id);
+			if(intervalVisited == null){
+				intervalObj.put("_id",_id);
+				intervalObj.put("start",getChunkStart(_id.intValue(), interval));
+				intervalObj.put("end",getChunkEnd(_id.intValue(), interval));
+				intervalObj.put("features_count",Math.log((int)intervalObj.get("features_count")));
+				ids.put(_id,intervalObj);
+				resultList.add(intervalObj);
+			}else{
+				Double sum = (Double)intervalVisited.get("features_count") + Math.log((int)intervalObj.get("features_count"));
+				intervalVisited.put("features_count", sum.intValue());
+			}
+		}
+		return resultList.toString();
+
+		//		QueryBuilder builder = QueryBuilder.start("chromosome").is(region.getChromosome()).and("end")
+		//				.greaterThan(region.getStart()).and("start").lessThan(region.getEnd());
+		//
+		//		int numIntervals = (region.getEnd() - region.getStart()) / interval + 1;
+		//		int[] intervalCount = new int[numIntervals];
+		//
+		//		List<Gene> genes = executeQuery(builder.get(),
+		//				Arrays.asList("transcripts,id,name,biotype,status,chromosome,end,strand,source,description"));
+		//
+		//		System.out.println("GENES index");
+		//		System.out.println("numIntervals: " + numIntervals);
+		//		for (Gene gene : genes) {
+		//			System.out.print("gs:" + gene.getStart() + " ");
+		//			if (gene.getStart() >= region.getStart() && gene.getStart() <= region.getEnd()) {
+		//				int intervalIndex = (gene.getStart() - region.getStart()) / interval; // truncate
+		//				System.out.print(intervalIndex + " ");
+		//				intervalCount[intervalIndex]++;
+		//			}
+		//		}
+		//		System.out.println("GENES index");
+		//
+		//		int intervalStart = region.getStart();
+		//		int intervalEnd = intervalStart + interval - 1;
+		//		BasicDBList intervalList = new BasicDBList();
+		//		for (int i = 0; i < numIntervals; i++) {
+		//			BasicDBObject intervalObj = new BasicDBObject();
+		//			intervalObj.put("start", intervalStart);
+		//			intervalObj.put("end", intervalEnd);
+		//			intervalObj.put("interval", i);
+		//			intervalObj.put("value", intervalCount[i]);
+		//			intervalList.add(intervalObj);
+		//			intervalStart = intervalEnd + 1;
+		//			intervalEnd = intervalStart + interval - 1;
+		//		}
+		//
+		//		System.out.println(region.getChromosome());
+		//		System.out.println(region.getStart());
+		//		System.out.println(region.getEnd());
+		//		return intervalList.toString();
 
 	}
 
-    private int getChunkId(int position, int chunksize){
-        return position/chunksize;
-    }
-    private int getChunkStart(int id, int chunksize){
-        return  (id==0) ? 1 : id*chunksize;
-    }
-    private int getChunkEnd(int id, int chunksize){
-        return (id*chunksize)+chunksize-1;
-    }
+	private int getChunkId(int position, int chunksize){
+		return position/chunksize;
+	}
+	private int getChunkStart(int id, int chunksize){
+		return  (id==0) ? 1 : id*chunksize;
+	}
+	private int getChunkEnd(int id, int chunksize){
+		return (id*chunksize)+chunksize-1;
+	}
 
-    
-    @Override
+
+	@Override
 	public QueryResult getAll() {
 		BasicDBObject query = new BasicDBObject();
-//		return executeQuery("result", query, Arrays.asList("_id"), null);
+		//		return executeQuery("result", query, Arrays.asList("_id"), null);
 		return null;
 	}
 

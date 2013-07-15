@@ -20,60 +20,80 @@ public interface TranscriptDBAdaptor extends FeatureDBAdaptor {
     public QueryResponse getAllByIdList(List<String> idList, QueryOptions options);
 
 	
-	public List<String> getAllEnsemblIds();
+//	public List<String> getAllEnsemblIds();
+//
+//	public Transcript getByEnsemblId(String ensemblId);
+//	
+//	public List<Transcript> getAllByEnsemblIdList(List<String> ensemblIdList);
+//
+//	public List<List<Transcript>> getAllByName(String name, List<String> exclude);
+//
+//	public List<List<List<Transcript>>> getAllByNameList(List<String> nameList, List<String> exclude);
+//	
+//	public List<Transcript> getByEnsemblGeneId(String ensemblGeneId);
+//	
+//	public List<List<Transcript>> getByEnsemblGeneIdList(List<String> ensemblGeneIdList);
 
-	public Transcript getByEnsemblId(String ensemblId);
 	
-	public List<Transcript> getAllByEnsemblIdList(List<String> ensemblIdList);
-
-	public List<List<Transcript>> getAllByName(String name, List<String> exclude);
-
-	public List<List<List<Transcript>>> getAllByNameList(List<String> nameList, List<String> exclude);
-	
-	public List<Transcript> getByEnsemblGeneId(String ensemblGeneId);
-	
-	public List<List<Transcript>> getByEnsemblGeneIdList(List<String> ensemblGeneIdList);
-
-	
-	public List<Transcript> getAllByBiotype(String biotype);
-	
-	public List<Transcript> getAllByBiotypeList(List<String> biotypeList);
-	
-
-	public List<Transcript> getAllByPosition(String chromosome, int position);
-
-	public List<Transcript> getAllByPosition(Position position);
-
-	public List<List<Transcript>> getAllByPositionList(List<Position> positionList);
+//	public List<Transcript> getAllByBiotype(String biotype);
+//	
+//	public List<Transcript> getAllByBiotypeList(List<String> biotypeList);
 	
 
-	public List<Transcript> getAllByRegion(String chromosome);
+//	public List<Transcript> getAllByPosition(String chromosome, int position);
+//
+//	public List<Transcript> getAllByPosition(Position position);
 
-	public List<Transcript> getAllByRegion(String chromosome, int start);
-
-	public List<Transcript> getAllByRegion(String chromosome, int start, int end);
-
-	public List<Transcript> getAllByRegion(String chromosome, int start, int end, List<String> biotypeList);
-
-	public List<Transcript> getAllByRegion(Region region);
-
-	public List<Transcript> getAllByRegion(Region region, List<String> biotypeList);
-
-	public List<List<Transcript>> getAllByRegionList(List<Region> regionList);
+	public QueryResponse getAllByPosition(String chromosome, int position, QueryOptions options);
 	
-	public List<List<Transcript>> getAllByRegionList(List<Region> regions, List<String> biotypeList);
+	public QueryResponse getAllByPosition(Position position, QueryOptions options);
+	
+//	public List<List<Transcript>> getAllByPositionList(List<Position> positionList);
+	
+	public QueryResponse getAllByPositionList(List<Position> positionList, QueryOptions options);
 
-	public List<Transcript> getAllByCytoband(String chromosome, String cytoband);
+	
+//	public List<Transcript> getAllByRegion(String chromosome);
+//
+//	public List<Transcript> getAllByRegion(String chromosome, int start);
+//
+//	public List<Transcript> getAllByRegion(String chromosome, int start, int end);
+//
+//	public List<Transcript> getAllByRegion(String chromosome, int start, int end, List<String> biotypeList);
+	
+	public QueryResponse getAllByRegion(String chromosome, int start, int end, QueryOptions options);
+
+//	public List<Transcript> getAllByRegion(Region region);
+//
+//	public List<Transcript> getAllByRegion(Region region, List<String> biotypeList);
+
+	public QueryResponse getAllByRegion(Region region, QueryOptions options);
 	
 	
-	public List<Transcript> getAllBySnpId(String snpId);
+//	public List<List<Transcript>> getAllByRegionList(List<Region> regionList);
+//	
+//	public List<List<Transcript>> getAllByRegionList(List<Region> regions, List<String> biotypeList);
+
+	public QueryResponse getAllByRegionList(List<Region> regions, QueryOptions options);
 	
-	public List<List<Transcript>> getAllBySnpIdList(List<String> snpIdList);
+	
+	
+//	public List<Transcript> getAllByCytoband(String chromosome, String cytoband);
+//	
+//	
+//	public List<Transcript> getAllBySnpId(String snpId);
+//	
+//	public List<List<Transcript>> getAllBySnpIdList(List<String> snpIdList);
 
 
-	public List<Transcript> getAllByEnsemblExonId(String ensemblExonId);
+	public QueryResponse getAllByEnsemblExonId(String ensemblExonId, QueryOptions options);
 
-	public List<List<Transcript>> getAllByEnsemblExonId(List<String> ensemblExonId);
+	public QueryResponse getAllByEnsemblExonIdList(List<String> ensemblExonIdList, QueryOptions options);
+	
+	
+	public QueryResponse getAllByTFBSId(String tfbsId, QueryOptions options);
+
+	public QueryResponse getAllByTFBSIdList(List<String> tfbsIdList, QueryOptions options);
 	
 	
 	public List<Transcript> getAllByProteinName(String proteinName);

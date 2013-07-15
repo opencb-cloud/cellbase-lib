@@ -75,6 +75,8 @@ public class VariationMongoDBAdaptor extends MongoDBAdaptor implements Variation
         if (end < 1) {
             end = 1;
         }
+        // db.variation.find({"chromosome": "13", $and: [{"start": {"$gte": 32890444}}, {"start": {"$lte": 32890444}}]})
+        // OJO esto es incorrecto:  db.variation.find({"chromosome": "13", "start": {"$gte": 32889715}, "start": {"$lte": 32891205}})
         QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome.trim()).and("start").greaterThanEquals(start).lessThanEquals(end);
 
         List<Variation> variationList = executeQuery(builder.get(), exclude);

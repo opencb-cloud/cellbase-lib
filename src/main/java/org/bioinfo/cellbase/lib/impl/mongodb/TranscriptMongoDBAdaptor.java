@@ -1,23 +1,18 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
-import java.util.AbstractCollection;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.bioinfo.cellbase.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.cellbase.lib.common.Position;
 import org.bioinfo.cellbase.lib.common.Region;
-import org.bioinfo.cellbase.lib.common.core.Gene;
 import org.bioinfo.cellbase.lib.common.core.Transcript;
-import org.bioinfo.cellbase.lib.common.core.Xref;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
-import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
 public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements TranscriptDBAdaptor {
@@ -31,6 +26,13 @@ public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements Transcri
 		mongoDBCollection = db.getCollection("core");
 	}
 
+	@Override
+	public QueryResult getAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
     @Override
     public QueryResponse getAllById(String id, QueryOptions options) {
         //        db.core.aggregate({$match: {"transcripts.id": "ENST00000343281"}}, {$unwind: "$transcripts"}, {$match: {"transcripts.id": "ENST00000343281"}})
@@ -42,38 +44,167 @@ public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements Transcri
         commands[1] = unwind;
         commands[2] = match;
 
-        return executeAggregation(id, commands, null, null, options);
+        QueryResponse q = executeAggregation(id, commands, options);
+        System.out.println(">>"+((QueryResult)q.get(id)).getResult());
+        
+        return executeAggregation(id, commands, options);
     }
+    
+    
 
     @Override
     public QueryResponse getAllByIdList(List<String> idList, QueryOptions options) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-	private List<List<Transcript>> executeQuery(DBObject query) {
-		List<List<Transcript>> result = null;
+    @Override
+	public QueryResponse getAllByPosition(String chromosome, int position,
+			QueryOptions options) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-		BasicDBObject returnFields = new BasicDBObject("transcripts", 1);
-		DBCursor cursor = mongoDBCollection.find(query, returnFields);
+	@Override
+	public QueryResponse getAllByPosition(Position position,
+			QueryOptions options) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-		try {
-			if (cursor != null) {
-				result = new ArrayList<List<Transcript>>();
-//				Gson jsonObjectMapper = new Gson();
-				Gene gene = null;
-				while (cursor.hasNext()) {
-//					gene = (Gene) jsonObjectMapper.fromJson(cursor.next().toString(), Gene.class);
-					result.add(gene.getTranscripts());
-//					BasicDBList b = new BasicDBList();
-//					b.addAll((BasicDBList)cursor.next().get("transcripts"));
-//					trans = (Transcript) jsonObjectMapper.fromJson(cursor.next().get("transcripts").toString(), Transcript.class);
-				}
-			}
-		} finally {
-			cursor.close();
-		}
+	@Override
+	public QueryResponse getAllByPositionList(List<Position> positionList,
+			QueryOptions options) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-		return result;
+	@Override
+	public QueryResponse getAllByRegion(String chromosome, int start, int end,
+			QueryOptions options) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public QueryResponse getAllByRegion(Region region, QueryOptions options) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public QueryResponse getAllByRegionList(List<Region> regions,
+			QueryOptions options) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	@Override
+	public QueryResponse getAllByEnsemblExonId(String ensemblExonId,
+			QueryOptions options) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public QueryResponse getAllByEnsemblExonIdList(
+			List<String> ensemblExonIdList, QueryOptions options) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	@Override
+	public QueryResponse getAllByTFBSId(String tfbsId, QueryOptions options) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public QueryResponse getAllByTFBSIdList(List<String> tfbsIdList,
+			QueryOptions options) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+//	private List<List<Transcript>> executeQuery(DBObject query) {
+//		List<List<Transcript>> result = null;
+//
+//		BasicDBObject returnFields = new BasicDBObject("transcripts", 1);
+//		DBCursor cursor = mongoDBCollection.find(query, returnFields);
+//
+//		try {
+//			if (cursor != null) {
+//				result = new ArrayList<List<Transcript>>();
+////				Gson jsonObjectMapper = new Gson();
+//				Gene gene = null;
+//				while (cursor.hasNext()) {
+////					gene = (Gene) jsonObjectMapper.fromJson(cursor.next().toString(), Gene.class);
+//					result.add(gene.getTranscripts());
+////					BasicDBList b = new BasicDBList();
+////					b.addAll((BasicDBList)cursor.next().get("transcripts"));
+////					trans = (Transcript) jsonObjectMapper.fromJson(cursor.next().get("transcripts").toString(), Transcript.class);
+//				}
+//			}
+//		} finally {
+//			cursor.close();
+//		}
+//
+//		return result;
+//	}
+
+	
+//	@Override
+//	public List<List<Transcript>> getAllByName(String name, List<String> exclude) {
+//		BasicDBObject query = new BasicDBObject("transcripts.xrefs.id", name.toUpperCase());
+//        List<List<Transcript>> result = new ArrayList<List<Transcript>>();
+//        List<List<Transcript>> transcriptsList = executeQuery(query);
+//
+//        boolean found = false;
+//		for (List<Transcript> transcripts : transcriptsList) {
+//
+//            found = false;
+//            for (Transcript transcript : transcripts) {
+//                for (Xref xref : transcript.getXrefs()) {
+//                    if (xref.getId().equals(name.toUpperCase())) {
+//                        result.add(transcripts);
+//                        found = true;
+//                        break;
+//                    }
+//                }
+//                if(found){
+//                    break;
+//                }
+//            }
+//
+//
+//		}
+//		return result;
+//	}
+
+
+	@Override
+	public List<Transcript> getAllByProteinName(String proteinName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<List<Transcript>> getAllByProteinNameList(List<String> proteinNameList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Transcript> getAllByMirnaMature(String mirnaID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<List<Transcript>> getAllByMirnaMatureList(List<String> mirnaIDList) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -130,215 +261,4 @@ public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements Transcri
 		return null;
 	}
 
-	@Override
-	public QueryResult getAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-    @Override
-	public List<String> getAllEnsemblIds() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Transcript getByEnsemblId(String ensemblId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Transcript> getAllByEnsemblIdList(List<String> ensemblIdList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<List<Transcript>> getAllByName(String name, List<String> exclude) {
-		BasicDBObject query = new BasicDBObject("transcripts.xrefs.id", name.toUpperCase());
-        List<List<Transcript>> result = new ArrayList<List<Transcript>>();
-        List<List<Transcript>> transcriptsList = executeQuery(query);
-
-        boolean found = false;
-		for (List<Transcript> transcripts : transcriptsList) {
-
-            found = false;
-            for (Transcript transcript : transcripts) {
-                for (Xref xref : transcript.getXrefs()) {
-                    if (xref.getId().equals(name.toUpperCase())) {
-                        result.add(transcripts);
-                        found = true;
-                        break;
-                    }
-                }
-                if(found){
-                    break;
-                }
-            }
-
-
-		}
-		return result;
-	}
-
-	@Override
-	public List<List<List<Transcript>>> getAllByNameList(List<String> nameList, List<String> exclude) {
-        List<List<List<Transcript>>> transcripts = new ArrayList<List<List<Transcript>>>(nameList.size());
-		for (String name : nameList) {
-			transcripts.add(getAllByName(name, exclude));
-		}
-		return transcripts;
-	}
-
-	@Override
-	public List<Transcript> getByEnsemblGeneId(String ensemblGeneId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<List<Transcript>> getByEnsemblGeneIdList(List<String> ensemblGeneIdList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Transcript> getAllByBiotype(String biotype) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Transcript> getAllByBiotypeList(List<String> biotypeList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Transcript> getAllByPosition(String chromosome, int position) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Transcript> getAllByPosition(Position position) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<List<Transcript>> getAllByPositionList(List<Position> positionList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Transcript> getAllByRegion(String chromosome) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Transcript> getAllByRegion(String chromosome, int start) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Transcript> getAllByRegion(String chromosome, int start, int end) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Transcript> getAllByRegion(String chromosome, int start, int end, List<String> biotypeList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Transcript> getAllByRegion(Region region) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Transcript> getAllByRegion(Region region, List<String> biotypeList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<List<Transcript>> getAllByRegionList(List<Region> regionList) {
-		List<List<Transcript>> transcript = new ArrayList<List<Transcript>>(regionList.size());
-		for (Region region : regionList) {
-			transcript.add(getAllByRegion(region));
-		}
-		return transcript;
-	}
-
-	@Override
-	public List<List<Transcript>> getAllByRegionList(List<Region> regionList, List<String> biotypeList) {
-		List<List<Transcript>> transcript = new ArrayList<List<Transcript>>(regionList.size());
-		for (Region region : regionList) {
-			transcript.add(getAllByRegion(region, biotypeList));
-		}
-		return transcript;
-	}
-
-	@Override
-	public List<Transcript> getAllByCytoband(String chromosome, String cytoband) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Transcript> getAllBySnpId(String snpId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<List<Transcript>> getAllBySnpIdList(List<String> snpIdList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Transcript> getAllByEnsemblExonId(String ensemblExonId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<List<Transcript>> getAllByEnsemblExonId(List<String> ensemblExonId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Transcript> getAllByProteinName(String proteinName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<List<Transcript>> getAllByProteinNameList(List<String> proteinNameList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Transcript> getAllByMirnaMature(String mirnaID) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<List<Transcript>> getAllByMirnaMatureList(List<String> mirnaIDList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
