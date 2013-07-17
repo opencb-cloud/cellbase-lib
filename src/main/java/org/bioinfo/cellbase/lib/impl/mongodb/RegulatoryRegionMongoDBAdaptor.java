@@ -13,14 +13,14 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.QueryBuilder;
 
-public class RegulationMongoDBAdaptor extends MongoDBAdaptor implements RegulationDBAdaptor {
+public class RegulatoryRegionMongoDBAdaptor extends MongoDBAdaptor implements RegulationDBAdaptor {
 
 
-    public RegulationMongoDBAdaptor(DB db) {
+    public RegulatoryRegionMongoDBAdaptor(DB db) {
         super(db);
     }
 
-    public RegulationMongoDBAdaptor(DB db, String species, String version) {
+    public RegulatoryRegionMongoDBAdaptor(DB db, String species, String version) {
         super(db, species, version);
         mongoDBCollection = db.getCollection("regulation");
     }

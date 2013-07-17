@@ -254,18 +254,6 @@ public class MongoDBAdaptorFactory extends DBAdaptorFactory {
 	}
 
 	@Override
-	public TfbsDBAdaptor getTfbsDBAdaptor(String species) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public TfbsDBAdaptor getTfbsDBAdaptor(String species, String version) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public RegulatoryRegionDBAdaptor getRegulatoryRegionDBAdaptor(String species) {
 		// TODO Auto-generated method stub
 		return null;
@@ -351,7 +339,7 @@ public class MongoDBAdaptorFactory extends DBAdaptorFactory {
             DB db = createCellBaseMongoDB(speciesVersionPrefix);
             mongoDBFactory.put(speciesVersionPrefix, db);
         }
-        return (RegulationDBAdaptor) new RegulationMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix),
+        return (RegulationDBAdaptor) new RegulatoryRegionMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix),
                 speciesAlias.get(species), version);
     }
 
@@ -384,4 +372,18 @@ public class MongoDBAdaptorFactory extends DBAdaptorFactory {
                 speciesAlias.get(species), version);
     }
 
+    public TfbsDBAdaptor getTfbsDBAdaptor(String species) {
+        return getTfbsDBAdaptor(species, null);
+    }
+
+
+    public TfbsDBAdaptor getTfbsDBAdaptor(String species, String version) {
+        String speciesVersionPrefix = getSpeciesVersionPrefix(species, version);
+        if (!mongoDBFactory.containsKey(speciesVersionPrefix)) {
+            DB db = createCellBaseMongoDB(speciesVersionPrefix);
+            mongoDBFactory.put(speciesVersionPrefix, db);
+        }
+        return (TfbsDBAdaptor) new TfbsMongoDBAdaptor(mongoDBFactory.get(speciesVersionPrefix),
+                speciesAlias.get(species), version);
+    }
 }
