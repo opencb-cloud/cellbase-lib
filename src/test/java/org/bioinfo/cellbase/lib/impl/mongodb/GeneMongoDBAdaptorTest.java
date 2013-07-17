@@ -35,7 +35,7 @@ public class GeneMongoDBAdaptorTest {
 	}
 
 	public void testGetAll() {
-		System.out.println(geneDBAdaptor.getAll().get(0).toString());
+		System.out.println(geneDBAdaptor.getAll(null).get(0).toString());
 	}
 
 	@Test

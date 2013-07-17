@@ -10,6 +10,7 @@ import java.util.List;
  */
 public class GenericFeature {
     private String chromosome;
+    private List<String> chunkIds;
     private String source;
     private String featureType;
     private int start;
@@ -148,5 +149,13 @@ public class GenericFeature {
 
     public void setMatrix(String matrix) {
         this.matrix = matrix;
+    }
+
+    public List<String> getChunkIds() {
+        return chunkIds;
+    }
+
+    public void setChunkIds(List<String> chunkIds) {
+        this.chunkIds = chunkIds;
     }
 }
