@@ -84,7 +84,17 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 		return executeQuery("result", builder.get(), options);
 	}
 
-	@Override
+    @Override
+    public QueryResponse next(String id, QueryOptions options) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public QueryResponse next(String chromosome, int position, QueryOptions options) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
 	public QueryResponse getAllById(String id, QueryOptions options) {
 		QueryBuilder builder = QueryBuilder.start("transcripts.xrefs.id").is(id);
 
@@ -438,12 +448,12 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 	}
 
 
-	@Override
-	public QueryResult getAll() {
-		BasicDBObject query = new BasicDBObject();
-		//		return executeQuery("result", query, Arrays.asList("_id"), null);
-		return null;
-	}
+//	@Override
+//	public QueryResult getAll() {
+//		BasicDBObject query = new BasicDBObject();
+//		//		return executeQuery("result", query, Arrays.asList("_id"), null);
+//		return null;
+//	}
 
 	@Override
 	public List<String> getAllIds() {
