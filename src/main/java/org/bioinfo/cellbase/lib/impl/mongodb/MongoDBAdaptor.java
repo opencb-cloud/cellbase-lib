@@ -152,32 +152,43 @@ public class MongoDBAdaptor extends DBAdaptor {
 		return returnFields;
 	}
 
-	protected BasicDBList executeFind(DBObject query, BasicDBObject returnFields) {
-		BasicDBList queryResult = null;
-		BasicDBList list = new BasicDBList();
-		
-		DBCursor cursor = mongoDBCollection.find(query, returnFields);
-		try {
-			if (cursor != null) {
-				while (cursor.hasNext()) {
-					list.add(cursor.next());
-				}
-			}
-		} finally {
-			if (cursor != null) {
-				cursor.close();
-			}
-		}
+    protected BasicDBList executeFind(DBObject query, BasicDBObject returnFields) {
+        return executeFind(query,returnFields,mongoDBCollection);
+    }
 
-		return queryResult;
+    protected BasicDBList executeFind(DBObject query, BasicDBObject returnFields, DBCollection dbCollection) {
+        BasicDBList list = new BasicDBList();
+
+        DBCursor cursor = dbCollection.find(query, returnFields);
+        try {
+            if (cursor != null) {
+                while (cursor.hasNext()) {
+                    list.add(cursor.next());
+                }
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return list;
+    }
+
+
+    protected QueryResponse executeQuery(Object id, DBObject query, QueryOptions options) {
+        return executeQueryList(Arrays.asList(id), Arrays.asList(query), options, mongoDBCollection);
+    }
+
+    protected QueryResponse executeQueryList(List<? extends Object> ids, List<DBObject> queries, QueryOptions options) {
+        return executeQueryList(ids, queries, options, mongoDBCollection);
+    }
+
+	protected QueryResponse executeQuery(Object id, DBObject query, QueryOptions options, DBCollection dbCollection) {
+		return executeQueryList(Arrays.asList(id), Arrays.asList(query), options, dbCollection);
 	}
 
-
-	protected QueryResponse executeQuery(Object id, DBObject query, QueryOptions options) {
-		return executeQueryList(Arrays.asList(id), Arrays.asList(query), options);
-	}
-
-	protected QueryResponse executeQueryList(List<? extends Object> ids, List<DBObject> queries, QueryOptions options) {
+	protected QueryResponse executeQueryList(List<? extends Object> ids, List<DBObject> queries, QueryOptions options, DBCollection dbCollection) {
 		QueryResponse queryResponse = new QueryResponse();
 
 		// Select which fields are excluded and included in MongoDB query
@@ -191,7 +202,7 @@ public class MongoDBAdaptor extends DBAdaptor {
 
 			// Execute query and calculate time
 			dbTimeStart = System.currentTimeMillis();
-			BasicDBList list = executeFind(query, returnFields);
+			BasicDBList list = executeFind(query, returnFields, dbCollection);
 			dbTimeEnd = System.currentTimeMillis();
 
 			queryResult.setDBTime((dbTimeEnd - dbTimeStart));
@@ -215,14 +226,22 @@ public class MongoDBAdaptor extends DBAdaptor {
 	}
 
 
+    protected QueryResponse executeAggregation(Object id, DBObject[] operations, QueryOptions options) {
+        return executeAggregation(id,operations,options,mongoDBCollection);
+    }
 
-	protected QueryResponse executeAggregation(Object id, DBObject[] operations, QueryOptions options) {
+    protected QueryResponse executeAggregationList(List<? extends Object> ids, List<DBObject[]> operationsList, QueryOptions options) {
+        return executeAggregationList(ids,operationsList,options,mongoDBCollection);
+    }
+
+
+	protected QueryResponse executeAggregation(Object id, DBObject[] operations, QueryOptions options, DBCollection dbCollection) {
 		List<DBObject[]> operationsList = new ArrayList<>();
 		operationsList.add(operations);
-		return executeAggregationList(Arrays.asList(id), operationsList, options);
+		return executeAggregationList(Arrays.asList(id), operationsList, options, dbCollection);
 	}
 
-	protected QueryResponse executeAggregationList(List<? extends Object> ids, List<DBObject[]> operationsList, QueryOptions options) {
+	protected QueryResponse executeAggregationList(List<? extends Object> ids, List<DBObject[]> operationsList, QueryOptions options, DBCollection dbCollection) {
 		long timeStart = System.currentTimeMillis();
 		QueryResponse queryResponse = new QueryResponse();
 		AggregationOutput aggregationOutput;
@@ -239,7 +258,7 @@ public class MongoDBAdaptor extends DBAdaptor {
 			QueryResult queryResult = new QueryResult();
 			// Execute query and calculate time
 			dbTimeStart = System.currentTimeMillis();
-			aggregationOutput = mongoDBCollection.aggregate(firstOperation, additionalOperations);
+			aggregationOutput = dbCollection.aggregate(firstOperation, additionalOperations);
 			//            cursor = mongoDBCollection.find(query, returnFields);
 			dbTimeEnd = System.currentTimeMillis();
 

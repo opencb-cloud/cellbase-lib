@@ -21,14 +21,14 @@ public interface TfbsDBAdaptor extends FeatureDBAdaptor {
 //
 //	public List<List<Tfbs>> getAllByTfGeneNameList(List<String> tfGeneNameList, String celltype, int start, int end);
 
-	public QueryResponse getAllByTargetGeneId(String targetGeneId);
+	public QueryResponse getAllByTargetGeneId(String targetGeneId, QueryOptions options);
 
-	public QueryResponse getAllByTargetGeneIdList(List<String> targetGeneIdList);
+	public QueryResponse getAllByTargetGeneIdList(List<String> targetGeneIdList, QueryOptions options);
 	
 	
-	public QueryResponse getAllByJasparId(String jasparId);
+	public QueryResponse getAllByJasparId(String jasparId, QueryOptions options);
 
-	public QueryResponse getAllByJasparIdList(List<String> jasparIdList);
+	public QueryResponse getAllByJasparIdList(List<String> jasparIdList, QueryOptions options);
 	
 	
 //	public List<Protein> getTfInfoByTfGeneName(String tfGeneName);
@@ -50,13 +50,13 @@ public interface TfbsDBAdaptor extends FeatureDBAdaptor {
 //
 //	public List<List<Tfbs>> getAllByRegionList(List<Region> regionList);
 
-	public QueryResponse getAllByPosition(String chromosome, int position, QueryOptions options);
+//	public QueryResponse getAllByPosition(String chromosome, int position, QueryOptions options);
 
 	public QueryResponse getAllByPosition(Position position, QueryOptions options);
 	
 	public QueryResponse getAllByPositionList(List<Position> positionList, QueryOptions options);
-	
-	
+
+
 	public QueryResponse getAllByRegion(String chromosome, int start, int end, QueryOptions options);
 
 	public QueryResponse getAllByRegion(Region region, QueryOptions options);

@@ -39,8 +39,14 @@ public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements Transcri
         commands[2] = match;
 
         QueryResponse q = executeAggregation(id, commands, options);
+
+        System.out.print(commands[0].toString()+",");
+        System.out.print(commands[1].toString()+",");
+        System.out.print(commands[2].toString());
+        System.out.println("");
+
         System.out.println(">>"+((QueryResult)q.get(id)).getResult());
-        
+
         return executeAggregation(id, commands, options);
     }
     
