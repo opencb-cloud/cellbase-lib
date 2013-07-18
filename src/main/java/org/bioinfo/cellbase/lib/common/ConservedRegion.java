@@ -9,13 +9,15 @@ public class ConservedRegion {
 	private int start;
 	private int end;
     private String type;
+    private int chunkId;
     private List<Float> values;
 
-	public ConservedRegion(String chromosome, int start, int end, String type, List<Float> values){
+	public ConservedRegion(String chromosome, int start, int end, String type, int chunkId, List<Float> values){
 		this.chromosome = chromosome;
 		this.start = start;
 		this.end = end;
 		this.type = type;
+		this.chunkId = chunkId;
         this.values = values;
 	}
 
@@ -59,4 +61,11 @@ public class ConservedRegion {
         this.values = values;
     }
 
+    public int getChunkId() {
+        return chunkId;
+    }
+
+    public void setChunkId(int chunkId) {
+        this.chunkId = chunkId;
+    }
 }
