@@ -152,7 +152,7 @@ public class MongoDBAdaptor extends DBAdaptor {
 		return returnFields;
 	}
 
-	protected BasicDBList executeFind(DBObject query, BasicDBObject returnFields) {
+	protected BasicDBList executeFind(DBObject query, DBObject returnFields) {
 		BasicDBList queryResult = null;
 		BasicDBList list = new BasicDBList();
 		
