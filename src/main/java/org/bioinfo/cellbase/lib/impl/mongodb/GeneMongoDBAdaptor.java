@@ -1,7 +1,6 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,6 @@ import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.Gene;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
-import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 
 import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBList;
@@ -102,13 +100,15 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 		if(options.getString("strand") == null || (options.getString("strand").equals("1") || options.getString("strand").equals("+"))) {
 			// db.core.find({chromosome: "1", start: {$gt: 1000000}}).sort({start: 1}).limit(1)
 			QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome).and("start").greaterThanEquals(position);
-			options.put("sortAsc", "start");
+//			options.put("sortAsc", "start");
+			options.put("sort", new HashMap<String, String>().put("start", "asc"));
 			options.put("limit", 1);
 			//		mongoDBCollection.find().sort(new BasicDBObject("", "")).limit(1);
 			return executeQuery("result", builder.get(), options);
 		}else {
 			QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome).and("end").lessThanEquals(position);
-			options.put("sortDesc", "end");
+//			options.put("sortDesc", "end");
+			options.put("sort", new HashMap<String, String>().put("end", "desc"));
 			options.put("limit", 1);
 			//		mongoDBCollection.find().sort(new BasicDBObject("", "")).limit(1);
 			return executeQuery("result", builder.get(), options);
