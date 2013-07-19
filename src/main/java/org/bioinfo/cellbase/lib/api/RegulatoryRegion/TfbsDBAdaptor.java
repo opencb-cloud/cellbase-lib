@@ -1,7 +1,8 @@
-package org.bioinfo.cellbase.lib.api;
+package org.bioinfo.cellbase.lib.api.RegulatoryRegion;
 
 import java.util.List;
 
+import org.bioinfo.cellbase.lib.api.FeatureDBAdaptor;
 import org.bioinfo.cellbase.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.cellbase.lib.common.Position;
 import org.bioinfo.cellbase.lib.common.Region;
@@ -9,26 +10,23 @@ import org.bioinfo.cellbase.lib.common.regulatory.Tfbs;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
 
-public interface TfbsDBAdaptor extends FeatureDBAdaptor {
+public interface TfbsDBAdaptor extends RegulatoryRegionDBAdaptor {
 
 	
-	public QueryResponse getAllById(String id, QueryOptions options);
 
-	public QueryResponse getAllByIdList(List<String> idList, QueryOptions options);
-	
-	
+
 //	public List<Tfbs> getAllByTfGeneName(String tfGeneName, String celltype, int start, int end);
 //
 //	public List<List<Tfbs>> getAllByTfGeneNameList(List<String> tfGeneNameList, String celltype, int start, int end);
 
-	public QueryResponse getAllByTargetGeneId(String targetGeneId);
+	public QueryResponse getAllByTargetGeneId(String targetGeneId, QueryOptions options);
 
-	public QueryResponse getAllByTargetGeneIdList(List<String> targetGeneIdList);
+	public QueryResponse getAllByTargetGeneIdList(List<String> targetGeneIdList, QueryOptions options);
 	
 	
-	public QueryResponse getAllByJasparId(String jasparId);
+	public QueryResponse getAllByJasparId(String jasparId, QueryOptions options);
 
-	public QueryResponse getAllByJasparIdList(List<String> jasparIdList);
+	public QueryResponse getAllByJasparIdList(List<String> jasparIdList, QueryOptions options);
 	
 	
 //	public List<Protein> getTfInfoByTfGeneName(String tfGeneName);
@@ -50,20 +48,9 @@ public interface TfbsDBAdaptor extends FeatureDBAdaptor {
 //
 //	public List<List<Tfbs>> getAllByRegionList(List<Region> regionList);
 
-	public QueryResponse getAllByPosition(String chromosome, int position, QueryOptions options);
+//	public QueryResponse getAllByPosition(String chromosome, int position, QueryOptions options);
 
-	public QueryResponse getAllByPosition(Position position, QueryOptions options);
-	
-	public QueryResponse getAllByPositionList(List<Position> positionList, QueryOptions options);
-	
-	
-	public QueryResponse getAllByRegion(String chromosome, int start, int end, QueryOptions options);
 
-	public QueryResponse getAllByRegion(Region region, QueryOptions options);
-
-	public QueryResponse getAllByRegionList(List<Region> regions, QueryOptions options);
-	
-	
 //	public List<Tfbs> getAllByInternalIdList(List<String> idList);
 //
 //	public List<Tfbs> getAllByInternalId(String id);

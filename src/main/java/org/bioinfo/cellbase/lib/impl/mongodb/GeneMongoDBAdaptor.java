@@ -112,7 +112,6 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 			options.put("limit", 1);
 			//		mongoDBCollection.find().sort(new BasicDBObject("", "")).limit(1);
 			return executeQuery("result", builder.get(), options);
-			return null;
 		}
 	}
 	
@@ -470,12 +469,12 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 	}
 
 
-	@Override
-	public QueryResult getAll() {
-		BasicDBObject query = new BasicDBObject();
-		//		return executeQuery("result", query, Arrays.asList("_id"), null);
-		return null;
-	}
+//	@Override
+//	public QueryResult getAll() {
+//		BasicDBObject query = new BasicDBObject();
+//		//		return executeQuery("result", query, Arrays.asList("_id"), null);
+//		return null;
+//	}
 
 	@Override
 	public List<String> getAllIds() {

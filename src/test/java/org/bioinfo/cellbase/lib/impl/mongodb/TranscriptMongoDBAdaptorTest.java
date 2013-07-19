@@ -18,6 +18,9 @@ public class TranscriptMongoDBAdaptorTest {
 	private long startExecTime;
 	private String species = "hsapiens";
 
+    private static ObjectMapper jsonObjectMapper;
+    private static ObjectWriter jsonObjectWriter;
+
     @Before
 	public void beforeTestStart() {
         transcriptDBAdaptor = dbAdaptorFact.getTranscriptDBAdaptor(species, "v3");
@@ -44,6 +47,7 @@ public class TranscriptMongoDBAdaptorTest {
     @Test
     public void getAllByIdTest() throws JsonProcessingException {
         QueryResponse response = transcriptDBAdaptor.getAllById("ENST00000343281", null);
+//        System.out.println(jsonObjectWriter.writeValueAsString(response));
         System.out.println(response.toJson());
     }
 }

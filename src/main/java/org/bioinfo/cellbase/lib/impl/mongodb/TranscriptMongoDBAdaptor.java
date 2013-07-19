@@ -26,13 +26,7 @@ public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements Transcri
 		mongoDBCollection = db.getCollection("core");
 	}
 
-	@Override
-	public QueryResult getAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	
     @Override
     public QueryResponse getAllById(String id, QueryOptions options) {
         //        db.core.aggregate({$match: {"transcripts.id": "ENST00000343281"}}, {$unwind: "$transcripts"}, {$match: {"transcripts.id": "ENST00000343281"}})
@@ -45,8 +39,14 @@ public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements Transcri
         commands[2] = match;
 
         QueryResponse q = executeAggregation(id, commands, options);
+
+        System.out.print(commands[0].toString()+",");
+        System.out.print(commands[1].toString()+",");
+        System.out.print(commands[2].toString());
+        System.out.println("");
+
         System.out.println(">>"+((QueryResult)q.get(id)).getResult());
-        
+
         return executeAggregation(id, commands, options);
     }
     
@@ -207,7 +207,22 @@ public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements Transcri
 		return null;
 	}
 
-	@Override
+    @Override
+    public QueryResponse getAll(QueryOptions options) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public QueryResponse next(String id, QueryOptions options) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public QueryResponse next(String chromosome, int position, QueryOptions options) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
 	public List<String> getAllIds() {
 		// TODO Auto-generated method stub
 		return null;

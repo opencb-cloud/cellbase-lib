@@ -10,6 +10,8 @@ import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.Exon;
 import org.bioinfo.cellbase.lib.common.core.Gene;
 import org.bioinfo.cellbase.lib.common.core.Transcript;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 
 import com.mongodb.BasicDBObject;
@@ -84,6 +86,21 @@ public class ExonMongoDBAdaptor extends MongoDBAdaptor implements ExonDBAdaptor 
     }
 
     public QueryResult getAll() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public QueryResponse getAll(QueryOptions options) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public QueryResponse next(String id, QueryOptions options) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public QueryResponse next(String chromosome, int position, QueryOptions options) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
