@@ -8,7 +8,10 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.bioinfo.cellbase.lib.api.*;
+import org.bioinfo.cellbase.lib.api.RegulatoryRegion.TfbsDBAdaptor;
 import org.bioinfo.cellbase.lib.impl.DBAdaptorFactory;
+import org.bioinfo.cellbase.lib.impl.mongodb.RegulatoryRegion.RegulatoryRegionMongoDBAdaptor;
+import org.bioinfo.cellbase.lib.impl.mongodb.RegulatoryRegion.TfbsMongoDBAdaptor;
 import org.bioinfo.commons.Config;
 
 import com.mongodb.DB;

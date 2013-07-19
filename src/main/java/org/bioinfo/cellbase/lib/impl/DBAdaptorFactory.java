@@ -7,6 +7,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.bioinfo.cellbase.lib.api.*;
+import org.bioinfo.cellbase.lib.api.RegulatoryRegion.TfbsDBAdaptor;
 import org.bioinfo.commons.Config;
 import org.bioinfo.commons.log.Logger;
 

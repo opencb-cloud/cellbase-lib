@@ -1,9 +1,7 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
-import org.bioinfo.cellbase.lib.api.GeneDBAdaptor;
-import org.bioinfo.cellbase.lib.api.TfbsDBAdaptor;
+import org.bioinfo.cellbase.lib.api.RegulatoryRegion.TfbsDBAdaptor;
 import org.bioinfo.cellbase.lib.common.Position;
-import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.impl.DBAdaptorFactory;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
@@ -39,14 +37,16 @@ public class TfbsMongoDBAdaptorTest {
 
 	@Test
 	public void testGetAllById() {
-		QueryResponse qr = tfbsDBAdaptor.getAllById("H3K36me3", new QueryOptions());
+		QueryResponse qr = tfbsDBAdaptor.getAllById("HNF4A", new QueryOptions());
 		System.out.println(qr.toJson());
 
 	}
     @Test
 	public void testGetAllByTargetGeneId() {
-		QueryResponse qr = tfbsDBAdaptor.getAllByTargetGeneId("ENST00000544455", new QueryOptions());
-		System.out.println(qr.toJson());
+//		QueryResponse qr = tfbsDBAdaptor.getAllByTargetGeneId("ENST00000544455", new QueryOptions());
+		QueryResponse qr2 = tfbsDBAdaptor.getAllByTargetGeneIdList(Arrays.asList("ENST00000544455","BRCA2"), new QueryOptions());
+//		System.out.println(qr.toJson());
+		System.out.println(qr2.toJson());
 	}
     @Test
     public void testGetAllByPosition() {
