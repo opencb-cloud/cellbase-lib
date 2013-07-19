@@ -11,6 +11,7 @@ import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 import org.bioinfo.cellbase.lib.impl.mongodb.MongoDBAdaptor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -32,25 +33,19 @@ public class TfbsMongoDBAdaptor extends RegulatoryRegionMongoDBAdaptor implement
     public TfbsMongoDBAdaptor(DB db, String species, String version) {
         super(db, species, version);
         mongoDBCollection = db.getCollection("regulatory_region");
-
-
     }
 
     @Override
     public QueryResponse getAllById(String id, QueryOptions options) {
-        QueryBuilder builder = QueryBuilder.start("name").is(id).and("featureType").is("TF_binding_site_motif");
-
-//        System.out.println("Query: " + builder.get());
-
-        options = addExcludeReturnFields("chunkIds", options);
-        return executeQuery("result", builder.get(), options);
+        return getAllByIdList(Arrays.asList(id), options);
     }
 
     @Override
     public QueryResponse getAllByIdList(List<String> idList, QueryOptions options) {
         List<DBObject> queries = new ArrayList<>();
         for (String id : idList) {
-            QueryBuilder builder = QueryBuilder.start("name").is(id);
+            QueryBuilder builder = QueryBuilder.start("name").is(id).and("featureType").is("TF_binding_site_motif");
+//            System.out.println("Query: " + builder.get());
             queries.add(builder.get());
         }
         options = addExcludeReturnFields("chunkIds", options);
@@ -59,42 +54,7 @@ public class TfbsMongoDBAdaptor extends RegulatoryRegionMongoDBAdaptor implement
 
     @Override
     public QueryResponse getAllByTargetGeneId(String targetGeneId, QueryOptions options) {
-        DBCollection coreMongoDBCollection = db.getCollection("core");
-
-        DBObject[] commands = new DBObject[3];
-        DBObject match = new BasicDBObject("$match", new BasicDBObject("transcripts.xrefs.id", targetGeneId));
-        DBObject unwind = new BasicDBObject("$unwind", "$transcripts");
-
-
-        BasicDBObject projectObj = new BasicDBObject("_id", 0);
-        projectObj.append("transcripts.id", 1);
-        projectObj.append("transcripts.tfbs", 1);
-        DBObject project = new BasicDBObject("$project", projectObj);
-
-        commands[0] = match;
-        commands[1] = unwind;
-        commands[2] = project;
-
-        QueryResponse queryResponse = executeAggregation(targetGeneId, commands, options, coreMongoDBCollection);
-
-
-
-
-        QueryResult queryResult = (QueryResult) queryResponse.get(targetGeneId);
-        BasicDBList list = (BasicDBList) queryResult.get("result");
-
-        for (int i = 0; i < list.size(); i++) {
-            BasicDBObject gene = (BasicDBObject) list.get(i);
-            BasicDBObject transcript = (BasicDBObject) gene.get("transcripts");
-            String transcriptId = transcript.getString("id");
-            if (transcriptId.toUpperCase().equals(targetGeneId)) {
-                BasicDBList tfbs = (BasicDBList) transcript.get("tfbs");
-                queryResult.setResult(tfbs);
-                break;
-            }
-        }
-
-        return queryResponse;
+        return getAllByTargetGeneIdList(Arrays.asList(targetGeneId),options);
     }
 
     @Override

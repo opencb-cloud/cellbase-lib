@@ -43,10 +43,10 @@ public class TfbsMongoDBAdaptorTest {
 	}
     @Test
 	public void testGetAllByTargetGeneId() {
-//		QueryResponse qr = tfbsDBAdaptor.getAllByTargetGeneId("ENST00000544455", new QueryOptions());
-		QueryResponse qr2 = tfbsDBAdaptor.getAllByTargetGeneIdList(Arrays.asList("ENST00000544455","BRCA2"), new QueryOptions());
-//		System.out.println(qr.toJson());
-		System.out.println(qr2.toJson());
+		QueryResponse qr = tfbsDBAdaptor.getAllByTargetGeneId("ENST00000544455", new QueryOptions());
+//		QueryResponse qr2 = tfbsDBAdaptor.getAllByTargetGeneIdList(Arrays.asList("ENST00000544455","BRCA2"), new QueryOptions());
+		System.out.println(qr.toJson());
+//		System.out.println(qr2.toJson());
 	}
     @Test
     public void testGetAllByPosition() {

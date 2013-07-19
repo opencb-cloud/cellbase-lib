@@ -9,6 +9,7 @@ import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
 import org.bioinfo.cellbase.lib.impl.mongodb.MongoDBAdaptor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -33,12 +34,7 @@ public class RegulatoryRegionMongoDBAdaptor extends MongoDBAdaptor implements Re
 
     @Override
     public QueryResponse getAllById(String id, QueryOptions options) {
-        QueryBuilder builder = QueryBuilder.start("name").is(id);
-
-//        System.out.println("Query: " + builder.get());
-
-        options = addExcludeReturnFields("chunkIds", options);
-        return executeQuery("result", builder.get(), options);
+        return getAllByIdList(Arrays.asList(id),options);
     }
 
     @Override
@@ -46,6 +42,7 @@ public class RegulatoryRegionMongoDBAdaptor extends MongoDBAdaptor implements Re
         List<DBObject> queries = new ArrayList<>();
         for (String id : idList) {
             QueryBuilder builder = QueryBuilder.start("name").is(id);
+//          System.out.println("Query: " + builder.get());
             queries.add(builder.get());
         }
         options = addExcludeReturnFields("chunkIds", options);
@@ -54,17 +51,7 @@ public class RegulatoryRegionMongoDBAdaptor extends MongoDBAdaptor implements Re
 
     @Override
     public QueryResponse getAllByPosition(Position position, QueryOptions options) {
-        //  db.regulatory_region.find({"chunkIds": {$in:["1_200", "1_300"]}, "start": 601156})
-        String chunkId = position.getChromosome() +"_"+ getChunkId(position.getPosition(), CHUNKSIZE);
-        BasicDBList chunksId = new BasicDBList();
-        chunksId.add(chunkId);
-
-        QueryBuilder builder = QueryBuilder.start("chunkIds").in(chunksId).and("start").is(position.getPosition());
-
-//        System.out.println("Query: " + builder.get());
-
-        options = addExcludeReturnFields("chunkIds", options);
-        return executeQuery("result", builder.get(), options);
+        return getAllByPositionList(Arrays.asList(position),options);
     }
 
     @Override
@@ -75,8 +62,8 @@ public class RegulatoryRegionMongoDBAdaptor extends MongoDBAdaptor implements Re
             String chunkId = position.getChromosome() +"_"+ getChunkId(position.getPosition(), CHUNKSIZE);
             BasicDBList chunksId = new BasicDBList();
             chunksId.add(chunkId);
-
             QueryBuilder builder = QueryBuilder.start("chunkIds").in(chunksId).and("start").is(position.getPosition());
+////        System.out.println("Query: " + builder.get());
             queries.add(builder.get());
         }
 
