@@ -1,7 +1,6 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,6 @@ import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.Gene;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
-import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 
 import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBList;
@@ -35,7 +33,7 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 		super(db, species, version);
 		mongoDBCollection = db.getCollection("core");
 
-		System.out.println("In GeneMongoDBAdaptor constructor");
+		logger.info("In GeneMongoDBAdaptor constructor");
 	}
 
 	//	private List<Gene> executeQuery(DBObject query, List<String> excludeFields) {
@@ -80,21 +78,44 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 			builder = builder.and("biotype").in(biotypeIds);
 		}
 
-		options = addExcludeReturnFields("transcripts", options);
+//		options = addExcludeReturnFields("transcripts", options);
 		return executeQuery("result", builder.get(), options);
 	}
 
-    @Override
-    public QueryResponse next(String id, QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
+	@Override
+	public QueryResponse next(String id, QueryOptions options) {
+		// TODO Auto-generated method stub
+		QueryBuilder builder = QueryBuilder.start("transcripts.xrefs.id").is(id);
+		DBObject returnFields = getReturnFields(options);
+		BasicDBList list = executeFind(builder.get(), returnFields);
+		if(list != null && list.size() > 0) {
+			DBObject gene = (DBObject) list.get(0);
+			return next((String)gene.get("chromosome"), Integer.parseInt((String) gene.get("start")), options);
+		}
+		return null;
+	}
 
-    @Override
-    public QueryResponse next(String chromosome, int position, QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
+	@Override
+	public QueryResponse next(String chromosome, int position, QueryOptions options) {
+		if(options.getString("strand") == null || (options.getString("strand").equals("1") || options.getString("strand").equals("+"))) {
+			// db.core.find({chromosome: "1", start: {$gt: 1000000}}).sort({start: 1}).limit(1)
+			QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome).and("start").greaterThanEquals(position);
+//			options.put("sortAsc", "start");
+			options.put("sort", new HashMap<String, String>().put("start", "asc"));
+			options.put("limit", 1);
+			//		mongoDBCollection.find().sort(new BasicDBObject("", "")).limit(1);
+			return executeQuery("result", builder.get(), options);
+		}else {
+			QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome).and("end").lessThanEquals(position);
+//			options.put("sortDesc", "end");
+			options.put("sort", new HashMap<String, String>().put("end", "desc"));
+			options.put("limit", 1);
+			//		mongoDBCollection.find().sort(new BasicDBObject("", "")).limit(1);
+			return executeQuery("result", builder.get(), options);
+		}
+	}
+	
+	@Override
 	public QueryResponse getAllById(String id, QueryOptions options) {
 		QueryBuilder builder = QueryBuilder.start("transcripts.xrefs.id").is(id);
 

@@ -152,11 +152,11 @@ public class MongoDBAdaptor extends DBAdaptor {
 		return returnFields;
 	}
 
-    protected BasicDBList executeFind(DBObject query, BasicDBObject returnFields) {
-        return executeFind(query,returnFields,mongoDBCollection);
+    protected BasicDBList executeFind(DBObject query, DBObject returnFields) {
+        return executeFind(query, returnFields, mongoDBCollection);
     }
 
-    protected BasicDBList executeFind(DBObject query, BasicDBObject returnFields, DBCollection dbCollection) {
+    protected BasicDBList executeFind(DBObject query, DBObject returnFields, DBCollection dbCollection) {
         BasicDBList list = new BasicDBList();
 
         DBCursor cursor = dbCollection.find(query, returnFields);
@@ -233,7 +233,6 @@ public class MongoDBAdaptor extends DBAdaptor {
     protected QueryResponse executeAggregationList(List<? extends Object> ids, List<DBObject[]> operationsList, QueryOptions options) {
         return executeAggregationList(ids,operationsList,options,mongoDBCollection);
     }
-
 
 	protected QueryResponse executeAggregation(Object id, DBObject[] operations, QueryOptions options, DBCollection dbCollection) {
 		List<DBObject[]> operationsList = new ArrayList<>();
