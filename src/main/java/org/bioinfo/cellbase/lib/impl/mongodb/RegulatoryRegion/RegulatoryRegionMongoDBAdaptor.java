@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
- * User: fsalavert
+ * User: fsalavert and mbleda :)
  * Date: 7/18/13
  * Time: 5:53 PM
  * To change this template use File | Settings | File Templates.
@@ -23,6 +23,7 @@ import java.util.Map;
 public class RegulatoryRegionMongoDBAdaptor extends MongoDBAdaptor implements RegulatoryRegionDBAdaptor {
 
     private static int CHUNKSIZE = 2000;
+
     public RegulatoryRegionMongoDBAdaptor(DB db) {
         super(db);
     }
@@ -34,7 +35,7 @@ public class RegulatoryRegionMongoDBAdaptor extends MongoDBAdaptor implements Re
 
     @Override
     public QueryResponse getAllById(String id, QueryOptions options) {
-        return getAllByIdList(Arrays.asList(id),options);
+        return getAllByIdList(Arrays.asList(id), options);
     }
 
     @Override
@@ -51,19 +52,30 @@ public class RegulatoryRegionMongoDBAdaptor extends MongoDBAdaptor implements Re
 
     @Override
     public QueryResponse getAllByPosition(Position position, QueryOptions options) {
-        return getAllByPositionList(Arrays.asList(position),options);
+        return getAllByPositionList(Arrays.asList(position), options);
     }
 
     @Override
     public QueryResponse getAllByPositionList(List<Position> positionList, QueryOptions options) {
         //  db.regulatory_region.find({"chunkIds": {$in:["1_200", "1_300"]}, "start": 601156})
+
+        String featureType = options.getString("featureType", null);
+        String featureClass = options.getString("featureClass", null);
+
         List<DBObject> queries = new ArrayList<>();
-        for (Position position : positionList){
-            String chunkId = position.getChromosome() +"_"+ getChunkId(position.getPosition(), CHUNKSIZE);
+        for (Position position : positionList) {
+            String chunkId = position.getChromosome() + "_" + getChunkId(position.getPosition(), CHUNKSIZE);
             BasicDBList chunksId = new BasicDBList();
             chunksId.add(chunkId);
             QueryBuilder builder = QueryBuilder.start("chunkIds").in(chunksId).and("start").is(position.getPosition());
-////        System.out.println("Query: " + builder.get());
+            if(featureType!=null){
+                builder.and("featureType").is(featureType);
+            }
+            if(featureClass!=null){
+                builder.and("featureClass").is(featureClass);
+            }
+
+//        System.out.println("Query: " + builder.get());
             queries.add(builder.get());
         }
 
@@ -74,24 +86,53 @@ public class RegulatoryRegionMongoDBAdaptor extends MongoDBAdaptor implements Re
     }
 
 
-
-
-
-
     @Override
     public QueryResponse getAllByRegion(String chromosome, int start, int end, QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        Region region = new Region(chromosome, start, end);
+        return getAllByRegionList(Arrays.asList(region), options);
     }
 
     @Override
     public QueryResponse getAllByRegion(Region region, QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return getAllByRegionList(Arrays.asList(region), options);
     }
 
     @Override
-    public QueryResponse getAllByRegionList(List<Region> regions, QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public QueryResponse getAllByRegionList(List<Region> regionList, QueryOptions options) {
+        //  db.regulatory_region.find({"chunkIds": {$in:["1_200", "1_300"]}, "start": 601156})
+
+        String featureType = options.getString("featureType", null);
+        String featureClass = options.getString("featureClass", null);
+
+        List<DBObject> queries = new ArrayList<>();
+        List<String> ids = new ArrayList<>(regionList.size());
+        for (Region region : regionList) {
+            int firstChunkId = getChunkId(region.getStart(), CHUNKSIZE);
+            int lastChunkId = getChunkId(region.getEnd(), CHUNKSIZE);
+            BasicDBList chunksId = new BasicDBList();
+            for(int j=firstChunkId; j<=lastChunkId; j++) {
+                String chunkId = region.getChromosome()+"_"+j;
+                chunksId.add(chunkId);
+            }
+
+            QueryBuilder builder = QueryBuilder.start("chunkIds").in(chunksId).and("start").lessThanEquals(region.getEnd()).and("end").greaterThanEquals(region.getStart());
+            if(featureType!=null){
+                builder.and("featureType").is(featureType);
+            }
+            if(featureClass!=null){
+                builder.and("featureClass").is(featureClass);
+            }
+
+            System.out.println("Query: " + builder.get());
+            queries.add(builder.get());
+            ids.add(region.toString());
+        }
+        options = addExcludeReturnFields("chunkIds", options);
+        return executeQueryList(ids, queries, options);
     }
+
+
+
 
     @Override
     public QueryResponse getAll(QueryOptions options) {

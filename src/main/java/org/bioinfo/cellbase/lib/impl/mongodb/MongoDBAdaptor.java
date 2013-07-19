@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import com.mongodb.*;
 import org.bioinfo.cellbase.lib.common.IntervalFeatureFrequency;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.impl.DBAdaptor;
@@ -20,13 +21,6 @@ import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 import org.bioinfo.commons.Config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.AggregationOutput;
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 
 public class MongoDBAdaptor extends DBAdaptor {
 
@@ -159,6 +153,7 @@ public class MongoDBAdaptor extends DBAdaptor {
     protected BasicDBList executeFind(DBObject query, DBObject returnFields, DBCollection dbCollection) {
         BasicDBList list = new BasicDBList();
 
+        System.out.println(returnFields);
         DBCursor cursor = dbCollection.find(query, returnFields);
         try {
             if (cursor != null) {
@@ -291,6 +286,24 @@ public class MongoDBAdaptor extends DBAdaptor {
 		return queryResponse;
 	}
 
+    public QueryResponse next(String chromosome, int position, QueryOptions options) {
+        if(options.getString("strand") == null || (options.getString("strand").equals("1") || options.getString("strand").equals("+"))) {
+            // db.core.find({chromosome: "1", start: {$gt: 1000000}}).sort({start: 1}).limit(1)
+            QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome).and("start").greaterThan(position);
+//			options.put("sortAsc", "start");
+            options.put("sort", new HashMap<String, String>().put("start", "asc"));
+            options.put("limit", 1);
+            //		mongoDBCollection.find().sort(new BasicDBObject("", "")).limit(1);
+            return executeQuery("result", builder.get(), options);
+        }else {
+            QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome).and("end").lessThanEquals(position);
+//			options.put("sortDesc", "end");
+            options.put("sort", new HashMap<String, String>().put("end", "desc"));
+            options.put("limit", 1);
+            //		mongoDBCollection.find().sort(new BasicDBObject("", "")).limit(1);
+            return executeQuery("result", builder.get(), options);
+        }
+    }
 
 
 	//	protected List<?> execute(Criteria criteria){

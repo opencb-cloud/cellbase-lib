@@ -38,6 +38,17 @@ public class GeneMongoDBAdaptorTest {
 		System.out.println(geneDBAdaptor.getAll(null).get(0).toString());
 	}
 
+    @Test
+    public void testNext() {
+//        QueryResponse qr = geneDBAdaptor.next("BRCA2", new QueryOptions());
+        QueryOptions qo =  new QueryOptions("transcripts", false);
+        qo.put("strand", "1");
+        QueryResponse qr = geneDBAdaptor.next("BRCA2", qo);
+//        System.out.println(qr.toJson());
+        System.out.println("");
+
+    }
+
 	@Test
 	public void testGetAllBYId() {
 		QueryResponse qr = geneDBAdaptor.getAllById("BRCA2", new QueryOptions("transcripts", false));

@@ -2,6 +2,7 @@ package org.bioinfo.cellbase.lib.impl.mongodb;
 
 import org.bioinfo.cellbase.lib.api.RegulatoryRegion.TfbsDBAdaptor;
 import org.bioinfo.cellbase.lib.common.Position;
+import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.impl.DBAdaptorFactory;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
@@ -50,7 +51,7 @@ public class TfbsMongoDBAdaptorTest {
 	}
     @Test
     public void testGetAllByPosition() {
-        Position p = new Position("1", 601156);
+        Position p = new Position("1", 601152);
         QueryResponse qr = tfbsDBAdaptor.getAllByPosition(p, new QueryOptions());
         System.out.println(qr.toJson());
     }
@@ -66,6 +67,16 @@ public class TfbsMongoDBAdaptorTest {
         positions.add(p3);
 
         QueryResponse qr = tfbsDBAdaptor.getAllByPositionList(positions, new QueryOptions());
+        System.out.println(qr.toJson());
+    }
+    @Test
+    public void testGetAllByRegionList() {
+        Region r1 = new Region("1", 601156, 608156);
+        Region r2 = new Region("2", 601750, 602436);
+
+        List<Region> regions = Arrays.asList(r1, r2);
+
+        QueryResponse qr = tfbsDBAdaptor.getAllByRegionList(regions, new QueryOptions());
         System.out.println(qr.toJson());
     }
 }
