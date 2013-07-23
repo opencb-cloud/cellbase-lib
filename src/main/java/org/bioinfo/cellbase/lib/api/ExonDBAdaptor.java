@@ -5,6 +5,8 @@ import java.util.List;
 import org.bioinfo.cellbase.lib.common.Position;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.Exon;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 
 public interface ExonDBAdaptor extends FeatureDBAdaptor {
@@ -24,6 +26,9 @@ public interface ExonDBAdaptor extends FeatureDBAdaptor {
 	public List<Exon> getByEnsemblGeneId(String geneId);
 	
 	public List<List<Exon>> getByEnsemblGeneIdList(List<String> geneIdList);
+
+
+    public QueryResponse next(String id, QueryOptions options);
 	
 	
 	public List<Exon> getAllByPosition(String chromosome, int position);

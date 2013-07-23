@@ -46,6 +46,12 @@ public class TfbsMongoDBAdaptor extends RegulatoryRegionMongoDBAdaptor implement
         return super.getAllByPositionList(positionList, options);
     }
 
+    @Override
+    public QueryResponse next(String chromosome, int position, QueryOptions options) {
+        options.put("featureType", "TF_binding_site_motif");
+        return super.next(chromosome, position, options);
+    }
+
 //    @Override
 //    public QueryResponse getAllByRegion(String chromosome, int start, int end, QueryOptions options) {
 //        return null;  //To change body of implemented methods use File | Settings | File Templates.
@@ -158,15 +164,6 @@ public class TfbsMongoDBAdaptor extends RegulatoryRegionMongoDBAdaptor implement
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    @Override
-    public QueryResponse next(String id, QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public QueryResponse next(String chromosome, int position, QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 
     @Override
     public List<String> getAllIds() {

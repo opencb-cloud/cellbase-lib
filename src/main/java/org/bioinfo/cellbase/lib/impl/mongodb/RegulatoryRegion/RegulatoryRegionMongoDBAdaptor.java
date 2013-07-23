@@ -131,21 +131,44 @@ public class RegulatoryRegionMongoDBAdaptor extends MongoDBAdaptor implements Re
         return executeQueryList(ids, queries, options);
     }
 
+    @Override
+    public QueryResponse next(String chromosome, int position, QueryOptions options) {
 
+        String featureType = options.getString("featureType", null);
+        String featureClass = options.getString("featureClass", null);
+
+        BasicDBList chunksId = new BasicDBList();
+        String chunkId = chromosome + "_" + getChunkId(position, CHUNKSIZE);
+        chunksId.add(chunkId);
+
+        // TODO: Add query to find next item considering next chunk
+        // db.regulatory_region.find({ "chromosome" : "19" , "start" : { "$gt" : 62005} , "featureType" : "TF_binding_site_motif"}).sort({start:1}).limit(1)
+
+        QueryBuilder builder;
+        if(options.getString("strand") == null || (options.getString("strand").equals("1") || options.getString("strand").equals("+"))) {
+            // db.core.find({chromosome: "1", start: {$gt: 1000000}}).sort({start: 1}).limit(1)
+            builder = QueryBuilder.start("chunkIds").in(chunksId).and("chromosome").is(chromosome).and("start").greaterThan(position);
+            options.put("sort", new BasicDBObject("start",1));
+            options.put("limit", 1);
+        }else {
+            builder = QueryBuilder.start("chunkIds").in(chunksId).and("chromosome").is(chromosome).and("end").lessThan(position);
+            options.put("sort", new BasicDBObject("end",-1));
+            options.put("limit", 1);
+        }
+
+        if(featureType!=null){
+            builder.and("featureType").is(featureType);
+        }
+        if(featureClass!=null){
+            builder.and("featureClass").is(featureClass);
+        }
+        System.out.println(builder.get());
+        return executeQuery("result", builder.get(), options);
+    }
 
 
     @Override
     public QueryResponse getAll(QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public QueryResponse next(String id, QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public QueryResponse next(String chromosome, int position, QueryOptions options) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

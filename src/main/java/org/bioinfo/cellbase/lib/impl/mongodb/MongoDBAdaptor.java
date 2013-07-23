@@ -146,15 +146,25 @@ public class MongoDBAdaptor extends DBAdaptor {
 		return returnFields;
 	}
 
-    protected BasicDBList executeFind(DBObject query, DBObject returnFields) {
-        return executeFind(query, returnFields, mongoDBCollection);
+    protected BasicDBList executeFind(DBObject query, DBObject returnFields, QueryOptions options) {
+        return executeFind(query, returnFields, options, mongoDBCollection);
     }
 
-    protected BasicDBList executeFind(DBObject query, DBObject returnFields, DBCollection dbCollection) {
+    protected BasicDBList executeFind(DBObject query, DBObject returnFields, QueryOptions options, DBCollection dbCollection) {
         BasicDBList list = new BasicDBList();
 
         System.out.println(returnFields);
         DBCursor cursor = dbCollection.find(query, returnFields);
+
+        int limit = options.getInt("limit", 0);
+        if (limit > 0){
+            cursor.limit(limit);
+        }
+        BasicDBObject sort = (BasicDBObject) options.get("sort");
+        if (sort != null){
+            cursor.sort(sort);
+        }
+
         try {
             if (cursor != null) {
                 while (cursor.hasNext()) {
@@ -197,7 +207,7 @@ public class MongoDBAdaptor extends DBAdaptor {
 
 			// Execute query and calculate time
 			dbTimeStart = System.currentTimeMillis();
-			BasicDBList list = executeFind(query, returnFields, dbCollection);
+			BasicDBList list = executeFind(query, returnFields, options, dbCollection);
 			dbTimeEnd = System.currentTimeMillis();
 
 			queryResult.setDBTime((dbTimeEnd - dbTimeStart));
@@ -291,14 +301,16 @@ public class MongoDBAdaptor extends DBAdaptor {
             // db.core.find({chromosome: "1", start: {$gt: 1000000}}).sort({start: 1}).limit(1)
             QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome).and("start").greaterThan(position);
 //			options.put("sortAsc", "start");
-            options.put("sort", new HashMap<String, String>().put("start", "asc"));
+//            options.put("sort", new HashMap<String, String>().put("start", "asc"));
+            options.put("sort", new BasicDBObject("start",1));
             options.put("limit", 1);
             //		mongoDBCollection.find().sort(new BasicDBObject("", "")).limit(1);
             return executeQuery("result", builder.get(), options);
         }else {
-            QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome).and("end").lessThanEquals(position);
+            QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome).and("end").lessThan(position);
 //			options.put("sortDesc", "end");
-            options.put("sort", new HashMap<String, String>().put("end", "desc"));
+//            options.put("sort", new HashMap<String, String>().put("end", "desc"));
+            options.put("sort", new BasicDBObject("end",-1));
             options.put("limit", 1);
             //		mongoDBCollection.find().sort(new BasicDBObject("", "")).limit(1);
             return executeQuery("result", builder.get(), options);

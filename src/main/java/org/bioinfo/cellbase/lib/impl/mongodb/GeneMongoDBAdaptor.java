@@ -87,7 +87,7 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 		// TODO Auto-generated method stub
 		QueryBuilder builder = QueryBuilder.start("transcripts.xrefs.id").is(id);
 		DBObject returnFields = getReturnFields(options);
-		BasicDBList list = executeFind(builder.get(), returnFields);
+		BasicDBList list = executeFind(builder.get(), returnFields, options);
 		if(list != null && list.size() > 0) {
 			DBObject gene = (DBObject) list.get(0);
             System.out.println(Integer.parseInt(gene.get("start").toString()));

@@ -42,11 +42,10 @@ public class GeneMongoDBAdaptorTest {
     public void testNext() {
 //        QueryResponse qr = geneDBAdaptor.next("BRCA2", new QueryOptions());
         QueryOptions qo =  new QueryOptions("transcripts", false);
-        qo.put("strand", "1");
+        qo.put("strand", "-1");
         QueryResponse qr = geneDBAdaptor.next("BRCA2", qo);
-//        System.out.println(qr.toJson());
+        System.out.println(qr.toJson());
         System.out.println("");
-
     }
 
 	@Test

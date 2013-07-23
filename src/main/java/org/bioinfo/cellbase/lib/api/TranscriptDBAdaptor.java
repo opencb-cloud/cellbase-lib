@@ -17,6 +17,8 @@ public interface TranscriptDBAdaptor extends FeatureDBAdaptor {
 
     public QueryResponse getAllByIdList(List<String> idList, QueryOptions options);
 
+    public QueryResponse next(String id, QueryOptions options);
+
 	
 //	public List<String> getAllEnsemblIds();
 //

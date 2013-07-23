@@ -43,6 +43,13 @@ public class TfbsMongoDBAdaptorTest {
 
 	}
     @Test
+    public void testNext() {
+        QueryOptions qo =  new QueryOptions("strand", "-1");
+        QueryResponse qr = tfbsDBAdaptor.next("19", 67694, qo);
+        System.out.println(qr.toJson());
+        System.out.println("");
+    }
+    @Test
 	public void testGetAllByTargetGeneId() {
 		QueryResponse qr = tfbsDBAdaptor.getAllByTargetGeneId("ENST00000544455", new QueryOptions());
 //		QueryResponse qr2 = tfbsDBAdaptor.getAllByTargetGeneIdList(Arrays.asList("ENST00000544455","BRCA2"), new QueryOptions());
