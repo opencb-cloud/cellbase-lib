@@ -22,6 +22,9 @@ public interface GeneDBAdaptor extends FeatureDBAdaptor {
 	
 	public QueryResponse getAll(QueryOptions options);
 
+
+    public QueryResponse next(String id, QueryOptions options);
+
 	/**
 	 * List<String>
 	 * @return

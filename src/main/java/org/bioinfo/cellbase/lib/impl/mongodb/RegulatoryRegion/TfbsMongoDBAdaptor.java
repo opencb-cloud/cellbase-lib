@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public class TfbsMongoDBAdaptor extends RegulatoryRegionMongoDBAdaptor implements TfbsDBAdaptor {
 
-    private static int CHUNKSIZE= 2000;
+    private static int CHUNKSIZE = 2000;
 
     public TfbsMongoDBAdaptor(DB db) {
         super(db);
@@ -36,10 +36,46 @@ public class TfbsMongoDBAdaptor extends RegulatoryRegionMongoDBAdaptor implement
     }
 
     @Override
+    public QueryResponse getAllByPosition(Position position, QueryOptions options) {
+        return getAllByPositionList(Arrays.asList(position), options);
+    }
+
+    @Override
+    public QueryResponse getAllByPositionList(List<Position> positionList, QueryOptions options) {
+        options.put("featureType", "TF_binding_site_motif");
+        return super.getAllByPositionList(positionList, options);
+    }
+
+    @Override
+    public QueryResponse next(String chromosome, int position, QueryOptions options) {
+        options.put("featureType", "TF_binding_site_motif");
+        return super.next(chromosome, position, options);
+    }
+
+//    @Override
+//    public QueryResponse getAllByRegion(String chromosome, int start, int end, QueryOptions options) {
+//        return null;  //To change body of implemented methods use File | Settings | File Templates.
+//    }
+
+    @Override
+    public QueryResponse getAllByRegion(Region region, QueryOptions options) {
+        return getAllByRegionList(Arrays.asList(region), options);
+    }
+
+    @Override
+    public QueryResponse getAllByRegionList(List<Region> regionList, QueryOptions options) {
+        options.put("featureType", "TF_binding_site_motif");
+        return super.getAllByRegionList(regionList, options);
+    }
+
+    @Override
     public QueryResponse getAllById(String id, QueryOptions options) {
         return getAllByIdList(Arrays.asList(id), options);
     }
 
+    /**
+     * PARTICULAR METHODS FOR TFBS CLASS
+     */
     @Override
     public QueryResponse getAllByIdList(List<String> idList, QueryOptions options) {
         List<DBObject> queries = new ArrayList<>();
@@ -54,7 +90,7 @@ public class TfbsMongoDBAdaptor extends RegulatoryRegionMongoDBAdaptor implement
 
     @Override
     public QueryResponse getAllByTargetGeneId(String targetGeneId, QueryOptions options) {
-        return getAllByTargetGeneIdList(Arrays.asList(targetGeneId),options);
+        return getAllByTargetGeneIdList(Arrays.asList(targetGeneId), options);
     }
 
     @Override
@@ -108,28 +144,6 @@ public class TfbsMongoDBAdaptor extends RegulatoryRegionMongoDBAdaptor implement
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-//    @Override
-//    public QueryResponse getAllByPosition(String chromosome, int position, QueryOptions options) {
-//        return null;  //To change body of implemented methods use File | Settings | File Templates.
-//    }
-
-
-
-    @Override
-    public QueryResponse getAllByRegion(String chromosome, int start, int end, QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public QueryResponse getAllByRegion(Region region, QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public QueryResponse getAllByRegionList(List<Region> regions, QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
     @Override
     public List<Object> getAllAnnotation() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
@@ -150,15 +164,6 @@ public class TfbsMongoDBAdaptor extends RegulatoryRegionMongoDBAdaptor implement
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    @Override
-    public QueryResponse next(String id, QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public QueryResponse next(String chromosome, int position, QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 
     @Override
     public List<String> getAllIds() {
