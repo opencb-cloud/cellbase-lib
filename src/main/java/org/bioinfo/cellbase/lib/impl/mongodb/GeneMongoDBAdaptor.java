@@ -232,11 +232,18 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 		return getAllByRegion(new Region(chromosome, start, end), options);
 	}
 
-
+//	db.core_chunks.find( {chunkIds: "1_36248", "start": {$lte: 144998347}, "end": {$gte: 144998347}}, {id:1, start:1, end:1}).explain()
 	@Override
 	public QueryResponse getAllByRegion(Region region, QueryOptions options) {
-		QueryBuilder builder = QueryBuilder.start("chromosome").is(region.getChromosome()).and("end")
-				.greaterThan(region.getStart()).and("start").lessThan(region.getEnd());
+		QueryBuilder builder = null ;
+		// If regions is 1 position then query can be optimize using chunks
+		if(region.getStart() == region.getEnd()) {
+			builder = QueryBuilder.start("chunkIds").is(region.getChromosome()+"_"+(region.getStart()/applicationProperties.getIntProperty("CHUNK_SIZE", 4000))).and("end")
+					.greaterThanEquals(region.getStart()).and("start").lessThanEquals(region.getEnd());
+		}else {
+			builder = QueryBuilder.start("chromosome").is(region.getChromosome()).and("end")
+					.greaterThanEquals(region.getStart()).and("start").lessThanEquals(region.getEnd());			
+		}
 
 		List<Object> biotypes = options.getList("biotypes", null);
 		if (biotypes != null && biotypes.size() > 0) {
