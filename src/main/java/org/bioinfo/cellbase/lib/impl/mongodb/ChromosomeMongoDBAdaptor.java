@@ -1,16 +1,12 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.bioinfo.cellbase.lib.api.ChromosomeDBAdaptor;
-import org.bioinfo.cellbase.lib.common.core.Chromosome;
-import org.bioinfo.cellbase.lib.common.core.Cytoband;
-
-import com.mongodb.DB;
-import com.mongodb.DBObject;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
+
+import com.mongodb.DB;
 
 
 public class ChromosomeMongoDBAdaptor extends MongoDBAdaptor implements ChromosomeDBAdaptor {
@@ -40,8 +36,15 @@ public class ChromosomeMongoDBAdaptor extends MongoDBAdaptor implements Chromoso
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    @Override
+    public QueryResponse getAllCytobandsById(String id, QueryOptions options) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
-
+    @Override
+    public QueryResponse getAllCytobandsByIdList(List<String> id, QueryOptions options) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
 //
 //    private List<Chromosome> executeQuery() {

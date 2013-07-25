@@ -33,7 +33,7 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 		super(db, species, version);
 		mongoDBCollection = db.getCollection("core");
 
-		logger.info("In GeneMongoDBAdaptor constructor");
+		logger.info("GeneMongoDBAdaptor: in 'constructor'");
 	}
 
 	//	private List<Gene> executeQuery(DBObject query, List<String> excludeFields) {
@@ -78,8 +78,28 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 			builder = builder.and("biotype").in(biotypeIds);
 		}
 
-//		options = addExcludeReturnFields("transcripts", options);
+		//		options = addExcludeReturnFields("transcripts", options);
 		return executeQuery("result", builder.get(), options);
+	}
+	
+	@Override
+	public QueryResponse next(String chromosome, int position, QueryOptions options) {
+		if(options.getString("strand") == null || (options.getString("strand").equals("1") || options.getString("strand").equals("+"))) {
+			// db.core.find({chromosome: "1", start: {$gt: 1000000}}).sort({start: 1}).limit(1)
+			QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome).and("start").greaterThanEquals(position);
+			// options.put("sortAsc", "start");
+			options.put("sort", new HashMap<String, String>().put("start", "asc"));
+			options.put("limit", 1);
+			// mongoDBCollection.find().sort(new BasicDBObject("", "")).limit(1);
+			return executeQuery("result", builder.get(), options);
+		}else {
+			QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome).and("end").lessThanEquals(position);
+			// options.put("sortDesc", "end");
+			options.put("sort", new HashMap<String, String>().put("end", "desc"));
+			options.put("limit", 1);
+			//              mongoDBCollection.find().sort(new BasicDBObject("", "")).limit(1);
+			return executeQuery("result", builder.get(), options);
+		}
 	}
 
 	@Override
@@ -90,14 +110,14 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 		BasicDBList list = executeFind(builder.get(), returnFields, options);
 		if(list != null && list.size() > 0) {
 			DBObject gene = (DBObject) list.get(0);
-            System.out.println(Integer.parseInt(gene.get("start").toString()));
+			System.out.println(Integer.parseInt(gene.get("start").toString()));
 			return next((String)gene.get("chromosome"), Integer.parseInt(gene.get("start").toString()), options);
 		}
 		return null;
 	}
 
-    // INFO:
-    // next(chromosome, position) method has been moved to MongoDBAdaptor class
+	// INFO:
+	// next(chromosome, position) method has been moved to MongoDBAdaptor class
 
 	@Override
 	public QueryResponse getAllById(String id, QueryOptions options) {
@@ -216,7 +236,7 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 		return getAllByRegion(new Region(chromosome, start, end), options);
 	}
 
-//	db.core_chunks.find( {chunkIds: "1_36248", "start": {$lte: 144998347}, "end": {$gte: 144998347}}, {id:1, start:1, end:1}).explain()
+	//	db.core_chunks.find( {chunkIds: "1_36248", "start": {$lte: 144998347}, "end": {$gte: 144998347}}, {id:1, start:1, end:1}).explain()
 	@Override
 	public QueryResponse getAllByRegion(Region region, QueryOptions options) {
 		QueryBuilder builder = null ;
@@ -460,12 +480,12 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 	}
 
 
-//	@Override
-//	public QueryResult getAll() {
-//		BasicDBObject query = new BasicDBObject();
-//		//		return executeQuery("result", query, Arrays.asList("_id"), null);
-//		return null;
-//	}
+	//	@Override
+	//	public QueryResult getAll() {
+	//		BasicDBObject query = new BasicDBObject();
+	//		//		return executeQuery("result", query, Arrays.asList("_id"), null);
+	//		return null;
+	//	}
 
 	@Override
 	public List<String> getAllIds() {

@@ -14,6 +14,10 @@ public interface ChromosomeDBAdaptor {
 
 	public QueryResponse getAllByIdList(List<String> idList, QueryOptions options);
 
+    public QueryResponse getAllCytobandsById(String id, QueryOptions options);
+
+    public QueryResponse getAllCytobandsByIdList(List<String> id, QueryOptions options);
+    
 //	List<Cytoband> getCytobandByName(String name);
 //	List<List<Cytoband>> getCytobandByNameList(List<String> nameList);
 //	List<String> getChromosomeNames();

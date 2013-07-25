@@ -7,7 +7,6 @@ import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.Transcript;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
-import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 
 public interface TranscriptDBAdaptor extends FeatureDBAdaptor {
 

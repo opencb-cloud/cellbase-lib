@@ -296,26 +296,6 @@ public class MongoDBAdaptor extends DBAdaptor {
 		return queryResponse;
 	}
 
-    public QueryResponse next(String chromosome, int position, QueryOptions options) {
-        if(options.getString("strand") == null || (options.getString("strand").equals("1") || options.getString("strand").equals("+"))) {
-            // db.core.find({chromosome: "1", start: {$gt: 1000000}}).sort({start: 1}).limit(1)
-            QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome).and("start").greaterThan(position);
-//			options.put("sortAsc", "start");
-//            options.put("sort", new HashMap<String, String>().put("start", "asc"));
-            options.put("sort", new BasicDBObject("start",1));
-            options.put("limit", 1);
-            //		mongoDBCollection.find().sort(new BasicDBObject("", "")).limit(1);
-            return executeQuery("result", builder.get(), options);
-        }else {
-            QueryBuilder builder = QueryBuilder.start("chromosome").is(chromosome).and("end").lessThan(position);
-//			options.put("sortDesc", "end");
-//            options.put("sort", new HashMap<String, String>().put("end", "desc"));
-            options.put("sort", new BasicDBObject("end",-1));
-            options.put("limit", 1);
-            //		mongoDBCollection.find().sort(new BasicDBObject("", "")).limit(1);
-            return executeQuery("result", builder.get(), options);
-        }
-    }
 
 
 	//	protected List<?> execute(Criteria criteria){
