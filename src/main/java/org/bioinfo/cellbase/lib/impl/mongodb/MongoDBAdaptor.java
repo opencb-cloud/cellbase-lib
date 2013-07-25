@@ -126,19 +126,19 @@ public class MongoDBAdaptor extends DBAdaptor {
 		// Select which fields are excluded and included in MongoDB query
 		BasicDBObject returnFields = new BasicDBObject("_id", 0);
 		// Read and process 'exclude' field from 'options' object
-		if ((options != null && options.getList("include") != null) && options.getList("include").size() > 0) {
-			List<Object> excludedOptionFields = (List<Object>) options.getList("include");
-			if (excludedOptionFields != null && excludedOptionFields.size() > 0) {
-				for (Object field : excludedOptionFields) {
-					returnFields.put(field.toString(), 1);
+		if(options != null && options.get("include") != null && !options.getString("include").equals("")) {
+			String[] includedOptionFields = options.getString("include").split(",");
+			if(includedOptionFields != null && includedOptionFields.length > 0) {
+				for(String field : includedOptionFields) {
+					returnFields.put(field, 1);
 				}
 			}
 		} else {
-			if (options != null && options.getList("exclude") != null) {
-				List<Object> excludedOptionFields = (List<Object>) options.getList("exclude");
-				if (excludedOptionFields != null && excludedOptionFields.size() > 0) {
-					for (Object field : excludedOptionFields) {
-						returnFields.put(field.toString(), 0);
+			if(options != null && options.get("exclude") != null && !options.getString("exclude").equals("")) {
+				String[] excludedOptionFields = options.getString("exclude").split(",");
+				if(excludedOptionFields != null && excludedOptionFields.length > 0) {
+					for(String field : excludedOptionFields) {
+						returnFields.put(field, 0);
 					}
 				}
 			}
