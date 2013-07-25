@@ -1,6 +1,6 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
-import org.bioinfo.cellbase.lib.api.VariationDBAdaptor;
+import org.bioinfo.cellbase.lib.api.variation.VariationDBAdaptor;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.variation.Variation;
 import org.bioinfo.cellbase.lib.impl.DBAdaptorFactory;

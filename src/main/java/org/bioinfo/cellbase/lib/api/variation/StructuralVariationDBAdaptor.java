@@ -1,4 +1,4 @@
-package org.bioinfo.cellbase.lib.api;
+package org.bioinfo.cellbase.lib.api.variation;
 
 import java.util.List;
 

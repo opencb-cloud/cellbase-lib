@@ -8,6 +8,10 @@ import java.util.ResourceBundle;
 
 import org.bioinfo.cellbase.lib.api.*;
 import org.bioinfo.cellbase.lib.api.RegulatoryRegion.TfbsDBAdaptor;
+import org.bioinfo.cellbase.lib.api.variation.GenomicVariantEffectDBAdaptor;
+import org.bioinfo.cellbase.lib.api.variation.MutationDBAdaptor;
+import org.bioinfo.cellbase.lib.api.variation.StructuralVariationDBAdaptor;
+import org.bioinfo.cellbase.lib.api.variation.VariationDBAdaptor;
 import org.bioinfo.commons.Config;
 import org.bioinfo.commons.log.Logger;
 

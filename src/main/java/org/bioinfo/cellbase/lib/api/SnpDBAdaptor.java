@@ -2,6 +2,7 @@ package org.bioinfo.cellbase.lib.api;
 
 import java.util.List;
 
+@Deprecated
 public interface SnpDBAdaptor {
 
 	

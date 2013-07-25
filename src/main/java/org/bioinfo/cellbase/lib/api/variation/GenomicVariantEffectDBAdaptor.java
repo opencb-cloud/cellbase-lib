@@ -1,11 +1,8 @@
-package org.bioinfo.cellbase.lib.api;
+package org.bioinfo.cellbase.lib.api.variation;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.bioinfo.cellbase.lib.common.GenomicVariant;
-import org.bioinfo.cellbase.lib.common.GenomicVariantConsequenceType;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
 

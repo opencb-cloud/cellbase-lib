@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bioinfo.cellbase.lib.api.VariationDBAdaptor;
+import org.bioinfo.cellbase.lib.api.variation.VariationDBAdaptor;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.variation.TranscriptVariation;
 import org.bioinfo.cellbase.lib.common.variation.Variation;
@@ -124,7 +124,7 @@ public class VariationMongoDBAdaptor extends MongoDBAdaptor implements Variation
     }
 
     @Override
-    public List<List<Variation>> getByIdList(List<String> idList, List<String> exclude) {
+    public List<List<Variation>> getAllByIdList(List<String> idList, List<String> exclude) {
         List<List<Variation>> result = new ArrayList<List<Variation>>(idList.size());
         for (String id : idList) {
             result.add(getById(id, exclude));
