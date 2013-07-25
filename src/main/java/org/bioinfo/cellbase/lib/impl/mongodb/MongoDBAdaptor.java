@@ -210,9 +210,10 @@ public class MongoDBAdaptor extends DBAdaptor {
 			BasicDBList list = executeFind(query, returnFields, options, dbCollection);
 			dbTimeEnd = System.currentTimeMillis();
 
+			// setting queryResult fields
 			queryResult.setDBTime((dbTimeEnd - dbTimeStart));
-			queryResult.setResult(list);
 			queryResult.setNumResults(list.size());
+			queryResult.setResult(list);
 
 			// Save QueryResult into QueryResponse object
 			queryResponse.put(ids.get(i).toString(), queryResult);
