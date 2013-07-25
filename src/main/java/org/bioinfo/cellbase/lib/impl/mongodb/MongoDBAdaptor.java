@@ -212,6 +212,7 @@ public class MongoDBAdaptor extends DBAdaptor {
 
 			queryResult.setDBTime((dbTimeEnd - dbTimeStart));
 			queryResult.setResult(list);
+			queryResult.setNumResults(list.size());
 
 			// Save QueryResult into QueryResponse object
 			queryResponse.put(ids.get(i).toString(), queryResult);

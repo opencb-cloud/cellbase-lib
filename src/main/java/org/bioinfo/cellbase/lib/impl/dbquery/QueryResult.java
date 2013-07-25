@@ -55,4 +55,13 @@ public class QueryResult extends DBObjectMap {
 		this.put("result", value);
 	}
 	
+	
+	public int getNumResults() {
+		return this.getInt("numResults");
+	}
+	
+	public void setNumResults(int value) {
+		this.put("numResults", value);
+	}
+	
 }

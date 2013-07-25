@@ -165,10 +165,12 @@ public class VariationMongoDBAdaptor extends MongoDBAdaptor implements Variation
 	public QueryResponse getAllByRegionList(List<Region> regions, QueryOptions options) {
 		List<DBObject> queries = new ArrayList<>();
 
-		List<Object> consequenceTypes = options.getList("consequence_type", null);
+		String consequenceTypes = options.getString("consequence_type", null);
 		BasicDBList consequenceTypeDBList = new BasicDBList();
-		if (consequenceTypes != null && consequenceTypes.size() > 0) {
-			consequenceTypeDBList.addAll(consequenceTypes);
+		if (consequenceTypes != null && !consequenceTypes.equals("")) {
+			for(String ct: consequenceTypes.split(",")) {
+				consequenceTypeDBList.add(ct);				
+			}
 		}
 
 		List<String> ids = new ArrayList<>(regions.size());
