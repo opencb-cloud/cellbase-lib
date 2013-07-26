@@ -1,12 +1,18 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.mongodb.QueryBuilder;
 import org.bioinfo.cellbase.lib.api.ChromosomeDBAdaptor;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
 
 import com.mongodb.DB;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 
 
 public class ChromosomeMongoDBAdaptor extends MongoDBAdaptor implements ChromosomeDBAdaptor {
@@ -23,17 +29,31 @@ public class ChromosomeMongoDBAdaptor extends MongoDBAdaptor implements Chromoso
 
     @Override
     public QueryResponse getAll(QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return executeQuery("result", new BasicDBObject(), options);
     }
 
     @Override
     public QueryResponse getById(String id, QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return getAllByIdList(Arrays.asList(id),options);
     }
 
     @Override
     public QueryResponse getAllByIdList(List<String> idList, QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        List<DBObject[]> commandList = new ArrayList<>();
+        for (String id : idList) {
+            DBObject[] commands = new DBObject[3];
+            DBObject match = new BasicDBObject("$match", new BasicDBObject("chromosomes.name", id));
+            DBObject unwind = new BasicDBObject("$unwind", "$chromosomes");
+            commands[0] = match;
+            commands[1] = unwind;
+            commands[2] = match;
+            commandList.add(commands);
+        }
+        if(idList != null && idList.size() == 1){
+            idList = Arrays.asList("result");
+        }
+        return executeAggregationList(idList, commandList, options);
+
     }
 
     @Override

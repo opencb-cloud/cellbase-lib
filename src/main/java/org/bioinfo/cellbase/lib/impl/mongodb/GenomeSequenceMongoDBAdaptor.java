@@ -1,19 +1,19 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mongodb.*;
 import org.bioinfo.cellbase.lib.api.GenomeSequenceDBAdaptor;
 import org.bioinfo.cellbase.lib.common.GenomeSequenceFeature;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.common.core.GenomeSequenceChunk;
 
-import com.mongodb.DB;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.QueryBuilder;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 
 @Deprecated
 public class GenomeSequenceMongoDBAdaptor extends MongoDBAdaptor implements GenomeSequenceDBAdaptor {
@@ -53,12 +53,66 @@ public class GenomeSequenceMongoDBAdaptor extends MongoDBAdaptor implements Geno
 
     @Override
     public QueryResponse getByRegion(String chromosome, int start, int end, QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        Region region = new Region(chromosome, start, end);
+        return getAllByRegionList(Arrays.asList(region),options);
     }
 
     @Override
     public QueryResponse getAllByRegionList(List<Region> regions, QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+
+
+        List<DBObject> queries = new ArrayList<>();
+        List<String> ids = new ArrayList<>(regions.size());
+        for (Region region : regions) {
+
+            // positions below 1 are not allowed
+            if (region.getStart() < 1) {
+                region.setStart(1);
+            }
+            if (region.getEnd() < 1) {
+                region.setEnd(1);
+            }
+
+            QueryBuilder builder = QueryBuilder.start("chromosome").is(region.getChromosome()).and("chunkId")
+                    .greaterThanEquals(getChunk(region.getStart())).lessThanEquals(getChunk(region.getEnd()));
+            queries.add(builder.get());
+            ids.add(region.toString());
+        }
+
+        QueryResponse queryResponse = executeQueryList(ids,queries,options);
+
+
+        for (Region region : regions) {
+            QueryResult queryResult = (QueryResult) queryResponse.get(region.toString());
+            BasicDBList list = (BasicDBList) queryResult.get("result");
+
+		    StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < list.size(); i++) {
+                BasicDBObject chunk = (BasicDBObject) list.get(i);
+                sb.append(chunk.get("sequence"));
+            }
+
+            int startStr = getOffset(region.getStart());
+		    int endStr = getOffset(region.getStart()) + (region.getEnd() - region.getStart()) + 1;
+
+		    String subStr = "";
+
+            if (getChunk(region.getEnd()) > 0) {
+                if (sb.toString().length() > 0 && sb.toString().length() >= endStr) {
+                    subStr = sb.toString().substring(startStr, endStr);
+                    System.out.println();
+                }
+            } else {
+                if (sb.toString().length() > 0 && sb.toString().length() + 1 >= endStr) {
+                    subStr = sb.toString().substring(startStr-1, endStr - 1);
+                }
+            }
+            GenomeSequenceFeature genomeSequenceFeature = new GenomeSequenceFeature(region.getChromosome(), region.getStart(), region.getEnd(), subStr);
+
+            queryResult.setResult(genomeSequenceFeature);
+        }
+
+        return queryResponse;
     }
 
     @Override

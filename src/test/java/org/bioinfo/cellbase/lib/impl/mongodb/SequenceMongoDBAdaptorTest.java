@@ -2,19 +2,23 @@ package org.bioinfo.cellbase.lib.impl.mongodb;
 
 import org.bioinfo.cellbase.lib.api.ChromosomeDBAdaptor;
 import org.bioinfo.cellbase.lib.api.ConservedRegionDBAdaptor;
+import org.bioinfo.cellbase.lib.api.GenomeSequenceDBAdaptor;
+import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.impl.DBAdaptorFactory;
 import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
 import org.bioinfo.commons.utils.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ChromosomeMongoDBAdaptorTest {
+public class SequenceMongoDBAdaptorTest {
 
 	private DBAdaptorFactory dbAdaptorFactory = new MongoDBAdaptorFactory();
-    ConservedRegionDBAdaptor conservedRegionDBAdaptor;
+    GenomeSequenceMongoDBAdaptor genomeSequenceMongoDBAdaptor;
 	private String species = "hsapiens";
 	private String version = "v3";
 
@@ -34,9 +38,10 @@ public class ChromosomeMongoDBAdaptorTest {
 	@Test
 	public void testGetByRegionList() {
 
-        ChromosomeDBAdaptor dbAdaptor = dbAdaptorFactory.getChromosomeDBAdaptor(this.species, this.version);
-//        System.out.println(dbAdaptor.getAll(new QueryOptions()));
-        System.out.println(dbAdaptor.getAllByIdList(StringUtils.toList("20", ","), new QueryOptions()));
+        GenomeSequenceDBAdaptor dbAdaptor = dbAdaptorFactory.getGenomeSequenceDBAdaptor(this.species, this.version);
+        List<Region> regions = new ArrayList<>();
+        regions.add(new Region("20", 32877847, 32878707));
+        System.out.println(dbAdaptor.getAllByRegionList(regions, new QueryOptions()));
 
 	}
 	

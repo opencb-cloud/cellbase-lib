@@ -64,8 +64,8 @@ public class GeneMongoDBAdaptorTest {
 		
 		
 		List<Region> regions = new ArrayList<>();
-		regions.add(new Region("2", 1000, 1190000));
-		regions.add(new Region("12", 5000, 1190000));
+//		regions.add(new Region("2", 1000, 1190000));
+		regions.add(new Region("20", 32877847, 32878707));
 		QueryResponse qr = geneDBAdaptor.getAllByRegionList(regions, new QueryOptions("{'transcripts': false, 'metadata': false, 'exclude': 'id'}"));
 		System.out.println(qr.toJson());
 		
