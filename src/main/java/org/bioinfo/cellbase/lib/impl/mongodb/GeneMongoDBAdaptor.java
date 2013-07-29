@@ -1,9 +1,6 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.bioinfo.cellbase.lib.api.GeneDBAdaptor;
 import org.bioinfo.cellbase.lib.common.Position;
@@ -19,6 +16,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.QueryBuilder;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResult;
 
 //import org.bioinfo.infrared.core.cellbase.Gene;
 
@@ -366,7 +364,7 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 	}
 
 	@Override
-	public String getAllIntervalFrequencies(Region region, int interval) {
+	public QueryResponse getAllIntervalFrequencies(Region region, int interval) {
 
 		BasicDBObject start = new BasicDBObject("$gt",region.getStart());
 		start.append("$lt",region.getEnd());
@@ -425,7 +423,15 @@ public class GeneMongoDBAdaptor extends MongoDBAdaptor implements GeneDBAdaptor 
 				intervalVisited.put("features_count", sum.intValue());
 			}
 		}
-		return resultList.toString();
+        QueryResult queryResult = new QueryResult();
+        queryResult.setResult(resultList);
+
+        QueryResponse queryResponse = new QueryResponse();
+        queryResponse.getMetadata().put("queryIds", Arrays.asList(region.toString()));
+        queryResponse.put(region.toString(), queryResult);
+
+        return queryResponse;
+
 
 		//		QueryBuilder builder = QueryBuilder.start("chromosome").is(region.getChromosome()).and("end")
 		//				.greaterThan(region.getStart()).and("start").lessThan(region.getEnd());

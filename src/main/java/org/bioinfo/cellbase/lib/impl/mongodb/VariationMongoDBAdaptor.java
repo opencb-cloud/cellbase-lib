@@ -1,9 +1,6 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.bioinfo.cellbase.lib.api.variation.VariationDBAdaptor;
 import org.bioinfo.cellbase.lib.common.Position;
@@ -284,6 +281,7 @@ public class VariationMongoDBAdaptor extends MongoDBAdaptor implements Variation
 		queryResult.setResult(resultList);
 		
 		QueryResponse queryResponse = new QueryResponse();
+        queryResponse.getMetadata().put("queryIds", Arrays.asList(region.toString()));
 		queryResponse.put(region.toString(), queryResult);
 		
 //		return resultList;

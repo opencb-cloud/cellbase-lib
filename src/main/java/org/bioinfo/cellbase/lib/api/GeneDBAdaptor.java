@@ -10,14 +10,7 @@ import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
 
 public interface GeneDBAdaptor extends FeatureDBAdaptor {
 
-	// @Override
 
-	/**
-	 * List<Gene>
-	 * @param biotype
-	 * @param id
-	 * @return
-	 */
 //	public QueryResult getAll(List<String> biotype, Boolean id);
 	
 	public QueryResponse getAll(QueryOptions options);
@@ -121,5 +114,5 @@ public interface GeneDBAdaptor extends FeatureDBAdaptor {
 
 	public List<List<Gene>> getAllTargetsByMiRnaMatureList(List<String> mirbaseIds);
 
-	public String getAllIntervalFrequencies(Region region, int interval);
+	public QueryResponse getAllIntervalFrequencies(Region region, int interval);
 }

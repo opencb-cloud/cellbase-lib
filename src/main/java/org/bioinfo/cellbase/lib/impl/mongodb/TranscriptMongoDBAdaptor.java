@@ -1,8 +1,11 @@
 package org.bioinfo.cellbase.lib.impl.mongodb;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.mongodb.DBCollection;
 import org.bioinfo.cellbase.lib.api.TranscriptDBAdaptor;
 import org.bioinfo.cellbase.lib.common.Position;
 import org.bioinfo.cellbase.lib.common.Region;
@@ -29,32 +32,23 @@ public class TranscriptMongoDBAdaptor extends MongoDBAdaptor implements Transcri
 
     @Override
     public QueryResponse getAllById(String id, QueryOptions options) {
-        //        db.core.aggregate({$match: {"transcripts.id": "ENST00000343281"}}, {$unwind: "$transcripts"}, {$match: {"transcripts.id": "ENST00000343281"}})
-
-        DBObject[] commands = new DBObject[3];
-        DBObject match = new BasicDBObject("$match", new BasicDBObject("transcripts.id", id) );
-        DBObject unwind = new BasicDBObject("$unwind", "$transcripts" );
-        commands[0] = match;
-        commands[1] = unwind;
-        commands[2] = match;
-
-        QueryResponse q = executeAggregation(id, commands, options);
-
-        System.out.print(commands[0].toString()+",");
-        System.out.print(commands[1].toString()+",");
-        System.out.print(commands[2].toString());
-        System.out.println("");
-
-        System.out.println(">>"+((QueryResult)q.get(id)).getResult());
-
-        return executeAggregation(id, commands, options);
+        //db.core.aggregate({$match: {"transcripts.id": "ENST00000343281"}}, {$unwind: "$transcripts"}, {$match: {"transcripts.id": "ENST00000343281"}})
+        return getAllByIdList(Arrays.asList(id), options);
     }
-    
-    
 
     @Override
     public QueryResponse getAllByIdList(List<String> idList, QueryOptions options) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        List<DBObject[]> commandList = new ArrayList<>();
+        for (String id : idList) {
+            DBObject[] commands = new DBObject[3];
+            DBObject match = new BasicDBObject("$match", new BasicDBObject("transcripts.id", id) );
+            DBObject unwind = new BasicDBObject("$unwind", "$transcripts" );
+            commands[0] = match;
+            commands[1] = unwind;
+            commands[2] = match;
+            commandList.add(commands);
+        }
+        return executeAggregationList(idList, commandList, options);
     }
 
     @Override
