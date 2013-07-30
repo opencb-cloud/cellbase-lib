@@ -2,8 +2,11 @@ package org.bioinfo.cellbase.lib.impl.mongodb;
 
 import org.bioinfo.cellbase.lib.api.ConservedRegionDBAdaptor;
 import org.bioinfo.cellbase.lib.common.ConservedRegion;
+import org.bioinfo.cellbase.lib.common.DataSourceStats;
 import org.bioinfo.cellbase.lib.common.Region;
 import org.bioinfo.cellbase.lib.impl.DBAdaptorFactory;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryOptions;
+import org.bioinfo.cellbase.lib.impl.dbquery.QueryResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,13 +33,12 @@ public class ConservedRegionMongoDBAdaptorTest {
 	public void tearDown() throws Exception {
 	}
 
-//	@Test
-//	public void testGetByRegionList() {
-//        List<Region> regions = Region.parseRegions("13:19020001-19020002");
-//        int strand = 1;
-//        List<List<ConservedRegion>> a = conservedRegionDBAdaptor.getByRegionList(regions);
-//        System.out.println(gson.toJson(a));
-//	}
+	@Test
+	public void testGetByRegionList() {
+        List<Region> regions = Region.parseRegions("2:11517-30000");
+        QueryResponse qr = conservedRegionDBAdaptor.getAllByRegionList(regions, new QueryOptions());
+        System.out.println(qr.toJson());
+	}
 	
 
 	

@@ -123,7 +123,7 @@ public class RegulatoryRegionMongoDBAdaptor extends MongoDBAdaptor implements Re
                 builder.and("featureClass").is(featureClass);
             }
 
-            System.out.println("Query: " + builder.get());
+//            System.out.println("Query: " + builder.get());
             queries.add(builder.get());
             ids.add(region.toString());
         }
